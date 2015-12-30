@@ -9,7 +9,10 @@ namespace DpControl.Controllers.Test
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        // GET: api/values
+        /// <summary>
+        /// 获取所有aaaaaa
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IEnumerable<string> Get()
         {
