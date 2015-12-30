@@ -10,7 +10,7 @@ namespace DpControl.Controllers.Test
     public class ValuesController : Controller
     {
         /// <summary>
-        /// 获取所有 Branch测试
+        /// 获取所有
         /// </summary>
         /// <returns></returns>
         [HttpGet]
