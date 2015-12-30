@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.SwaggerGen;
+using DpControl.Domain.EFContext;
+using Microsoft.Data.Entity;
 
 namespace DpControl
 {
@@ -38,6 +40,11 @@ namespace DpControl
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
+
+            services.AddEntityFramework()
+                .AddSqlServer()
+                .AddDbContext<ShadingContext>(options =>
+                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
             services.AddMvc();
 
@@ -84,6 +91,7 @@ namespace DpControl
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
+            DbInitialization.Initialize(app.ApplicationServices);
         }
 
         // Entry point for the application.
