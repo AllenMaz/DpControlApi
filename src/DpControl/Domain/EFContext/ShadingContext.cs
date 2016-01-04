@@ -8,7 +8,7 @@ using DpControl.Domain.EFContext.Configurations;
 
 namespace DpControl.Domain.EFContext
 {
-    public class ShadingContext :DbContext
+    public class ShadingContext : Microsoft.Data.Entity.DbContext
     {
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<AlarmMessage> AlarmMessages { get; set; }

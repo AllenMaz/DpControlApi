@@ -10,13 +10,13 @@ namespace DpControl.Domain.Repository
 {
     public class EFContextFactory : IEFContextFactory
     {
-        private readonly DbContext dbContext;
+        private readonly Microsoft.Data.Entity.DbContext dbContext;
         public EFContextFactory()
         {
             dbContext = new ShadingContext();
         }
 
-        public DbContext GetContext()
+        public Microsoft.Data.Entity.DbContext GetContext()
         {
             return dbContext;
         }

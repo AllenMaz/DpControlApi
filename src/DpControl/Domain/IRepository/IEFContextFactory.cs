@@ -8,6 +8,6 @@ namespace DpControl.Domain.IRepository
 {
     public interface IEFContextFactory
     {
-        DbContext GetContext();
+        Microsoft.Data.Entity.DbContext GetContext();
     }
 }
