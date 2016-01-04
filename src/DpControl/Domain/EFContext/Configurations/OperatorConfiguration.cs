@@ -25,7 +25,7 @@ namespace DpControl.Domain.DbContext.Configurations
             entityBuilder.Property(o => o.ModifiedDate).IsRequired();
             entityBuilder.Property(o => o.RowVersion).IsConcurrencyToken();
 
-//            entityBuilder.HasMany(o => o.Logs).WithOne(l => l.Operator).HasForeignKey(i => i.OperatorId);
+//            entityBuilder.HasMany(o => o.Logs).WithOne(l => l.Operator).IsRequired(false);  // (i => i.OperatorId);
         }
 
     }

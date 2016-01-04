@@ -8,8 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.SwaggerGen;
-using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using DpControl.Domain.IRepository;
+using DpControl.Domain.Repository;
+using DpControl.Domain.EFContext;
 
 namespace DpControl
 {
@@ -49,7 +51,7 @@ namespace DpControl
             services.AddMvc();
 
             #region  swagger
-        services.AddSwaggerGen();
+            services.AddSwaggerGen();
             services.ConfigureSwaggerDocument(options =>
             {
 
@@ -70,6 +72,8 @@ namespace DpControl
             });
 
             #endregion
+
+            services.AddSingleton<ICustomerRepository, CustomerRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -91,6 +95,7 @@ namespace DpControl
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
+
             DbInitialization.Initialize(app.ApplicationServices);
         }
 
