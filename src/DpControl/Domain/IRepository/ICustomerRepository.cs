@@ -9,7 +9,7 @@ namespace DpControl.Domain.IRepository
     public interface ICustomerRepository
     {
         void Add( Customer item);
-        IEnumerable<Customer> GetAll();
+        Task<IEnumerable<Customer>> GetAll();
         Task<Customer> Find(string customerNo);
         Task Remove(string key);
         void Update(Customer item);
