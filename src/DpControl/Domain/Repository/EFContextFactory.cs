@@ -4,18 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.EFContext;
+using Microsoft.Data.Entity;
 
 namespace DpControl.Domain.Repository
 {
     public class EFContextFactory : IEFContextFactory
     {
-        private readonly Microsoft.Data.Entity.DbContext dbContext;
+        private readonly DbContext dbContext;
         public EFContextFactory()
         {
             dbContext = new ShadingContext();
         }
 
-        public Microsoft.Data.Entity.DbContext GetContext()
+        public DbContext GetContext()
         {
             return dbContext;
         }
