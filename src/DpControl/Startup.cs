@@ -12,6 +12,13 @@ using Microsoft.Data.Entity;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
+using Microsoft.AspNet.Mvc;
+using DpControl.Controllers.ExceptionFilter;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNet.Diagnostics;
+using Microsoft.Extensions.WebEncoders;
+using System.Net;
 
 namespace DpControl
 {
@@ -51,6 +58,11 @@ namespace DpControl
 
             services.AddMvc();
 
+            //services.Configure<MvcOptions>(options =>
+            //{
+            //    options.Filters.Add(new GlobalExceptionFilter());
+            //});
+
             #region  swagger
             services.AddSwaggerGen();
             services.ConfigureSwaggerDocument(options =>
@@ -88,7 +100,26 @@ namespace DpControl
 
             app.UseApplicationInsightsRequestTelemetry();
 
+            // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
+
+            //异常消息处理
+            app.UseExceptionHandler(errorApp =>
+            {
+                // Normally you'd use MVC or similar to render a nice page.
+                errorApp.Run(async context =>
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    var error = context.Features.Get<IExceptionHandlerFeature>();
+                    if (error != null)
+                    {
+                        // This error would not normally be exposed to the client
+                        await context.Response.WriteAsync(error.Error.Message);
+                    }
+                    await context.Response.WriteAsync(new string(' ', 512)); // Padding for IE
+                });
+            });
+            
 
             app.UseStaticFiles();
 
@@ -97,6 +128,8 @@ namespace DpControl
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
+
+            
 
             DbInitialization.Initialize(app.ApplicationServices);
         }

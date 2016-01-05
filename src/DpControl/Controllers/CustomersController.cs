@@ -1,4 +1,5 @@
-﻿using DpControl.Domain.EFContext;
+﻿
+using DpControl.Domain.EFContext;
 using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Repository;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 namespace DpControl.Controllers
 {
     [Route("[controller]")]
-    public class CustomersController:Controller
+    public class CustomersController: BaseController
     {
         [FromServices]
         public ICustomerRepository _customerRepository { get; set; }
@@ -27,9 +28,9 @@ namespace DpControl.Controllers
             var customers = await _customerRepository.GetAll();
             if (customers.Count() ==0)
             {
-                Response.StatusCode = 204;
-                //var data = Encoding.UTF8.GetBytes("NO CONTENT");
-                //Response.Body.Write(data, 0, data.Length);
+                //Response.StatusCode = 111;
+                var data = Encoding.UTF8.GetBytes("没有数据");
+                await Response.Body.WriteAsync(data, 0, data.Length);
             }
 
             return customers;
@@ -62,9 +63,11 @@ namespace DpControl.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest();
+                return HttpBadRequest(); 
             }
+
             await _customerRepository.Add(customer);
+                
             return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = customer.CustomerNo }, customer);
         }
     }

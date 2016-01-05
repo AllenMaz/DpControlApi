@@ -6,6 +6,9 @@ using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using System.Net.Http;
+using System.Web.Http;
+using System.Net;
 //using Microsoft.Extensions.DependencyInjection;
 
 
@@ -60,8 +63,8 @@ namespace DpControl.Domain.Repository
             }
             catch (Exception e)
             {
-                operateMessage.Success = false;
-                operateMessage.Message = "数据新增失败：错误："+e.Message;
+                throw new Exception("数据新增失败,错误："+e.Message);
+
             }
             return operateMessage;
             
