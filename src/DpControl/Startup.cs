@@ -17,6 +17,8 @@ namespace DpControl
 {
     public class Startup
     {
+        public static IConfigurationRoot Configuration { get; set; }
+
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
@@ -33,7 +35,6 @@ namespace DpControl
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
 
-        public IConfigurationRoot Configuration { get; set; }
 
         private string pathToDoc = "../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml";
 
@@ -45,8 +46,7 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer()
-                .AddDbContext<ShadingContext>(options =>
-                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+                .AddDbContext<ShadingContext>();
 
 
             services.AddMvc();
@@ -74,7 +74,7 @@ namespace DpControl
 
             #endregion
 
-            services.AddScoped<ShadingContext, ShadingContext>();
+            services.AddTransient<ShadingContext, ShadingContext>();
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
     }
 

@@ -13,45 +13,59 @@ namespace DpControl.Domain.Repository
 {
     public class CustomerRepository : ICustomerRepository
     {
-        
-       ShadingContext  dbContext;
-       public CustomerRepository(ShadingContext dbContext)
-        {
-            this.dbContext = dbContext; 
-        }
+
+        private ShadingContext _dbContext;
+
+        #region 构造函数
         public CustomerRepository()
         {
 
         }
-        public async Task<IEnumerable<Customer>> GetAll()
+
+        public CustomerRepository(ShadingContext dbContext)
         {
-            using (var context=new ShadingContext())
-            {
-                return await context.Customers.ToListAsync<Customer>();
-            }
-        }
-        public async Task<Customer> Find(string customerNo)
-        {
-            using (var context = new ShadingContext())
-            {
-                var customer= await context.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
-                if (customer == null)
-                    throw new KeyNotFoundException();
-                return customer;
-            }
+            _dbContext = dbContext;
         }
 
-        public async void Add(Customer customer)
+        #endregion
+
+        public async Task<IEnumerable<Customer>> GetAll()
         {
-            using (var context=new ShadingContext())
+            return await _dbContext.Customers.ToListAsync<Customer>();
+
+        }
+
+        public async Task<Customer> Find(string customerNo)
+        {
+            var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
+
+            return customer;
+
+        }
+
+
+        public async Task<OperateMessage> Add(Customer customer)
+        {
+            OperateMessage operateMessage = new OperateMessage();
+            try
             {
                 if (customer == null)
                 {
                     throw new ArgumentNullException();
                 }
-                context.Customers.Add(customer);
-                await context.SaveChangesAsync();
+
+                _dbContext.Customers.Add(customer);
+                await _dbContext.SaveChangesAsync();
+
             }
+            catch (Exception e)
+            {
+                operateMessage.Success = false;
+                operateMessage.Message = "数据新增是吧";
+            }
+            return operateMessage;
+            
+
         }
 
         public void Update(Customer customer)
@@ -68,10 +82,21 @@ namespace DpControl.Domain.Repository
                     context.Customers.Remove(customer);
                     await context.SaveChangesAsync();
                 }
-                else{
+                else {
                     return;
                 }
             }
         }
+    }
+
+    public class OperateMessage
+    {
+        public OperateMessage()
+        {
+            Success = true;
+        }
+        public bool Success { get; set; }
+
+        public string Message { get; set; }
     }
 }
