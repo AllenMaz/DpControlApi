@@ -61,7 +61,7 @@ namespace DpControl.Domain.Repository
             catch (Exception e)
             {
                 operateMessage.Success = false;
-                operateMessage.Message = "数据新增是吧";
+                operateMessage.Message = "数据新增失败：错误："+e.Message;
             }
             return operateMessage;
             
