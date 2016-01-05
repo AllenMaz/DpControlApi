@@ -48,6 +48,7 @@ namespace DpControl
                 .AddDbContext<ShadingContext>(options =>
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
+
             services.AddMvc();
 
             #region  swagger
@@ -73,6 +74,7 @@ namespace DpControl
 
             #endregion
 
+            services.AddScoped<ShadingContext, ShadingContext>();
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
     }
 
