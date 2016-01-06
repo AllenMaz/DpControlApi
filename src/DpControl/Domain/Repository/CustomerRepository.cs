@@ -6,6 +6,7 @@ using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using DpControl.Domain.Models;
 //using Microsoft.Extensions.DependencyInjection;
 
 
@@ -13,35 +14,45 @@ namespace DpControl.Domain.Repository
 {
     public class CustomerRepository : ICustomerRepository
     {
-        
-       ShadingContext  dbContext;
-       public CustomerRepository(ShadingContext dbContext)
-        {
-            this.dbContext = dbContext; 
-        }
+        public  Microsoft.Data.Entity.DbContext DB { get; set; }
         public CustomerRepository()
         {
-
         }
-        public async Task<IEnumerable<Customer>> GetAll()
+        public async Task<IEnumerable<MCustomer>> GetAll()
         {
             using (var context=new ShadingContext())
             {
-                return await context.Customers.ToListAsync<Customer>();
+                return await context.Customers.Select(c => new MCustomer
+                {
+                    CustomerId = c.CustomerId,
+                    CustomerName = c.CustomerName,
+                    CustomerNo = c.CustomerNo,
+                    ProjectName = c.ProjectName,
+                    ProjectNo = c.ProjectNo
+                })
+                .OrderBy(c => c.CustomerNo)
+                .ToArrayAsync<MCustomer>();
             }
         }
-        public async Task<Customer> Find(string customerNo)
+        public async Task<MCustomer> Find(string customerNo)
         {
             using (var context = new ShadingContext())
             {
                 var customer= await context.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
                 if (customer == null)
                     throw new KeyNotFoundException();
-                return customer;
+                return new MCustomer
+                {
+                    CustomerId = customer.CustomerId,
+                    CustomerName = customer.CustomerName,
+                    CustomerNo = customer.CustomerNo,
+                    ProjectName = customer.ProjectName,
+                    ProjectNo = customer.ProjectNo
+                };
             }
         }
 
-        public async void Add(Customer customer)
+        public async void Add(MCustomer customer)
         {
             using (var context=new ShadingContext())
             {
@@ -49,18 +60,37 @@ namespace DpControl.Domain.Repository
                 {
                     throw new ArgumentNullException();
                 }
-                context.Customers.Add(customer);
+                context.Customers.Add(new Customer
+                {
+                    CustomerName = customer.CustomerName,
+                    CustomerNo = customer.CustomerNo,
+                    ProjectName = customer.ProjectName,
+                    ProjectNo = customer.ProjectNo,
+                    ModifiedDate = DateTime.Now
+                }); 
                 await context.SaveChangesAsync();
             }
         }
 
-        public void Update(Customer customer)
+        public async void UpdateById(MCustomer mcustomer)
         {
-
+            using (var context=new ShadingContext())
+            {
+                var customer = await context.Customers.FirstOrDefaultAsync(c => c.CustomerId == mcustomer.CustomerId);
+                if (customer == null)
+                    throw new KeyNotFoundException();
+                customer.CustomerName = mcustomer.CustomerName;
+                customer.CustomerNo = mcustomer.CustomerNo;
+                customer.ProjectName = mcustomer.ProjectName;
+                customer.ProjectNo = mcustomer.ProjectNo;
+                customer.ModifiedDate = DateTime.Now;
+                await context.SaveChangesAsync();
+            }
         }
+
         public async Task Remove(string customerNo)
         {
-            using (var context = new ShadingContext())
+            using (var context =(ShadingContext)(new EFContextFactory().GetContext()))
             {
                 var customer = await context.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
                 if (customer != null)
@@ -71,6 +101,14 @@ namespace DpControl.Domain.Repository
                 else{
                     return;
                 }
+            }
+        }
+
+        public async Task<IEnumerable<String>> GetCustomerName()
+        {
+            using (var context=new ShadingContext())
+            {
+                return await context.Customers.Select(c => c.CustomerName).ToListAsync<String>();
             }
         }
     }

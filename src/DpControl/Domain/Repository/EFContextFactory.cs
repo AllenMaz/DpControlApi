@@ -9,7 +9,7 @@ namespace DpControl.Domain.Repository
 {
     public class EFContextFactory : IEFContextFactory
     {
-        private readonly Microsoft.Data.Entity.DbContext dbContext;
+        private readonly ShadingContext dbContext;
         public EFContextFactory()
         {
             dbContext = new ShadingContext();

@@ -12,7 +12,7 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public LocationConfiguration(EntityTypeBuilder<Location> entityBuilder)
         {
-            entityBuilder.HasKey(l => l.DeviceId);
+            entityBuilder.HasKey(l => l.LocationId);
             entityBuilder.ToTable("DeviceLocations", "ControlSystem");
 
             entityBuilder.Property(l => l.Building).HasMaxLength(80).IsRequired();
