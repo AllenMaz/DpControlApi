@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DpControl.Controllers
 {
-    [Route("[controller]")]
+    [Route("v1/[controller]")]
     public class CustomersController: BaseController
     {
         [FromServices]

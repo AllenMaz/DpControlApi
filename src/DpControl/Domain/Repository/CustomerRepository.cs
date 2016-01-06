@@ -75,18 +75,14 @@ namespace DpControl.Domain.Repository
         }
         public async Task Remove(string customerNo)
         {
-            using (var context = new ShadingContext())
+           
+            var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
+            if (customer != null)
             {
-                var customer = await context.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
-                if (customer != null)
-                {
-                    context.Customers.Remove(customer);
-                    await context.SaveChangesAsync();
-                }
-                else {
-                    return;
-                }
+                    _dbContext.Customers.Remove(customer);
+                await _dbContext.SaveChangesAsync();
             }
+            
         }
     }
     
