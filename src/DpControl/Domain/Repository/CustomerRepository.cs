@@ -63,7 +63,7 @@ namespace DpControl.Domain.Repository
             }
             catch (Exception e)
             {
-                throw new Exception("数据新增失败,错误："+e.Message);
+                throw new NotImplementedException("数据新增失败,错误："+e.Message);
 
             }
             return operateMessage;

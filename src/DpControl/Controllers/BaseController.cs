@@ -1,4 +1,4 @@
-﻿using DpControl.Controllers.ExceptionFilter;
+﻿using DpControl.Controllers.ExceptionHandler;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DpControl.Controllers
 {
-    [GlobalExceptionFilter]
+    //[GlobalExceptionFilter]
     public class BaseController:Controller
     {
     }
