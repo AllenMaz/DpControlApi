@@ -12,11 +12,20 @@ using Microsoft.Data.Entity;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
+using Microsoft.AspNet.Mvc;
+using DpControl.Controllers.ExceptionHandler;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNet.Diagnostics;
+using Microsoft.Extensions.WebEncoders;
+using System.Net;
 
 namespace DpControl
 {
     public class Startup
     {
+        public static IConfigurationRoot Configuration { get; set; }
+
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
@@ -33,7 +42,6 @@ namespace DpControl
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
 
-        public IConfigurationRoot Configuration { get; set; }
 
         private string pathToDoc = "../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml";
 
@@ -45,10 +53,15 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer()
-                .AddDbContext<ShadingContext>(options =>
-                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+                .AddDbContext<ShadingContext>();
+
 
             services.AddMvc();
+
+            //services.Configure<MvcOptions>(options =>
+            //{
+            //    options.Filters.Add(new GlobalExceptionFilter());
+            //});
 
             #region  swagger
             services.AddSwaggerGen();
@@ -73,6 +86,7 @@ namespace DpControl
 
             #endregion
 
+            services.AddTransient<ShadingContext, ShadingContext>();
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
     }
 
@@ -86,7 +100,12 @@ namespace DpControl
 
             app.UseApplicationInsightsRequestTelemetry();
 
+            // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
+
+            //捕获全局异常消息
+            app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+
 
             app.UseStaticFiles();
 
@@ -95,6 +114,8 @@ namespace DpControl
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
+
+            
 
             DbInitialization.Initialize(app.ApplicationServices);
         }

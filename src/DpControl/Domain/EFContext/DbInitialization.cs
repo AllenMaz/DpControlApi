@@ -10,16 +10,16 @@ namespace DpControl.Domain.EFContext
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            var context = serviceProvider.GetService<ShadingContext>();
-            if (context.Database == null)
-            {
-                throw new Exception("DB is null");
-            }
+            //var context = serviceProvider.GetService<ShadingContext>();
+            //if (context.Database == null)
+            //{
+            //    throw new Exception("DB is null");
+            //}
 
-            if (context.Alarms.Any())
-            {
-                return;   // DB has been seeded 
-            }
+            //if (context.Alarms.Any())
+            //{
+            //    return;   // DB has been seeded 
+            //}
 
             // Seed data here
         }

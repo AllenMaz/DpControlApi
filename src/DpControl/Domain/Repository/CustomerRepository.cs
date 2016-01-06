@@ -14,13 +14,25 @@ namespace DpControl.Domain.Repository
 {
     public class CustomerRepository : ICustomerRepository
     {
-        public  Microsoft.Data.Entity.DbContext DB { get; set; }
+
+        private ShadingContext _dbContext;
+
+        #region 构造函数
         public CustomerRepository()
         {
         }
-        public async Task<IEnumerable<MCustomer>> GetAll()
+
+        public CustomerRepository(ShadingContext dbContext)
         {
-            using (var context=new ShadingContext())
+            _dbContext = dbContext;
+        }
+
+        #endregion
+
+        public async Task<IEnumerable<Customer>> GetAll()
+        {
+            var customers = await _dbContext.Customers.ToListAsync<Customer>();
+            if (customers.Count() == 0)
             {
                 return await context.Customers.Select(c => new MCustomer
                 {
@@ -33,6 +45,8 @@ namespace DpControl.Domain.Repository
                 .OrderBy(c => c.CustomerNo)
                 .ToArrayAsync<MCustomer>();
             }
+            return customers;
+
         }
         public async Task<MCustomer> Find(string customerNo)
         {
@@ -54,7 +68,7 @@ namespace DpControl.Domain.Repository
 
         public async void Add(MCustomer customer)
         {
-            using (var context=new ShadingContext())
+            try
             {
                 if (customer == null)
                 {
@@ -70,12 +84,14 @@ namespace DpControl.Domain.Repository
                 }); 
                 await context.SaveChangesAsync();
             }
+            
+
         }
 
         public async void UpdateById(MCustomer mcustomer)
         {
             using (var context=new ShadingContext())
-            {
+        {
                 var customer = await context.Customers.FirstOrDefaultAsync(c => c.CustomerId == mcustomer.CustomerId);
                 if (customer == null)
                     throw new KeyNotFoundException();
@@ -110,6 +126,8 @@ namespace DpControl.Domain.Repository
             {
                 return await context.Customers.Select(c => c.CustomerName).ToListAsync<String>();
             }
+            
         }
     }
+    
 }
