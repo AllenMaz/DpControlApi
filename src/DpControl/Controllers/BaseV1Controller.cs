@@ -5,10 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace DpControl.Controllers
 {
+    //版本号为V1的BaseController
     //[GlobalExceptionFilter]
-    public class BaseController:Controller
+    [Route("v1/[controller]")]
+    public class BaseV1Controller:Controller
     {
     }
 }

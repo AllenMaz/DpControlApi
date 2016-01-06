@@ -21,9 +21,10 @@ namespace DpControl.Controllers.ExceptionHandler
                 if (error != null)
                 {
                     //判断不同的异常并将不同类型的异常转换为HttpStatusCode
-                    if (error.Error.GetType() == typeof(NotImplementedException))
+                    var exceptionType = error.Error.GetType();
+                    if (exceptionType == typeof(NotImplementedException))
                     {
-                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         // This error would not normally be exposed to the client
                         await context.Response.WriteAsync(error.Error.Message);
                     }

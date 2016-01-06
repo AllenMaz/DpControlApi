@@ -34,7 +34,12 @@ namespace DpControl.Domain.Repository
 
         public async Task<IEnumerable<Customer>> GetAll()
         {
-            return await _dbContext.Customers.ToListAsync<Customer>();
+            var customers = await _dbContext.Customers.ToListAsync<Customer>();
+            if (customers.Count() == 0)
+            {
+                //
+            }
+            return customers;
 
         }
 

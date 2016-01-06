@@ -12,32 +12,26 @@ using System.Threading.Tasks;
 
 namespace DpControl.Controllers
 {
-    [Route("v1/[controller]")]
-    public class CustomersController: BaseController
+    
+    public class CustomersController: BaseV1Controller
     {
         [FromServices]
         public ICustomerRepository _customerRepository { get; set; }
 
         /// <summary>
-        /// 获取所有数据
+        /// Search all data
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         public async Task<IEnumerable<Customer>> GetAll()
         {
             var customers = await _customerRepository.GetAll();
-            if (customers.Count() ==0)
-            {
-                //Response.StatusCode = 111;
-                var data = Encoding.UTF8.GetBytes("没有数据");
-                await Response.Body.WriteAsync(data, 0, data.Length);
-            }
-
+            
             return customers;
         }
 
         /// <summary>
-        /// 根据CustomerNo获取数据
+        /// Search data by CustomerNo
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -54,7 +48,7 @@ namespace DpControl.Controllers
         }
 
         /// <summary>
-        /// 新增数据
+        /// Add data
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -69,6 +63,30 @@ namespace DpControl.Controllers
             await _customerRepository.Add(customer);
                 
             return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = customer.CustomerNo }, customer);
+        }
+
+        /// <summary>
+        /// Edit data by CustomerNo
+        /// </summary>
+        /// <param name="customerNo"></param>
+        /// <param name="customer"></param>
+        /// <returns></returns>
+        [HttpPut("{customerNo}")]
+        public IActionResult Update(string customerNo, [FromBody] Customer customer)
+        {
+
+            return new NoContentResult();
+        }
+
+        /// <summary>
+        /// Delete data by CustomerNo
+        /// </summary>
+        /// <param name="customerNo"></param>
+        [HttpDelete("{customerNo}")]
+        public async Task Delete(string customerNo)
+        {
+            await _customerRepository.Remove(customerNo);
+
         }
     }
 }
