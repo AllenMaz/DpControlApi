@@ -7,6 +7,9 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.AspNet.Diagnostics;
 using System.Net;
 using Microsoft.AspNet.Http;
+using DpControl.Domain.Utility;
+using DpControl.Domain.Models;
+using System.Text;
 
 namespace DpControl.Controllers.ExceptionHandler
 {
@@ -29,16 +32,19 @@ namespace DpControl.Controllers.ExceptionHandler
                     var exceptionType = error.Error.GetType();
                     var exceptionMessage = error.Error.Message;
 
+                    ErrResponse errResponse = new ErrResponse();
+                    errResponse.message = exceptionMessage; 
+                    string errMessage = ResponseUtility.ConstructErrResponse(errResponse);
                     //程序异常
                     if (exceptionType == typeof(ProcedureException))
                     {
                         // This error would not normally be exposed to the client
-                        await context.Response.WriteAsync(exceptionMessage);
+                        await context.Response.WriteAsync(errMessage,Encoding.UTF8);
                     }
                     else
                     {
                         //系统异常
-                        await context.Response.WriteAsync("系统出现异常："+ exceptionMessage);
+                        await context.Response.WriteAsync(errMessage, Encoding.UTF8);
                     }
 
                 }

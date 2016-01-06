@@ -52,8 +52,7 @@ namespace DpControl
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddEntityFramework()
-                .AddSqlServer()
-                .AddDbContext<ShadingContext>();
+                .AddSqlServer();
 
 
             services.AddMvc();

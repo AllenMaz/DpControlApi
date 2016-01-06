@@ -3,7 +3,9 @@ using DpControl.Controllers;
 using DpControl.Domain.EFContext;
 using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
+using DpControl.Domain.Models;
 using DpControl.Domain.Repository;
+using DpControl.Domain.Utility;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ using System.Threading.Tasks;
 namespace DpControl.Controllers
 {
     
-    public class CustomersController: BaseV1Controller
+    public class CustomersController: BaseController
     {
         [FromServices]
         public ICustomerRepository _customerRepository { get; set; }
@@ -24,12 +26,11 @@ namespace DpControl.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ResponseData<IEnumerable<Customer>>> GetAll()
+        public async Task<ResponseData<IEnumerable<MCustomer>>> GetAll()
         {
             var customers = await _customerRepository.GetAll();
-            ResponseData<IEnumerable<Customer>> data = new ResponseData<IEnumerable<Customer>>();
-            data.data = customers;
-            return data;
+            var responseData = ResponseUtility.ConstructResponse<IEnumerable<MCustomer>>(customers);
+            return responseData;
         }
 
         /// <summary>
@@ -42,11 +43,9 @@ namespace DpControl.Controllers
         {
 
             var customer = await _customerRepository.Find(customerNo);
-            if (customer == null)
-            {
-                return HttpNotFound();
-            }
-            return new ObjectResult(customer);
+            var responseData = ResponseUtility.ConstructResponse<MCustomer>(customer);
+
+            return new ObjectResult(responseData);
         }
 
         /// <summary>
@@ -55,16 +54,16 @@ namespace DpControl.Controllers
         /// <param name="item"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Customer customer)
+        public async Task<IActionResult> Post([FromBody] MCustomer mCustomer)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(); 
             }
 
-            await _customerRepository.Add(customer);
+            await _customerRepository.Add(mCustomer);
                 
-            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = customer.CustomerNo }, customer);
+            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
         }
 
         /// <summary>
@@ -91,9 +90,5 @@ namespace DpControl.Controllers
 
         }
     }
-
-    public class ResponseData<T>
-    {
-        public T data { get; set; }
-    }
+    
 }
