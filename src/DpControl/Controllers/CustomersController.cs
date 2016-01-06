@@ -1,4 +1,5 @@
 ﻿
+using DpControl.Controllers;
 using DpControl.Domain.EFContext;
 using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
@@ -23,11 +24,12 @@ namespace DpControl.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IEnumerable<Customer>> GetAll()
+        public async Task<ResponseData<IEnumerable<Customer>>> GetAll()
         {
             var customers = await _customerRepository.GetAll();
-            
-            return customers;
+            ResponseData<IEnumerable<Customer>> data = new ResponseData<IEnumerable<Customer>>();
+            data.data = customers;
+            return data;
         }
 
         /// <summary>
@@ -88,5 +90,10 @@ namespace DpControl.Controllers
             await _customerRepository.Remove(customerNo);
 
         }
+    }
+
+    public class ResponseData<T>
+    {
+        public T data { get; set; }
     }
 }

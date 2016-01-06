@@ -9,6 +9,7 @@ using Microsoft.Data.Entity;
 using System.Net.Http;
 using System.Web.Http;
 using System.Net;
+using DpControl.Controllers.ExceptionHandler;
 //using Microsoft.Extensions.DependencyInjection;
 
 
@@ -35,10 +36,6 @@ namespace DpControl.Domain.Repository
         public async Task<IEnumerable<Customer>> GetAll()
         {
             var customers = await _dbContext.Customers.ToListAsync<Customer>();
-            if (customers.Count() == 0)
-            {
-                //
-            }
             return customers;
 
         }

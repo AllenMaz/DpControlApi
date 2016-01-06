@@ -12,6 +12,11 @@ namespace DpControl.Controllers.ExceptionHandler
 {
     public class GlobalExceptionBuilder 
     {
+        /// <summary>
+        /// 判断不同的异常并将不同类型的异常转换为HttpStatusCode
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IApplicationBuilder ExceptionBuilder(IApplicationBuilder builder)
         {
             builder.Run(async context =>
@@ -20,13 +25,20 @@ namespace DpControl.Controllers.ExceptionHandler
                 var error = context.Features.Get<IExceptionHandlerFeature>();
                 if (error != null)
                 {
-                    //判断不同的异常并将不同类型的异常转换为HttpStatusCode
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     var exceptionType = error.Error.GetType();
-                    if (exceptionType == typeof(NotImplementedException))
+                    var exceptionMessage = error.Error.Message;
+
+                    //程序异常
+                    if (exceptionType == typeof(ProcedureException))
                     {
-                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         // This error would not normally be exposed to the client
-                        await context.Response.WriteAsync(error.Error.Message);
+                        await context.Response.WriteAsync(exceptionMessage);
+                    }
+                    else
+                    {
+                        //系统异常
+                        await context.Response.WriteAsync("系统出现异常："+ exceptionMessage);
                     }
 
                 }
