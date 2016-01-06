@@ -47,9 +47,8 @@ namespace DpControl.Domain.Repository
         }
 
 
-        public async Task<OperateMessage> Add(Customer customer)
+        public async Task Add(Customer customer)
         {
-            OperateMessage operateMessage = new OperateMessage();
             try
             {
                 if (customer == null)
@@ -66,7 +65,6 @@ namespace DpControl.Domain.Repository
                 throw new NotImplementedException("数据新增失败,错误："+e.Message);
 
             }
-            return operateMessage;
             
 
         }
@@ -91,15 +89,5 @@ namespace DpControl.Domain.Repository
             }
         }
     }
-
-    public class OperateMessage
-    {
-        public OperateMessage()
-        {
-            Success = true;
-        }
-        public bool Success { get; set; }
-
-        public string Message { get; set; }
-    }
+    
 }
