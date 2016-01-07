@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace DpControl.Controllers
 {
@@ -27,7 +28,7 @@ namespace DpControl.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ResponseMessage<IEnumerable<MCustomer>>> GetAll()
+        public async Task<ResponseMessage<IEnumerable<MCustomer>>> GetAll([FromUri] Query query)
         {
             var customers = await _customerRepository.GetAll();
             var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);

@@ -32,7 +32,11 @@
 
   "frameworks": {
     "dnx451": {},
-    "dnxcore50": {}
+    "dnxcore50": {
+      "dependencies": {
+        "System.ComponentModel.TypeConverter": "4.0.1-beta-23516"
+      }
+    }
   },
 
   "exclude": [
