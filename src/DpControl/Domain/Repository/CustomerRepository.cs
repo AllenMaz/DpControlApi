@@ -11,7 +11,6 @@ using System.Web.Http;
 using System.Net;
 using DpControl.Controllers.ExceptionHandler;
 using DpControl.Domain.Models;
-using DpControl.Domain.Utility;
 //using Microsoft.Extensions.DependencyInjection;
 
 
@@ -37,90 +36,93 @@ namespace DpControl.Domain.Repository
         public async Task<IEnumerable<MCustomer>> GetAll()
         {
             var customers = await _dbContext.Customers.ToListAsync<Customer>();
-
-            List<MCustomer> mCustomers = EntityModelUtility.ConverEntityToModel<MCustomer, Customer>(customers);
-            mCustomers = mCustomers.OrderBy(v=>v.CustomerNo).ToList();
-
-            return mCustomers;
-        }
-        public async Task<MCustomer> Find(string customerNo)
-        {
-            var customer= await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
-            if (customer == null)
-                throw new KeyNotFoundException();
-
-            MCustomer mCustomer = EntityModelUtility.ConverEntityToModel<MCustomer, Customer>(customer);
-            return mCustomer;
-
-
-        }
-
-        public async Task Add(MCustomer mCustomer)
-        {
-
-            try
+            
+            return await _dbContext.Customers.Select(c => new MCustomer
             {
-                if (mCustomer == null)
-                {
-                    throw new ArgumentNullException();
-                }
-                //var bb = _dbContext.ChangeTracker.Entries();
-
-                if (mCustomer == null)
-                {
-                    throw new ArgumentNullException();
-                }
-                Customer customer = EntityModelUtility.ConverModelToEntity<MCustomer, Customer>(mCustomer);
-                customer.ModifiedDate = DateTime.Now;
-                _dbContext.Customers.Add(customer);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                throw new ProcedureException("数据新增失败。错误："+e.Message);
-            }
+                CustomerId = c.CustomerId,
+                CustomerName = c.CustomerName,
+                CustomerNo = c.CustomerNo,
+                ProjectName = c.ProjectName,
+                ProjectNo = c.ProjectNo
+            })
+            .OrderBy(c => c.CustomerNo)
+            .ToArrayAsync<MCustomer>();
             
 
         }
-
-        public async Task UpdateById(MCustomer mCustomer)
+        public async Task<MCustomer> Find(string customerNo)
         {
-            Customer customer = EntityModelUtility.ConverModelToEntity<MCustomer, Customer>(mCustomer);
-
-            var entity = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
-            if (entity == null)
+           
+            var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
+            if (customer == null)
                 throw new KeyNotFoundException();
+            return new MCustomer
+            {
+                CustomerId = customer.CustomerId,
+                CustomerName = customer.CustomerName,
+                CustomerNo = customer.CustomerNo,
+                ProjectName = customer.ProjectName,
+                ProjectNo = customer.ProjectNo
+            };
+            
+        }
 
-            entity.CustomerName = customer.CustomerName;
-            entity.CustomerNo = customer.CustomerNo;
-            entity.ProjectName = customer.ProjectName;
-            entity.ProjectNo = customer.ProjectNo;
-            entity.ModifiedDate = DateTime.Now;
+        public async void Add(MCustomer customer)
+        {
+            if (customer == null)
+            {
+                throw new ArgumentNullException();
+            }
+            _dbContext.Customers.Add(new Customer
+            {
+                CustomerName = customer.CustomerName,
+                CustomerNo = customer.CustomerNo,
+                ProjectName = customer.ProjectName,
+                ProjectNo = customer.ProjectNo,
+                ModifiedDate = DateTime.Now
+            });
             await _dbContext.SaveChangesAsync();
+            
 
+
+
+        }
+
+        public async void UpdateById(MCustomer mcustomer)
+        {
+                var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == mcustomer.CustomerId);
+                if (customer == null)
+                    throw new KeyNotFoundException();
+                customer.CustomerName = mcustomer.CustomerName;
+                customer.CustomerNo = mcustomer.CustomerNo;
+                customer.ProjectName = mcustomer.ProjectName;
+                customer.ProjectNo = mcustomer.ProjectNo;
+                customer.ModifiedDate = DateTime.Now;
+                await _dbContext.SaveChangesAsync();
+            
         }
 
         public async Task Remove(string customerNo)
         {
-           
-            var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
-            if (customer != null)
-            {
-                _dbContext.Customers.Remove(customer);
-                await _dbContext.SaveChangesAsync();
-            }
-            else{
-                return;
-            }
+                var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
+                if (customer != null)
+                {
+                    _dbContext.Customers.Remove(customer);
+                    await _dbContext.SaveChangesAsync();
+                }
+                else {
+                    return;
+                }
             
         }
-           
+
         public async Task<IEnumerable<String>> GetCustomerName()
         {
-           
-           return await _dbContext.Customers.Select(c => c.CustomerName).ToListAsync<String>();
-            
-            
+            using (var context = new ShadingContext())
+            {
+                return await context.Customers.Select(c => c.CustomerName).ToListAsync<String>();
+            }
+
         }
     }
     

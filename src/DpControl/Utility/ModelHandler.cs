@@ -5,11 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace DpControl.Domain.Utility
+namespace DpControl.Utility
 {
-    public static class EntityModelUtility
+    public static class ModelHandler
     {
-
         /// <summary>
         /// Conver Entity To Model
         /// </summary>
@@ -37,7 +36,7 @@ namespace DpControl.Domain.Utility
         /// <typeparam name="E"></typeparam>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public static M ConverEntityToModel<M,E>(E entity)where M:new()
+        public static M ConverEntityToModel<M, E>(E entity) where M : new()
         {
             try
             {
@@ -59,7 +58,7 @@ namespace DpControl.Domain.Utility
 
                             //if (mPropertie.PropertyType == typeof(string))
                             //{
-                                
+
                             //    var ePropertieValue = ePropertie.GetValue(entity, null).ToString();
                             //    mPropertie.SetValue(model, ePropertieValue);
                             //}
@@ -69,11 +68,12 @@ namespace DpControl.Domain.Utility
 
                 return model;
 
-            } catch (Exception e)
-            {
-                throw new ProcedureException("实体类转换成领域模型失败。错误："+e.Message);
             }
-            
+            catch (Exception e)
+            {
+                throw new ProcedureException("实体类转换成领域模型失败。错误：" + e.Message);
+            }
+
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace DpControl.Domain.Utility
                     {
                         if (ePropertie.Name == mPropertie.Name)
                         {
-                           
+
                             object value = SwitchPropertyValue(ePropertie.PropertyType, mPropertie.GetValue(model, null));
                             ePropertie.SetValue(entity, value, null);
                         }
@@ -135,22 +135,7 @@ namespace DpControl.Domain.Utility
                 throw new ProcedureException("领域模型转换成实体类失败。错误：" + e.Message);
             }
         }
-
-        //public static object SetPropertyValue(object obj, Dictionary<string, string> content)
-        //{
-        //    if (obj == null) return null;
-        //    if (content == null || content.Count == 0) return null;
-        //    foreach (var ee in content)
-        //    {
-        //        PropertyInfo info = obj.GetType().GetProperty(ee.Key);
-        //        if (info != null)
-        //        {
-        //            object value = SwitchPropertyValue(info.PropertyType, ee.Value);
-        //            info.SetValue(obj, value, null);
-        //        }
-        //    }
-        //    return obj;
-        //}
+        
 
         public static object SwitchPropertyValue(Type type, object value)
         {
@@ -158,7 +143,7 @@ namespace DpControl.Domain.Utility
             //{
             //    return type.IsValueType ? Activator.CreateInstance(type) : null;
             //}
-            
+
             bool isNullable = type.Name == "Nullable`1";
             if (isNullable)
             {

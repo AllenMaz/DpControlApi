@@ -5,7 +5,8 @@ using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
 using DpControl.Domain.Repository;
-using DpControl.Domain.Utility;
+using DpControl.Models;
+using DpControl.Utility;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -26,10 +27,10 @@ namespace DpControl.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ResponseData<IEnumerable<MCustomer>>> GetAll()
+        public async Task<ResponseMessage<IEnumerable<MCustomer>>> GetAll()
         {
             var customers = await _customerRepository.GetAll();
-            var responseData = ResponseUtility.ConstructResponse<IEnumerable<MCustomer>>(customers);
+            var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);
             return responseData;
         }
 
@@ -43,7 +44,7 @@ namespace DpControl.Controllers
         {
 
             var customer = await _customerRepository.Find(customerNo);
-            var responseData = ResponseUtility.ConstructResponse<MCustomer>(customer);
+            var responseData = ResponseHandler.ConstructResponse<MCustomer>(customer);
 
             return new ObjectResult(responseData);
         }
@@ -61,7 +62,7 @@ namespace DpControl.Controllers
                 return HttpBadRequest(); 
             }
 
-            await _customerRepository.Add(mCustomer);
+            //await _customerRepository.Add(mCustomer);
                 
             return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
         }

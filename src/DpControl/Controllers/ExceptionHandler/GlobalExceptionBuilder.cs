@@ -7,9 +7,10 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.AspNet.Diagnostics;
 using System.Net;
 using Microsoft.AspNet.Http;
-using DpControl.Domain.Utility;
 using DpControl.Domain.Models;
 using System.Text;
+using DpControl.Models;
+using DpControl.Utility;
 
 namespace DpControl.Controllers.ExceptionHandler
 {
@@ -32,9 +33,9 @@ namespace DpControl.Controllers.ExceptionHandler
                     var exceptionType = error.Error.GetType();
                     var exceptionMessage = error.Error.Message;
 
-                    ErrResponse errResponse = new ErrResponse();
+                    ErrResponseMessage errResponse = new ErrResponseMessage();
                     errResponse.message = exceptionMessage; 
-                    string errMessage = ResponseUtility.ConstructErrResponse(errResponse);
+                    string errMessage = ResponseHandler.ConstructErrResponse(errResponse);
                     //程序异常
                     if (exceptionType == typeof(ProcedureException))
                     {

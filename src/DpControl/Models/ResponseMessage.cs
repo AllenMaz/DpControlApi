@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DpControl.Domain.Models
+namespace DpControl.Models
 {
-
-    public class BaseResponseData
+    public class BaseResponseMessage
     {
 
     }
@@ -15,7 +14,7 @@ namespace DpControl.Domain.Models
     /// API消息返回
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ResponseData<T>: BaseResponseData
+    public class ResponseMessage<T> : BaseResponseMessage
     {
 
         public T data { get; set; }
@@ -24,11 +23,12 @@ namespace DpControl.Domain.Models
     /// <summary>
     /// API错误消息返回
     /// </summary>
-    public class ErrResponse : BaseResponseData
+    public class ErrResponseMessage : BaseResponseMessage
     {
 
         public string code { get; set; }
 
         public string message { get; set; }
     }
+    
 }

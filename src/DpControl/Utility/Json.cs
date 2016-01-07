@@ -6,9 +6,9 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DpControl.Domain.Utility
+namespace DpControl.Utility
 {
-    public static class JSON
+    public static class Json
     {
         public static T UnJson<T>(string jsonString)
         {
@@ -26,6 +26,5 @@ namespace DpControl.Domain.Utility
                 return Encoding.UTF8.GetString(ms.ToArray());
             }
         }
-
     }
 }
