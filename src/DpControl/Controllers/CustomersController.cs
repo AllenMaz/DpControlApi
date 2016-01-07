@@ -39,7 +39,7 @@ namespace DpControl.Controllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [HttpGet("{customerNo}")]
+        [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
 
@@ -62,22 +62,29 @@ namespace DpControl.Controllers
                 return HttpBadRequest(); 
             }
 
-            //await _customerRepository.Add(mCustomer);
-                
-            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
+            await _customerRepository.Add(mCustomer);
+            var responseData = ResponseHandler.ConstructResponse<MCustomer>(mCustomer);
+            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, responseData);
         }
 
         /// <summary>
-        /// Edit data by CustomerNo
+        /// Edit data by CustomerId
         /// </summary>
         /// <param name="customerNo"></param>
         /// <param name="customer"></param>
         /// <returns></returns>
-        [HttpPut("{customerNo}")]
-        public IActionResult Update(string customerNo, [FromBody] Customer customer)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] MCustomer mCustomer)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest();
+            }
+            mCustomer.CustomerId = id;
+            await _customerRepository.UpdateById(mCustomer);
+            var responseData = ResponseHandler.ConstructResponse<MCustomer>(mCustomer);
+            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, responseData);
 
-            return new NoContentResult();
         }
 
         /// <summary>
@@ -85,7 +92,7 @@ namespace DpControl.Controllers
         /// </summary>
         /// <param name="customerNo"></param>
         [HttpDelete("{customerNo}")]
-        public async Task Delete(string customerNo)
+        public async Task DeleteByCustomerNo(string customerNo)
         {
             await _customerRepository.Remove(customerNo);
 

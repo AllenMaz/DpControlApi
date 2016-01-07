@@ -71,7 +71,7 @@ namespace DpControl.Utility
             }
             catch (Exception e)
             {
-                throw new ProcedureException("实体类转换成领域模型失败。错误：" + e.Message);
+                throw new Exception("实体类转换成领域模型失败。错误：" + e.Message);
             }
 
         }
@@ -132,7 +132,7 @@ namespace DpControl.Utility
             }
             catch (Exception e)
             {
-                throw new ProcedureException("领域模型转换成实体类失败。错误：" + e.Message);
+                throw new Exception("领域模型转换成实体类失败。错误：" + e.Message);
             }
         }
         
@@ -178,7 +178,7 @@ namespace DpControl.Utility
                 return new Guid(value.ToString());
             }
 
-            throw new NotSupportedException("数据类型不支持");
+            throw new Exception("数据类型不支持");
         }
     }
 }

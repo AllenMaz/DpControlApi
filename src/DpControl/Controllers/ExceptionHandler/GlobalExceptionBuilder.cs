@@ -34,22 +34,26 @@ namespace DpControl.Controllers.ExceptionHandler
                     var exceptionMessage = error.Error.Message;
 
                     ErrResponseMessage errResponse = new ErrResponseMessage();
-                    errResponse.message = exceptionMessage; 
-                    string errMessage = ResponseHandler.ConstructErrResponse(errResponse);
-                    //程序异常
-                    if (exceptionType == typeof(ProcedureException))
+                    
+
+                    if(exceptionType == typeof(Exception))
                     {
-                        // This error would not normally be exposed to the client
-                        await context.Response.WriteAsync(errMessage,Encoding.UTF8);
+                        //系统异常
+                        errResponse.code = 500;
+                        errResponse.error = exceptionMessage;
                     }
                     else
                     {
                         //系统异常
-                        await context.Response.WriteAsync(errMessage, Encoding.UTF8);
+                        errResponse.code = 500;
+                        errResponse.error = "System is abnormal ！Error：" + exceptionMessage;
+                        
                     }
 
+                    string errMessage = ResponseHandler.ConstructErrResponse(errResponse);
+                    await context.Response.WriteAsync(errMessage, Encoding.UTF8);
                 }
-                await context.Response.WriteAsync(new string(' ', 512)); // Padding for IE
+                //await context.Response.WriteAsync(new string(' ', 512)); // Padding for IE
             });
             
 

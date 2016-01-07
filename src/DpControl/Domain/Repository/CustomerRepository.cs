@@ -35,7 +35,6 @@ namespace DpControl.Domain.Repository
 
         public async Task<IEnumerable<MCustomer>> GetAll()
         {
-            var customers = await _dbContext.Customers.ToListAsync<Customer>();
             
             return await _dbContext.Customers.Select(c => new MCustomer
             {
@@ -52,7 +51,7 @@ namespace DpControl.Domain.Repository
         }
         public async Task<MCustomer> Find(string customerNo)
         {
-           
+            
             var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
             if (customer == null)
                 throw new KeyNotFoundException();
@@ -67,7 +66,7 @@ namespace DpControl.Domain.Repository
             
         }
 
-        public async void Add(MCustomer customer)
+        public async Task Add(MCustomer customer)
         {
             if (customer == null)
             {
@@ -88,7 +87,7 @@ namespace DpControl.Domain.Repository
 
         }
 
-        public async void UpdateById(MCustomer mcustomer)
+        public async Task UpdateById(MCustomer mcustomer)
         {
                 var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == mcustomer.CustomerId);
                 if (customer == null)
