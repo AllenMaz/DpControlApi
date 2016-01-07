@@ -44,6 +44,10 @@ namespace DpControl.Controllers
         {
 
             var customer = await _customerRepository.Find(customerNo);
+            if (customer == null)
+            {
+                return HttpNotFound();
+            }
             var responseData = ResponseHandler.ConstructResponse<MCustomer>(customer);
 
             return new ObjectResult(responseData);

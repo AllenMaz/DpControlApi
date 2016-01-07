@@ -36,7 +36,11 @@ namespace DpControl.Domain.Repository
         public async Task<IEnumerable<MCustomer>> GetAll()
         {
             
-            return await _dbContext.Customers.Select(c => new MCustomer
+            //using (var context = new ShadingContext())
+            //{
+            //    var AAA = await context.Customers.ToListAsync<Customer>();
+            //}
+                var customers = await _dbContext.Customers.Select(c => new MCustomer
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
@@ -45,13 +49,13 @@ namespace DpControl.Domain.Repository
                 ProjectNo = c.ProjectNo
             })
             .OrderBy(c => c.CustomerNo)
-            .ToArrayAsync<MCustomer>();
-            
+            .ToListAsync<MCustomer>();
 
+
+            return customers;
         }
         public async Task<MCustomer> Find(string customerNo)
         {
-            
             var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
             if (customer == null)
                 throw new KeyNotFoundException();
