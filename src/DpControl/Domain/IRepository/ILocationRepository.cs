@@ -11,7 +11,7 @@ namespace DpControl.Domain.IRepository
         Task Add(MLocation item, string projectNo);
         Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo);
         Task<MLocationOnly> Find(string deviceNo, string projectNo);
-        Task Remove(int  key, string projectNo);
+        Task Remove(int key);
         Task Update(MLocation mcustomer, string projectNo);
     }
 }

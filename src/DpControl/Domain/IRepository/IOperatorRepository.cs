@@ -10,7 +10,7 @@ namespace DpControl.Domain.IRepository
     {
         Task Add(MOperator mOperator, string ProjectNo);
         Task<IEnumerable<MOperator>> GetAllAsync(string projectNo);
-        Task Remove(string key, string projectNo);
-        Task UpdateById(MOperator mGroup, string projectNo);
+        Task Remove(int Id);
+        Task UpdateById(MOperator mOperator, string projectNo);
     }
 }

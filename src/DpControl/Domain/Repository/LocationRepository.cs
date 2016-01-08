@@ -82,12 +82,6 @@ namespace DpControl.Domain.Repository
             var query = await GetCustomerByProjectNo(projectNo);
             _customerId = query.CustomerId;
 
-            //// does the Name exist?
-            //if (query.DeviceLocations.Select(g => g.GroupName).Contains(groupName))
-            //{
-            //    throw new Exception("The group already exist.");
-            //}
-
             query.DeviceLocations.Add(new Location
             {
                 Building = mLocation.Building,
@@ -147,32 +141,34 @@ namespace DpControl.Domain.Repository
             _single.ModifiedDate = DateTime.Now;
             await _context.SaveChangesAsync();
         }
-        public async Task Remove(int key, string projectNo)
+
+        // remove the item by id
+        public async Task Remove(int Id)
         {
-            int _customerId;
-
-            // get groups with projectNo = projectNo
-            var query = await GetCustomerByProjectNo(projectNo);
-            _customerId = query.CustomerId;
-
-
-            var location = query.DeviceLocations.FirstOrDefault(l => (l.LocationId == key) && (l.CustomerId == _customerId));
-            if (location != null)
+            if (Id == 0)
             {
-                _context.Locations.Remove(location);
-                await _context.SaveChangesAsync();
+                throw new Exception("The group does not exist.");
             }
-            else {
-                return;
-            }
+
+            var toDelete = new Location { LocationId = Id };
+            _context.Locations.Attach(toDelete);
+            _context.Locations.Remove(toDelete);
+            await _context.SaveChangesAsync();
+
+            //            _context.Database.ExecuteSqlCommandAsync("Delete From operators where OperatorId = Id");
         }
 
         async Task<Customer> GetCustomerByProjectNo(string projectNo)
         {
-            return await _context.Customers
+            var query = await _context.Customers
                         .Include(c => c.DeviceLocations)
                         .Where(c => c.ProjectNo == projectNo)
                         .SingleAsync();
+            if (query == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            return query;
         }
     }
 }

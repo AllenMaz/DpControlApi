@@ -33,10 +33,6 @@ namespace DpControl.Domain.Repository
 
             // get groups with projectNo = projectNo
             var query = await GetCustomerByProjectNo(projectNo);
-            if (query == null)
-            {
-                throw new KeyNotFoundException();
-            }
 
             _customerId = query.CustomerId;
 
@@ -86,6 +82,22 @@ namespace DpControl.Domain.Repository
             }
         }
 
+        public async Task Remove(int Id)
+        {
+            if (Id == 0)
+            {
+                throw new Exception("The group does not exist.");
+            }
+
+            var toDelete = new Group { GroupId = Id };
+            _context.Groups.Attach(toDelete);
+            _context.Groups.Remove(toDelete);
+            await _context.SaveChangesAsync();
+
+            //            _context.Database.ExecuteSqlCommandAsync("Delete From operators where OperatorId = Id");
+        }
+
+
         public async Task UpdateById(MGroup mGroup, string projectNo)
         {
             // get groups by the projectNo
@@ -103,10 +115,15 @@ namespace DpControl.Domain.Repository
 
         async Task<Customer> GetCustomerByProjectNo(string projectNo)
         {
-            return await _context.Customers
+            var query = await _context.Customers
                         .Include(c => c.Groups)
                         .Where(c => c.ProjectNo == projectNo)
                         .SingleAsync();
+            if (query == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            return query;
         }
     }
 }

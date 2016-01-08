@@ -12,7 +12,7 @@ namespace DpControl.Domain.IRepository
         void Add( MCustomer item);
         Task<IEnumerable<MCustomer>> GetAll();
         Task<MCustomer> Find(string customerNo);
-        Task Remove(string key);
+        Task Remove(int Id);
         void UpdateById(MCustomer mcustomer);
         Task<IEnumerable<String>> GetCustomerName();
     }

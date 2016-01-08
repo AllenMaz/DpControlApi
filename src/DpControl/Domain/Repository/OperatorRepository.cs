@@ -11,7 +11,7 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.Repository
 {
-    public class OperatorRepository
+    public class OperatorRepository : IOperatorRepository
     {
         ShadingContext _context;
         public OperatorRepository()
@@ -27,10 +27,10 @@ namespace DpControl.Domain.Repository
         {
             string _fullname = mOperator.FirstName + mOperator.LastName;
             int _customerId;
-            var query = await _context.Customers
-                    .Include(c => c.Operators)
-                    .Where(c => c.ProjectNo == projectNo)
-                    .SingleAsync();
+
+            // get groups with projectNo = projectNo
+            var query = await GetCustomerByProjectNo(projectNo);
+
             _customerId = query.CustomerId;
             // does the Name exist?
             if (query.Operators.Select(o => o.FirstName + o.LastName).Contains(_fullname))
@@ -56,10 +56,7 @@ namespace DpControl.Domain.Repository
         public async Task<IEnumerable<MOperator>> GetAllAsync(string projectNo)
         {
             // get groups by the projectNo
-            var query = await _context.Customers
-                .Include(c => c.Operators)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
+            var query = await GetCustomerByProjectNo(projectNo);
 
             return query.Operators.Select(o => new MOperator
             {
@@ -72,23 +69,51 @@ namespace DpControl.Domain.Repository
             .ToList<MOperator>();
         }
 
-        public async Task Remove(string fullName, string projectNo)
+        public async Task Remove(int Id)
+        {
+            if (Id == 0)
+            {
+                throw new Exception("The group does not exist.");
+            }
+
+            var toDelete = new Operator { OperatorId = Id };
+            _context.Operators.Attach(toDelete);
+            _context.Operators.Remove(toDelete);
+            await _context.SaveChangesAsync();
+
+//            _context.Database.ExecuteSqlCommandAsync("Delete From operators where OperatorId = Id");
+        }
+
+        public async Task UpdateById(MOperator mOperator, string projectNo)
+        {
+            // get groups by the projectNo
+            var query = await GetCustomerByProjectNo(projectNo);
+
+            var _single = query.Operators.Where(g => g.OperatorId == mOperator.OperatorId).Single();
+            if (_single == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            _single.OperatorId = mOperator.OperatorId;
+            _single.FirstName = mOperator.FirstName;
+            _single.LastName = mOperator.LastName;
+            _single.NickName = mOperator.NickName;
+            _single.Description = mOperator.Description;
+//            _context.Operators.Update(_single);
+            await _context.SaveChangesAsync();
+        }
+
+        async Task<Customer> GetCustomerByProjectNo(string projectNo)
         {
             var query = await _context.Customers
                         .Include(c => c.Operators)
                         .Where(c => c.ProjectNo == projectNo)
                         .SingleAsync();
-            var removeItem = query.Operators.Single(o => (o.FirstName + o.LastName) == fullName);
-            if (removeItem == null)
+            if (query == null)
             {
-                throw new Exception("The group does not exist.");
+                throw new KeyNotFoundException();
             }
-            else
-            {
-                _context.Operators.Remove(removeItem);
-                await _context.SaveChangesAsync();
-            }
+            return query;
         }
-
     }
 }
