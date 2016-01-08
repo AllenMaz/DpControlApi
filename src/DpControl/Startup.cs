@@ -19,6 +19,7 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.Extensions.WebEncoders;
 using System.Net;
+using DpControl.Models;
 
 namespace DpControl
 {
@@ -59,7 +60,8 @@ namespace DpControl
 
             //services.Configure<MvcOptions>(options =>
             //{
-            //    options.Filters.Add(new GlobalExceptionFilter());
+            //    //options.Filters.Add(new GlobalExceptionFilter());
+            //    options.ModelBinders.Insert(0, new QueryModelBinder());
             //});
 
             #region  swagger
@@ -87,7 +89,8 @@ namespace DpControl
 
             services.AddTransient<ShadingContext, ShadingContext>();
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
-    }
+            
+        }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

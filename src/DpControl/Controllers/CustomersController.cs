@@ -28,7 +28,7 @@ namespace DpControl.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ResponseMessage<IEnumerable<MCustomer>>> GetAll([FromUri] Query query)
+        public async Task<ResponseMessage<IEnumerable<MCustomer>>> GetAll()
         {
             var customers = await _customerRepository.GetAll();
             var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);
