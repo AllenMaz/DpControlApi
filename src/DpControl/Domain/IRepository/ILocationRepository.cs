@@ -8,11 +8,10 @@ namespace DpControl.Domain.IRepository
 {
     public interface ILocationRepository
     {
-        void Add(MLocation item);
+        Task Add(MLocation item, string projectNo);
         Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo);
         Task<MLocationOnly> Find(string deviceNo, string projectNo);
         Task Remove(int  key, string projectNo);
-        void Update(MLocation mcustomer);
-
+        Task Update(MLocation mcustomer, string projectNo);
     }
 }

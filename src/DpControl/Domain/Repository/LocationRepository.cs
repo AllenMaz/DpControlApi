@@ -25,9 +25,9 @@ namespace DpControl.Domain.Repository
         public async Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo)
         {
             // get projectNo from Customer
-            int custId;
-            custId = await GetLocationIdByProjectNo(projectNo);
-            return await _context.Locations.Where(l => l.CustomerId == custId).Select(l => new MLocation
+            var query = await GetCustomerByProjectNo(projectNo);
+
+            return query.DeviceLocations.Select(l => new MLocation
             {
                 LocationId = l.LocationId,
                 Building = l.Building,
@@ -44,16 +44,17 @@ namespace DpControl.Domain.Repository
                 FavorPositionFirst = l.FavorPositionFirst,
                 FavorPositionrSecond = l.FavorPositionrSecond,
                 FavorPositionThird = l.FavorPositionThird
-            })
-            .OrderBy(c => c.LocationId)
-            .ToArrayAsync<MLocation>();
+            }).ToList<MLocation>().OrderBy(m=>m.Building).ThenByDescending(m=>m.Floor).ThenByDescending(m=>m.Orientation);
         }
 
         //finding an device location through device serial no
         public async Task<MLocationOnly> Find(string serialNo, string projectNo)
         {
-            int custId = await GetLocationIdByProjectNo(projectNo);
-            var location = await _context.Locations.FirstOrDefaultAsync(l => (l.DeviceSerialNo == serialNo) && (l.CustomerId == custId));
+            int custId;
+            var query = await GetCustomerByProjectNo(projectNo);
+
+            custId = query.CustomerId;
+            var location = query.DeviceLocations.FirstOrDefault(l => (l.DeviceSerialNo == serialNo) );
             if (location == null)
                 throw new KeyNotFoundException();
             return new MLocationOnly
@@ -68,63 +69,94 @@ namespace DpControl.Domain.Repository
 
         }
 
-        public async void Add(MLocation customer)
+        public async Task Add(MLocation mLocation, string projectNo)
         {
-            if (customer == null)
+            if (mLocation == null)
             {
                 throw new ArgumentNullException();
             }
-            _context.Locations.Add(new Location
-            {
-                LocationId = customer.LocationId,
-                Building = customer.Building,
-                Floor = customer.Floor,
-                RoomNo = customer.RoomNo,
-                Orientation = customer.Orientation,
-                InstallationNumber = customer.InstallationNumber,
 
-                DeviceType = customer.DeviceType,
-                CommMode = customer.CommMode,
-                DeviceSerialNo = customer.DeviceSerialNo,
-                CommAddress = customer.CommAddress,
-                CurrentPosition = customer.CurrentPosition,
-                FavorPositionFirst = customer.FavorPositionFirst,
-                FavorPositionrSecond = customer.FavorPositionrSecond,
-                FavorPositionThird = customer.FavorPositionThird,
-                ModifiedDate=DateTime.Now
+            int _customerId;
+
+            // get groups with projectNo = projectNo
+            var query = await GetCustomerByProjectNo(projectNo);
+            _customerId = query.CustomerId;
+
+            //// does the Name exist?
+            //if (query.DeviceLocations.Select(g => g.GroupName).Contains(groupName))
+            //{
+            //    throw new Exception("The group already exist.");
+            //}
+
+            query.DeviceLocations.Add(new Location
+            {
+                Building = mLocation.Building,
+                Floor = mLocation.Floor,
+                RoomNo = mLocation.RoomNo,
+                Orientation = mLocation.Orientation,
+                InstallationNumber = mLocation.InstallationNumber,
+
+                DeviceType = mLocation.DeviceType,
+                CommMode = mLocation.CommMode,
+                DeviceSerialNo = mLocation.DeviceSerialNo,
+                CommAddress = mLocation.CommAddress,
+                CurrentPosition = mLocation.CurrentPosition,
+                FavorPositionFirst = mLocation.FavorPositionFirst,
+                FavorPositionrSecond = mLocation.FavorPositionrSecond,
+                FavorPositionThird = mLocation.FavorPositionThird,
+                ModifiedDate = DateTime.Now,
+                CustomerId = _customerId
             });
             await _context.SaveChangesAsync();
         }
 
-        public async void Update(MLocation mLocation)
+        public async Task Update(MLocation mLocation, string projectNo)
         {
-            var _location = await _context.Locations.FirstOrDefaultAsync(c => c.LocationId == mLocation.LocationId);
-            if (_location == null)
+            if (mLocation == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            int _customerId;
+
+            // get groups with projectNo = projectNo
+            var query = await GetCustomerByProjectNo(projectNo);
+            if (query == null)
             {
                 throw new KeyNotFoundException();
             }
-            _location.LocationId = mLocation.LocationId;
-            _location.Building = mLocation.Building;
-            _location.Floor = mLocation.Floor;
-            _location.RoomNo = mLocation.RoomNo;
-            _location.Orientation = mLocation.Orientation;
-            _location.InstallationNumber = mLocation.InstallationNumber;
+            _customerId = query.CustomerId;
 
-            _location.DeviceType = mLocation.DeviceType;
-            _location.CommMode = mLocation.CommMode;
-            _location.DeviceSerialNo = mLocation.DeviceSerialNo;
-            _location.CommAddress = mLocation.CommAddress;
-            _location.CurrentPosition = mLocation.CurrentPosition;
-            _location.FavorPositionFirst = mLocation.FavorPositionFirst;
-            _location.FavorPositionrSecond = mLocation.FavorPositionrSecond;
-            _location.FavorPositionThird = mLocation.FavorPositionThird;
-            _location.ModifiedDate = DateTime.Now;
+            var _single = query.DeviceLocations.Where(l => l.LocationId == mLocation.LocationId).Single();
+
+            _single.CustomerId = _customerId;
+            _single.Building = mLocation.Building;
+            _single.Floor = mLocation.Floor;
+            _single.RoomNo = mLocation.RoomNo;
+            _single.Orientation = mLocation.Orientation;
+            _single.InstallationNumber = mLocation.InstallationNumber;
+
+            _single.DeviceType = mLocation.DeviceType;
+            _single.CommMode = mLocation.CommMode;
+            _single.DeviceSerialNo = mLocation.DeviceSerialNo;
+            _single.CommAddress = mLocation.CommAddress;
+            _single.CurrentPosition = mLocation.CurrentPosition;
+            _single.FavorPositionFirst = mLocation.FavorPositionFirst;
+            _single.FavorPositionrSecond = mLocation.FavorPositionrSecond;
+            _single.FavorPositionThird = mLocation.FavorPositionThird;
+            _single.ModifiedDate = DateTime.Now;
             await _context.SaveChangesAsync();
         }
         public async Task Remove(int key, string projectNo)
         {
-            int custId = await GetLocationIdByProjectNo(projectNo);
-            var location = await _context.Locations.FirstOrDefaultAsync(l => (l.LocationId == key) && (l.CustomerId == custId));
+            int _customerId;
+
+            // get groups with projectNo = projectNo
+            var query = await GetCustomerByProjectNo(projectNo);
+            _customerId = query.CustomerId;
+
+
+            var location = query.DeviceLocations.FirstOrDefault(l => (l.LocationId == key) && (l.CustomerId == _customerId));
             if (location != null)
             {
                 _context.Locations.Remove(location);
@@ -134,12 +166,13 @@ namespace DpControl.Domain.Repository
                 return;
             }
         }
-        async Task<int> GetLocationIdByProjectNo(string projectNo)
+
+        async Task<Customer> GetCustomerByProjectNo(string projectNo)
         {
-            var project = await _context.Customers.SingleAsync(c => c.ProjectNo == projectNo);
-            if (project == null)
-                throw new NullReferenceException();
-            return project.CustomerId;
+            return await _context.Customers
+                        .Include(c => c.DeviceLocations)
+                        .Where(c => c.ProjectNo == projectNo)
+                        .SingleAsync();
         }
     }
 }

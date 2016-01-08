@@ -9,6 +9,5 @@ namespace DpControl.Domain.Models
     {
         public int GroupId { get; set; }
         public string GroupName { get; set; }
-
     }
 }

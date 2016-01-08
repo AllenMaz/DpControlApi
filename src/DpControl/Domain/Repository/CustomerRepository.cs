@@ -29,12 +29,12 @@ namespace DpControl.Domain.Repository
 
         #endregion
 
-        public async Task<IEnumerable<Customer>> GetAll()
+        public async Task<IEnumerable<MCustomer>> GetAll()
         {
             var customers = await _dbContext.Customers.ToListAsync<Customer>();
             if (customers.Count() == 0)
             {
-                return await context.Customers.Select(c => new MCustomer
+                return await _dbContext.Customers.Select(c => new MCustomer
                 {
                     CustomerId = c.CustomerId,
                     CustomerName = c.CustomerName,
@@ -43,10 +43,8 @@ namespace DpControl.Domain.Repository
                     ProjectNo = c.ProjectNo
                 })
                 .OrderBy(c => c.CustomerNo)
-                .ToArrayAsync<MCustomer>();
+                .ToListAsync<MCustomer>();
             }
-            return customers;
-
         }
         public async Task<MCustomer> Find(string customerNo)
         {
@@ -74,7 +72,7 @@ namespace DpControl.Domain.Repository
                 {
                     throw new ArgumentNullException();
                 }
-                context.Customers.Add(new Customer
+                _dbContext.Customers.Add(new Customer
                 {
                     CustomerName = customer.CustomerName,
                     CustomerNo = customer.CustomerNo,
@@ -82,7 +80,7 @@ namespace DpControl.Domain.Repository
                     ProjectNo = customer.ProjectNo,
                     ModifiedDate = DateTime.Now
                 }); 
-                await context.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
             }
             
 

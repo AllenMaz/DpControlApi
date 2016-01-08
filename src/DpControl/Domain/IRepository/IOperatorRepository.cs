@@ -6,11 +6,11 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface IGroupRepository
+    interface IOperatorRepository
     {
-        Task Add(string groupName, string ProjectNo);
-        Task<IEnumerable<MGroup>> GetAllAsync(string projectNo);
+        Task Add(MOperator mOperator, string ProjectNo);
+        Task<IEnumerable<MOperator>> GetAllAsync(string projectNo);
         Task Remove(string key, string projectNo);
-        Task UpdateById(MGroup mGroup, string projectNo);
+        Task UpdateById(MOperator mGroup, string projectNo);
     }
-}   
+}
