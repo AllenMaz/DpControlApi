@@ -97,7 +97,7 @@ namespace DpControl.Controllers
         /// </summary>
         /// <param name="customerId"></param>
         [HttpDelete("{customerId}")]
-        public async Task DeleteByCustomerNo(int customerId)
+        public async Task DeleteByCustomerId(int customerId)
         {
             await _customerRepository.Remove(customerId);
 
