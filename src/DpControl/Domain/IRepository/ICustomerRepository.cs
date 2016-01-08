@@ -9,11 +9,11 @@ namespace DpControl.Domain.IRepository
 {
     public interface ICustomerRepository
     {
-        void Add( MCustomer item);
+        Task Add( MCustomer item);
         Task<IEnumerable<MCustomer>> GetAll();
         Task<MCustomer> Find(string customerNo);
         Task Remove(int Id);
-        void UpdateById(MCustomer mcustomer);
+        Task UpdateById(MCustomer mcustomer);
         Task<IEnumerable<String>> GetCustomerName();
     }
 }

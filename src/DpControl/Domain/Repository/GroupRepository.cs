@@ -10,17 +10,20 @@ using Microsoft.Data.Entity;
 
 namespace DpControl.Domain.Repository
 {
-    public class GroupRepository : IGroupRepository
-    {
-        ShadingContext _context;
+    public class GroupRepository 
+        {
+        private ShadingContext _context;
+
+        #region Constructors
         public GroupRepository()
         {
+        }
 
-        }
-        public GroupRepository(ShadingContext context)
+        public GroupRepository(ShadingContext dbContext)
         {
-            _context = context;
+            _context = dbContext;
         }
+        #endregion
 
         public async Task Add(string groupName, string projectNo)
         {

@@ -11,7 +11,7 @@ namespace DpControl.Controllers
     //版本号为V1的BaseController
     //[GlobalExceptionFilter]
     [Route("v1/[controller]")]
-    public class BaseV1Controller:Controller
+    public class BaseController:Controller
     {
     }
 }
