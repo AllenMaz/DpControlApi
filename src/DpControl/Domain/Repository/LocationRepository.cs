@@ -24,6 +24,11 @@ namespace DpControl.Domain.Repository
 
         public async Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo)
         {
+            if( string.IsNullOrEmpty(projectNo))
+            {
+                throw new ArgumentNullException();
+            }
+
             // get projectNo from Customer
             var query = await GetCustomerByProjectNo(projectNo);
 
@@ -50,6 +55,11 @@ namespace DpControl.Domain.Repository
         //finding an device location through device serial no
         public async Task<MLocationOnly> Find(string serialNo, string projectNo)
         {
+            if (string.IsNullOrEmpty(serialNo) || string.IsNullOrEmpty(projectNo))
+            {
+                throw new ArgumentNullException();
+            }
+
             int custId;
             var query = await GetCustomerByProjectNo(projectNo);
 
@@ -106,7 +116,7 @@ namespace DpControl.Domain.Repository
 
         public async Task Update(MLocation mLocation, string projectNo)
         {
-            if (mLocation == null)
+            if (mLocation == null| | string.IsNullOrEmpty(projectNo))
             {
                 throw new ArgumentNullException();
             }

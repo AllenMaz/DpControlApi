@@ -10,24 +10,24 @@ using Microsoft.Data.Entity;
 
 namespace DpControl.Domain.Repository
 {
-    public class GroupRepository
+    public class SceneRepository : ISceneRepository
     {
-        private ShadingContext _context;
+        ShadingContext _context;
 
         #region Constructors
-        public GroupRepository()
+        public SceneRepository()
         {
         }
 
-        public GroupRepository(ShadingContext dbContext)
+        public SceneRepository(ShadingContext dbContext)
         {
             _context = dbContext;
         }
         #endregion
 
-        public async Task Add(string groupName, string projectNo)
+        public async  Task Add(string sceneName, string projectNo)
         {
-            if (groupName == null || string.IsNullOrEmpty(projectNo))
+            if (string.IsNullOrEmpty(sceneName) || string.IsNullOrEmpty(projectNo))
             {
                 throw new ArgumentNullException();
             }
@@ -40,49 +40,33 @@ namespace DpControl.Domain.Repository
             _customerId = query.CustomerId;
 
             // does the Name exist?
-            if (query.Groups.Select(g => g.GroupName).Contains(groupName))
+            if (query.Scenes.Select(s => s.Name).Contains(sceneName))
             {
                 throw new Exception("The group already exist.");
             }
 
             // create new Group
-            Group group = new Group
+            Scene _scene = new Scene
             {
-                GroupName = groupName,
+                Name = sceneName,
+                Enable = false,
                 ModifiedDate = DateTime.Now,
                 CustomerId = _customerId
             };
-            _context.Groups.Add(group);
+            _context.Scenes.Add(_scene);
             await _context.SaveChangesAsync();
         }
-
-        public async Task<IEnumerable<MGroup>> GetAllAsync(string projectNo)
+        public async Task<IEnumerable<MScene>> GetAll(string projectNo)
         {
             // get groups by the projectNo
             var query = await GetCustomerByProjectNo(projectNo);
 
-            return query.Groups.Select(g => new MGroup
+            return query.Scenes.Select(s => new MScene
             {
-                GroupId = g.GroupId,
-                GroupName = g.GroupName
+                SceneId = s.SceneId,
+                Name = s.Name
             })
-            .ToList<MGroup>();
-        }
-
-        public async Task Remove(string groupName, string projectNo)
-        {
-            var query = await GetCustomerByProjectNo(projectNo);
-
-            var removeItem = query.Groups.Single(g => g.GroupName == groupName);
-            if (removeItem == null)
-            {
-                throw new Exception("The group does not exist.");
-            }
-            else
-            {
-                _context.Remove(removeItem);
-                await _context.SaveChangesAsync();
-            }
+            .ToList<MScene>();
         }
 
         public async Task Remove(int Id)
@@ -92,34 +76,31 @@ namespace DpControl.Domain.Repository
                 throw new Exception("The group does not exist.");
             }
 
-            var toDelete = new Group { GroupId = Id };
-            _context.Groups.Attach(toDelete);
-            _context.Groups.Remove(toDelete);
+            var toDelete = new Scene { SceneId = Id };
+            _context.Scenes.Attach(toDelete);
+            _context.Scenes.Remove(toDelete);
             await _context.SaveChangesAsync();
 
-            //            _context.Database.ExecuteSqlCommandAsync("Delete From operators where OperatorId = Id");
         }
-
-
-        public async Task UpdateById(MGroup mGroup, string projectNo)
+        public async void UpdateById(MScene mScene, string projectNo)
         {
             // get groups by the projectNo
             var query = await GetCustomerByProjectNo(projectNo);
 
-            var _single = query.Groups.Where(g => g.GroupId == mGroup.GroupId).Single();
+            var _single = query.Scenes.Where(s => s.SceneId == mScene.SceneId).Single();
             if (_single == null)
             {
                 throw new KeyNotFoundException();
             }
-            _single.GroupName = mGroup.GroupName;
-            _context.Groups.Update(_single);
+            _single.Name = mScene.Name;
+            _context.Scenes.Update(_single);
             await _context.SaveChangesAsync();
         }
 
         async Task<Customer> GetCustomerByProjectNo(string projectNo)
         {
             var query = await _context.Customers
-                        .Include(c => c.Groups)
+                        .Include(c => c.Scenes)
                         .Where(c => c.ProjectNo == projectNo)
                         .SingleAsync();
             if (query == null)
