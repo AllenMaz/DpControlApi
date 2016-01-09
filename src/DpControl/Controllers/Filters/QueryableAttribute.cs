@@ -110,19 +110,12 @@ namespace DpControl.Controllers.Filters
         }
         
         /// <summary>
-        /// 统一查询返回格式
         /// 在controller action result执行之后调用 
         /// </summary>
         /// <param name="context"></param>
         public override void OnResultExecuted(ResultExecutedContext context)
         {
-            // var jsonResult = (ResponseMessage<IEnumerable<MCustomer>>)context.Result;
-            if (context.Result is JsonResult)
-            {
-                var result = context.Result as JsonResult;
-                var data = result.Value;
-
-            }
+                
         }
 
         /// <summary>
@@ -132,28 +125,38 @@ namespace DpControl.Controllers.Filters
         /// <param name="context"></param>
         public override void OnResultExecuting(ResultExecutingContext context)
         {
-            //获取方法的返回值类型
-            Type actionReturnType = GetActionReturnType<ResultExecutingContext>(context);
-            
-            if (context.Result is ObjectResult)
+            try
             {
-                //获取返回的结果
-                var result = context.Result as ObjectResult;
-                
-                //如果返回结果类型为list，则进行如下操作
-                if (result.Value.GetType().Name == "List`1")
+                //获取方法的返回值类型
+                Type actionReturnType = GetActionReturnType<ResultExecutingContext>(context);
+
+                if (context.Result is ObjectResult)
                 {
-                    //根据方法返回值类型，生成List<返回值类型>实例
-                    IList genericList = CreateList(typeof(List<>), actionReturnType,result.Value);
-                    //对实例集合进行查询操作
-                    IList resultData = QueryResult(genericList);
-                    //对返回结果重新赋值
-                    result.Value = resultData;
-                    
+                    //获取返回的结果
+                    var result = context.Result as ObjectResult;
+
+                    //如果返回结果类型为list，则进行如下操作
+                    if (result.Value.GetType().Name == "List`1")
+                    {
+                        //根据方法返回值类型，生成List<返回值类型>实例
+                        IList genericList = CreateList(typeof(List<>), actionReturnType, result.Value);
+                        //对实例集合进行查询操作
+                        IList resultData = QueryResult(genericList);
+                        //统一查询返回格式
+                        var responseData = ResponseHandler.ConstructResponse<IList>(resultData);
+                        //对返回结果重新赋值
+                        result.Value = responseData;
+
+
+                    }
 
                 }
-
             }
+            catch(Exception e)
+            {
+                //出现异常，则不做处理，返回原数据
+            }
+            
         }
 
         private IList QueryResult(IList listData)
@@ -161,7 +164,7 @@ namespace DpControl.Controllers.Filters
             IList result = listData;
             if (listData.Count != 0 )
             {
-                #region 分页查询
+                #region paging by skip and top
                 if (!string.IsNullOrEmpty(this.skip) && string.IsNullOrEmpty(this.top))
                 {
                     int skipNum = System.Convert.ToInt32(this.skip);
@@ -178,6 +181,9 @@ namespace DpControl.Controllers.Filters
                     int topNum = System.Convert.ToInt32(this.top);
                     result = listData.Cast<object>().Skip(skipNum).Take(topNum).ToList();
                 }
+                #endregion
+                #region　orderby
+
                 #endregion
             }
             return result;
