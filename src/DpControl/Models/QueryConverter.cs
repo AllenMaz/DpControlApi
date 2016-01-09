@@ -29,7 +29,7 @@ namespace DpControl.Models
             if (value is string)
             {
                 Query query;
-                if (Query.TryParse((string)value, out query))
+                if (Query.ConverQuerystringToObject((string)value, out query))
                 {
                     return query;
                 }

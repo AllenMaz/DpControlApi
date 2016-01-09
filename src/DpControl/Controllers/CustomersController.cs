@@ -1,5 +1,6 @@
 ﻿
 using DpControl.Controllers;
+using DpControl.Controllers.Filters;
 using DpControl.Domain.EFContext;
 using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
@@ -28,11 +29,12 @@ namespace DpControl.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ResponseMessage<IEnumerable<MCustomer>>> GetAll()
+        [QueryableAttribute]
+        public async Task<IEnumerable<MCustomer>> GetAll()
         {
             var customers = await _customerRepository.GetAll();
-            var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);
-            return responseData;
+            //var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);
+            return customers;
         }
 
         /// <summary>
