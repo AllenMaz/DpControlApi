@@ -11,6 +11,8 @@ using Microsoft.AspNet.Mvc.Controllers;
 using DpControl.Utility;
 using System.Reflection;
 using System.Collections;
+using System.Dynamic;
+using System.Linq.Expressions;
 
 namespace DpControl.Controllers.Filters
 {
@@ -26,6 +28,12 @@ namespace DpControl.Controllers.Filters
         ///       orderby=name 
         /// </summary>
         private string orderby { get; set; }
+
+        private string[] orderbyParams { get; set; }
+        /// <summary>
+        /// desc / asc
+        /// </summary>
+        private string orderbybehavior { get; set; }
 
         /// <summary>
         /// 跳过前N条
@@ -66,6 +74,8 @@ namespace DpControl.Controllers.Filters
         public  QueryableAttribute()
         {
             this.orderby = null;
+            this.orderbybehavior = null;
+            this.orderbyParams = null;
             this.skip = null;
             this.top = null;
         }
@@ -98,24 +108,81 @@ namespace DpControl.Controllers.Filters
             #region 校验查询参数是否符合规则
             //校验排序的字段只能是返回数据类含有的字段
 
-
-            bool isSkipaAailable= Regex.IsMatch(skipString, @"^[1-9]([0-9]*)$|^[0-9]$");
-            bool isTopAailable = Regex.IsMatch(topString, @"^[1-9]([0-9]*)$|^[0-9]$");
-
-            this.skip = isSkipaAailable ? skipString : null;
-            this.top = isTopAailable ? topString : null;
+            this.skip = GetSkipParam(skipString);
+            this.top = GetTopParam(topString);
+            this.orderbyParams = GetOrderbyParam(orderbyString,actionReturnType);
             #endregion
             
 
         }
-        
+
         /// <summary>
-        /// 在controller action result执行之后调用 
+        /// 获取orderby参数
         /// </summary>
-        /// <param name="context"></param>
-        public override void OnResultExecuted(ResultExecutedContext context)
+        /// <param name="orderbyString"></param>
+        /// <param name="actionReturnType"></param>
+        /// <returns></returns>
+        private string[] GetOrderbyParam(string orderbyString, Type actionReturnType)
         {
-                
+            string orderbyParam = orderbyString;
+            //校验字符串是否匹配 desc asc后缀
+            bool isOrderbyHasBehavior = Regex.IsMatch(orderbyString, @".*( desc| asc)$");
+            if (isOrderbyHasBehavior)
+            {
+                //如果查询后带 desc,或者 asc则把这部分内容截掉
+                string regex = @"( desc| asc)";
+                Regex re = new Regex(regex);
+                orderbyParam = Regex.Replace(orderbyString, regex, "");
+                //同时获取orderbybehavior
+                Regex reg = new Regex(regex);
+                this.orderbybehavior = reg.Match(orderbyString).Groups[1].Value.Trim();
+            }
+            //以逗号分隔字符串
+            string[] arrOrderby = orderbyParam.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            string[] orderbyParams = new string[arrOrderby.Length];
+            //校验输入的排序参数的值的范围必须在当前方法返回类型中的字段值中
+            for (int i=0;i<arrOrderby.Length;i++)
+            {
+                var property = actionReturnType.GetProperty(arrOrderby[i]);
+                if (property == null)
+                {
+                    //如果有任意一个值不属于方法返回值类型，则返回null
+                    return null;
+                }
+                else
+                {
+                    //去除每个排序参数的前后空格
+                    orderbyParams[i] = arrOrderby[i].Trim();
+                }
+            }
+
+            return orderbyParams;
+
+        }
+
+        /// <summary>
+        /// 获取skip参数
+        /// </summary>
+        /// <param name="skipString"></param>
+        private string GetSkipParam(string skipString)
+        {
+            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
+            bool isSkipaAvailable = Regex.IsMatch(skipString, regex);
+            string skipStr =  isSkipaAvailable ? skipString : null;
+            return skipStr;
+        }
+
+        /// <summary>
+        /// 获取top参数
+        /// </summary>
+        /// <param name="topString"></param>
+        /// <returns></returns>
+        private string GetTopParam(string topString)
+        {
+            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
+            bool isSkipaAvailable = Regex.IsMatch(topString, regex);
+            string topStr = isSkipaAvailable ? topString : null;
+            return topStr;
         }
 
         /// <summary>
@@ -141,7 +208,7 @@ namespace DpControl.Controllers.Filters
                         //根据方法返回值类型，生成List<返回值类型>实例
                         IList genericList = CreateList(typeof(List<>), actionReturnType, result.Value);
                         //对实例集合进行查询操作
-                        IList resultData = QueryResult(genericList);
+                        IList resultData = QueryResult(genericList,actionReturnType);
                         //统一查询返回格式
                         var responseData = ResponseHandler.ConstructResponse<IList>(resultData);
                         //对返回结果重新赋值
@@ -159,7 +226,7 @@ namespace DpControl.Controllers.Filters
             
         }
 
-        private IList QueryResult(IList listData)
+        private IList QueryResult(IList listData, Type actionReturnType)
         {
             IList result = listData;
             if (listData.Count != 0 )
@@ -183,7 +250,30 @@ namespace DpControl.Controllers.Filters
                 }
                 #endregion
                 #region　orderby
+                if (orderbyParams != null)
+                {
+                    if (!string.IsNullOrEmpty(orderbybehavior) && orderbybehavior.Trim().ToLower() =="desc")
+                    {
+                        var finalResult = listData.Cast<object>().OrderByDescending(v => v.GetType().GetProperty(orderbyParams[0]).GetValue(v, null));
+                        for (int i = 1; i < orderbyParams.Length; i++)
+                        {
+                            finalResult = finalResult.OrderByDescending(v => v.GetType().GetProperty(orderbyParams[i]).GetValue(v, null));
 
+                        }
+                        return finalResult.ToList();
+                    }
+                    else
+                    {
+                        var finalResult = listData.Cast<object>().OrderBy(v => v.GetType().GetProperty(orderbyParams[0]).GetValue(v, null));
+                        for (int i = 1; i < orderbyParams.Length; i++)
+                        {
+                            finalResult = finalResult.ThenBy(v => v.GetType().GetProperty(orderbyParams[i]).GetValue(v, null));
+
+                        }
+                        return finalResult.ToList();
+                    }
+                    
+                }
                 #endregion
             }
             return result;
@@ -243,5 +333,9 @@ namespace DpControl.Controllers.Filters
             var nextType = converType.GenericTypeArguments[0];
             return GetClassType(nextType);
         }
+    }
+    public class ItemWithProperty
+    {
+        public string Property { get; set; }
     }
 }
