@@ -7,7 +7,7 @@ namespace DpControl.Domain.Entities
 {
     public class Location
     {
-        public int DeviceId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
+        public int LocationId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
         public string Building { get; set; }
         public string Floor { get; set; }
         public string RoomNo { get; set; }
@@ -47,6 +47,7 @@ namespace DpControl.Domain.Entities
 
     public enum Orientation
     {
+        Null,       // for unidentified
         East,
         South,
         West,
@@ -59,6 +60,7 @@ namespace DpControl.Domain.Entities
 
     public enum ControllerType
     {
+        Null,
         Controller,
         TouchScreen,
         DryContact,
@@ -68,6 +70,7 @@ namespace DpControl.Domain.Entities
 
     public enum CommMode
     {
+        Null,
         RS485,
         ZigBee,
         Bluetooth,
