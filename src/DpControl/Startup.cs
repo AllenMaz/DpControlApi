@@ -20,6 +20,7 @@ using Microsoft.AspNet.Diagnostics;
 using Microsoft.Extensions.WebEncoders;
 using System.Net;
 using DpControl.Models;
+using DpControl.Controllers.Middlewares;
 
 namespace DpControl
 {
@@ -107,7 +108,8 @@ namespace DpControl
 
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
-
+            //HTTP方法覆盖
+            app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();
 
