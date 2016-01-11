@@ -11,62 +11,84 @@ using Microsoft.AspNet.Mvc;
 namespace DpControl.Models
 {
     //[TypeConverter(typeof(QueryConverter))]
-    [ModelBinder(BinderType = typeof(QueryModelBinder))]
+    //[ModelBinder(BinderType = typeof(QueryModelBinder))]
     public class Query
     {
         /// <summary>
         /// 排序
+        /// 格式：orderby=name,price desc/asc
+        ///       orderby=name 
         /// </summary>
-        public string orderby { get; set; }
+        public OrderBy orderby { get; set; }
+
 
         /// <summary>
         /// 跳过前N条
+        /// 格式：skip=10
+        /// @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
         /// </summary>
-        public string skip { get; set; }
+        public int? skip { get; set; }
 
         /// <summary>
         /// 返回前N条
+        /// 格式：top=20
+        /// @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
         /// </summary>
-        public string top { get; set; }
+        public int? top { get; set; }
+
+        /// <summary>
+        /// 选中要返回的属性结果
+        /// 格式：select = name,price
+        /// </summary>
+        public string[] select { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        //public string expand { get; set; }
+        //private string expand { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        //public string filter { get; set; }
+        //private string filter { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        //public string inlinecount { get; set; }
+        //private string inlinecount { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        //public string select { get; set; }
 
-        
         /// <summary>
         /// Conver s value to result
         /// </summary>
         /// <param name="s"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public static bool ConverQuerystringToObject(string queryString, out Query result)
+        //public static bool ConverQuerystringToObject(string queryString, out Query result)
+        //{
+        //}
+
+        public  Query()
         {
-            result = null;
-            if (!string.IsNullOrEmpty(queryString))
-            {
-
-            }
-            
-            return true;
-
+            this.orderby = null;
+            this.skip = null;
+            this.top = null;
+            this.select = null;
         }
+
+    }
+
+    public class OrderBy
+    {
+        /// <summary>
+        /// orderby field name
+        /// </summary>
+        public string[] OrderbyField { get; set; }
+
+        /// <summary>
+        /// orderby behavior (desc/asc or empty)
+        /// </summary>
+        public string OrderbyBehavior { get; set; }
     }
     
     

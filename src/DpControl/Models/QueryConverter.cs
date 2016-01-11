@@ -28,11 +28,11 @@ namespace DpControl.Models
         {
             if (value is string)
             {
-                Query query;
-                if (Query.ConverQuerystringToObject((string)value, out query))
-                {
-                    return query;
-                }
+                //Query query;
+                //if (Query.ConverQuerystringToObject((string)value, out query))
+                //{
+                //    return query;
+                //}
             }
             return base.ConvertFrom(context, culture, value);
         }

@@ -14,22 +14,21 @@ namespace DpControl.Models
     {
         public Task<ModelBindingResult> BindModelAsync(ModelBindingContext bindingContext)
         {
-            if (bindingContext.ModelType == typeof(Query))
-            {
+            
                 //获取查询参数
-                var queryStrinqg = bindingContext.OperationBindingContext.HttpContext.Request.Query["expand"];
+                var queryString = bindingContext.OperationBindingContext.HttpContext.Request.Query["expand"];
 
-                var queryString = bindingContext.OperationBindingContext.HttpContext.Request.QueryString.ToString() ;
+               
 
                 #region 绑定每一个值到model
-                Query model;
-                if (Query.ConverQuerystringToObject(queryString, out model))
-                {
-                    return Task.FromResult(ModelBindingResult.Success(bindingContext.ModelName, model));
-                }
+                //Query model;
+                //if (Query.ConverQuerystringToObject(queryString, out model))
+                //{
+                //    return Task.FromResult(ModelBindingResult.Success(bindingContext.ModelName, model));
+                //}
                 #endregion
 
-            }
+            
 
             return null;
 

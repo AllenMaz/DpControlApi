@@ -29,8 +29,21 @@ namespace DpControl.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [QueryableAttribute]
-        public async Task<IEnumerable<MCustomer>> GetAll()
+        [EnableQuery]
+        public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
+        {
+            var customers = await _customerRepository.GetAll();
+            //var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);
+            return customers;
+        }
+
+
+        /// <summary>
+        /// Search all data
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("AllByQuery")]
+        public async Task<IEnumerable<MCustomer>> GetAllByQuery([FromUri] Query query)
         {
             var customers = await _customerRepository.GetAll();
             //var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);

@@ -18,68 +18,17 @@ namespace DpControl.Controllers.Filters
 {
     /// <summary>
     /// 查询过滤器
+    /// 该类允许对Controller取得的结果集进行过滤，排序等查询操作
     /// </summary>
-    public class QueryableAttribute : ActionFilterAttribute
+    public class EnableQuery : ActionFilterAttribute
     {
-        #region 过滤，排序，搜索，分页等查询条件
-        /// <summary>
-        /// 排序
-        /// 格式：orderby=name,price desc/asc
-        ///       orderby=name 
-        /// </summary>
-        private string orderby { get; set; }
+        //查询参数对象
+        private Query query ;
 
-        private string[] orderbyParams { get; set; }
-        /// <summary>
-        /// desc / asc
-        /// </summary>
-        private string orderbybehavior { get; set; }
-
-        /// <summary>
-        /// 跳过前N条
-        /// 格式：skip=10
-        /// @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
-        /// </summary>
-        private string skip { get; set; }
-
-        /// <summary>
-        /// 返回前N条
-        /// 格式：top=20
-        /// @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
-        /// </summary>
-        private string top { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        //private string expand { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        //private string filter { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        //private string inlinecount { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        //private string select { get; set; }
-
-        #endregion
-
-        public  QueryableAttribute()
+        public EnableQuery()
         {
-            this.orderby = null;
-            this.orderbybehavior = null;
-            this.orderbyParams = null;
-            this.skip = null;
-            this.top = null;
+            query = new Query();
         }
-        
 
         /// <summary>
         /// 在controller action执行之后调用 
@@ -99,21 +48,56 @@ namespace DpControl.Controllers.Filters
         {
             Type actionReturnType = GetActionReturnType<ActionExecutingContext>(context);
             #region 获取查询参数
-
-            var orderbyString = context.HttpContext.Request.Query["orderby"].ToString().Trim();
             var skipString = context.HttpContext.Request.Query["skip"].ToString().Trim();
             var topString = context.HttpContext.Request.Query["top"].ToString().Trim();
-
+            var orderbyString = context.HttpContext.Request.Query["orderby"].ToString().Trim();
+            var selectString = context.HttpContext.Request.Query["select"].ToString().Trim();
             #endregion
             #region 校验查询参数是否符合规则
             //校验排序的字段只能是返回数据类含有的字段
 
-            this.skip = GetSkipParam(skipString);
-            this.top = GetTopParam(topString);
-            this.orderbyParams = GetOrderbyParam(orderbyString,actionReturnType);
+            query.skip = GetSkipParam(skipString);
+            query.top = GetTopParam(topString);
+            query.orderby = GetOrderbyParam(orderbyString,actionReturnType);
+            query.select = GetSelectParam(selectString,actionReturnType);
             #endregion
-            
 
+            //给Action的查询参数赋值
+            context.ActionArguments["query"] = query;
+
+        }
+
+        /// <summary>
+        /// 获取skip参数
+        /// </summary>
+        /// <param name="skipString"></param>
+        private int? GetSkipParam(string skipString)
+        {
+            int? skipParma = null;
+            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
+            bool isSkipaAvailable = Regex.IsMatch(skipString, regex);
+            if (isSkipaAvailable)
+            {
+                skipParma = System.Convert.ToInt32(skipString);
+            }
+            return skipParma;
+        }
+
+        /// <summary>
+        /// 获取top参数
+        /// </summary>
+        /// <param name="topString"></param>
+        /// <returns></returns>
+        private int? GetTopParam(string topString)
+        {
+            int? topParam = null;
+            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
+            bool isSkipaAvailable = Regex.IsMatch(topString, regex);
+            if (isSkipaAvailable)
+            {
+                topParam = System.Convert.ToInt32(topString);
+            }
+            return topParam;
         }
 
         /// <summary>
@@ -122,9 +106,10 @@ namespace DpControl.Controllers.Filters
         /// <param name="orderbyString"></param>
         /// <param name="actionReturnType"></param>
         /// <returns></returns>
-        private string[] GetOrderbyParam(string orderbyString, Type actionReturnType)
+        private OrderBy GetOrderbyParam(string orderbyString, Type actionReturnType)
         {
-            string orderbyParam = orderbyString;
+            OrderBy orderbyParam = new OrderBy();
+            string orderbyParamString = orderbyString;
             //校验字符串是否匹配 desc asc后缀
             bool isOrderbyHasBehavior = Regex.IsMatch(orderbyString, @".*( desc| asc)$");
             if (isOrderbyHasBehavior)
@@ -132,16 +117,16 @@ namespace DpControl.Controllers.Filters
                 //如果查询后带 desc,或者 asc则把这部分内容截掉
                 string regex = @"( desc| asc)";
                 Regex re = new Regex(regex);
-                orderbyParam = Regex.Replace(orderbyString, regex, "");
+                orderbyParamString = Regex.Replace(orderbyString, regex, "");
                 //同时获取orderbybehavior
                 Regex reg = new Regex(regex);
-                this.orderbybehavior = reg.Match(orderbyString).Groups[1].Value.Trim();
+                orderbyParam.OrderbyBehavior = reg.Match(orderbyString).Groups[1].Value.Trim();
             }
             //以逗号分隔字符串
-            string[] arrOrderby = orderbyParam.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            string[] orderbyParams = new string[arrOrderby.Length];
+            string[] arrOrderby = orderbyParamString.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            string[] OrderbyField = new string[arrOrderby.Length];
             //校验输入的排序参数的值的范围必须在当前方法返回类型中的字段值中
-            for (int i=0;i<arrOrderby.Length;i++)
+            for (int i = 0; i < arrOrderby.Length; i++)
             {
                 var property = actionReturnType.GetProperty(arrOrderby[i]);
                 if (property == null)
@@ -152,44 +137,51 @@ namespace DpControl.Controllers.Filters
                 else
                 {
                     //去除每个排序参数的前后空格
-                    orderbyParams[i] = arrOrderby[i].Trim();
+                    OrderbyField[i] = arrOrderby[i].Trim();
                 }
             }
 
-            return orderbyParams;
+            orderbyParam.OrderbyField = OrderbyField;
+            return orderbyParam;
 
         }
 
         /// <summary>
-        /// 获取skip参数
+        /// 获取select参数
         /// </summary>
-        /// <param name="skipString"></param>
-        private string GetSkipParam(string skipString)
-        {
-            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
-            bool isSkipaAvailable = Regex.IsMatch(skipString, regex);
-            string skipStr =  isSkipaAvailable ? skipString : null;
-            return skipStr;
-        }
-
-        /// <summary>
-        /// 获取top参数
-        /// </summary>
-        /// <param name="topString"></param>
+        /// <param name="orderbyString"></param>
+        /// <param name="actionReturnType"></param>
         /// <returns></returns>
-        private string GetTopParam(string topString)
+        private string[] GetSelectParam(string selectString, Type actionReturnType)
         {
-            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
-            bool isSkipaAvailable = Regex.IsMatch(topString, regex);
-            string topStr = isSkipaAvailable ? topString : null;
-            return topStr;
-        }
+            //以逗号分隔字符串
+            string[] arrSelect = selectString.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            string[] selectField = new string[arrSelect.Length];
+            //校验输入的select参数的值的范围必须在当前方法返回类型中的字段值中
+            for (int i = 0; i < arrSelect.Length; i++)
+            {
+                var property = actionReturnType.GetProperty(arrSelect[i]);
+                if (property == null)
+                {
+                    //如果有任意一个值不属于方法返回值类型，则返回null
+                    return null;
+                }
+                else
+                {
+                    //去除每个select参数的前后空格
+                    selectField[i] = arrSelect[i].Trim();
+                }
+            }
+            
+            return selectField;
 
+        }
         /// <summary>
         /// 在controller action result执行之前调用 
         /// 获取返回结果后，对结果进行过滤，排序，搜索等操作
         /// </summary>
         /// <param name="context"></param>
+        /// 
         public override void OnResultExecuting(ResultExecutingContext context)
         {
             try
@@ -231,46 +223,56 @@ namespace DpControl.Controllers.Filters
             IList result = listData;
             if (listData.Count != 0 )
             {
+                int? skipParam = query.skip;
+                int? topParam = query.top;
+                OrderBy orderbyParam = query.orderby;
+
                 #region paging by skip and top
-                if (!string.IsNullOrEmpty(this.skip) && string.IsNullOrEmpty(this.top))
+                if (skipParam != null && query.top ==null)
                 {
-                    int skipNum = System.Convert.ToInt32(this.skip);
+                    int skipNum = System.Convert.ToInt32(skipParam);
                     result = listData.Cast<object>().Skip(skipNum).ToList();
 
-                } else if (string.IsNullOrEmpty(this.skip) && !string.IsNullOrEmpty(this.top))
+                } else if (skipParam == null && query.top != null)
                 {
-                    int topNum = System.Convert.ToInt32(this.top);
+                    int topNum = System.Convert.ToInt32(topParam);
                     result = listData.Cast<object>().Take(topNum).ToList();
 
-                } else if (!string.IsNullOrEmpty(this.skip) && !string.IsNullOrEmpty(this.top))
+                } else if (skipParam != null && query.top != null)
                 {
-                    int skipNum = System.Convert.ToInt32(this.skip);
-                    int topNum = System.Convert.ToInt32(this.top);
+                    int skipNum = System.Convert.ToInt32(skipParam);
+                    int topNum = System.Convert.ToInt32(topParam);
                     result = listData.Cast<object>().Skip(skipNum).Take(topNum).ToList();
                 }
                 #endregion
                 #region　orderby
-                if (orderbyParams != null)
+                if (orderbyParam.OrderbyField.Length  != 0)
                 {
-                    if (!string.IsNullOrEmpty(orderbybehavior) && orderbybehavior.Trim().ToLower() =="desc")
+                    string orderbyBehavior = orderbyParam.OrderbyBehavior;
+                    string[] orderbyField = orderbyParam.OrderbyField;
+                    if (!string.IsNullOrEmpty(orderbyBehavior) && orderbyBehavior.Trim().ToLower() =="desc")
                     {
-                        var finalResult = listData.Cast<object>().OrderByDescending(v => v.GetType().GetProperty(orderbyParams[0]).GetValue(v, null));
-                        for (int i = 1; i < orderbyParams.Length; i++)
+                        var finalResult = result.Cast<object>().OrderByDescending(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
+                        for (int i = 1; i < orderbyField.Length; i++)
                         {
-                            finalResult = finalResult.OrderByDescending(v => v.GetType().GetProperty(orderbyParams[i]).GetValue(v, null));
-
+                            finalResult = finalResult.ThenByDescending(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
+                            if (i == orderbyField.Length -1)
+                            {
+                                return finalResult.ToList();
+                            }
                         }
-                        return finalResult.ToList();
                     }
                     else
                     {
-                        var finalResult = listData.Cast<object>().OrderBy(v => v.GetType().GetProperty(orderbyParams[0]).GetValue(v, null));
-                        for (int i = 1; i < orderbyParams.Length; i++)
+                        var finalResult = result.Cast<object>().OrderBy(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
+                        for (int i = 1; i < orderbyField.Length; i++)
                         {
-                            finalResult = finalResult.ThenBy(v => v.GetType().GetProperty(orderbyParams[i]).GetValue(v, null));
-
+                            finalResult = finalResult.ThenBy(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
+                            if (i == orderbyField.Length - 1)
+                            {
+                                return finalResult.ToList();
+                            }
                         }
-                        return finalResult.ToList();
                     }
                     
                 }
