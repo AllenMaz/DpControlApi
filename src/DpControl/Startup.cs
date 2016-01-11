@@ -26,6 +26,7 @@ namespace DpControl
 {
     public class Startup
     {
+        private string pathToDoc ;
         public static IConfigurationRoot Configuration { get; set; }
 
         public Startup(IHostingEnvironment env)
@@ -39,13 +40,15 @@ namespace DpControl
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
+            
+            pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
-
-
-        private string pathToDoc = "../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml";
+        
+        
+       
 
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
@@ -55,8 +58,7 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer();
-
-
+            
             services.AddMvc();
 
             //services.Configure<MvcOptions>(options =>
