@@ -10,8 +10,6 @@ using Microsoft.AspNet.Mvc;
 
 namespace DpControl.Models
 {
-    //[TypeConverter(typeof(QueryConverter))]
-    //[ModelBinder(BinderType = typeof(QueryModelBinder))]
     public class Query
     {
         /// <summary>

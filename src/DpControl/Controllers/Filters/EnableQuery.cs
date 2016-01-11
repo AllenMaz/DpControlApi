@@ -52,10 +52,7 @@ namespace DpControl.Controllers.Filters
             var topString = context.HttpContext.Request.Query["top"].ToString().Trim();
             var orderbyString = context.HttpContext.Request.Query["orderby"].ToString().Trim();
             var selectString = context.HttpContext.Request.Query["select"].ToString().Trim();
-            #endregion
-            #region 校验查询参数是否符合规则
-            //校验排序的字段只能是返回数据类含有的字段
-
+            
             query.skip = GetSkipParam(skipString);
             query.top = GetTopParam(topString);
             query.orderby = GetOrderbyParam(orderbyString,actionReturnType);
@@ -63,8 +60,22 @@ namespace DpControl.Controllers.Filters
             #endregion
 
             //给Action的查询参数赋值
-            context.ActionArguments["query"] = query;
+            string queryKey = GetActionQueryArgumentKey(context.ActionArguments);
+            context.ActionArguments[queryKey] = query;
+        }
 
+        private string GetActionQueryArgumentKey(IDictionary<string,object> actionArguments)
+        {
+            string queryKey = string.Empty;
+            foreach (string key in actionArguments.Keys)
+            {
+                if (actionArguments[key].GetType() == typeof(Query))
+                {
+                    queryKey = key;
+                    break;
+                }
+            }
+            return queryKey;
         }
 
         /// <summary>
@@ -176,6 +187,7 @@ namespace DpControl.Controllers.Filters
             return selectField;
 
         }
+
         /// <summary>
         /// 在controller action result执行之前调用 
         /// 获取返回结果后，对结果进行过滤，排序，搜索等操作
@@ -201,11 +213,8 @@ namespace DpControl.Controllers.Filters
                         IList genericList = CreateList(typeof(List<>), actionReturnType, result.Value);
                         //对实例集合进行查询操作
                         IList resultData = QueryResult(genericList,actionReturnType);
-                        //统一查询返回格式
-                        var responseData = ResponseHandler.ConstructResponse<IList>(resultData);
-                        //对返回结果重新赋值
-                        result.Value = responseData;
-
+                        ////对返回结果重新赋值
+                        result.Value = resultData;
 
                     }
 

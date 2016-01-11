@@ -30,10 +30,10 @@ namespace DpControl.Controllers
         /// <returns></returns>
         [HttpGet]
         [EnableQuery]
+        [TypeFilter(typeof(StandardReturnType),Arguments = new object[] { Common.ActionReturnType_GetList})]
         public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
         {
             var customers = await _customerRepository.GetAll();
-            //var responseData = ResponseHandler.ConstructResponse<IEnumerable<MCustomer>>(customers);
             return customers;
         }
         
@@ -44,6 +44,7 @@ namespace DpControl.Controllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
+        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_GetSingle })]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
 
@@ -52,9 +53,7 @@ namespace DpControl.Controllers
             {
                 return HttpNotFound();
             }
-            var responseData = ResponseHandler.ConstructResponse<MCustomer>(customer);
-
-            return new ObjectResult(responseData);
+            return new ObjectResult(customer);
         }
 
         /// <summary>
@@ -63,6 +62,7 @@ namespace DpControl.Controllers
         /// <param name="item"></param>
         /// <returns></returns>
         [HttpPost]
+        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_Post })]
         public async Task<IActionResult> Post([FromBody] MCustomer mCustomer)
         {
             if (!ModelState.IsValid)
@@ -71,8 +71,7 @@ namespace DpControl.Controllers
             }
 
             await _customerRepository.Add(mCustomer);
-            var responseData = ResponseHandler.ConstructResponse<MCustomer>(mCustomer);
-            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, responseData);
+            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
         }
 
         /// <summary>
@@ -82,6 +81,7 @@ namespace DpControl.Controllers
         /// <param name="customer"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_Put })]
         public async Task<IActionResult> Update(int id, [FromBody] MCustomer mCustomer)
         {
             if (!ModelState.IsValid)
@@ -90,8 +90,7 @@ namespace DpControl.Controllers
             }
             mCustomer.CustomerId = id;
             await _customerRepository.UpdateById(mCustomer);
-            var responseData = ResponseHandler.ConstructResponse<MCustomer>(mCustomer);
-            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, responseData);
+            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
 
         }
 
