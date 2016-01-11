@@ -227,58 +227,83 @@ namespace DpControl.Controllers.Filters
                 int? topParam = query.top;
                 OrderBy orderbyParam = query.orderby;
 
-                #region paging by skip and top
-                if (skipParam != null && query.top ==null)
-                {
-                    int skipNum = System.Convert.ToInt32(skipParam);
-                    result = listData.Cast<object>().Skip(skipNum).ToList();
-
-                } else if (skipParam == null && query.top != null)
-                {
-                    int topNum = System.Convert.ToInt32(topParam);
-                    result = listData.Cast<object>().Take(topNum).ToList();
-
-                } else if (skipParam != null && query.top != null)
-                {
-                    int skipNum = System.Convert.ToInt32(skipParam);
-                    int topNum = System.Convert.ToInt32(topParam);
-                    result = listData.Cast<object>().Skip(skipNum).Take(topNum).ToList();
-                }
-                #endregion
-                #region　orderby
-                if (orderbyParam.OrderbyField.Length  != 0)
-                {
-                    string orderbyBehavior = orderbyParam.OrderbyBehavior;
-                    string[] orderbyField = orderbyParam.OrderbyField;
-                    if (!string.IsNullOrEmpty(orderbyBehavior) && orderbyBehavior.Trim().ToLower() =="desc")
-                    {
-                        var finalResult = result.Cast<object>().OrderByDescending(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
-                        for (int i = 1; i < orderbyField.Length; i++)
-                        {
-                            finalResult = finalResult.ThenByDescending(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
-                            if (i == orderbyField.Length -1)
-                            {
-                                return finalResult.ToList();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var finalResult = result.Cast<object>().OrderBy(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
-                        for (int i = 1; i < orderbyField.Length; i++)
-                        {
-                            finalResult = finalResult.ThenBy(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
-                            if (i == orderbyField.Length - 1)
-                            {
-                                return finalResult.ToList();
-                            }
-                        }
-                    }
-                    
-                }
-                #endregion
+                result = OrderByResult(listData,orderbyParam);
+                result = PageResult(result,skipParam,topParam);
+                
             }
             return result;
+        }
+
+        /// <summary>
+        /// 对查询结果进行排序
+        /// </summary>
+        /// <param name="listData"></param>
+        /// <returns></returns>
+        private IList OrderByResult(IList listData, OrderBy orderbyParam)
+        {
+            #region　orderby
+            if (orderbyParam.OrderbyField.Length != 0)
+            {
+                string orderbyBehavior = orderbyParam.OrderbyBehavior;
+                string[] orderbyField = orderbyParam.OrderbyField;
+                if (!string.IsNullOrEmpty(orderbyBehavior) && orderbyBehavior.Trim().ToLower() == "desc")
+                {
+                    var finalResult = listData.Cast<object>().OrderByDescending(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
+                    for (int i = 1; i < orderbyField.Length; i++)
+                    {
+                        finalResult = finalResult.ThenByDescending(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
+                        if (i == orderbyField.Length - 1)
+                        {
+                            return finalResult.ToList();
+                        }
+                    }
+                }
+                else
+                {
+                    var finalResult = listData.Cast<object>().OrderBy(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
+                    for (int i = 1; i < orderbyField.Length; i++)
+                    {
+                        finalResult = finalResult.ThenBy(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
+                        if (i == orderbyField.Length - 1)
+                        {
+                            return finalResult.ToList();
+                        }
+                    }
+                }
+
+            }
+            return listData;
+            #endregion
+        }
+
+        /// <summary>
+        /// 对结果进行分页
+        /// </summary>
+        /// <returns></returns>
+        private IList PageResult(IList listData, int? skipParam, int? topParam)
+        {
+            var result = listData;
+            #region paging by skip and top
+            if (skipParam != null && query.top == null)
+            {
+                int skipNum = System.Convert.ToInt32(skipParam);
+                result = listData.Cast<object>().Skip(skipNum).ToList();
+
+            }
+            else if (skipParam == null && query.top != null)
+            {
+                int topNum = System.Convert.ToInt32(topParam);
+                result = listData.Cast<object>().Take(topNum).ToList();
+
+            }
+            else if (skipParam != null && query.top != null)
+            {
+                int skipNum = System.Convert.ToInt32(skipParam);
+                int topNum = System.Convert.ToInt32(topParam);
+                result = listData.Cast<object>().Skip(skipNum).Take(topNum).ToList();
+            }
+            return result;
+            #endregion
         }
 
         /// <summary>
