@@ -8,23 +8,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.SwaggerGen;
-using Microsoft.Data.Entity;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
-using Microsoft.AspNet.Mvc;
 using DpControl.Controllers.ExceptionHandler;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Features;
-using Microsoft.AspNet.Diagnostics;
-using Microsoft.Extensions.WebEncoders;
-using System.Net;
-using DpControl.Models;
+using DpControl.Controllers.Middlewares;
 
 namespace DpControl
 {
     public class Startup
     {
+        private string pathToDoc ;
         public static IConfigurationRoot Configuration { get; set; }
 
         public Startup(IHostingEnvironment env)
@@ -38,13 +32,15 @@ namespace DpControl
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
+            
+            pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
-
-
-        private string pathToDoc = "../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml";
+        
+        
+       
 
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
@@ -54,8 +50,7 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer();
-
-
+            
             services.AddMvc();
 
             //services.Configure<MvcOptions>(options =>
@@ -107,7 +102,8 @@ namespace DpControl
 
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
-
+            //HTTP方法覆盖
+            app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();
 
