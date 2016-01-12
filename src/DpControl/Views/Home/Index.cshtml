@@ -7,9 +7,15 @@
 </style>
 <body style="background-color:#BBC5C2;">
     <div style="margin:100px 100px;">
-        <h1>DpControl WebApi Program</h1>
-        <h2>Version:v1</h2>
-        
+        <h1>Restful WebApi For DpControl v1</h1>
         <label style="font-size:x-large">More Detail,Click: </label><a style="font-size:x-large;" href="/Swagger/ui">API Document</a>
+        <h2>There are some Features:</h2>
+        <h3">1、Allow Paging by skip and top params.</h3">
+        <h3>example:<a href="/v1/Customers?skip=3&top=10">https://localhost:44366/v1/Customers?skip=3&top=10</a> </h3>
+        <h3">2、Allow Orderby by orderby(desc/asc) params.</h3">
+        <h3>example:<a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">https://localhost:44366/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a></h3>
+        <h3">3、Allow via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</h3">
+
+        
     </div>
 </body>
