@@ -8,18 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.SwaggerGen;
-using Microsoft.Data.Entity;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
-using Microsoft.AspNet.Mvc;
 using DpControl.Controllers.ExceptionHandler;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Features;
-using Microsoft.AspNet.Diagnostics;
-using Microsoft.Extensions.WebEncoders;
-using System.Net;
-using DpControl.Models;
 using DpControl.Controllers.Middlewares;
 
 namespace DpControl
