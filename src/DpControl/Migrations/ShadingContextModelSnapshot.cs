@@ -103,6 +103,8 @@ namespace DpControl.Migrations
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken();
 
+                    b.Property<int>("SceneId");
+
                     b.Property<int?>("SceneSceneId");
 
                     b.HasKey("GroupId");
@@ -120,7 +122,7 @@ namespace DpControl.Migrations
 
                     b.Property<int?>("GroupGroupId");
 
-                    b.Property<int?>("LocationDeviceId");
+                    b.Property<int?>("LocationLocationId");
 
                     b.HasKey("GroupId", "LocationId");
 
@@ -169,7 +171,7 @@ namespace DpControl.Migrations
 
             modelBuilder.Entity("DpControl.Domain.Entities.Location", b =>
                 {
-                    b.Property<int>("DeviceId")
+                    b.Property<int>("LocationId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Building")
@@ -211,7 +213,7 @@ namespace DpControl.Migrations
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken();
 
-                    b.HasKey("DeviceId");
+                    b.HasKey("LocationId");
 
                     b.HasAnnotation("Relational:Schema", "ControlSystem");
 
@@ -230,7 +232,13 @@ namespace DpControl.Migrations
 
                     b.Property<int>("LogDescriptionId");
 
+                    b.Property<int?>("LogOfLocationId");
+
                     b.Property<DateTime>("ModifiedDate");
+
+                    b.Property<int>("OperatorId");
+
+                    b.Property<int?>("OperatorOperatorId");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken();
@@ -266,21 +274,33 @@ namespace DpControl.Migrations
 
                     b.Property<int>("CustomerId");
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .HasAnnotation("MaxLength", 50);
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 30);
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 30);
 
                     b.Property<DateTime>("ModifiedDate");
 
-                    b.Property<string>("NickName");
+                    b.Property<string>("NickName")
+                        .HasAnnotation("MaxLength", 20);
 
-                    b.Property<string>("Password");
+                    b.Property<string>("Password")
+                        .HasAnnotation("MaxLength", 20);
 
-                    b.Property<byte[]>("RowVersion");
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken();
 
                     b.HasKey("OperatorId");
+
+                    b.HasAnnotation("Relational:Schema", "ControlSystem");
+
+                    b.HasAnnotation("Relational:TableName", "Operators");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.OperatorLocation", b =>
@@ -289,7 +309,7 @@ namespace DpControl.Migrations
 
                     b.Property<int>("OperatorId");
 
-                    b.Property<int?>("LocationDeviceId");
+                    b.Property<int?>("LocationLocationId");
 
                     b.Property<int?>("OperatorOperatorId");
 
@@ -335,7 +355,7 @@ namespace DpControl.Migrations
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken();
 
-                    b.Property<int>("SenseId");
+                    b.Property<int>("SceneId");
 
                     b.Property<int>("SequenceNo");
 
@@ -382,7 +402,7 @@ namespace DpControl.Migrations
 
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationDeviceId");
+                        .HasForeignKey("LocationLocationId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.GroupOperator", b =>
@@ -412,13 +432,17 @@ namespace DpControl.Migrations
 
             modelBuilder.Entity("DpControl.Domain.Entities.Log", b =>
                 {
-                    b.HasOne("DpControl.Domain.Entities.Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
                     b.HasOne("DpControl.Domain.Entities.LogDescription")
                         .WithMany()
                         .HasForeignKey("LogDescriptionId");
+
+                    b.HasOne("DpControl.Domain.Entities.Location")
+                        .WithMany()
+                        .HasForeignKey("LogOfLocationId");
+
+                    b.HasOne("DpControl.Domain.Entities.Operator")
+                        .WithMany()
+                        .HasForeignKey("OperatorOperatorId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Operator", b =>
@@ -432,7 +456,7 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationDeviceId");
+                        .HasForeignKey("LocationLocationId");
 
                     b.HasOne("DpControl.Domain.Entities.Operator")
                         .WithMany()
@@ -450,7 +474,7 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Scene")
                         .WithMany()
-                        .HasForeignKey("SenseId");
+                        .HasForeignKey("SceneId");
                 });
         }
     }

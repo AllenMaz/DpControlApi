@@ -80,9 +80,8 @@ namespace DpControl.Domain.Repository
             _context.Scenes.Attach(toDelete);
             _context.Scenes.Remove(toDelete);
             await _context.SaveChangesAsync();
-
         }
-        public async void UpdateById(MScene mScene, string projectNo)
+        public async Task UpdateById(MScene mScene, string projectNo)
         {
             // get groups by the projectNo
             var query = await GetCustomerByProjectNo(projectNo);

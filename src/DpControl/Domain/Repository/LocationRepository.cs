@@ -116,7 +116,7 @@ namespace DpControl.Domain.Repository
 
         public async Task Update(MLocation mLocation, string projectNo)
         {
-            if (mLocation == null| | string.IsNullOrEmpty(projectNo))
+            if (mLocation == null || string.IsNullOrEmpty(projectNo))
             {
                 throw new ArgumentNullException();
             }

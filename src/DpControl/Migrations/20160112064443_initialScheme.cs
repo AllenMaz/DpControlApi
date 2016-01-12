@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Metadata;
 
 namespace DpControl.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initialScheme : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,7 +84,7 @@ namespace DpControl.Migrations
                 schema: "ControlSystem",
                 columns: table => new
                 {
-                    DeviceId = table.Column<int>(nullable: false)
+                    LocationId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Building = table.Column<string>(nullable: false),
                     CommAddress = table.Column<string>(nullable: true),
@@ -105,7 +105,7 @@ namespace DpControl.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Location", x => x.DeviceId);
+                    table.PrimaryKey("PK_Location", x => x.LocationId);
                     table.ForeignKey(
                         name: "FK_Location_Customer_CustomerId",
                         column: x => x.CustomerId,
@@ -115,15 +115,16 @@ namespace DpControl.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
-                name: "Operator",
+                name: "Operators",
+                schema: "ControlSystem",
                 columns: table => new
                 {
                     OperatorId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CustomerId = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
+                    FirstName = table.Column<string>(nullable: false),
+                    LastName = table.Column<string>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
                     NickName = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
@@ -191,7 +192,7 @@ namespace DpControl.Migrations
                         column: x => x.LocationId,
                         principalSchema: "ControlSystem",
                         principalTable: "DeviceLocations",
-                        principalColumn: "DeviceId",
+                        principalColumn: "LocationId",
                         onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
@@ -204,19 +205,15 @@ namespace DpControl.Migrations
                     Comment = table.Column<string>(nullable: true),
                     LocationId = table.Column<int>(nullable: false),
                     LogDescriptionId = table.Column<int>(nullable: false),
+                    LogOfLocationId = table.Column<int>(nullable: true),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
+                    OperatorId = table.Column<int>(nullable: false),
+                    OperatorOperatorId = table.Column<int>(nullable: true),
                     RowVersion = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Log", x => x.LogId);
-                    table.ForeignKey(
-                        name: "FK_Log_Location_LocationId",
-                        column: x => x.LocationId,
-                        principalSchema: "ControlSystem",
-                        principalTable: "DeviceLocations",
-                        principalColumn: "DeviceId",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Log_LogDescription_LogDescriptionId",
                         column: x => x.LogDescriptionId,
@@ -224,6 +221,20 @@ namespace DpControl.Migrations
                         principalTable: "LogDescription",
                         principalColumn: "LogDescriptionId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Log_Location_LogOfLocationId",
+                        column: x => x.LogOfLocationId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "DeviceLocations",
+                        principalColumn: "LocationId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Log_Operator_OperatorOperatorId",
+                        column: x => x.OperatorOperatorId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "Operators",
+                        principalColumn: "OperatorId",
+                        onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateTable(
                 name: "OperatorLocations",
@@ -232,23 +243,24 @@ namespace DpControl.Migrations
                 {
                     LocationId = table.Column<int>(nullable: false),
                     OperatorId = table.Column<int>(nullable: false),
-                    LocationDeviceId = table.Column<int>(nullable: true),
+                    LocationLocationId = table.Column<int>(nullable: true),
                     OperatorOperatorId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OperatorLocation", x => new { x.LocationId, x.OperatorId });
                     table.ForeignKey(
-                        name: "FK_OperatorLocation_Location_LocationDeviceId",
-                        column: x => x.LocationDeviceId,
+                        name: "FK_OperatorLocation_Location_LocationLocationId",
+                        column: x => x.LocationLocationId,
                         principalSchema: "ControlSystem",
                         principalTable: "DeviceLocations",
-                        principalColumn: "DeviceId",
+                        principalColumn: "LocationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OperatorLocation_Operator_OperatorOperatorId",
                         column: x => x.OperatorOperatorId,
-                        principalTable: "Operator",
+                        principalSchema: "ControlSystem",
+                        principalTable: "Operators",
                         principalColumn: "OperatorId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -263,6 +275,7 @@ namespace DpControl.Migrations
                     GroupName = table.Column<string>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
                     RowVersion = table.Column<byte[]>(nullable: true),
+                    SceneId = table.Column<int>(nullable: false),
                     SceneSceneId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -292,7 +305,7 @@ namespace DpControl.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
                     RowVersion = table.Column<byte[]>(nullable: true),
-                    SenseId = table.Column<int>(nullable: false),
+                    SceneId = table.Column<int>(nullable: false),
                     SequenceNo = table.Column<int>(nullable: false),
                     StartTime = table.Column<string>(nullable: false),
                     Volumn = table.Column<int>(nullable: false)
@@ -301,8 +314,8 @@ namespace DpControl.Migrations
                 {
                     table.PrimaryKey("PK_SceneSegment", x => x.SceneSegmentId);
                     table.ForeignKey(
-                        name: "FK_SceneSegment_Scene_SenseId",
-                        column: x => x.SenseId,
+                        name: "FK_SceneSegment_Scene_SceneId",
+                        column: x => x.SceneId,
                         principalSchema: "ControlSystem",
                         principalTable: "Scenes",
                         principalColumn: "SceneId",
@@ -316,7 +329,7 @@ namespace DpControl.Migrations
                     GroupId = table.Column<int>(nullable: false),
                     LocationId = table.Column<int>(nullable: false),
                     GroupGroupId = table.Column<int>(nullable: true),
-                    LocationDeviceId = table.Column<int>(nullable: true)
+                    LocationLocationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -329,11 +342,11 @@ namespace DpControl.Migrations
                         principalColumn: "GroupId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GroupLocation_Location_LocationDeviceId",
-                        column: x => x.LocationDeviceId,
+                        name: "FK_GroupLocation_Location_LocationLocationId",
+                        column: x => x.LocationLocationId,
                         principalSchema: "ControlSystem",
                         principalTable: "DeviceLocations",
-                        principalColumn: "DeviceId",
+                        principalColumn: "LocationId",
                         onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateTable(
@@ -359,7 +372,8 @@ namespace DpControl.Migrations
                     table.ForeignKey(
                         name: "FK_GroupOperator_Operator_OperatorOperatorId",
                         column: x => x.OperatorOperatorId,
-                        principalTable: "Operator",
+                        principalSchema: "ControlSystem",
+                        principalTable: "Operators",
                         principalColumn: "OperatorId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -378,7 +392,7 @@ namespace DpControl.Migrations
             migrationBuilder.DropTable(name: "Groups", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "LogDescription", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "DeviceLocations", schema: "ControlSystem");
-            migrationBuilder.DropTable("Operator");
+            migrationBuilder.DropTable(name: "Operators", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "Scenes", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "Customers", schema: "ControlSystem");
         }

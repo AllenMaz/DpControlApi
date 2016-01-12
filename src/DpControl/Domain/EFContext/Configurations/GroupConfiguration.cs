@@ -17,6 +17,8 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(g => g.GroupName).HasMaxLength(50).IsRequired();
             entityBuilder.Property(g => g.ModifiedDate).IsRequired();
             entityBuilder.Property(g => g.RowVersion).IsConcurrencyToken();
+
+            entityBuilder.HasOne(g => g.Scene).WithMany(s => s.LocationGroups).IsRequired(false);
         }
     }
 }

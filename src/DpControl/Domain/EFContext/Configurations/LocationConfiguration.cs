@@ -25,7 +25,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(i => i.DeviceSerialNo).HasMaxLength(16);
 
             entityBuilder.HasMany(l => l.Alarms).WithOne(g => g.Location).HasForeignKey(g => g.LocationId);
-            entityBuilder.HasMany(l => l.Logs).WithOne(g => g.LogOf).HasForeignKey(g => g.LocationId);
+//            entityBuilder.HasMany(l => l.Logs).WithOne(g => g.LogOf).IsRequired(false);  //.HasForeignKey(g => g.LocationId);
         }
     }
 }

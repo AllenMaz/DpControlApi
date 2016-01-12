@@ -14,6 +14,7 @@ namespace DpControl.Domain.EFContext.Configurations
         {
             entityBuilder.ToTable("GroupOperators", "ControlSystem");
             entityBuilder.HasKey(gl => new { gl.GroupId, gl.OperatorId });
+
             entityBuilder.HasOne(gl => gl.Group).WithMany(g => g.GroupOperators).IsRequired(false);//.HasForeignKey(gl => gl.GroupId);
             entityBuilder.HasOne(gl => gl.Operator).WithMany(l => l.GroupOperators).IsRequired(false);//.HasForeignKey(global => global.OperatorId);
         }

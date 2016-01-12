@@ -16,8 +16,6 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.HasKey(a => a.AlarmId);
             entityBuilder.Property(a => a.ModifiedDate).IsRequired();
             entityBuilder.Property(a => a.RowVersion).IsConcurrencyToken();
-
-            entityBuilder.HasOne(a => a.AlarmMessage).WithMany(m => m.Alarms);
         }
     }
 }

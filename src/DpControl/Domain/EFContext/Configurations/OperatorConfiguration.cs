@@ -6,7 +6,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Builders;
 using DpControl.Domain.Entities;
 
-namespace DpControl.Domain.DbContext.Configurations
+namespace DpControl.Domain.EFContext.Configurations
 {
     public class OperatorConfiguration
     {
@@ -24,8 +24,6 @@ namespace DpControl.Domain.DbContext.Configurations
 
             entityBuilder.Property(o => o.ModifiedDate).IsRequired();
             entityBuilder.Property(o => o.RowVersion).IsConcurrencyToken();
-
-//            entityBuilder.HasMany(o => o.Logs).WithOne(l => l.Operator).IsRequired(false);  // (i => i.OperatorId);
         }
 
     }

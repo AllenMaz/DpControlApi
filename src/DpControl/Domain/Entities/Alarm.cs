@@ -16,7 +16,8 @@ namespace DpControl.Domain.Entities
         public int LocationId { get; set; }
         public Location Location { get; set; }
         #endregion
-        public DateTime ModifiedDate { get; set; }
+
+        public DateTime ModifiedDate { get; set; }      // alarms generated time
         public byte[] RowVersion { get; set; }
 
     }

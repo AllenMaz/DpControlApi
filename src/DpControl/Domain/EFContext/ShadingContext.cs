@@ -42,7 +42,7 @@ namespace DpControl.Domain.EFContext
             new OperatorLocationConfiguration(modelBuilder.Entity<OperatorLocation>());
             new SceneConfiguration(modelBuilder.Entity<Scene>());
             new SceneSegmentConfiguration(modelBuilder.Entity<SceneSegment>());
-
+            new OperatorConfiguration(modelBuilder.Entity<Operator>());
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
