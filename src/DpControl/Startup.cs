@@ -34,7 +34,7 @@ namespace DpControl
             }
             
             pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
-
+            //pathToDoc = env.MapPath("../DpControl.xml");
             builder.AddEnvironmentVariables();
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
@@ -107,7 +107,13 @@ namespace DpControl
 
             app.UseStaticFiles();
 
-            app.UseMvc();
+            //app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
 
             app.UseSwaggerGen();
 
