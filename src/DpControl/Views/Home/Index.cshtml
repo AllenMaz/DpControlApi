@@ -2,19 +2,26 @@
     ViewData["Title"] = "Home Page";
 }
 <style>
-    
-
+    .divHead{
+        padding:30px 100px;
+        background-color:aqua;
+    }
+    .divBody{
+        margin:0px 100px;
+    }
 </style>
-<body style="background-color:#BBC5C2;">
-    <div style="margin:100px 100px;">
-        <h1>Restful WebApi For DpControl v1</h1>
-        <label style="font-size:x-large">More Detail,Click: </label><a style="font-size:x-large;" href="/Swagger/ui">API Document</a>
-        <h2>There are some Features:</h2>
-        <h3">1、Allow Paging by skip and top params.</h3">
-        <h3>example:<a href="/v1/Customers?skip=3&top=10">https://localhost:44366/v1/Customers?skip=3&top=10</a> </h3>
-        <h3">2、Allow Orderby by orderby(desc/asc) params.</h3">
-        <h3>example:<a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">https://localhost:44366/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a></h3>
-        <h3">3、Allow via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</h3">
+<body>
+    <div class="divHead">
+        <label style="font-size:x-large">Restful WebApi For DpControl v1  </label>
+        <label style="font-size:large">More Detail,Click: </label><a style="font-size:large;" href="/Swagger/ui">API Document</a>
+    </div>
+    <div class="divBody">
+        <h3>There are some Features:</h3>
+        <p>1、Allow Paging by skip and top param.</p>
+        <p>example:<a href="/v1/Customers?skip=3&top=10">https://localhost:44366/v1/Customers?skip=3&top=10</a> </p>
+        <p>2、Allow Orderby by orderby(desc/asc) param.</p>
+        <p>example:<a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">https://localhost:44366/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a></p>
+        <p>3、Allow via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</p>
 
         
     </div>
