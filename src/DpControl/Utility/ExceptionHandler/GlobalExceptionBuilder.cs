@@ -12,7 +12,7 @@ using System.Text;
 using DpControl.Models;
 using DpControl.Utility;
 
-namespace DpControl.Controllers.ExceptionHandler
+namespace DpControl.Utility.ExceptionHandler
 {
     public class GlobalExceptionBuilder 
     {

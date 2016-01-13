@@ -11,8 +11,8 @@ using Swashbuckle.SwaggerGen;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
-using DpControl.Controllers.ExceptionHandler;
-using DpControl.Controllers.Middlewares;
+using DpControl.Utility.ExceptionHandler;
+using DpControl.Utility.Middlewares;
 
 namespace DpControl
 {

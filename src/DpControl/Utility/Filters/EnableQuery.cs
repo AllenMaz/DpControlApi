@@ -14,7 +14,7 @@ using System.Collections;
 using System.Dynamic;
 using System.Linq.Expressions;
 
-namespace DpControl.Controllers.Filters
+namespace DpControl.Utility.Filters
 {
     /// <summary>
     /// 查询过滤器

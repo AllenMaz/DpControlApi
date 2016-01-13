@@ -1,5 +1,4 @@
-﻿using DpControl.Controllers.ExceptionHandler;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace DpControl.Controllers
     //版本号为V1的BaseController
     //[GlobalExceptionFilter]
     [Route("v1/[controller]")]
-    public class BaseController:Controller
+    public class BaseAPIController:Controller
     {
     }
 }

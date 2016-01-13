@@ -1,6 +1,6 @@
 ﻿
 using DpControl.Controllers;
-using DpControl.Controllers.Filters;
+using DpControl.Utility.Filters;
 using DpControl.Domain.EFContext;
 using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
@@ -16,10 +16,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace DpControl.Controllers
+namespace DpControl.APIControllers
 {
     
-    public class CustomersController: BaseController
+    public class CustomersController: BaseAPIController
     {
         [FromServices]
         public ICustomerRepository _customerRepository { get; set; }

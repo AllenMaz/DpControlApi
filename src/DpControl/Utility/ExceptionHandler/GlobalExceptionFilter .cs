@@ -10,7 +10,7 @@ using System.Web.Http;
 using System.Net;
 using System.Net.Http;
 
-namespace DpControl.Controllers.ExceptionHandler
+namespace DpControl.Utility.ExceptionHandler
 {
     /// <summary>
     /// 全局捕获异常

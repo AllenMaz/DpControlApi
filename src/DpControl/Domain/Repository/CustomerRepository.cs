@@ -9,7 +9,7 @@ using Microsoft.Data.Entity;
 using System.Net.Http;
 using System.Web.Http;
 using System.Net;
-using DpControl.Controllers.ExceptionHandler;
+using DpControl.Utility.ExceptionHandler;
 using DpControl.Domain.Models;
 //using Microsoft.Extensions.DependencyInjection;
 
