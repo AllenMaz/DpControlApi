@@ -30,10 +30,11 @@ namespace DpControl.APIControllers
         /// <returns></returns>
         [HttpGet]
         [EnableQuery]
-        [TypeFilter(typeof(StandardReturnType),Arguments = new object[] { Common.ActionReturnType_GetList})]
+        [FormatReturnType]
         public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
         {
             var customers = await _customerRepository.GetAll();
+            
             return customers;
         }
         
@@ -44,7 +45,6 @@ namespace DpControl.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
-        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_GetSingle })]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
 
@@ -62,7 +62,6 @@ namespace DpControl.APIControllers
         /// <param name="item"></param>
         /// <returns></returns>
         [HttpPost]
-        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_Post })]
         public async Task<IActionResult> Post([FromBody] MCustomer mCustomer)
         {
             if (!ModelState.IsValid)
@@ -81,7 +80,6 @@ namespace DpControl.APIControllers
         /// <param name="customer"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_Put })]
         public async Task<IActionResult> Update(int id, [FromBody] MCustomer mCustomer)
         {
             if (!ModelState.IsValid)

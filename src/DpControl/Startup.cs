@@ -13,6 +13,7 @@ using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
 using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
+using Microsoft.AspNet.Mvc;
 
 namespace DpControl
 {
@@ -51,13 +52,16 @@ namespace DpControl
             services.AddEntityFramework()
                 .AddSqlServer();
             
-            services.AddMvc();
+            var mvcBuilder = services.AddMvc();
+            //增加支持XML Formatter
+            //mvcBuilder.AddXmlDataContractSerializerFormatters();
 
             //services.Configure<MvcOptions>(options =>
             //{
-            //    //options.Filters.Add(new GlobalExceptionFilter());
-            //    options.ModelBinders.Insert(0, new QueryModelBinder());
+            //    options.Filters.Add(new GlobalExceptionFilter());
+
             //});
+
 
             #region  swagger
             services.AddSwaggerGen();

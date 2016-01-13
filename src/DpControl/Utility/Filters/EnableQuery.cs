@@ -212,19 +212,19 @@ namespace DpControl.Utility.Filters
                         //根据方法返回值类型，生成List<返回值类型>实例
                         IList genericList = CreateList(typeof(List<>), actionReturnType, result.Value);
                         //对实例集合进行查询操作
-                        IList resultData = QueryResult(genericList,actionReturnType);
-                        ////对返回结果重新赋值
+                        IList resultData = QueryResult(genericList, actionReturnType);
+                        //对返回结果重新赋值
                         result.Value = resultData;
 
                     }
 
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 //出现异常，则不做处理，返回原数据
             }
-            
+
         }
 
         private IList QueryResult(IList listData, Type actionReturnType)

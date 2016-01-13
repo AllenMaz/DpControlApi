@@ -6,25 +6,34 @@ using System.Threading.Tasks;
 
 namespace DpControl.Models
 {
-    public class BaseResponseMessage
+    public class BaseResponseModel
     {
 
     }
 
     /// <summary>
-    /// API消息返回
+    /// 返回结果是list的消息构造
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ResponseMessage<T> : BaseResponseMessage
+    public class ListResponseModel<T> : BaseResponseModel
     {
-
         public T data { get; set; }
     }
 
     /// <summary>
-    /// API错误消息返回
+    /// 返回结果是单条数据的消息构造
     /// </summary>
-    public class ErrResponseMessage : BaseResponseMessage
+    /// <typeparam name="T"></typeparam>
+    public class SingleResponseModel<T> : BaseResponseModel
+    {
+        public T data { get; set; }
+    }
+    
+
+    /// <summary>
+    /// API错误消息构造
+    /// </summary>
+    public class ErrorResponseModel : BaseResponseModel
     {
 
         public int code { get; set; }
