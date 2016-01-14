@@ -32,36 +32,36 @@ namespace DpControl.Domain.Repository
                 throw new ArgumentNullException();
             }
 
-            int _customerId;
-
-            // get groups with projectNo = projectNo
-            var query = await GetCustomerByProjectNo(projectNo);
-
-            _customerId = query.CustomerId;
-
-            // does the Name exist?
-            if (query.Scenes.Select(s => s.Name).Contains(sceneName))
-            {
-                throw new Exception("The group already exist.");
-            }
+            // get projectNo from Customer
+            var _customer = await _context.Customers
+                .Include(c => c.Scenes)
+                .Where(c => c.ProjectNo == projectNo)
+                .SingleAsync();
 
             // create new Group
-            Scene _scene = new Scene
+            _context.Scenes.Add(new Scene
             {
                 Name = sceneName,
                 Enable = false,
                 ModifiedDate = DateTime.Now,
-                CustomerId = _customerId
-            };
-            _context.Scenes.Add(_scene);
+                CustomerId = _customer.CustomerId
+            });
             await _context.SaveChangesAsync();
         }
         public async Task<IEnumerable<MScene>> GetAll(string projectNo)
         {
-            // get groups by the projectNo
-            var query = await GetCustomerByProjectNo(projectNo);
+            if (string.IsNullOrWhiteSpace(projectNo))
+            {
+                throw new ArgumentNullException();
+            }
 
-            return query.Scenes.Select(s => new MScene
+            // get projectNo from Customer
+            var _customer = await _context.Customers
+                .Include(c => c.Scenes)
+                .Where(c => c.ProjectNo == projectNo)
+                .SingleAsync();
+
+            return _customer.Scenes.Select(s => new MScene
             {
                 SceneId = s.SceneId,
                 Name = s.Name
@@ -73,40 +73,43 @@ namespace DpControl.Domain.Repository
         {
             if (Id == 0)
             {
-                throw new Exception("The group does not exist.");
+                throw new ArgumentNullException();
             }
 
             var toDelete = new Scene { SceneId = Id };
             _context.Scenes.Attach(toDelete);
+
+            //remove data in related table - Groups - optional relationship with data undeleted (set to Null), just load data into memory
+            _context.Groups.Where(l => l.SceneId == Id).Load();
+
+            // Scensegments will be deleted by Cascade setting in database
             _context.Scenes.Remove(toDelete);
             await _context.SaveChangesAsync();
         }
         public async Task UpdateById(MScene mScene, string projectNo)
         {
-            // get groups by the projectNo
-            var query = await GetCustomerByProjectNo(projectNo);
+            // get projectNo from Customer
+            var _customer = await _context.Customers
+                .Include(c => c.Scenes)
+                .Where(c => c.ProjectNo == projectNo)
+                .SingleAsync();
 
-            var _single = query.Scenes.Where(s => s.SceneId == mScene.SceneId).Single();
-            if (_single == null)
-            {
-                throw new KeyNotFoundException();
-            }
+            var _single = _customer.Scenes.Where(s => s.SceneId == mScene.SceneId).Single();
             _single.Name = mScene.Name;
-            _context.Scenes.Update(_single);
             await _context.SaveChangesAsync();
         }
 
-        async Task<Customer> GetCustomerByProjectNo(string projectNo)
-        {
-            var query = await _context.Customers
-                        .Include(c => c.Scenes)
-                        .Where(c => c.ProjectNo == projectNo)
-                        .SingleAsync();
-            if (query == null)
-            {
-                throw new KeyNotFoundException();
-            }
-            return query;
-        }
+        //async Task<Customer> GetCustomerByProjectNo(string projectNo)
+        //{
+        //    var query = await _context.Customers
+        //                .Include(c => c.Scenes)
+        //                .Where(c => c.ProjectNo == projectNo)
+        //                .SingleAsync();
+        //    if (query == null)
+        //    {
+        //        throw new KeyNotFoundException();
+        //    }
+        //    return query;
+        //}
     }
 }

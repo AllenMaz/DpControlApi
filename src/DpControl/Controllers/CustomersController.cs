@@ -44,12 +44,12 @@ namespace DpControl.Controllers
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
 
-            var customer = await _customerRepository.Find(customerNo);
+            var customer = await _customerRepository.FindByCustomerNo(customerNo);
             if (customer == null)
             {
                 return HttpNotFound();
             }
-            var responseData = ResponseHandler.ConstructResponse<MCustomer>(customer);
+            var responseData = ResponseHandler.ConstructResponse<MCustomer>(customer.First());
 
             return new ObjectResult(responseData);
         }
@@ -86,7 +86,7 @@ namespace DpControl.Controllers
                 return HttpBadRequest();
             }
             mCustomer.CustomerId = id;
-            await _customerRepository.UpdateById(mCustomer);
+            await _customerRepository.Update(mCustomer);
             var responseData = ResponseHandler.ConstructResponse<MCustomer>(mCustomer);
             return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, responseData);
 
@@ -99,7 +99,7 @@ namespace DpControl.Controllers
         [HttpDelete("{customerId}")]
         public async Task DeleteByCustomerNo(int customerId)
         {
-            await _customerRepository.Remove(customerId);
+            await _customerRepository.RemoveById(customerId);
 
         }
     }

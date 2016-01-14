@@ -15,7 +15,7 @@ namespace DpControl.Domain.Entities
         public Customer Customer { get; set; }
         public virtual List<GroupLocation> GroupLocations { get; set; }     // many-to-many
         public virtual List<GroupOperator> GroupOperators { get; set; }       // many-to-many
-        public int SceneId { get; set; }
+        public int? SceneId { get; set; }
         public Scene Scene { get; set; }         // one-to-many: one Scene can have multi-group; but one group only belong to a single scene.
         #endregion
 

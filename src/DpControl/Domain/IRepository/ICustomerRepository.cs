@@ -9,9 +9,11 @@ namespace DpControl.Domain.IRepository
     {
         Task Add( MCustomer item);
         Task<IEnumerable<MCustomer>> GetAll();
-        Task<MCustomer> Find(string customerNo);
-        Task Remove(int Id);
-        Task UpdateById(MCustomer mcustomer);
+        Task<IEnumerable<MCustomer>> FindByCustomerNo(string customerNo);
+        Task RemoveById(int Id);
+        Task Update(MCustomer mcustomer);
         Task<IEnumerable<String>> GetCustomerName();
+
+        //Task<IEnumerable<MCustomer>> FindRangeByOrder(Query query);
     }
 }
