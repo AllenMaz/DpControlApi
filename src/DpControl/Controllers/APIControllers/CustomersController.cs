@@ -39,7 +39,6 @@ namespace DpControl.APIControllers
         /// <returns></returns>
         [HttpGet]
         [EnableQuery]
-        [FormatReturnType]
         public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
         {
             string cacheKey = "CustomerGetAllCache";

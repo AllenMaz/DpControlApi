@@ -1,49 +1,66 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-<style>
-    body{margin:0px 0px;}
-    .divHead{
-        padding:30px 100px;
-        background-color:aqua;
-    }
-    .divBody{
-        margin:0px 100px;
-    }
-    .content{
-        color:black;
-        font-size:large ;
-    }
-    .newStyle{
-        color:red;
-        font-size:large;
-        margin:0px 2px;
-        font-style:italic;
-    }
-</style>
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomePage</title>
+    <link rel="stylesheet" href="~/css/CssInitialization.css" />
+
+    <style>
+
+        .divHead {
+            padding: 30px 100px;
+            background-color: #12CC18;
+        }
+
+        .divBody {
+            min-height:500px;
+            padding: 50px 100px;
+            background-color: azure;
+        }
+
+        .content {
+            color: black;
+            font-size: large;
+        }
+
+        .newStyle {
+            color: red;
+            font-size: large;
+            margin: 0px 2px;
+            font-style: italic;
+        }
+        li{padding:10px 0px;}
+        a { text-decoration:underline; } 
+    </style>
+</head>
+
 <body>
     <div class="divHead">
         <label style="font-size:x-large">Restful WebApi For DpControl v1  </label>
         <label style="font-size:large">More Detail,Click: </label><a style="font-size:large;" href="/Swagger/ui">API Document</a>
     </div>
     <div class="divBody">
-        <h3>There are some Features:</h3>
+        <label style="font-size:large;font-weight:700">There are some Features:</label>
         <ul>
-            <li class="content">Support Distributed Cache by SqlServerCache <sup class="newStyle">NEW</sup></li>
-            <li class="content">Paging by skip and top param.
+            <li class="content">* Support Distributed Cache by SqlServerCache <sup class="newStyle">new</sup></li>
+            <li class="content">
+                * Paging by skip and top param.
                 <p>example:<a href="/v1/Customers?skip=3&top=10">https://ip:port/v1/Customers?skip=3&top=10</a> </p>
             </li>
-            <li class="content">Orderby by orderby(desc/asc) param.
+            <li class="content">
+                * Orderby by orderby(desc/asc) param.
                 <p>example:<a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">https://ip:port/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a></p>
-            
-            </li>
-            <li class="content">Via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</li>
-            
-        </ul>
-        
-       
-        
 
-        
+            </li>
+            <li class="content">* Via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</li>
+
+        </ul>
+
+
+
+
+
     </div>
 </body>
+</html>
