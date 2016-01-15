@@ -2,12 +2,23 @@
     ViewData["Title"] = "Home Page";
 }
 <style>
+    body{margin:0px 0px;}
     .divHead{
         padding:30px 100px;
         background-color:aqua;
     }
     .divBody{
         margin:0px 100px;
+    }
+    .content{
+        color:black;
+        font-size:large ;
+    }
+    .newStyle{
+        color:red;
+        font-size:large;
+        margin:0px 2px;
+        font-style:italic;
     }
 </style>
 <body>
@@ -17,11 +28,21 @@
     </div>
     <div class="divBody">
         <h3>There are some Features:</h3>
-        <p>1、Allow Paging by skip and top param.</p>
-        <p>example:<a href="/v1/Customers?skip=3&top=10">https://localhost:44366/v1/Customers?skip=3&top=10</a> </p>
-        <p>2、Allow Orderby by orderby(desc/asc) param.</p>
-        <p>example:<a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">https://localhost:44366/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a></p>
-        <p>3、Allow via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</p>
+        <ul>
+            <li class="content">Support Distributed Cache by SqlServerCache <sup class="newStyle">NEW</sup></li>
+            <li class="content">Paging by skip and top param.
+                <p>example:<a href="/v1/Customers?skip=3&top=10">https://localhost:44366/v1/Customers?skip=3&top=10</a> </p>
+            </li>
+            <li class="content">Orderby by orderby(desc/asc) param.
+                <p>example:<a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">https://localhost:44366/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a></p>
+            
+            </li>
+            <li class="content">Via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</li>
+            
+        </ul>
+        
+       
+        
 
         
     </div>
