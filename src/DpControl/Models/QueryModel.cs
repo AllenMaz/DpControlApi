@@ -10,7 +10,7 @@ using Microsoft.AspNet.Mvc;
 
 namespace DpControl.Models
 {
-    public class Query
+    public class QueryModel
     {
         /// <summary>
         /// 排序
@@ -66,7 +66,7 @@ namespace DpControl.Models
         //{
         //}
 
-        public  Query()
+        public  QueryModel()
         {
             this.orderby = null;
             this.skip = null;

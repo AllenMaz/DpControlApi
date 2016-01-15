@@ -1,5 +1,4 @@
-﻿using DpControl.Domain.Models;
-using DpControl.Models;
+﻿using DpControl.Models;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using System;
@@ -23,11 +22,11 @@ namespace DpControl.Utility.Filters
     public class EnableQueryAttribute : ActionFilterAttribute
     {
         //查询参数对象
-        private Query query ;
+        private QueryModel query ;
 
         public EnableQueryAttribute()
         {
-            query = new Query();
+            query = new QueryModel();
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace DpControl.Utility.Filters
             string queryKey = string.Empty;
             foreach (string key in actionArguments.Keys)
             {
-                if (actionArguments[key].GetType() == typeof(Query))
+                if (actionArguments[key].GetType() == typeof(QueryModel))
                 {
                     queryKey = key;
                     break;

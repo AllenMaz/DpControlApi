@@ -39,6 +39,7 @@ namespace DpControl.APIControllers
         /// <returns></returns>
         [HttpGet]
         [EnableQuery]
+        [FormatReturnType]
         public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
         {
             string cacheKey = "CustomerGetAllCache";
@@ -120,7 +121,7 @@ namespace DpControl.APIControllers
                 return HttpBadRequest();
             }
             mCustomer.CustomerId = id;
-            await _customerRepository.UpdateById(mCustomer);
+            await _customerRepository.Update(mCustomer);
             return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
 
         }
