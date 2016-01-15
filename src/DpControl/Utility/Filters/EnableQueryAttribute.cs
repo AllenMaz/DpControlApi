@@ -14,18 +14,18 @@ using System.Collections;
 using System.Dynamic;
 using System.Linq.Expressions;
 
-namespace DpControl.Controllers.Filters
+namespace DpControl.Utility.Filters
 {
     /// <summary>
     /// 查询过滤器
     /// 该类允许对Controller取得的结果集进行过滤，排序等查询操作
     /// </summary>
-    public class EnableQuery : ActionFilterAttribute
+    public class EnableQueryAttribute : ActionFilterAttribute
     {
         //查询参数对象
         private Query query ;
 
-        public EnableQuery()
+        public EnableQueryAttribute()
         {
             query = new Query();
         }
@@ -212,19 +212,19 @@ namespace DpControl.Controllers.Filters
                         //根据方法返回值类型，生成List<返回值类型>实例
                         IList genericList = CreateList(typeof(List<>), actionReturnType, result.Value);
                         //对实例集合进行查询操作
-                        IList resultData = QueryResult(genericList,actionReturnType);
-                        ////对返回结果重新赋值
+                        IList resultData = QueryResult(genericList, actionReturnType);
+                        //对返回结果重新赋值
                         result.Value = resultData;
 
                     }
 
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 //出现异常，则不做处理，返回原数据
             }
-            
+
         }
 
         private IList QueryResult(IList listData, Type actionReturnType)
@@ -369,9 +369,5 @@ namespace DpControl.Controllers.Filters
             var nextType = converType.GenericTypeArguments[0];
             return GetClassType(nextType);
         }
-    }
-    public class ItemWithProperty
-    {
-        public string Property { get; set; }
     }
 }

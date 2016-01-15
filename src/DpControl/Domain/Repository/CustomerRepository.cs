@@ -33,7 +33,7 @@ namespace DpControl.Domain.Repository
         public async Task<IEnumerable<MCustomer>> GetAll()
         {
             var customers = await _context.Customers.Select(c => new MCustomer
-                {
+            {
                     CustomerId      =   c.CustomerId,
                     CustomerName = c.CustomerName,
                     CustomerNo = c.CustomerNo,
@@ -41,7 +41,7 @@ namespace DpControl.Domain.Repository
                     ProjectNo = c.ProjectNo
                 })
                 .OrderBy(c => c.CustomerNo)
-                .ToListAsync<MCustomer>();
+            .ToListAsync<MCustomer>();
             return customers;
         }
         public async Task<IEnumerable<MCustomer>> FindByCustomerNo(string customerNo)
@@ -56,25 +56,25 @@ namespace DpControl.Domain.Repository
                             ProjectName = c.ProjectName,
                             ProjectNo = c.ProjectNo
                         });
-            if (customer == null)
-                throw new KeyNotFoundException();
+                if (customer == null)
+                    throw new KeyNotFoundException();
             return await customer.ToListAsync<MCustomer>();
         }
 
         public async Task Add(MCustomer customer)
         {
-            if (customer == null)
-            {
-                throw new ArgumentNullException();
-            }
+                if (customer == null)
+                {
+                    throw new ArgumentNullException();
+                }
             _context.Customers.Add(new Customer
-            {
-                CustomerName = customer.CustomerName,
-                CustomerNo = customer.CustomerNo,
-                ProjectName = customer.ProjectName,
-                ProjectNo = customer.ProjectNo,
-                ModifiedDate = DateTime.Now
-            });
+                {
+                    CustomerName = customer.CustomerName,
+                    CustomerNo = customer.CustomerNo,
+                    ProjectName = customer.ProjectName,
+                    ProjectNo = customer.ProjectNo,
+                    ModifiedDate = DateTime.Now
+                }); 
             await _context.SaveChangesAsync();
         }
  
@@ -93,7 +93,7 @@ namespace DpControl.Domain.Repository
         }
 
         public async Task RemoveById(int Id)
-        {
+                {
             var toDelete = new Customer { CustomerId = Id };
             _context.Customers.Attach(toDelete);
             _context.Customers.Remove(toDelete);

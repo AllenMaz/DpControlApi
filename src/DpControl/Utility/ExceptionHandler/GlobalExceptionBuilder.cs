@@ -12,7 +12,7 @@ using System.Text;
 using DpControl.Models;
 using DpControl.Utility;
 
-namespace DpControl.Controllers.ExceptionHandler
+namespace DpControl.Utility.ExceptionHandler
 {
     public class GlobalExceptionBuilder 
     {
@@ -32,26 +32,18 @@ namespace DpControl.Controllers.ExceptionHandler
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     var exceptionType = error.Error.GetType();
                     var exceptionMessage = error.Error.Message;
-
-                    ErrResponseMessage errResponse = new ErrResponseMessage();
                     
-
-                    if(exceptionType == typeof(Exception))
+                    if(exceptionType != typeof(Exception))
                     {
                         //系统异常
-                        errResponse.code = 500;
-                        errResponse.error = exceptionMessage;
-                    }
-                    else
-                    {
-                        //系统异常
-                        errResponse.code = 500;
-                        errResponse.error = "System is abnormal ！Error：" + exceptionMessage;
+                        exceptionMessage = "System is abnormal ！Error：" + exceptionMessage;
                         
                     }
 
-                    string errMessage = ResponseHandler.ConstructErrResponse(errResponse);
+                    string errMessage = ResponseHandler.ReturnError(exceptionMessage);
+                    
                     await context.Response.WriteAsync(errMessage, Encoding.UTF8);
+                    
                 }
                 //await context.Response.WriteAsync(new string(' ', 512)); // Padding for IE
             });

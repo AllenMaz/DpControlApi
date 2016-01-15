@@ -1,6 +1,6 @@
 ﻿
 using DpControl.Controllers;
-using DpControl.Controllers.Filters;
+using DpControl.Utility.Filters;
 using DpControl.Domain.EFContext;
 using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
@@ -15,14 +15,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.SqlServer;
+using Microsoft.Extensions.Caching.Distributed;
 
-namespace DpControl.Controllers
+namespace DpControl.APIControllers
 {
-    
-    public class CustomersController: BaseController
+
+    public class CustomersController : BaseAPIController
     {
         [FromServices]
         public ICustomerRepository _customerRepository { get; set; }
+
+        [FromServices]
+        public IMemoryCache _memoryCache { get; set; }
+
+        [FromServices]
+        public IDistributedCache _sqlServerCache { get; set; }
 
         /// <summary>
         /// Search all data
@@ -30,11 +39,37 @@ namespace DpControl.Controllers
         /// <returns></returns>
         [HttpGet]
         [EnableQuery]
-        [TypeFilter(typeof(StandardReturnType),Arguments = new object[] { Common.ActionReturnType_GetList})]
+        [FormatReturnType]
         public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
         {
-            var customers = await _customerRepository.GetAll();
-            return customers;
+            string cacheKey = "CustomerGetAllCache";
+            IEnumerable<MCustomer> result;
+
+            byte[] cacheResult = await _sqlServerCache.GetAsync(cacheKey);
+            if (cacheResult == null)
+            {
+                //如果没有缓存，则从数据库查询数据，并缓存数据
+                result = await _customerRepository.GetAll();
+
+                string jsonResult = JsonHandler.ToJson(result);
+                var value = Encoding.UTF8.GetBytes(jsonResult);
+                await _sqlServerCache.SetAsync(
+                    cacheKey,
+                    value,
+                    new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+            }
+            else
+            {
+                //如果有缓存，则直接返回缓存数据
+                string cacheResultStr = Encoding.UTF8.GetString(cacheResult);
+                result = JsonHandler.UnJson<IEnumerable<MCustomer>>(cacheResultStr);
+                
+            }
+           
+            
+
+            return result;
         }
 
 
@@ -44,7 +79,6 @@ namespace DpControl.Controllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
-        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_GetSingle })]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
 
@@ -62,7 +96,6 @@ namespace DpControl.Controllers
         /// <param name="item"></param>
         /// <returns></returns>
         [HttpPost]
-        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_Post })]
         public async Task<IActionResult> Post([FromBody] MCustomer mCustomer)
         {
             if (!ModelState.IsValid)
@@ -81,7 +114,6 @@ namespace DpControl.Controllers
         /// <param name="customer"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        [TypeFilter(typeof(StandardReturnType), Arguments = new object[] { Common.ActionReturnType_Put })]
         public async Task<IActionResult> Update(int id, [FromBody] MCustomer mCustomer)
         {
             if (!ModelState.IsValid)

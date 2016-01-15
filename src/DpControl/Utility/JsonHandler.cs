@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DpControl.Utility
 {
-    public static class Json
+    public static class JsonHandler
     {
         public static T UnJson<T>(string jsonString)
         {

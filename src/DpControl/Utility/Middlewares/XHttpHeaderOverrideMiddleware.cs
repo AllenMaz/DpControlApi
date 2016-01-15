@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DpControl.Controllers.Middlewares
+namespace DpControl.Utility.Middlewares
 {
     /// <summary>
     /// 允许通过POST方法覆盖http方法
@@ -34,7 +34,7 @@ namespace DpControl.Controllers.Middlewares
                     httpContext.Request.Method = headerValue.ToUpper();
                 }
             }
-            
+
             return _next.Invoke(httpContext);
         }
     }

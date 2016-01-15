@@ -11,8 +11,9 @@ using Swashbuckle.SwaggerGen;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
-using DpControl.Controllers.ExceptionHandler;
-using DpControl.Controllers.Middlewares;
+using DpControl.Utility.ExceptionHandler;
+using DpControl.Utility.Middlewares;
+using Microsoft.AspNet.Mvc;
 
 namespace DpControl
 {
@@ -34,7 +35,7 @@ namespace DpControl
             }
             
             pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
-
+            //pathToDoc = env.MapPath("../DpControl.xml");
             builder.AddEnvironmentVariables();
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
@@ -51,13 +52,25 @@ namespace DpControl
             services.AddEntityFramework()
                 .AddSqlServer();
             
-            services.AddMvc();
+            var mvcBuilder = services.AddMvc();
+            //增加支持XML Formatter
+            //mvcBuilder.AddXmlDataContractSerializerFormatters();
 
             //services.Configure<MvcOptions>(options =>
             //{
-            //    //options.Filters.Add(new GlobalExceptionFilter());
-            //    options.ModelBinders.Insert(0, new QueryModelBinder());
+            //    options.Filters.Add(new GlobalExceptionFilter());
+
             //});
+            
+            //Add SqlServerCache
+            services.AddSqlServerCache(options =>
+             {
+                 options.ConnectionString = Configuration["SqlsServerCache:ConnectionString"];
+                 options.SchemaName = Configuration["SqlsServerCache:SchemaName"];
+                 options.TableName = Configuration["SqlsServerCache:TableName"];
+             }
+            );
+            
 
             #region  swagger
             services.AddSwaggerGen();
@@ -107,8 +120,14 @@ namespace DpControl
 
             app.UseStaticFiles();
 
-            app.UseMvc();
-
+            //app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
+            
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
