@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext.Configurations;
+using Microsoft.AspNet.Identity.EntityFramework;
+using DpControl.Domain.Models;
 
 namespace DpControl.Domain.EFContext
 {
-    public class ShadingContext : Microsoft.Data.Entity.DbContext
+    public class ShadingContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<AlarmMessage> AlarmMessages { get; set; }

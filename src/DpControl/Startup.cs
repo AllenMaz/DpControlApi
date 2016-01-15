@@ -14,6 +14,9 @@ using DpControl.Domain.EFContext;
 using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Mvc;
+using DpControl.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using DpControl.Domain.Models;
 
 namespace DpControl
 {
@@ -70,7 +73,11 @@ namespace DpControl
                  options.TableName = Configuration["SqlsServerCache:TableName"];
              }
             );
-            
+
+            //Add Identity
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ShadingContext>()
+            .AddDefaultTokenProviders();
 
             #region  swagger
             services.AddSwaggerGen();
@@ -119,6 +126,9 @@ namespace DpControl
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();
+
+            //Identity
+            app.UseIdentity();
 
             //app.UseMvc();
             app.UseMvc(routes =>
