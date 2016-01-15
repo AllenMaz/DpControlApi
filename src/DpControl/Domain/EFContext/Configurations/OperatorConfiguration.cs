@@ -24,6 +24,7 @@ namespace DpControl.Domain.EFContext.Configurations
 
             entityBuilder.Property(o => o.ModifiedDate).IsRequired();
             entityBuilder.Property(o => o.RowVersion).IsConcurrencyToken();
+
         }
 
     }

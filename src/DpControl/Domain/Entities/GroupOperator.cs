@@ -7,8 +7,9 @@ namespace DpControl.Domain.Entities
 {
     public class GroupOperator
     {
-        public int GroupId { get; set; }
-        public int OperatorId { get; set; }
+        public int GroupOperatorId { get; set; }
+        public int? GroupId { get; set; }
+        public int? OperatorId { get; set; }
         public Group Group { get; set; }
         public Operator Operator { get; set; }
     }

@@ -70,7 +70,7 @@ namespace DpControl.APIControllers
 
             return result;
         }
-        
+
 
         /// <summary>
         /// Search data by CustomerNo
@@ -81,7 +81,7 @@ namespace DpControl.APIControllers
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
 
-            var customer = await _customerRepository.Find(customerNo);
+            var customer = await _customerRepository.FindByCustomerNo(customerNo);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -132,7 +132,7 @@ namespace DpControl.APIControllers
         [HttpDelete("{customerId}")]
         public async Task DeleteByCustomerId(int customerId)
         {
-            await _customerRepository.Remove(customerId);
+            await _customerRepository.RemoveById(customerId);
 
         }
     }

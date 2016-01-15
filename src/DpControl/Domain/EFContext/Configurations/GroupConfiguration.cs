@@ -14,6 +14,7 @@ namespace DpControl.Domain.EFContext.Configurations
         {
             entityBuilder.ToTable("Groups", "ControlSystem");
             entityBuilder.HasKey(g => g.GroupId);
+            entityBuilder.HasIndex(g => g.GroupName).IsUnique();
             entityBuilder.Property(g => g.GroupName).HasMaxLength(50).IsRequired();
             entityBuilder.Property(g => g.ModifiedDate).IsRequired();
             entityBuilder.Property(g => g.RowVersion).IsConcurrencyToken();

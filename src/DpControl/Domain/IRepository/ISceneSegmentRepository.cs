@@ -8,9 +8,10 @@ namespace DpControl.Domain.IRepository
 {
     public interface ISceneSegmentRepository
     {
-        Task Add(int sceneId, string projectNo, List<MSceneSegment> sceneSegment);
-        Task<IEnumerable<MSceneSegment>> GetAll(int Id, string projectNo);
+        Task Add(int sceneId, List<MSceneSegment> sceneSegment);
+        Task<IEnumerable<MSceneSegment>> GetAll(int Id);
         Task Remove(int Id);
         Task UpdateById(MSceneSegment msceneSegment, int sceneId);
+        Task UpdateSegmentsBySceneId(List<MSceneSegment> segments, int sceneId);
     }
 }
