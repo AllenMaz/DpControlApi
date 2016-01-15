@@ -13,10 +13,10 @@ namespace DpControl.Domain.EFContext.Configurations
         public OperatorLocationConfiguration(EntityTypeBuilder<OperatorLocation> entityBuilder)
         {
             entityBuilder.ToTable("OperatorLocations", "ControlSystem");
-            entityBuilder.HasKey(gl => new { gl.LocationId, gl.OperatorId });
+            entityBuilder.HasKey(gl => gl.OperatorLocationId);
 
-            entityBuilder.HasOne(gl => gl.Location).WithMany(g => g.OperatorLocations).IsRequired(false);//.HasForeignKey(gl => gl.LocationId);
-            entityBuilder.HasOne(gl => gl.Operator).WithMany(l => l.OperatorLocations).IsRequired(false);//.HasForeignKey(global => global.OperatorId);
+            entityBuilder.HasOne(gl => gl.Location).WithMany(g => g.OperatorLocations).IsRequired(false).HasForeignKey(gl => gl.LocationId);
+            entityBuilder.HasOne(gl => gl.Operator).WithMany(l => l.OperatorLocations).IsRequired(false).HasForeignKey(gl => gl.OperatorId);
         }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Metadata;
 
 namespace DpControl.Migrations
 {
-    public partial class initialScheme : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -173,7 +173,7 @@ namespace DpControl.Migrations
                     AlarmId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AlarmMessageId = table.Column<int>(nullable: false),
-                    LocationId = table.Column<int>(nullable: false),
+                    LocationId = table.Column<int>(nullable: true),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
                     RowVersion = table.Column<byte[]>(nullable: true)
                 },
@@ -193,7 +193,7 @@ namespace DpControl.Migrations
                         principalSchema: "ControlSystem",
                         principalTable: "DeviceLocations",
                         principalColumn: "LocationId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateTable(
                 name: "Logs",
@@ -203,17 +203,22 @@ namespace DpControl.Migrations
                     LogId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Comment = table.Column<string>(nullable: true),
-                    LocationId = table.Column<int>(nullable: false),
+                    LocationId = table.Column<int>(nullable: true),
                     LogDescriptionId = table.Column<int>(nullable: false),
-                    LogOfLocationId = table.Column<int>(nullable: true),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
-                    OperatorId = table.Column<int>(nullable: false),
-                    OperatorOperatorId = table.Column<int>(nullable: true),
+                    OperatorId = table.Column<int>(nullable: true),
                     RowVersion = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Log", x => x.LogId);
+                    table.ForeignKey(
+                        name: "FK_Log_Location_LocationId",
+                        column: x => x.LocationId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "DeviceLocations",
+                        principalColumn: "LocationId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Log_LogDescription_LogDescriptionId",
                         column: x => x.LogDescriptionId,
@@ -222,15 +227,8 @@ namespace DpControl.Migrations
                         principalColumn: "LogDescriptionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Log_Location_LogOfLocationId",
-                        column: x => x.LogOfLocationId,
-                        principalSchema: "ControlSystem",
-                        principalTable: "DeviceLocations",
-                        principalColumn: "LocationId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Log_Operator_OperatorOperatorId",
-                        column: x => x.OperatorOperatorId,
+                        name: "FK_Log_Operator_OperatorId",
+                        column: x => x.OperatorId,
                         principalSchema: "ControlSystem",
                         principalTable: "Operators",
                         principalColumn: "OperatorId",
@@ -241,24 +239,24 @@ namespace DpControl.Migrations
                 schema: "ControlSystem",
                 columns: table => new
                 {
-                    LocationId = table.Column<int>(nullable: false),
-                    OperatorId = table.Column<int>(nullable: false),
-                    LocationLocationId = table.Column<int>(nullable: true),
-                    OperatorOperatorId = table.Column<int>(nullable: true)
+                    OperatorLocationId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    LocationId = table.Column<int>(nullable: true),
+                    OperatorId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OperatorLocation", x => new { x.LocationId, x.OperatorId });
+                    table.PrimaryKey("PK_OperatorLocation", x => x.OperatorLocationId);
                     table.ForeignKey(
-                        name: "FK_OperatorLocation_Location_LocationLocationId",
-                        column: x => x.LocationLocationId,
+                        name: "FK_OperatorLocation_Location_LocationId",
+                        column: x => x.LocationId,
                         principalSchema: "ControlSystem",
                         principalTable: "DeviceLocations",
                         principalColumn: "LocationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OperatorLocation_Operator_OperatorOperatorId",
-                        column: x => x.OperatorOperatorId,
+                        name: "FK_OperatorLocation_Operator_OperatorId",
+                        column: x => x.OperatorId,
                         principalSchema: "ControlSystem",
                         principalTable: "Operators",
                         principalColumn: "OperatorId",
@@ -275,8 +273,7 @@ namespace DpControl.Migrations
                     GroupName = table.Column<string>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
                     RowVersion = table.Column<byte[]>(nullable: true),
-                    SceneId = table.Column<int>(nullable: false),
-                    SceneSceneId = table.Column<int>(nullable: true)
+                    SceneId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -289,8 +286,8 @@ namespace DpControl.Migrations
                         principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Group_Scene_SceneSceneId",
-                        column: x => x.SceneSceneId,
+                        name: "FK_Group_Scene_SceneId",
+                        column: x => x.SceneId,
                         principalSchema: "ControlSystem",
                         principalTable: "Scenes",
                         principalColumn: "SceneId",
@@ -326,24 +323,24 @@ namespace DpControl.Migrations
                 schema: "ControlSystem",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(nullable: false),
-                    LocationId = table.Column<int>(nullable: false),
-                    GroupGroupId = table.Column<int>(nullable: true),
-                    LocationLocationId = table.Column<int>(nullable: true)
+                    GroupLocationId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    GroupId = table.Column<int>(nullable: true),
+                    LocationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupLocation", x => new { x.GroupId, x.LocationId });
+                    table.PrimaryKey("PK_GroupLocation", x => x.GroupLocationId);
                     table.ForeignKey(
-                        name: "FK_GroupLocation_Group_GroupGroupId",
-                        column: x => x.GroupGroupId,
+                        name: "FK_GroupLocation_Group_GroupId",
+                        column: x => x.GroupId,
                         principalSchema: "ControlSystem",
                         principalTable: "Groups",
                         principalColumn: "GroupId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GroupLocation_Location_LocationLocationId",
-                        column: x => x.LocationLocationId,
+                        name: "FK_GroupLocation_Location_LocationId",
+                        column: x => x.LocationId,
                         principalSchema: "ControlSystem",
                         principalTable: "DeviceLocations",
                         principalColumn: "LocationId",
@@ -354,29 +351,35 @@ namespace DpControl.Migrations
                 schema: "ControlSystem",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(nullable: false),
-                    OperatorId = table.Column<int>(nullable: false),
-                    GroupGroupId = table.Column<int>(nullable: true),
-                    OperatorOperatorId = table.Column<int>(nullable: true)
+                    GroupOperatorId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    GroupId = table.Column<int>(nullable: true),
+                    OperatorId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupOperator", x => new { x.GroupId, x.OperatorId });
+                    table.PrimaryKey("PK_GroupOperator", x => x.GroupOperatorId);
                     table.ForeignKey(
-                        name: "FK_GroupOperator_Group_GroupGroupId",
-                        column: x => x.GroupGroupId,
+                        name: "FK_GroupOperator_Group_GroupId",
+                        column: x => x.GroupId,
                         principalSchema: "ControlSystem",
                         principalTable: "Groups",
                         principalColumn: "GroupId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GroupOperator_Operator_OperatorOperatorId",
-                        column: x => x.OperatorOperatorId,
+                        name: "FK_GroupOperator_Operator_OperatorId",
+                        column: x => x.OperatorId,
                         principalSchema: "ControlSystem",
                         principalTable: "Operators",
                         principalColumn: "OperatorId",
                         onDelete: ReferentialAction.Restrict);
                 });
+            migrationBuilder.CreateIndex(
+                name: "IX_Group_GroupName",
+                schema: "ControlSystem",
+                table: "Groups",
+                column: "GroupName",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

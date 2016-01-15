@@ -18,7 +18,6 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(o => o.ModifiedDate).IsRequired();
             entityBuilder.Property(o => o.RowVersion).IsConcurrencyToken();
 
-            entityBuilder.HasOne(l => l.Description).WithMany(m => m.Logs);
             entityBuilder.HasOne(l => l.LogOf).WithMany(l => l.Logs).IsRequired(false);
             entityBuilder.HasOne(l => l.Operator).WithMany(o => o.Logs).IsRequired(false);
         }
