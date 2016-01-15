@@ -14,7 +14,7 @@ namespace DpControl.Utility.Filters
     /// <summary>
     /// 格式化List数据返回类型
     /// </summary>
-    public class FormatReturnType : ActionFilterAttribute
+    public class FormatReturnTypeAttribute : ActionFilterAttribute
     {
         private string _actionReturnType;
         

@@ -61,7 +61,16 @@ namespace DpControl
             //    options.Filters.Add(new GlobalExceptionFilter());
 
             //});
-
+            
+            //Add SqlServerCache
+            services.AddSqlServerCache(options =>
+             {
+                 options.ConnectionString = Configuration["SqlsServerCache:ConnectionString"];
+                 options.SchemaName = Configuration["SqlsServerCache:SchemaName"];
+                 options.TableName = Configuration["SqlsServerCache:TableName"];
+             }
+            );
+            
 
             #region  swagger
             services.AddSwaggerGen();
@@ -118,7 +127,7 @@ namespace DpControl
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
+            
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();

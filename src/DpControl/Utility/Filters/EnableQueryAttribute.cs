@@ -20,12 +20,12 @@ namespace DpControl.Utility.Filters
     /// 查询过滤器
     /// 该类允许对Controller取得的结果集进行过滤，排序等查询操作
     /// </summary>
-    public class EnableQuery : ActionFilterAttribute
+    public class EnableQueryAttribute : ActionFilterAttribute
     {
         //查询参数对象
         private Query query ;
 
-        public EnableQuery()
+        public EnableQueryAttribute()
         {
             query = new Query();
         }
@@ -369,9 +369,5 @@ namespace DpControl.Utility.Filters
             var nextType = converType.GenericTypeArguments[0];
             return GetClassType(nextType);
         }
-    }
-    public class ItemWithProperty
-    {
-        public string Property { get; set; }
     }
 }

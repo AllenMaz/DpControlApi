@@ -46,7 +46,7 @@ namespace DpControl.Utility
             ErrorResponseModel errResponse = new ErrorResponseModel();
             errResponse.code = 500;
             errResponse.error = message;
-            string errJson = Json.ToJson(errResponse);
+            string errJson = JsonHandler.ToJson(errResponse);
 
             return errJson;
         }

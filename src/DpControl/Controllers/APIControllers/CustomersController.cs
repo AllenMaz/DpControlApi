@@ -15,14 +15,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.SqlServer;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace DpControl.APIControllers
 {
-    
-    public class CustomersController: BaseAPIController
+
+    public class CustomersController : BaseAPIController
     {
         [FromServices]
         public ICustomerRepository _customerRepository { get; set; }
+
+        [FromServices]
+        public IMemoryCache _memoryCache { get; set; }
+
+        [FromServices]
+        public IDistributedCache _sqlServerCache { get; set; }
 
         /// <summary>
         /// Search all data
@@ -33,9 +42,34 @@ namespace DpControl.APIControllers
         [FormatReturnType]
         public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
         {
-            var customers = await _customerRepository.GetAll();
+            string cacheKey = "CustomerGetAllCache";
+            IEnumerable<MCustomer> result;
+
+            byte[] cacheResult = await _sqlServerCache.GetAsync(cacheKey);
+            if (cacheResult == null)
+            {
+                //如果没有缓存，则从数据库查询数据，并缓存数据
+                result = await _customerRepository.GetAll();
+
+                string jsonResult = JsonHandler.ToJson(result);
+                var value = Encoding.UTF8.GetBytes(jsonResult);
+                await _sqlServerCache.SetAsync(
+                    cacheKey,
+                    value,
+                    new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+            }
+            else
+            {
+                //如果有缓存，则直接返回缓存数据
+                string cacheResultStr = Encoding.UTF8.GetString(cacheResult);
+                result = JsonHandler.UnJson<IEnumerable<MCustomer>>(cacheResultStr);
+                
+            }
+           
             
-            return customers;
+
+            return result;
         }
         
 
