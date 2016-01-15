@@ -34,8 +34,8 @@ namespace DpControl
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
             
-            pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
-            //pathToDoc = env.MapPath("../DpControl.xml");
+            //pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
+            pathToDoc = env.MapPath("../DpControl.xml");
             builder.AddEnvironmentVariables();
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
