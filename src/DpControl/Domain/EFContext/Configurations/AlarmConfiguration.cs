@@ -15,7 +15,9 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.ToTable("Alarms", "ControlSystem");
             entityBuilder.HasKey(a => a.AlarmId);
             entityBuilder.Property(a => a.ModifiedDate).IsRequired();
-            entityBuilder.Property(a => a.RowVersion).IsConcurrencyToken();
+            entityBuilder.Property(a => a.RowVersion).IsConcurrencyToken().IsRequired();
+
+            entityBuilder.HasOne(a=>a.Location).WithMany(o => o.Alarms).IsRequired(false);
         }
     }
 }

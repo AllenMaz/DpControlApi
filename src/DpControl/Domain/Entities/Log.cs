@@ -15,7 +15,7 @@ namespace DpControl.Domain.Entities
         public LogDescription Description { get; set; }
         public int? LocationId { get; set; }
         public Location LogOf { get; set; }
-        public int OperatorId { get; set; }
+        public int? OperatorId { get; set; }
         public Operator Operator { get; set; }
         #endregion
         public DateTime ModifiedDate { get; set; }

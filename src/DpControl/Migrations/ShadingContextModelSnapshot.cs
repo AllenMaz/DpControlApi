@@ -117,15 +117,14 @@ namespace DpControl.Migrations
 
             modelBuilder.Entity("DpControl.Domain.Entities.GroupLocation", b =>
                 {
-                    b.Property<int>("GroupId");
+                    b.Property<int>("GroupLocationId")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<int>("LocationId");
+                    b.Property<int?>("GroupId");
 
-                    b.Property<int?>("GroupGroupId");
+                    b.Property<int?>("LocationId");
 
-                    b.Property<int?>("LocationLocationId");
-
-                    b.HasKey("GroupId", "LocationId");
+                    b.HasKey("GroupLocationId");
 
                     b.HasAnnotation("Relational:Schema", "ControlSystem");
 
@@ -134,15 +133,14 @@ namespace DpControl.Migrations
 
             modelBuilder.Entity("DpControl.Domain.Entities.GroupOperator", b =>
                 {
-                    b.Property<int>("GroupId");
+                    b.Property<int>("GroupOperatorId")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<int>("OperatorId");
+                    b.Property<int?>("GroupId");
 
-                    b.Property<int?>("GroupGroupId");
+                    b.Property<int?>("OperatorId");
 
-                    b.Property<int?>("OperatorOperatorId");
-
-                    b.HasKey("GroupId", "OperatorId");
+                    b.HasKey("GroupOperatorId");
 
                     b.HasAnnotation("Relational:Schema", "ControlSystem");
 
@@ -235,9 +233,7 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("ModifiedDate");
 
-                    b.Property<int>("OperatorId");
-
-                    b.Property<int?>("OperatorOperatorId");
+                    b.Property<int?>("OperatorId");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken();
@@ -304,15 +300,14 @@ namespace DpControl.Migrations
 
             modelBuilder.Entity("DpControl.Domain.Entities.OperatorLocation", b =>
                 {
-                    b.Property<int>("LocationId");
+                    b.Property<int>("OperatorLocationId")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<int>("OperatorId");
+                    b.Property<int?>("LocationId");
 
-                    b.Property<int?>("LocationLocationId");
+                    b.Property<int?>("OperatorId");
 
-                    b.Property<int?>("OperatorOperatorId");
-
-                    b.HasKey("LocationId", "OperatorId");
+                    b.HasKey("OperatorLocationId");
 
                     b.HasAnnotation("Relational:Schema", "ControlSystem");
 
@@ -397,22 +392,22 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Group")
                         .WithMany()
-                        .HasForeignKey("GroupGroupId");
+                        .HasForeignKey("GroupId");
 
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationLocationId");
+                        .HasForeignKey("LocationId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.GroupOperator", b =>
                 {
                     b.HasOne("DpControl.Domain.Entities.Group")
                         .WithMany()
-                        .HasForeignKey("GroupGroupId");
+                        .HasForeignKey("GroupId");
 
                     b.HasOne("DpControl.Domain.Entities.Operator")
                         .WithMany()
-                        .HasForeignKey("OperatorOperatorId");
+                        .HasForeignKey("OperatorId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Holiday", b =>
@@ -441,7 +436,7 @@ namespace DpControl.Migrations
 
                     b.HasOne("DpControl.Domain.Entities.Operator")
                         .WithMany()
-                        .HasForeignKey("OperatorOperatorId");
+                        .HasForeignKey("OperatorId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Operator", b =>
@@ -455,11 +450,11 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationLocationId");
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("DpControl.Domain.Entities.Operator")
                         .WithMany()
-                        .HasForeignKey("OperatorOperatorId");
+                        .HasForeignKey("OperatorId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Scene", b =>
