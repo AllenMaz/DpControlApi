@@ -123,6 +123,39 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// after set a group to operator, means the operator has ability to control the motor group
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="operatorId"></param>
+        /// <returns></returns>
+        public async Task AddGroupToOperator(int groupId, int operatorId)
+        {
+            var _group = _context.Groups.Where(g => g.GroupId == groupId);
+            var _location = _context.Operators.Where(g => g.OperatorId == operatorId);
+
+            _context.GroupOperators.Add(new GroupOperator
+            {
+                GroupId = groupId,
+                OperatorId = operatorId
+            });
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddLocationToOperator(int locationId, int operatorId)
+        {
+            var _group = _context.Locations.Where(g => g.LocationId == locationId);
+            var _location = _context.Operators.Where(g => g.OperatorId == operatorId);
+
+            _context.OperatorLocation.Add(new OperatorLocation
+            {
+                LocationId = locationId,
+                OperatorId = operatorId
+            });
+            await _context.SaveChangesAsync();
+ 
+        }
+
         //async Task<Customer> GetCustomerByProjectNo(string projectNo)
         //{
         //    var query = await _context.Customers

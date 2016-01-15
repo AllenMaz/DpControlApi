@@ -12,5 +12,7 @@ namespace DpControl.Domain.IRepository
         Task<IEnumerable<MOperator>> GetAllAsync(string projectNo);
         Task Remove(int Id);
         Task UpdateById(MOperator mOperator, string projectNo);
+        Task AddGroupToOperator(int groupId, int operatorId);
+        Task AddLocationToOperator(int locationId, int operatorId);
     }
 }
