@@ -29,7 +29,7 @@ namespace DpControl.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired();
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("AlarmId");
 
@@ -79,7 +79,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 20);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("CustomerId");
 
@@ -102,7 +103,8 @@ namespace DpControl.Migrations
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<int?>("SceneId");
 
@@ -168,7 +170,8 @@ namespace DpControl.Migrations
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("HolidayId");
 
@@ -219,7 +222,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("LocationId");
 
@@ -245,7 +249,8 @@ namespace DpControl.Migrations
                     b.Property<int?>("OperatorId");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("LogId");
 
@@ -298,7 +303,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 20);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("OperatorId");
 
@@ -343,7 +349,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("SceneId");
 
@@ -360,7 +367,8 @@ namespace DpControl.Migrations
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<int>("SceneId");
 

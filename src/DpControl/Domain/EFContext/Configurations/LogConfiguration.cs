@@ -16,7 +16,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.HasKey(p => p.LogId);
             entityBuilder.Property(l => l.Comment).HasMaxLength(50);
             entityBuilder.Property(o => o.ModifiedDate).IsRequired();
-            entityBuilder.Property(o => o.RowVersion).IsConcurrencyToken();
+            entityBuilder.Property(o => o.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 
             entityBuilder.HasOne(l => l.LogOf).WithMany(l => l.Logs).IsRequired(false);
             entityBuilder.HasOne(l => l.Operator).WithMany(o => o.Logs).IsRequired(false);
