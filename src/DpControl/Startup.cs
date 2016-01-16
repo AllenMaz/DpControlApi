@@ -14,6 +14,7 @@ using DpControl.Domain.EFContext;
 using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Mvc;
+using DpControl.Utility.Filters;
 
 namespace DpControl
 {
@@ -52,7 +53,10 @@ namespace DpControl
             services.AddEntityFramework()
                 .AddSqlServer();
             
-            var mvcBuilder = services.AddMvc();
+            var mvcBuilder = services.AddMvc(config =>
+            {
+               // config.Filters.Add(new DigestAuthorizationAttribute());
+            });
             //增加支持XML Formatter
             //mvcBuilder.AddXmlDataContractSerializerFormatters();
 
@@ -61,7 +65,9 @@ namespace DpControl
             //    options.Filters.Add(new GlobalExceptionFilter());
 
             //});
-            
+
+            //Add MemoryCache
+            services.AddCaching();
             //Add SqlServerCache
             services.AddSqlServerCache(options =>
              {

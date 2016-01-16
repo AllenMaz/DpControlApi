@@ -18,10 +18,11 @@ using System.Web.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.SqlServer;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.AspNet.Authorization;
 
 namespace DpControl.APIControllers
 {
-
+    [DigestAuthorization]
     public class CustomersController : BaseAPIController
     {
         [FromServices]
@@ -33,10 +34,13 @@ namespace DpControl.APIControllers
         [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
 
+        
+
         /// <summary>
         /// Search all data
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
