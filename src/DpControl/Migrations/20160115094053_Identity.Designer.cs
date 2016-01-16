@@ -8,9 +8,10 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    partial class ShadingContextModelSnapshot : ModelSnapshot
+    [Migration("20160115094053_Identity")]
+    partial class Identity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
