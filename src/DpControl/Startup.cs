@@ -15,6 +15,7 @@ using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Mvc;
 using DpControl.Utility.Filters;
+using DpControl.Utility.Authentication;
 
 namespace DpControl
 {
@@ -123,6 +124,8 @@ namespace DpControl
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
             //HTTP方法覆盖
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
+            //
+           // app.UseMiddleware<DigestAuthenticationMiddleware>();
 
             app.UseStaticFiles();
 

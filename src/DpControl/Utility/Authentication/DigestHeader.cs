@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DpControl.Utility.Authorization
+namespace DpControl.Utility.Authentication
 {
     public class DigestHeader
     {
-        public static DigestHeader Create(string header, string method)
+        public static DigestHeader Create(string headerParams, string method)
         {
             var digestHeader = new DigestHeader { Method = method };
-            var keyValuePairs = header.Replace("\"", String.Empty);
+            var keyValuePairs = headerParams.Replace("\"", String.Empty);
 
             foreach (var keyValuePair in keyValuePairs.Split(','))
             {

@@ -1,4 +1,4 @@
-﻿using DpControl.Utility.Authorization;
+﻿using DpControl.Utility.Authentication;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;

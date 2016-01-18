@@ -22,7 +22,6 @@ using Microsoft.AspNet.Authorization;
 
 namespace DpControl.APIControllers
 {
-    [DigestAuthorization]
     public class CustomersController : BaseAPIController
     {
         [FromServices]
@@ -40,7 +39,6 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles ="Allen")]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]

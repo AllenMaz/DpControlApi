@@ -29,7 +29,8 @@
     "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
     "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
     "Microsoft.Extensions.Caching.SqlServer": "1.0.0-*",
-    "Microsoft.Framework.Caching.SqlConfig": "1.0.0-beta8"
+    "Microsoft.Framework.Caching.SqlConfig": "1.0.0-beta8",
+    "Microsoft.AspNet.Authentication": "1.0.0-rc2-16300"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel",
