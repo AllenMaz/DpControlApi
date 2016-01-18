@@ -39,6 +39,7 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles ="Allen")]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
