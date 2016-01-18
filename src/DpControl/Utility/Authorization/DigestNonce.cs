@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace DpControl.Utility.Authentication
+namespace DpControl.Utility.Authorization
 {
     public class DigestNonce
     {
@@ -36,8 +36,10 @@ namespace DpControl.Utility.Authentication
             // nonce has not expired yet
             if (cacheNonce != null)
             {
+                //十六进制转换成十进制
+                Int32 nc = Convert.ToInt32(nonceCount,16);
                 //nonceCount is greater than the one in record
-                if (Int32.Parse(nonceCount) > cacheNonce)
+                if (nc > cacheNonce)
                 {
                     //update the dictionary to reflect the nonce count just received in this request
                     //更新缓存的值，以表明nonceCount刚刚接收到了请求
@@ -51,10 +53,10 @@ namespace DpControl.Utility.Authentication
 
         private static void SetCache(string nonce, int count)
         {
-            //将nonce作为key,0作为初始值存入缓存,过期时间为10秒
+            //将nonce作为key,0作为初始值存入缓存,过期时间为10分钟
             _cache.Set(nonce, count,
                new MemoryCacheEntryOptions()
-               .SetAbsoluteExpiration(TimeSpan.FromSeconds(10))
+               .SetAbsoluteExpiration(TimeSpan.FromMinutes(10))
                .SetPriority(CacheItemPriority.Normal));
         }
     }

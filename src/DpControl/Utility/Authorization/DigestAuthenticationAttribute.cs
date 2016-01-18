@@ -1,5 +1,4 @@
-﻿using DpControl.Utility.Authentication;
-using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.Extensions.Caching.Memory;
@@ -9,23 +8,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace DpControl.Utility.Filters
+namespace DpControl.Utility.Authorization
 {
-    public class DigestAuthorizationAttribute: AuthorizationFilterAttribute
+    /// <summary>
+    /// 授权
+    /// </summary>
+    public class DigestAuthenticationAttribute:AuthorizationFilterAttribute
     {
         private readonly string Scheme = "Digest ";
-        
+
 
         public override void OnAuthorization(AuthorizationContext context)
         {
+            //如果用户已经被验证了，则不需要再次验证
+            if (context.HttpContext.User != null && context.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return;
+            }
+
             if (!HasAllowAnonymous(context))
             {
                 var userName = AuthorizAndReturnUserName(context.HttpContext);
                 if (!String.IsNullOrEmpty(userName))
                 {
-                    //SetIdentity(actionContext, userName);
+                    //构造ClaimIdentity
+                    SetIdentity(context.HttpContext, userName);
 
                 }
                 else
@@ -36,27 +46,8 @@ namespace DpControl.Utility.Filters
 
                 }
             }
-            
 
-        }
 
-        /// <summary>
-        /// 校验是否允许匿名
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected override bool HasAllowAnonymous(AuthorizationContext context)
-        {
-            
-            bool hasAlloAnonymous = context.Filters.Any(item => item is Microsoft.AspNet.Mvc.Filters.AllowAnonymousFilter);
-
-            //hasAlloAnonymous =  context.Filters.Any(item => item is Microsoft.AspNet.Authorization.AllowAnonymousAttribute);
-            return hasAlloAnonymous;
-        }
-
-        protected override void Fail(AuthorizationContext context)
-        {
-            context.Result = new HttpUnauthorizedResult();
         }
 
         /// <summary>
@@ -66,7 +57,7 @@ namespace DpControl.Utility.Filters
         /// <returns></returns>
         private string AuthorizAndReturnUserName(HttpContext context)
         {
-            StringValues authHeader ;
+            StringValues authHeader;
             if (context.Request.Headers.TryGetValue("Authorization", out authHeader) &&
                 authHeader.Any() &&
                 authHeader[0].StartsWith(Scheme))
@@ -103,7 +94,7 @@ namespace DpControl.Utility.Filters
                 }
             }
             return null;
-            
+
         }
 
         private string GetPassword(string userName)
@@ -118,6 +109,17 @@ namespace DpControl.Utility.Filters
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             context.Response.Headers.Add("WWW-Authenticate", new[] { Scheme + parameter });
 
+        }
+
+        private void SetIdentity(HttpContext context, string userName)
+        {
+            //根据用户名，查询用户信息
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Name, userName));
+            claims.Add(new Claim(ClaimTypes.Role, "Allen"));
+            var claimsIdentity = new ClaimsIdentity(claims, "DigestAuthentication");
+            ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            context.User = claimsPrincipal;
         }
 
     }

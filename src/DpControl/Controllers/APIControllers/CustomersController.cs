@@ -19,6 +19,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.SqlServer;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.AspNet.Authorization;
+using DpControl.Utility.Authorization;
 
 namespace DpControl.APIControllers
 {
@@ -33,13 +34,13 @@ namespace DpControl.APIControllers
         [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
 
-        
+
 
         /// <summary>
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles ="Allen")]
+        [Authorize(Roles ="Allen2")]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
@@ -81,6 +82,7 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
+        [Authorize(Roles ="Allen")]
         [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {

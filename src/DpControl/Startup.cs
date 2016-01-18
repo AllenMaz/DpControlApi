@@ -15,7 +15,7 @@ using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Mvc;
 using DpControl.Utility.Filters;
-using DpControl.Utility.Authentication;
+using DpControl.Utility.Authorization;
 
 namespace DpControl
 {
@@ -124,8 +124,13 @@ namespace DpControl
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
             //HTTP方法覆盖
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
-            //
-           // app.UseMiddleware<DigestAuthenticationMiddleware>();
+            //Digest身份验证
+            app.UseMiddleware<DigestAuthenticationMiddleware>(
+                new AuthenticationOptions() {
+                    Path ="/v1"  //只对API进行身份验证
+                }
+             );
+            
 
             app.UseStaticFiles();
 
