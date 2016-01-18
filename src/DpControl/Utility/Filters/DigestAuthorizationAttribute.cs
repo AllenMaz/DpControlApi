@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DpControl.Utility.Filters
@@ -20,12 +21,19 @@ namespace DpControl.Utility.Filters
 
         public override void OnAuthorization(AuthorizationContext context)
         {
+            //如果用户已经被验证了，则不需要再次验证
+            if (context.HttpContext.User !=null && context.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return;
+            }
+
             if (!HasAllowAnonymous(context))
             {
                 var userName = AuthorizAndReturnUserName(context.HttpContext);
                 if (!String.IsNullOrEmpty(userName))
                 {
-                    //SetIdentity(actionContext, userName);
+                    //构造ClaimIdentity
+                    SetIdentity(context.HttpContext, userName);
 
                 }
                 else
@@ -39,26 +47,7 @@ namespace DpControl.Utility.Filters
             
 
         }
-
-        /// <summary>
-        /// 校验是否允许匿名
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected override bool HasAllowAnonymous(AuthorizationContext context)
-        {
-            
-            bool hasAlloAnonymous = context.Filters.Any(item => item is Microsoft.AspNet.Mvc.Filters.AllowAnonymousFilter);
-
-            //hasAlloAnonymous =  context.Filters.Any(item => item is Microsoft.AspNet.Authorization.AllowAnonymousAttribute);
-            return hasAlloAnonymous;
-        }
-
-        protected override void Fail(AuthorizationContext context)
-        {
-            context.Result = new HttpUnauthorizedResult();
-        }
-
+        
         /// <summary>
         /// Authoriz User
         /// </summary>
@@ -120,5 +109,15 @@ namespace DpControl.Utility.Filters
 
         }
 
+        private void SetIdentity(HttpContext context, string userName)
+        {
+            //根据用户名，查询用户信息
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Name,userName));
+            claims.Add(new Claim(ClaimTypes.Role,"Allen"));
+            var claimsIdentity = new ClaimsIdentity(claims,"DigestAuthentication");
+            ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            context.User = claimsPrincipal;
+        }
     }
 }
