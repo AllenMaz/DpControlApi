@@ -131,6 +131,20 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddLocationToGroup(int locationId, int groupId)
+        {
+            var _group = _context.Groups.Where(g => g.GroupId == groupId);
+            var _location = _context.Locations.Where(g => g.LocationId == locationId);
+
+            _context.GroupLocations.Add(new GroupLocation
+            {
+                GroupId = groupId,
+                LocationId = locationId
+            });
+            await _context.SaveChangesAsync();
+        }
+
+
         //Customer GetCustomerByProjectNo(string projectNo)
         //{
         //    var query =  _context.Customers

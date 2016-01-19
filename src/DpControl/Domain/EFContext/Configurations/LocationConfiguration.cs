@@ -22,7 +22,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(i => i.DeviceSerialNo).HasMaxLength(16);
 
             entityBuilder.Property(l => l.ModifiedDate).IsRequired();
-            entityBuilder.Property(l => l.RowVersion).IsConcurrencyToken();
+            entityBuilder.Property(l => l.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
         }
     }
 }

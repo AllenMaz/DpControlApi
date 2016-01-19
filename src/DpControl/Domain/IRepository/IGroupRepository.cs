@@ -13,5 +13,6 @@ namespace DpControl.Domain.IRepository
         Task RemoveByName(string groupName, string projectNo);
         Task RemoveById(int Id);
         Task Update(MGroup mGroup, string projectNo);
+        Task AddLocationToGroup(int locationId, int groupId);
     }
 }   

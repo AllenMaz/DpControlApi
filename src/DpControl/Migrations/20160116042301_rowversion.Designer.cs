@@ -8,8 +8,8 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    [Migration("20160115032848_initial")]
-    partial class initial
+    [Migration("20160116042301_rowversion")]
+    partial class rowversion
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,7 +29,8 @@ namespace DpControl.Migrations
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("AlarmId");
 
@@ -79,7 +80,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 20);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("CustomerId");
 
@@ -102,7 +104,8 @@ namespace DpControl.Migrations
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<int?>("SceneId");
 
@@ -121,9 +124,13 @@ namespace DpControl.Migrations
                     b.Property<int>("GroupLocationId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("GroupId");
+                    b.Property<int?>("GroupGroupId");
 
-                    b.Property<int?>("LocationId");
+                    b.Property<int>("GroupId");
+
+                    b.Property<int>("LocationId");
+
+                    b.Property<int?>("LocationLocationId");
 
                     b.HasKey("GroupLocationId");
 
@@ -137,9 +144,13 @@ namespace DpControl.Migrations
                     b.Property<int>("GroupOperatorId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("GroupId");
+                    b.Property<int?>("GroupGroupId");
 
-                    b.Property<int?>("OperatorId");
+                    b.Property<int>("GroupId");
+
+                    b.Property<int>("OperatorId");
+
+                    b.Property<int?>("OperatorOperatorId");
 
                     b.HasKey("GroupOperatorId");
 
@@ -160,7 +171,8 @@ namespace DpControl.Migrations
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("HolidayId");
 
@@ -211,7 +223,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("LocationId");
 
@@ -237,7 +250,8 @@ namespace DpControl.Migrations
                     b.Property<int?>("OperatorId");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("LogId");
 
@@ -290,7 +304,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 20);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("OperatorId");
 
@@ -304,9 +319,13 @@ namespace DpControl.Migrations
                     b.Property<int>("OperatorLocationId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("LocationId");
+                    b.Property<int>("LocationId");
 
-                    b.Property<int?>("OperatorId");
+                    b.Property<int?>("LocationLocationId");
+
+                    b.Property<int>("OperatorId");
+
+                    b.Property<int?>("OperatorOperatorId");
 
                     b.HasKey("OperatorLocationId");
 
@@ -331,7 +350,8 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("SceneId");
 
@@ -348,7 +368,8 @@ namespace DpControl.Migrations
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken();
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<int>("SceneId");
 
@@ -393,22 +414,22 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Group")
                         .WithMany()
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("GroupGroupId");
 
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationId");
+                        .HasForeignKey("LocationLocationId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.GroupOperator", b =>
                 {
                     b.HasOne("DpControl.Domain.Entities.Group")
                         .WithMany()
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("GroupGroupId");
 
                     b.HasOne("DpControl.Domain.Entities.Operator")
                         .WithMany()
-                        .HasForeignKey("OperatorId");
+                        .HasForeignKey("OperatorOperatorId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Holiday", b =>
@@ -451,11 +472,11 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationId");
+                        .HasForeignKey("LocationLocationId");
 
                     b.HasOne("DpControl.Domain.Entities.Operator")
                         .WithMany()
-                        .HasForeignKey("OperatorId");
+                        .HasForeignKey("OperatorOperatorId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Scene", b =>
