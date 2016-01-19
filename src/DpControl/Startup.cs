@@ -16,12 +16,15 @@ using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Mvc;
 using DpControl.Utility.Filters;
 using DpControl.Utility.Authorization;
+using DpControl.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using DpControl.Domain.Models;
 
 namespace DpControl
 {
     public class Startup
     {
-        private string pathToDoc ;
+        //private string pathToDoc ;
         public static IConfigurationRoot Configuration { get; set; }
 
         public Startup(IHostingEnvironment env)
@@ -37,12 +40,14 @@ namespace DpControl
             }
             
             //pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
-            pathToDoc = env.MapPath("../DpControl.xml");
+            //使用MapPath或者Combine，Migration数据库的时候会报错？
+            //pathToDoc = env.MapPath("../DpControl.xml");
             builder.AddEnvironmentVariables();
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
         
         
+        private string pathToDoc = "../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml";
        
 
         // This method gets called by the runtime. Use this method to add services to the container
@@ -66,7 +71,7 @@ namespace DpControl
             //    options.Filters.Add(new GlobalExceptionFilter());
 
             //});
-
+            
             //Add MemoryCache
             services.AddCaching();
             //Add SqlServerCache
@@ -78,6 +83,10 @@ namespace DpControl
              }
             );
             
+            //Add Identity
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ShadingContext>()
+            .AddDefaultTokenProviders();
 
             #region  swagger
             services.AddSwaggerGen();
@@ -124,9 +133,12 @@ namespace DpControl
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
             //HTTP方法覆盖
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
-           
+
             
             app.UseStaticFiles();
+
+            //Identity
+            app.UseIdentity();
 
             //app.UseMvc();
             app.UseMvc(routes =>
