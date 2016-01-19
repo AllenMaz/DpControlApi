@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
@@ -20,16 +21,19 @@ namespace DpControl.Utility.Authorization
     {
         public string Roles { get; set; }
 
-        AbstractAuthentication authentication = new BasicAuthentication();
-        //new DigestAuthentication();
+        private AbstractAuthentication _authentication;
+        private IMemoryCache _memoryCach;
 
+        
         public override async Task OnAuthorizationAsync(AuthorizationContext context)
         {
+            InitServices(context.HttpContext);
+
             //if allowanonymous
             if (!HasAllowAnonymous(context))
             {
                 
-                string userName = await authentication.DoAuthentication(context.HttpContext);
+                string userName = await _authentication.DoAuthentication(context.HttpContext);
                 if (!String.IsNullOrEmpty(userName))
                 {
                     if (!await DoAuthorize(context.HttpContext, userName))
@@ -41,13 +45,24 @@ namespace DpControl.Utility.Authorization
                 else
                 {
                     //if authentication fail,return HttpUnauthorizedResult
-                    authentication.Challenge(context.HttpContext);
+                    _authentication.Challenge(context.HttpContext);
                     Fail(context);
 
                 }
             }
 
 
+        }
+
+        /// <summary>
+        /// 获取依赖注入实例
+        /// </summary>
+        /// <param name="httpContext"></param>
+        private void InitServices(HttpContext httpContext)
+        {
+            var serviceProveider = httpContext.RequestServices;  // Controller中，当前请求作用域内注册的Service
+            _authentication = serviceProveider.GetRequiredService<AbstractAuthentication>();
+            _memoryCach = serviceProveider.GetRequiredService<IMemoryCache>();
         }
 
         /// <summary>
