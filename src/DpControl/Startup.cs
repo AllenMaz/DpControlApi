@@ -124,14 +124,8 @@ namespace DpControl
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
             //HTTP方法覆盖
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
-            //Digest身份验证
-            app.UseMiddleware<DigestAuthenticationMiddleware>(
-                new AuthenticationOptions() {
-                    Path ="/v1"  //只对API进行身份验证
-                }
-             );
+           
             
-
             app.UseStaticFiles();
 
             //app.UseMvc();

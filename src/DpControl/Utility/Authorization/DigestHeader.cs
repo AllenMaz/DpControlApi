@@ -62,7 +62,7 @@ namespace DpControl.Utility.Authorization
         {
             return new DigestHeader
             {
-                Realm = "RealmOfBadri", //RealmOfBadri
+                Realm = "DpControl", //RealmOfBadri
                 Nonce = DigestNonce.Generate()
             };
         }
