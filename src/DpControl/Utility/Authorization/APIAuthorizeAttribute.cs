@@ -18,17 +18,18 @@ namespace DpControl.Utility.Authorization
     /// </summary>
     public class APIAuthorizeAttribute:AuthorizationFilterAttribute
     {
-        private readonly string _scheme = "Digest ";
         public string Roles { get; set; }
 
+        AbstractAuthentication authentication = new BasicAuthentication();
+        //new DigestAuthentication();
 
         public override async Task OnAuthorizationAsync(AuthorizationContext context)
         {
             //if allowanonymous
             if (!HasAllowAnonymous(context))
             {
-                DigestAuthentication digestAuthentication = new DigestAuthentication(_scheme);
-                string userName = await digestAuthentication.DoAuthentication(context.HttpContext);
+                
+                string userName = await authentication.DoAuthentication(context.HttpContext);
                 if (!String.IsNullOrEmpty(userName))
                 {
                     if (!await DoAuthorize(context.HttpContext, userName))
@@ -40,7 +41,7 @@ namespace DpControl.Utility.Authorization
                 else
                 {
                     //if authentication fail,return HttpUnauthorizedResult
-                    ChallengeForAuthentication(context.HttpContext);
+                    authentication.Challenge(context.HttpContext);
                     Fail(context);
 
                 }
@@ -67,15 +68,6 @@ namespace DpControl.Utility.Authorization
             context.Result = new HttpUnauthorizedResult();
         }
         
-
-        private void ChallengeForAuthentication(HttpContext context)
-        {
-            var header = DigestHeader.Unauthorized();
-            var parameter = header.ToString();
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            context.Response.Headers.Add("WWW-Authenticate", new[] { _scheme + parameter });
-
-        }
 
         private async void ChallengeForAuthorization(HttpContext context)
         {
