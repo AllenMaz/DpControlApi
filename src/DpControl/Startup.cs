@@ -19,6 +19,9 @@ using DpControl.Utility.Authorization;
 using DpControl.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using DpControl.Domain.Models;
+using DpControl.Utility.Authentication;
+using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNet.Http;
 
 namespace DpControl
 {
@@ -82,11 +85,11 @@ namespace DpControl
                  options.TableName = Configuration["SqlsServerCache:TableName"];
              }
             );
-            
+
             //Add Identity
-            //services.AddIdentity<ApplicationUser, IdentityRole>()
-            //.AddEntityFrameworkStores<ShadingContext>()
-            //.AddDefaultTokenProviders();
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ShadingContext>()
+            .AddDefaultTokenProviders();
 
             #region  swagger
             services.AddSwaggerGen();
@@ -132,14 +135,21 @@ namespace DpControl
 
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+            
+            //Add API Authentication Middleware
+            app.UseMiddleware<APIAuthenticationMiddleware>(
+                new AuthenticationOptions()
+                {
+                    Path = "/v1"  //只对API进行身份验证
+                }
+             );
             //HTTP方法覆盖
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
-            
             app.UseStaticFiles();
 
             //Identity
-            //app.UseIdentity();
+            app.UseIdentity();
 
             //app.UseMvc();
             app.UseMvc(routes =>

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Http;
+﻿using DpControl.Domain.Models;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Primitives;
 using System;
@@ -8,16 +10,19 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace DpControl.Utility.Authorization
+namespace DpControl.Utility.Authentication
 {
     /// <summary>
     /// Digest Authentication
     /// </summary>
     public class DigestAuthentication:AbstractAuthentication
     {
-        public DigestAuthentication()
+        public readonly UserManager<ApplicationUser> _userManager;
+
+        public DigestAuthentication(UserManager<ApplicationUser> userManager)
         {
             base._scheme = "Digest ";
+            _userManager = userManager;
         }
         
 
@@ -26,7 +31,7 @@ namespace DpControl.Utility.Authorization
         /// </summary>
         /// <param name="actionContext"></param>
         /// <returns></returns>
-        protected override async Task<string> CheckUserInfo(string headParams,HttpContext httpContext)
+        protected override string CheckUserInfo(string headParams,HttpContext httpContext)
         {
             
             var header = DigestHeader.Create(headParams, httpContext.Request.Method);
@@ -34,7 +39,7 @@ namespace DpControl.Utility.Authorization
 
             if (DigestNonce.IsValid(header.Nonce, header.NounceCounter))
             {
-                var password = await GetPassword(header.UserName);
+                var password = GetPassword(header.UserName);
 
                 var hash1 = String.Format(
                     "{0}:{1}:{2}",
@@ -73,7 +78,7 @@ namespace DpControl.Utility.Authorization
         }
         
 
-        private async Task<string> GetPassword(string userName)
+        private string GetPassword(string userName)
         {
             return userName;
         }

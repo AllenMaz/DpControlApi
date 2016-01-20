@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DpControl.Utility.Authorization
+namespace DpControl.Utility.Authentication
 {
     public class DigestHeader
     {

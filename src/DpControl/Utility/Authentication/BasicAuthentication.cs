@@ -1,23 +1,28 @@
-﻿using Microsoft.AspNet.Http;
+﻿using DpControl.Domain.Models;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DpControl.Utility.Authorization
+namespace DpControl.Utility.Authentication
 {
     /// <summary>
     /// 
     /// </summary>
     public class BasicAuthentication:AbstractAuthentication
     {
-        public BasicAuthentication()
+        public readonly UserManager<ApplicationUser> _userManager;
+        
+        public BasicAuthentication(UserManager<ApplicationUser> userManager)
         {
             base._scheme = "Basic ";
+            _userManager = userManager;
         }
 
-        protected override async Task<string> CheckUserInfo(string headParams,HttpContext httpContext)
+        protected override string CheckUserInfo(string headParams,HttpContext httpContext)
         {
             string resultUserName = string.Empty;
 
@@ -30,7 +35,7 @@ namespace DpControl.Utility.Authorization
                 string userName = arrUser[0];
                 string passWord = arrUser[1];
                 
-                if (await DoIdentity(userName, passWord))
+                if (DoIdentity(userName, passWord))
                 {
                     resultUserName = userName;
                 }
@@ -53,8 +58,10 @@ namespace DpControl.Utility.Authorization
         /// <param name="userName"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        private async Task<bool> DoIdentity(string userName,string password)
+        private bool DoIdentity(string userName,string password)
         {
+            var user = _userManager.FindByNameAsync(userName);
+            
             return true;
         }
     }

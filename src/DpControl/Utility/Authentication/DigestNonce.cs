@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace DpControl.Utility.Authorization
+namespace DpControl.Utility.Authentication
 {
     public class DigestNonce
     {

@@ -23,6 +23,7 @@ using DpControl.Utility.Authorization;
 
 namespace DpControl.APIControllers
 {
+
     public class CustomersController : BaseAPIController
     {
         [FromServices]
@@ -40,7 +41,7 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize]
+        [Authorize(Roles ="Allen")]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
@@ -82,7 +83,7 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [Authorize(Roles = "allen2")]
         [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
