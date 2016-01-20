@@ -39,8 +39,8 @@ namespace DpControl.Utility.ExceptionHandler
                         exceptionMessage = "System is abnormal ！Error：" + exceptionMessage;
                         
                     }
-
-                    string errMessage = ResponseHandler.ReturnError(exceptionMessage);
+                    int httpStatusCode = (int)HttpStatusCode.InternalServerError;
+                    string errMessage = ResponseHandler.ReturnError(httpStatusCode, exceptionMessage);
                     
                     await context.Response.WriteAsync(errMessage, Encoding.UTF8);
                     

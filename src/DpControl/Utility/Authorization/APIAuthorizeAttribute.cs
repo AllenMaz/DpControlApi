@@ -39,9 +39,15 @@ namespace DpControl.Utility.Authorization
 
         private async Task<bool> DoAuthorize(HttpContext httpContext)
         {
+            bool passAuthorize = false;
+
             ClaimsPrincipal claimsPrincipal = httpContext.User;
             #region Authorize logic
-            bool passAuthorize = true;
+            string username = claimsPrincipal.GetUserName();
+            if (username == Roles)
+            {
+                passAuthorize = true;
+            }
             
             #endregion
             return passAuthorize;
@@ -50,8 +56,9 @@ namespace DpControl.Utility.Authorization
 
         private async void Challenge(HttpContext context)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
-            string errMessage = ResponseHandler.ReturnError("You have no permission!");
+            int httpStatusCode = (int)HttpStatusCode.MethodNotAllowed;
+            context.Response.StatusCode = httpStatusCode;
+            string errMessage = ResponseHandler.ReturnError(httpStatusCode,"You have no permission!");
             await context.Response.WriteAsync(errMessage);
 
         }

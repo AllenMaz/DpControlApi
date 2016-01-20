@@ -37,8 +37,9 @@ namespace DpControl.Utility.Authorization
 
         private async void ChallengeForAuthorization(HttpContext context)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
-            string errMessage = ResponseHandler.ReturnError("You have no permission!");
+            int httpStatusCode = (int)HttpStatusCode.MethodNotAllowed;
+            context.Response.StatusCode = httpStatusCode;
+            string errMessage = ResponseHandler.ReturnError(httpStatusCode, "You have no permission!");
             await context.Response.WriteAsync(errMessage);
 
         }

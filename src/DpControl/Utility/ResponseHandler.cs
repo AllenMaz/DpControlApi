@@ -41,10 +41,10 @@ namespace DpControl.Utility
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public static string ReturnError(string message)
+        public static string ReturnError(int httpStatusCode,string message)
         {
             ErrorResponseModel errResponse = new ErrorResponseModel();
-            errResponse.code = 500;
+            errResponse.code = httpStatusCode;
             errResponse.error = message;
             string errJson = JsonHandler.ToJson(errResponse);
 
