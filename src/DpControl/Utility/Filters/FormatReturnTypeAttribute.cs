@@ -16,9 +16,7 @@ namespace DpControl.Utility.Filters
     /// </summary>
     public class FormatReturnTypeAttribute : ActionFilterAttribute
     {
-        private string _actionReturnType;
-        
-
+      
         /// <summary>
         /// 在controller action result执行之前调用 
         /// 统一数据返回类型

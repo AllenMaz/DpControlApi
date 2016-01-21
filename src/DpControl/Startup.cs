@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,15 +9,9 @@ using DpControl.Domain.Repository;
 using DpControl.Domain.EFContext;
 using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
-using Microsoft.AspNet.Mvc;
-using DpControl.Utility.Filters;
-using DpControl.Utility.Authorization;
-using DpControl.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using DpControl.Domain.Models;
 using DpControl.Utility.Authentication;
-using Microsoft.AspNet.Authentication.Cookies;
-using Microsoft.AspNet.Http;
 
 namespace DpControl
 {

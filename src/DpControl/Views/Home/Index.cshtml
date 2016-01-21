@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HomePage</title>
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <link rel="stylesheet" href="~/css/CssInitialization.css" />
 
     <style>
@@ -32,9 +32,20 @@
             font-style: italic;
         }
         li{padding:10px 0px;}
-        a { text-decoration:underline; } 
+        a { text-decoration:underline; }
+        .firstRetract {padding-left:25px;}
+        .secondRetract {padding-left:35px;}
+        .thirdRetract {padding-left:45px;}
+        .fourRetract {padding-left:55px;}
+        .fiveRetract {padding-left:65px;}
+
     </style>
     <script>
+        $(document).ready(function () {
+            $("#aShowCodeTitle").click(function () {
+                $("#divShowCode").toggle();
+            });
+        });
 
     </script>
 </head>
@@ -48,7 +59,40 @@
         <label style="font-size:large;font-weight:700">There are some Features:</label>
         <ul>
             <li class="content">* Support Basic Authentication <sup class="newStyle">new</sup>
-                
+                <br />
+                <a href="javaScript:void(0)" id="aShowCodeTitle" style="margin-left:20px;">HttpClient Call Method(C#)</a>
+                <div id="divShowCode" style="border:solid;border-color:gray;padding:10px 20px;display:none ;">
+                  <div>    public class Program  </div>
+                  <div>      {                    </div>
+                  <div class="firstRetract">      public static void Main(string[] args)</div>
+                   <div class="firstRetract">{</div>
+                   <div class="secondRetract">     var requestUri = new Uri("http://localhost:44354/v1/Customers");</div>
+                   <div class="secondRetract">     var credCache = new CredentialCache</div>
+                    <div class="secondRetract">{</div>
+                    <div class="thirdRetract"> {</div>
+                    <div class="fourRetract"> requestUri,</div>
+                    <div class="fourRetract"> "Basic",// "Digest",</div>
+                    <div class="fourRetract"> new NetworkCredential("Test", "Test1", "localhost")</div>
+                    <div class="thirdRetract"> }</div>
+                    <div class="secondRetract">  };</div>
+                    <div class="secondRetract">using (var clientHander = new HttpClientHandler</div>
+                    <div class="secondRetract"> {</div>
+                    <div class="thirdRetract"> Credentials = credCache,</div>
+                    <div class="thirdRetract">PreAuthenticate = true</div>
+                    <div class="secondRetract"> })</div>
+                    <div class="secondRetract">using (var httpClient = new HttpClient(clientHander))</div>
+                    <div class="secondRetract">{</div>
+                    <div class="thirdRetract">for (var i = 0; i < 5; i++)</div>
+                    <div class="thirdRetract"> {</div>
+                    <div class="fourRetract"> var responseTask = httpClient.GetAsync(requestUri);</div>
+                    <div class="fourRetract"> var bb = responseTask.Result.Content.ReadAsStringAsync();</div>
+                    <div class="fourRetract"> responseTask.Result.EnsureSuccessStatusCode();</div>
+                    <div class="thirdRetract">}</div>
+                    <div class="secondRetract">}</div>
+                    <div class="firstRetract">}</div>
+                    <div> }</div>
+
+                    </div>
             </li>
             <li class="content">* Support Distributed Cache by SqlServerCache <sup class="newStyle"></sup></li>
             <li class="content">
