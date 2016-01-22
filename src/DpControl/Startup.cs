@@ -108,7 +108,7 @@ namespace DpControl
 
             #endregion
             #region Register Dependency Injection
-            services.AddTransient<ShadingContext, ShadingContext>();
+            services.AddSingleton<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
             #endregion
