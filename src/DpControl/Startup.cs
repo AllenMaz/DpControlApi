@@ -126,7 +126,7 @@ namespace DpControl
                 .MinimumLevel.Warning()
                 .WriteTo.RollingFile(
                 pathFormat: env.MapPath("Warning/Exception.log"),
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}"
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}{NewLine}{NewLine}"
                 ).CreateLogger();
             
             loggerFactory.AddSerilog(logWarning);
