@@ -12,6 +12,9 @@ using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Identity.EntityFramework;
 using DpControl.Domain.Models;
 using DpControl.Utility.Authentication;
+using Serilog.Core;
+using Serilog;
+using Serilog.Events;
 
 namespace DpControl
 {
@@ -56,7 +59,7 @@ namespace DpControl
             {
                // config.Filters.Add(new DigestAuthorizationAttribute());
             });
-            //增加支持XML Formatter
+            #region 增加支持XML Formatter
             //mvcBuilder.AddXmlDataContractSerializerFormatters();
 
             //services.Configure<MvcOptions>(options =>
@@ -64,7 +67,8 @@ namespace DpControl
             //    options.Filters.Add(new GlobalExceptionFilter());
 
             //});
-            
+            #endregion
+            #region Cache
             //Add MemoryCache
             services.AddCaching();
             //Add SqlServerCache
@@ -75,12 +79,12 @@ namespace DpControl
                  options.TableName = Configuration["SqlsServerCache:TableName"];
              }
             );
-
-            //Add Identity
+            #endregion
+            #region  Add Identity
             services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ShadingContext>()
             .AddDefaultTokenProviders();
-
+            #endregion
             #region  swagger
             services.AddSwaggerGen();
             services.ConfigureSwaggerDocument(options =>
@@ -103,18 +107,30 @@ namespace DpControl
             });
 
             #endregion
-
+            #region Register Dependency Injection
             services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
-            
+            #endregion
         }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
+    {
+            
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            #region Serilog Logging
+            var logWarning = new Serilog.LoggerConfiguration()
+                .MinimumLevel.Warning()
+                .WriteTo.RollingFile(
+                pathFormat: env.MapPath("Warning/Exception.log"),
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}"
+                ).CreateLogger();
+            
+            loggerFactory.AddSerilog(logWarning);
+            #endregion
 
             app.UseIISPlatformHandler();
 
@@ -133,7 +149,7 @@ namespace DpControl
                     Path = "/v1"  //只对API进行身份验证
                 }
              );
-            //HTTP方法覆盖
+            //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();

@@ -11,11 +11,23 @@ using DpControl.Domain.Models;
 using System.Text;
 using DpControl.Models;
 using DpControl.Utility;
+using Microsoft.Extensions.Logging;
 
 namespace DpControl.Utility.ExceptionHandler
 {
     public class GlobalExceptionBuilder 
     {
+        private static ILogger _logger;
+        public GlobalExceptionBuilder()
+        {
+
+        }
+
+        public GlobalExceptionBuilder(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
         /// 判断不同的异常并将不同类型的异常转换为HttpStatusCode
         /// </summary>
@@ -37,7 +49,8 @@ namespace DpControl.Utility.ExceptionHandler
                     {
                         //系统异常
                         exceptionMessage = "System is abnormal ！Error：" + exceptionMessage;
-                        
+                        //记录异常日志
+                        _logger.LogWarning(exceptionMessage ,error.Error);
                     }
                     int httpStatusCode = (int)HttpStatusCode.InternalServerError;
                     string errMessage = ResponseHandler.ReturnError(httpStatusCode, exceptionMessage);
