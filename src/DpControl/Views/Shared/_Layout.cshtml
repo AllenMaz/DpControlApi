@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="~/css/CssInitialization.css" />
+
+    <style>
+
+        .divHead {
+            padding: 30px 100px;
+            padding-top:5px;
+            background-color: #12CC18;
+        }
+
+        .divContent {
+            min-height:500px;
+            padding: 50px 100px;
+            background-color: azure;
+        }
+
+        .divFoot{
+
+            height:100px;
+            padding:10px 100px;
+            background-color:aqua
+        }
+        #divHeadRight{
+            float:right ;
+            width:6%;
+        }
+
+        .clear {
+            clear :both ;
+        }
+    </style>
+</head>
+<body>
+    <div class="divHead">
+        <div id="divHeadTop">
+            <div id="divHeadLeft"> </div>
+            <div id="divHeadRight">
+                <a asp-controller="Account" asp-action="Login" style="color:white">Sign In</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div id="divHeadBottom">
+            <label style="font-size:x-large">Restful WebApi For DpControl v1  </label>
+            <label style="font-size:large">More Detail,Click: </label><a style="font-size:large;" href="/Swagger/ui">API Document</a>
+        </div>
+        
+    </div>
+    <div class="divContent">
+        @RenderBody()
+    </div>
+    <div class="divFoot">
+        Welcome to Padmate 
+
+    </div>
+</body>
+</html>

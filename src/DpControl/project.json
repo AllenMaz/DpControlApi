@@ -32,7 +32,8 @@
     "Microsoft.Framework.Caching.SqlConfig": "1.0.0-beta8",
     "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
     "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
-    "Serilog.Framework.Logging": "1.0.0-rc1-final-10083"
+    "Serilog.Framework.Logging": "1.0.0-rc1-final-10083",
+    "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel",
