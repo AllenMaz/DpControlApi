@@ -22,7 +22,7 @@ namespace DpControl.Controllers.APIControllers
         [HttpGet("{projectNo}", Name = "GetByProjectNo")]
         public async Task<IActionResult> GetByProjectNo(string projectNo)
         {
-            var group = await _groupRepository.GetByProjectNoAsync(projectNo);
+            var group = await _groupRepository.GetAll(projectNo);
             if (group == null)
             {
                 return HttpNotFound();
