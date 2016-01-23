@@ -46,7 +46,7 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<MGroup>> GetAllAsync(string projectNo)
+        public async Task<IEnumerable<MGroup>> GetByProjectNoAsync(string projectNo)
         {
             var _customer= await _context.Customers
                         .Include(c => c.Groups)

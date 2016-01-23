@@ -30,9 +30,6 @@ namespace DpControl.APIControllers
         public ICustomerRepository _customerRepository { get; set; }
 
         [FromServices]
-        public IMemoryCache _memoryCache { get; set; }
-
-        [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
 
 
