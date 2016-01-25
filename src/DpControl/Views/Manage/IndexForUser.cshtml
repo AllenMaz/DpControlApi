@@ -1,0 +1,32 @@
+﻿@using System.Collections.Generic
+@using DpControl.Domain.Models
+@inject UserManager<ApplicationUser> userManager
+
+<div style="margin:10px auto;">
+    <a asp-controller="Manage" asp-action="CreateUser" style="margin-right:10px;">Create</a>|
+    <a asp-controller="Manage" asp-action="DeleteUser">Delete</a>
+
+</div>
+<table class="table">
+   
+    <tbody>
+        <tr>
+            <td>User Name</td> 
+            <td>Role</td>
+        </tr>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>
+                    <select style="width:100%">
+                        @foreach (var role in await userManager.GetRolesAsync(user))
+                        {
+                            <option value=@role>@role</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+        }
+     </tbody>
+</table>    

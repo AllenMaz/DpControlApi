@@ -1,0 +1,28 @@
+﻿@using System.Collections.Generic
+@using DpControl.Domain.Models
+@using Microsoft.AspNet.Identity.EntityFramework
+@inject RoleManager<IdentityRole> roleManager
+
+<div style="margin:10px auto;">
+    <a asp-controller="Manage" asp-action="CreateRole" style="margin-right:10px;">Create</a>|
+    <a asp-controller="Manage" asp-action="DeleteRole">Delete</a>
+
+</div>
+<table class="table">
+
+    <tbody>
+        <tr>
+            <td>Role Name</td>
+        </tr>
+        @{
+            var allRoles = roleManager.Roles.ToList();
+            foreach (var role in allRoles)
+            {
+                <tr>
+                    <td>@role.Name</td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>    

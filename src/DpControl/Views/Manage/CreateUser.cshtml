@@ -1,0 +1,69 @@
+﻿@model CreateUserViewModel
+@using Microsoft.AspNet.Identity.EntityFramework
+@inject RoleManager<IdentityRole> roleManager
+@{
+    ViewData["Title"] = "Create";
+}
+<script>
+    $(function () {  
+        $(".rolecheck:checkbox").click(function () {
+
+            var chooseRoles = "";
+            $("[name = ckRole]:checkbox").each(function () {
+                if ($(this).is(":checked")) {
+                    chooseRoles += $(this).attr("value") + ";";
+
+                }
+
+            });
+            $("#tbRole").val(chooseRoles);
+        });
+    });
+   
+</script>
+
+<h2>@ViewData["Title"].</h2>
+
+<div class="col-md-8">
+    <form asp-controller="Manage" asp-action="CreateUser" method="post" class="form-horizontal" role="form">
+        <h4>Create a new account.</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="UserName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Roles" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input id="tbRole" asp-for="Roles" class="form-control" />
+                <span asp-validation-for="Roles" class="text-danger"></span>
+            </div>
+        </div>
+        <div style="padding:10px 130px;">
+            @{ 
+                var allRoles = roleManager.Roles.ToList();
+                foreach (var role in allRoles)
+                {
+                    <input name="ckRole" class="rolecheck" value=@role.Name  type="checkbox" />@role.Name
+                }
+
+            }
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-default">Create</button>
+            </div>
+        </div>
+    </form>
+</div>

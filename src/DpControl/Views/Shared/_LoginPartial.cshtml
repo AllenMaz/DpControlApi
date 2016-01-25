@@ -2,21 +2,18 @@
 
 @if (User.IsSignedIn())
 {
-    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a asp-controller="Manage" asp-action="Index" title="Manage">Hello @User.GetUserName()!</a>
-            </li>
-            <li>
-                <button type="submit" class="btn btn-link navbar-btn navbar-link">Log off</button>
-            </li>
-        </ul>
+    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
+       
+        <label style="color:white;margin-right:10px;">Hello @User.GetUserName()!</label>
+        <a asp-controller="Manage" asp-action="IndexForRole" style="color:white;margin-right:10px;">Add Role</a>
+        <a asp-controller="Manage" asp-action="IndexForUser" style="color:white;margin-right:10px;">Add User</a>
+        
+        <button type="submit" class="btn-link navbar-link" style="color:white">Log off</button>
+            
     </form>
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li><a asp-controller="Account" asp-action="Register">Register</a></li>
-        <li><a asp-controller="Account" asp-action="Login">Log in</a></li>
-    </ul>
+    <a asp-controller="Account" asp-action="InitAdmin" style="color:white;margin-right:10px;">初始化管理员用户</a>
+    <a asp-controller="Account" asp-action="Login" style="color:white">Sign In</a>
 }

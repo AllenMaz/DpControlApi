@@ -81,7 +81,7 @@ namespace DpControl
             );
             #endregion
             #region  Add Identity
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ShadingContext>()
             .AddDefaultTokenProviders();
             #endregion
