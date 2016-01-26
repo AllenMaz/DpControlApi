@@ -38,7 +38,7 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles ="Admin,Public")]
+        [APIAuthorize(Roles ="Public")]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
@@ -80,7 +80,7 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Public")]
         [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
