@@ -80,7 +80,7 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "allen2")]
+        [APIAuthorize(Roles = "Admin")]
         [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
         public async Task<IActionResult> GetByCustomerNo(string customerNo)
         {
