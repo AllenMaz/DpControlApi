@@ -31,22 +31,22 @@
         <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="UserName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-3">
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Password" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-3">
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Roles" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input id="tbRole" asp-for="Roles" class="form-control" />
+            <div class="col-md-3">
+                <input id="tbRole" asp-for="Roles" class="form-control" placeholder="请选择下列角色"/>
                 <span asp-validation-for="Roles" class="text-danger"></span>
             </div>
         </div>
@@ -55,7 +55,8 @@
                 var allRoles = roleManager.Roles.ToList();
                 foreach (var role in allRoles)
                 {
-                    <input name="ckRole" class="rolecheck" value=@role.Name  type="checkbox" />@role.Name
+                    <input name="ckRole" id="tb'@role'" class="rolecheck" value=@role.Name  type="checkbox" style="margin:0 5px;" /><label for="tb'@role'" >@role.Name</label>
+                    
                 }
 
             }
