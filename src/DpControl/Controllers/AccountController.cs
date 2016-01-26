@@ -50,7 +50,7 @@ namespace DpControl.Controllers
         {
             string userName = "Admin";
             string password = "Admin_123";
-            
+            string roleName = "Admin";
             //判断系统中是否已经存在Admin用户
             var admin = _userManager.FindByNameAsync(userName);
             
@@ -62,7 +62,13 @@ namespace DpControl.Controllers
             //新增用户
             var user = new ApplicationUser { UserName = userName };
             var result = await _userManager.CreateAsync(user, password);
-           
+            //新增角色
+            IdentityRole adminRole = new IdentityRole { Name = roleName, NormalizedName = roleName.ToUpper() };
+            result = await _roleManager.CreateAsync(adminRole);
+            //把用户添加到角色
+            var curruser = await _userManager.FindByNameAsync(userName);
+            result = await _userManager.AddToRoleAsync(curruser, roleName);
+
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);

@@ -31,7 +31,7 @@ namespace DpControl.Utility.Authentication
         /// </summary>
         /// <param name="actionContext"></param>
         /// <returns></returns>
-        protected override string CheckUserInfo(string headParams,HttpContext httpContext)
+        protected override async Task<string> CheckUserInfo(string headParams,HttpContext httpContext)
         {
             
             var header = DigestHeader.Create(headParams, httpContext.Request.Method);
@@ -39,7 +39,10 @@ namespace DpControl.Utility.Authentication
 
             if (DigestNonce.IsValid(header.Nonce, header.NounceCounter))
             {
-                var password = GetPassword(header.UserName);
+                var user = await _userManager.FindByNameAsync(header.UserName);
+                //此处密码需要改为明文密码才可校验
+                var password = user.PasswordHash;
+
 
                 var hash1 = String.Format(
                     "{0}:{1}:{2}",

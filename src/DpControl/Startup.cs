@@ -15,6 +15,11 @@ using DpControl.Utility.Authentication;
 using Serilog.Core;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNet.Http;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace DpControl
 {
@@ -84,6 +89,31 @@ namespace DpControl
             services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ShadingContext>()
             .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Cookies.ApplicationCookie.LoginPath = new PathString("/Account/Login");
+                options.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
+                {
+                    OnRedirectToLogin = ctx =>
+                    {
+                        int httpStatusCode = ctx.Response.StatusCode;
+                        if (ctx.Request.Path.StartsWithSegments("/v1")&&
+                        (httpStatusCode == (int)HttpStatusCode.OK //使用Identity Authoriz授权失败时httpStatusCode == (int)HttpStatusCode.OK
+                        || httpStatusCode == (int)HttpStatusCode.Unauthorized
+                        || httpStatusCode == (int)HttpStatusCode.MethodNotAllowed))
+                        {
+
+                            return Task.FromResult<object>(null);
+                        }
+                        else
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                            return Task.FromResult<object>(null);
+                        }
+                    }
+                };
+            });
             #endregion
             #region  swagger
             services.AddSwaggerGen();
@@ -141,22 +171,15 @@ namespace DpControl
 
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+
+            //Identity
+            app.UseIdentity();
             
-            //Add API Authentication Middleware
-            app.UseMiddleware<APIAuthenticationMiddleware>(
-                new AuthenticationOptions()
-                {
-                    Path = "/v1"  //只对API进行身份验证
-                }
-             );
             //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();
-
-            //Identity
-            app.UseIdentity();
-
+            
             //app.UseMvc();
             app.UseMvc(routes =>
             {

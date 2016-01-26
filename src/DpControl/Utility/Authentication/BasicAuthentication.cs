@@ -22,7 +22,7 @@ namespace DpControl.Utility.Authentication
             _userManager = userManager;
         }
 
-        protected override string CheckUserInfo(string headParams,HttpContext httpContext)
+        protected override async Task<string> CheckUserInfo(string headParams,HttpContext httpContext)
         {
             string resultUserName = string.Empty;
 
@@ -34,8 +34,10 @@ namespace DpControl.Utility.Authentication
             {
                 string userName = arrUser[0];
                 string passWord = arrUser[1];
-                
-                if (DoIdentity(userName, passWord))
+
+                var user =await _userManager.FindByNameAsync(userName);
+                bool isRightPassword = await _userManager.CheckPasswordAsync(user,passWord);
+                if (isRightPassword)
                 {
                     resultUserName = userName;
                 }
