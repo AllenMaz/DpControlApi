@@ -141,11 +141,17 @@ namespace DpControl
             services.AddSingleton<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton<IGroupRepository, GroupRepository>();
+            services.AddSingleton<ILocationRepository, LocationRepository>();
+            services.AddSingleton<IOperatorRepository, OperatorRepository>();
+            services.AddSingleton<ISceneRepository, SceneRepository>();
+            services.AddSingleton<ISceneSegmentRepository, SceneSegmentRepository>();
+
             #endregion
         }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
             
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
