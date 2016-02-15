@@ -4,7 +4,7 @@
 
 <div style="margin:10px auto;">
     <a asp-controller="Manage" asp-action="CreateUser" style="margin-right:10px;">Create</a>|
-    <a asp-controller="Manage" asp-action="DeleteUser">Delete</a>
+    <a href="javaScript:void()" id="aDelete">Delete</a>
 
 </div>
 <table class="table">
@@ -98,4 +98,40 @@
         }
     });
 
+    //Delete
+    $("#aDelete").click(function(){
+        var checkedItems = $('input:checkbox[name="ckUser"]:checked');
+        if(checkedItems.length == 0)
+        {
+            alert("Please select records");
+            return ;
+        }
+
+        var userIds =[];
+        checkedItems.each(function() //multiple checkbox的name  
+        {  
+            var id = $(this).val();  
+            userIds.push(id);
+        });  
+        //delete records
+        var jsonUserId = JSON.stringify(userIds);
+        $.ajax({
+            type: "get",//使用get方法访问后台
+            dataType: "json",//返回json格式的数据
+            url: "/Manage/BachDeleteByUserId",
+            data: {"UserIds":jsonUserId},
+            async:false,
+            success: function(message){
+                if(message.Success)
+                {
+                    location.href ="/Manage/IndexForUser";
+                }else{
+                    alert(message.Content);
+                }
+               
+            }
+        });
+
+
+    });
 </script>    
