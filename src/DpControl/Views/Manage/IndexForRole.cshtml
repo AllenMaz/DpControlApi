@@ -76,7 +76,11 @@
         var checkedItems = $('input:checkbox[name="ckRole"]:checked');
         if(checkedItems.length == 0)
         {
-            alert("Please select records");
+            layer.alert("Please select records", {
+                skin: 'layui-layer-molv'
+                        ,closeBtn: 0
+                        ,shift: 5 //动画类型
+            });
             return ;
         }
 
@@ -99,7 +103,13 @@
                 {
                     location.href ="/Manage/IndexForRole";
                 }else{
-                    alert(message.Content);
+
+                    layer.alert(message.Content, {
+                        skin: 'layui-layer-lan'
+                        ,closeBtn: 0
+                        ,shift: 4 //动画类型
+                    });
+
                 }
                
             }

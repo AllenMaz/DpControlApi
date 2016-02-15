@@ -103,7 +103,11 @@
         var checkedItems = $('input:checkbox[name="ckUser"]:checked');
         if(checkedItems.length == 0)
         {
-            alert("Please select records");
+            layer.alert("Please select records", {
+                skin: 'layui-layer-molv'
+                         ,closeBtn: 0
+                         ,shift: 5 //动画类型
+            });
             return ;
         }
 
@@ -126,7 +130,11 @@
                 {
                     location.href ="/Manage/IndexForUser";
                 }else{
-                    alert(message.Content);
+                    layer.alert(message.Content, {
+                        skin: 'layui-layer-molv'
+                        ,closeBtn: 0
+                        ,shift: 5 //动画类型
+                    });
                 }
                
             }
