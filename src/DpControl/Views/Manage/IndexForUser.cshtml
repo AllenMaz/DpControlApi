@@ -9,24 +9,93 @@
 </div>
 <table class="table">
    
-    <tbody>
+    <thead>
         <tr style="background-color:cadetblue">
-            <td>User Name</td> 
-            <td>Role</td>
+            <td>
+                <input id="ckAll" type="checkbox" />
+            </td>
+            <th>UserName</th>
+            <th>Roles</th>
+
         </tr>
-        @foreach (var user in Model)
+    </thead>
+    <tbody data-bind="foreach: UserResult">
+        <tr>
+            <td>
+                <input name="ckUser" data-bind="value:userId" type="checkbox" />
+            </td>
+            <td data-bind="text:userName"></td>
+            <td data-bind="text: roleNames"></td>
+
+        </tr>
+    </tbody>
+</table>
+<!--Script要放在HTML标签后，才能将值绑定到标签-->
+<script type="text/javascript">
+
+    var userResults = @Json.Serialize(ViewData["UserResults"]);
+    
+    function UserResult(userId,userName) {
+        var self = this;
+        self.userId = userId;
+        self.userName = userName;
+        
+        var names ='';
+        //根据用户名，获取对应的角色信息
+        $.ajax({
+            type: "get",//使用get方法访问后台
+            dataType: "json",//返回json格式的数据
+            url: "/Manage/GetRolesByUserName",
+            data: {"UserName":userName},
+            async:false,
+            success: function(data){
+                
+                for(var i=0;i<data.length;i++)
+                {
+                    if(i==0)
+                    {
+                        names += data[i];
+
+                    }else{
+                        names += "、"+ data[i];
+
+                    }
+                } 
+
+            }
+        });
+        
+        self.roleNames = names;
+    }
+
+
+    function AppViewModel() {
+        var self = this;
+        var userResult = [];
+        for (var i = 0; i < userResults.length ; i++)
         {
-            <tr>
-                <td>@user.UserName</td>
-                <td>
-                    <select style="width:100%">
-                        @foreach (var role in await userManager.GetRolesAsync(user))
-                        {
-                            <option value=@role>@role</option>
-                        }
-                    </select>
-                </td>
-            </tr>
+            var id = userResults[i].Id;
+            var name = userResults[i].UserName;
+
+            userResult.push(new UserResult(id,name));
         }
-     </tbody>
-</table>    
+
+        self.UserResult = ko.observableArray(userResult);
+        
+        
+    }
+    
+    // Activates knockout.js
+    ko.applyBindings(new AppViewModel());
+
+
+    $("#ckAll").click(function(){
+        if(this.checked){
+            $("[name = ckUser]:checkbox").prop("checked", true);
+
+        }else{
+            $("[name = ckUser]:checkbox").prop("checked", false);
+        }
+    });
+
+</script>    

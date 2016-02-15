@@ -1,8 +1,4 @@
-﻿@using System.Collections.Generic
-@using DpControl.Domain.Models
-@using Microsoft.AspNet.Identity.EntityFramework
-@inject RoleManager<IdentityRole> roleManager
-
+﻿
 <div style="margin:10px auto;">
     <a asp-controller="Manage" asp-action="CreateRole" style="margin-right:10px;">Create</a>|
     <a asp-controller="Manage" asp-action="DeleteRole">Delete</a>
@@ -10,19 +6,69 @@
 </div>
 <table class="table">
 
-    <tbody>
-        <tr>
-            <td style="background-color:cadetblue">Role Name</td>
-        </tr>
-        @{
-            var allRoles = roleManager.Roles.ToList();
-            foreach (var role in allRoles)
-            {
-                <tr>
-                    <td>@role.Name</td>
-                </tr>
-            }
+    <thead>
+        <tr style="background-color:cadetblue">
+            <td>
+                <input id="ckAll" type="checkbox"/>
+            </td>
+            <th>RoleName</th>
+            <th>NormalizedName</th>
 
-        }
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: RoleResult">
+        <tr>
+            <td >
+                <input name="ckRole" data-bind="value:roleId" type="checkbox"/>
+            </td>
+            <td data-bind="text:roleName"></td>
+            <td data-bind="text:roleNormalizedName"></td>
+
+        </tr>
     </tbody>
+
 </table>    
+
+<!--Script要放在HTML标签后，才能将值绑定到标签-->
+<script type="text/javascript">
+    
+    //var roleResults= @Html.Raw(Json.Serialize(Model));
+    var roleResults = @Json.Serialize(ViewData["RoleResults"]);
+    
+    function RoleResult(roleId,roleName,roleNormalizedName) {
+        var self = this;
+        self.roleId = roleId;
+        self.roleName = roleName;
+        self.roleNormalizedName = ko.observable(roleNormalizedName);
+    }
+
+
+    function AppViewModel() {
+        var self = this;
+        var roleResult = [];
+        for (var i = 0; i < roleResults.length ; i++)
+        {
+            var id = roleResults[i].Id;
+            var name = roleResults[i].Name;
+            var normalizedName = roleResults[i].NormalizedName;
+
+            roleResult.push(new RoleResult(id,name,normalizedName));
+        }
+
+        self.RoleResult = ko.observableArray(roleResult);
+    }
+
+    // Activates knockout.js
+    ko.applyBindings(new AppViewModel());
+
+
+    $("#ckAll").click(function(){    
+        if(this.checked){    
+            $("[name = ckRole]:checkbox").prop("checked", true);  
+
+        }else{    
+            $("[name = ckRole]:checkbox").prop("checked", false); 
+        }    
+    }); 
+
+</script>
