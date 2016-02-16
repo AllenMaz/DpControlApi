@@ -4,21 +4,32 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/knockout/dist/knockout.js"></script>
-    <script src="~/lib/layer/layer.js"></script>
-    <link rel="stylesheet" href="~/css/CssInitialization.css" />
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-table/dist/bootstrap-table.css" />
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/bootstrap-table/dist/bootstrap-table.min.js"></script>
+        <script src="~/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js"></script>
     </environment>
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css"
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+
+        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/locale/bootstrap-table-zh-CN.min.js"></script>
     </environment>
+    <link rel="stylesheet" href="~/css/CssInitialization.css" />
+
+    <script src="~/lib/knockout/dist/knockout.js"></script>
+    <script src="~/lib/layer/layer.js"></script>
     
+
     <style>
 
         .divHead {
@@ -28,7 +39,7 @@
         }
 
         .divContent {
-            min-height:500px;
+            min-height:300px;
             padding: 50px 100px;
             background-color: azure;
         }
@@ -63,7 +74,7 @@
             <div id="divHeadLeft">&nbsp;</div>
             <div id="divHeadRight">
                 @await Html.PartialAsync("_LoginPartial")
-                
+
             </div>
             <div class="clear"></div>
         </div>
@@ -73,13 +84,13 @@
             <br />
             <label><a href="http://192.168.20.239:8080/bugnet" target="_blank"  style="color:#EEE">DpControl Project Management</a></label>
         </div>
-        
+
     </div>
     <div class="divContent">
         @RenderBody()
     </div>
     <div class="divFoot">
-        Welcome to Padmate 
+        Welcome to Padmate
 
     </div>
 </body>

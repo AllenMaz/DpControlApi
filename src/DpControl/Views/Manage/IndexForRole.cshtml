@@ -1,119 +1,173 @@
 ﻿
-<div style="margin:10px auto;">
-    <a asp-controller="Manage" asp-action="CreateRole" style="margin-right:10px;">Create</a>|
-    <a href="javaScript:void()" id="aDelete">Delete</a>
 
+<div class="container">
+    <div class="panel-group" id="divSearch">
+        <div class="panel panel-danger">
+            <div>
+                <div style="float:left;">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group has-success">
+                            <label class="col-sm-1 control-label text-right fa-align-center">Name</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="name">
+                            </div>
+
+                            <label class="col-sm-3 control-label text-right">NormalizedName</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="normalizedName">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="float:right;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#divSearch"
+                                href="#divAdvancedSearch" class="glyphicon glyphicon-chevron-up">
+                                高级检索
+                            </a>
+                        </h4>
+                    </div>
+                </div>
+                <div style="clear:both;"></div>
+
+            </div>
+            
+            <div id="divAdvancedSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    添加其余查询条件
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toolbar">
+        <button id="btnAdd" class="btn btn-primary">
+            <i class="glyphicon glyphicon-plus"></i>Add
+        </button>
+        <button id="btnEdit" class="btn btn-success">
+            <i class="glyphicon glyphicon-plus"></i>Edit
+        </button>
+        <button id="btnDelete" class="btn btn-danger">
+            <i class="glyphicon glyphicon-remove"></i> Delete
+        </button>
+        
+    </div>
+    <table id="table"></table>
 </div>
-<table class="table">
 
-    <thead>
-        <tr style="background-color:cadetblue">
-            <td>
-                <input id="ckAll" type="checkbox"/>
-            </td>
-            <th>RoleName</th>
-            <th>NormalizedName</th>
-
-        </tr>
-    </thead>
-    <tbody data-bind="foreach: RoleResult">
-        <tr>
-            <td >
-                <input name="ckRole" data-bind="value:roleId" type="checkbox"/>
-            </td>
-            <td data-bind="text:roleName"></td>
-            <td data-bind="text:roleNormalizedName"></td>
-
-        </tr>
-    </tbody>
-
-</table>    
-
+    
 <!--Script要放在HTML标签后，才能将值绑定到标签-->
-<script type="text/javascript">
-    
-    //var roleResults= @Html.Raw(Json.Serialize(Model));
-    var roleResults = @Json.Serialize(ViewData["RoleResults"]);
-    
-    function RoleResult(roleId,roleName,roleNormalizedName) {
-        var self = this;
-        self.roleId = roleId;
-        self.roleName = roleName;
-        self.roleNormalizedName = ko.observable(roleNormalizedName);
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        InitTable();
+        InitToolBarButton();
+    });
+
+        
+
+    function InitTable()
+    {
+        $('#table').bootstrapTable({
+            height: $(document.body).height() - $("#divSearch").height() - $("#toolbar").height(),
+            method: 'post',                 //The method type to request remote data.
+            url: '/Manage/GetRolePageData',
+            dataType: "json",               //The type of data that you are expecting back from the server.
+            contentType:'application/json',
+            pagination: true,               //True to show a pagination toolbar on table bottom.
+            pageSize: 10,                   //初始化每页显示几条
+            pageNumber:1,                   //初始化在第几页
+            pageList: [10,25,50,100,200,'All'],
+            sidePagination: "server",       //服务端请求
+            idField:'Id',
+            toolbar:'#toolbar',
+            showRefresh:true,
+            search:true,
+            queryParams: ConstructQueryParams,
+            // queryParamsType: "limit",
+            locale:'en-US',
+            columns: [{
+                checkbox: true
+            },
+            {
+                field: 'Id',
+                title: 'Id',
+                visible:false
+            },
+            {
+                field: 'Name',
+                title: 'Name'
+            },
+            {
+                field: 'NormalizedName',
+                title: 'NormalizedName'
+            }
+            ]
+        });
     }
 
+    function ConstructQueryParams(param)
+    {
+        var params = {
+            limit: param.limit, //页面大小
+            offset:param.offset,//偏移数量
+            page: param.offset/param.limit, //页码
 
-    function AppViewModel() {
-        var self = this;
-        var roleResult = [];
-        for (var i = 0; i < roleResults.length ; i++)
-        {
-            var id = roleResults[i].Id;
-            var name = roleResults[i].Name;
-            var normalizedName = roleResults[i].NormalizedName;
-
-            roleResult.push(new RoleResult(id,name,normalizedName));
-        }
-
-        self.RoleResult = ko.observableArray(roleResult);
+        };
+        return params;
     }
 
-    // Activates knockout.js
-    ko.applyBindings(new AppViewModel());
+    function InitToolBarButton()
+    {
+        $("#btnAdd").click(function(){
+            location.href="/Manage/CreateRole";
+        });
 
+        $("#btnDelete").click(function(){
 
-    $("#ckAll").click(function(){    
-        if(this.checked){    
-            $("[name = ckRole]:checkbox").prop("checked", true);  
+            var selections = $('#table').bootstrapTable('getSelections');
+            if(selections.length == 0)
+            {
+                layer.alert("Please select records", {
+                    skin: 'layui-layer-molv'
+                            ,closeBtn: 0
+                            ,shift: 5 //动画类型
+                });
+                return ;
+            }
 
-        }else{    
-            $("[name = ckRole]:checkbox").prop("checked", false); 
-        }    
-    }); 
+            var roleIds =[];
+            for(var i=0;i<selections.length;i++)
+            {
+                var id = selections[i].Id;
+                roleIds.push(id);
+            }
+            //delete records
+            var jsonRoleIds = JSON.stringify(roleIds);
+            $.ajax({
+                type: "get",//使用get方法访问后台
+                dataType: "json",//返回json格式的数据
+                url: "/Manage/BachDeleteByRoleId",
+                data: {"RoleIds":jsonRoleIds},
+                async:false,
+                success: function(message){
+                    if(message.Success)
+                    {
+                        //重新加载
+                        $('#table').bootstrapTable('refresh');
+                    }else{
 
-    //Delete
-    $("#aDelete").click(function(){
-        var checkedItems = $('input:checkbox[name="ckRole"]:checked');
-        if(checkedItems.length == 0)
-        {
-            layer.alert("Please select records", {
-                skin: 'layui-layer-molv'
-                        ,closeBtn: 0
-                        ,shift: 5 //动画类型
-            });
-            return ;
-        }
+                        layer.alert(message.Content, {
+                            skin: 'layui-layer-lan'
+                            ,closeBtn: 0
+                            ,shift: 4 //动画类型
+                        });
 
-        var roleIds =[];
-        checkedItems.each(function() //multiple checkbox的name  
-        {  
-            var id = $(this).val();  
-            roleIds.push(id);
-        });  
-        //delete records
-        var jsonRoleIds = JSON.stringify(roleIds);
-        $.ajax({
-            type: "get",//使用get方法访问后台
-            dataType: "json",//返回json格式的数据
-            url: "/Manage/BachDeleteByRoleId",
-            data: {"RoleIds":jsonRoleIds},
-            async:false,
-            success: function(message){
-                if(message.Success)
-                {
-                    location.href ="/Manage/IndexForRole";
-                }else{
-
-                    layer.alert(message.Content, {
-                        skin: 'layui-layer-lan'
-                        ,closeBtn: 0
-                        ,shift: 4 //动画类型
-                    });
+                    }
 
                 }
-               
-            }
+            });
         });
-    });
+    }
 
 </script>
