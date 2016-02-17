@@ -123,6 +123,14 @@
             location.href="/Manage/CreateRole";
         });
 
+        $("#btnEdit").click(function () {
+            layer.alert("Edit is not enabled", {
+                skin: 'layui-layer-molv'
+                           , closeBtn: 0
+                           , shift: 5 //动画类型
+            });
+        });
+
         $("#btnDelete").click(function(){
 
             var selections = $('#table').bootstrapTable('getSelections');
