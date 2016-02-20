@@ -25,7 +25,7 @@ namespace DpControl
 {
     public class Startup
     {
-        private string pathToDoc ;
+        private string pathToDoc;
         public static IConfigurationRoot Configuration { get; set; }
 
         public Startup(IHostingEnvironment env)
@@ -33,8 +33,8 @@ namespace DpControl
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json",optional:true) ;
-            
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
             if (env.IsEnvironment("Development"))
             {
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
@@ -48,7 +48,7 @@ namespace DpControl
             Configuration = builder.Build();
         }
 
-        
+
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
@@ -57,10 +57,10 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer();
-            
+
             var mvcBuilder = services.AddMvc(config =>
             {
-               // config.Filters.Add(new DigestAuthorizationAttribute());
+                // config.Filters.Add(new DigestAuthorizationAttribute());
             });
             #region 增加支持XML Formatter
             //mvcBuilder.AddXmlDataContractSerializerFormatters();
@@ -76,11 +76,11 @@ namespace DpControl
             services.AddCaching();
             //Add SqlServerCache
             services.AddSqlServerCache(options =>
-             {
-                 options.ConnectionString = Configuration["SqlsServerCache:ConnectionString"];
-                 options.SchemaName = Configuration["SqlsServerCache:SchemaName"];
-                 options.TableName = Configuration["SqlsServerCache:TableName"];
-             }
+            {
+                options.ConnectionString = Configuration["SqlsServerCache:ConnectionString"];
+                options.SchemaName = Configuration["SqlsServerCache:SchemaName"];
+                options.TableName = Configuration["SqlsServerCache:TableName"];
+            }
             );
             #endregion
             #region  Add Identity
@@ -96,7 +96,7 @@ namespace DpControl
                     OnRedirectToLogin = ctx =>
                     {
                         int httpStatusCode = ctx.Response.StatusCode;
-                        if (ctx.Request.Path.StartsWithSegments("/v1")&&
+                        if (ctx.Request.Path.StartsWithSegments("/v1") &&
                         (httpStatusCode == (int)HttpStatusCode.OK //使用Identity Authoriz授权失败时httpStatusCode == (int)HttpStatusCode.OK
                         || httpStatusCode == (int)HttpStatusCode.Unauthorized
                         || httpStatusCode == (int)HttpStatusCode.MethodNotAllowed))
@@ -150,8 +150,8 @@ namespace DpControl
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-    {
-            
+        {
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -162,7 +162,7 @@ namespace DpControl
                 pathFormat: env.MapPath("Warning/Exception.log"),
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}{NewLine}{NewLine}"
                 ).CreateLogger();
-            
+
             loggerFactory.AddSerilog(logWarning);
             #endregion
 
@@ -174,16 +174,16 @@ namespace DpControl
             app.UseApplicationInsightsExceptionTelemetry();
 
             //捕获全局异常消息
-            app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+            app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
 
             //Identity
             app.UseIdentity();
-            
+
             //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();
-            
+
             //app.UseMvc();
             app.UseMvc(routes =>
             {
@@ -191,12 +191,12 @@ namespace DpControl
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
 
-            
+
 
             DbInitialization.Initialize(app.ApplicationServices);
         }
@@ -204,5 +204,5 @@ namespace DpControl
         // Entry point for the application.
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
-    
+
 }
