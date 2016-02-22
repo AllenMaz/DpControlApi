@@ -14,7 +14,7 @@ namespace DpControl.Domain.EFContext
     {
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<AlarmMessage> AlarmMessages { get; set; }
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Project> Projects { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Operator> Operators { get; set; }
         public DbSet<GroupLocation> GroupLocations { get; set; }
@@ -26,6 +26,7 @@ namespace DpControl.Domain.EFContext
         public DbSet<OperatorLocation> OperatorLocation { get; set; }
         public DbSet<Scene> Scenes { get; set; }
         public DbSet<SceneSegment> SceneSegments { get; set; }
+        public DbSet<Customer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,7 +34,7 @@ namespace DpControl.Domain.EFContext
 
             new AlarmMessageConfiguration(modelBuilder.Entity<AlarmMessage>());
             new AlarmConfiguration(modelBuilder.Entity<Alarm>());
-            new CustomerConfiguration(modelBuilder.Entity<Customer>());
+            new ProjectConfiguration(modelBuilder.Entity<Project>());
             new GroupConfiguration(modelBuilder.Entity<Group>());
             new GroupOperatorConfiguration(modelBuilder.Entity<GroupOperator>());
             new GroupLocationConfiguration(modelBuilder.Entity<GroupLocation>());
@@ -45,6 +46,7 @@ namespace DpControl.Domain.EFContext
             new SceneConfiguration(modelBuilder.Entity<Scene>());
             new SceneSegmentConfiguration(modelBuilder.Entity<SceneSegment>());
             new OperatorConfiguration(modelBuilder.Entity<Operator>());
+            
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

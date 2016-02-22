@@ -34,17 +34,17 @@ namespace DpControl
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
-            
+
             //pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
             //使用MapPath或者Combine，Migration数据库的时候会报错？
             pathToDoc = env.MapPath("../DpControl.xml");
             builder.AddEnvironmentVariables();
             Configuration = builder.Build().ReloadOnChanged("appsettings.json");
         }
-        
-        
+
+
         //private string pathToDoc = "../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml";
-       
+
 
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
@@ -54,7 +54,7 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer();
-            
+
             var mvcBuilder = services.AddMvc(config =>
             {
                // config.Filters.Add(new DigestAuthorizationAttribute());
@@ -110,13 +110,13 @@ namespace DpControl
             #region Register Dependency Injection
             services.AddSingleton<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
-            services.AddSingleton<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton<IProjectRepository, CustomerRepository>();
             #endregion
         }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-    {
+        {
             
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -141,7 +141,7 @@ namespace DpControl
 
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
-            
+
             //Add API Authentication Middleware
             app.UseMiddleware<APIAuthenticationMiddleware>(
                 new AuthenticationOptions()
@@ -164,7 +164,7 @@ namespace DpControl
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();

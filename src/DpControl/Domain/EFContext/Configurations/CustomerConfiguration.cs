@@ -12,20 +12,14 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public CustomerConfiguration(EntityTypeBuilder<Customer> entityBuilder)
         {
-            entityBuilder.HasKey(c => c.CustomerId);
             entityBuilder.ToTable("Customers", "ControlSystem");
-            entityBuilder.Property(c => c.CustomerName).HasMaxLength(60).IsRequired();            // Name
-            entityBuilder.Property(c => c.CustomerNo).HasMaxLength(20).IsRequired();
-            entityBuilder.Property(c => c.ProjectName).HasMaxLength(60).IsRequired();            // Name
-            entityBuilder.Property(c => c.ProjectNo).HasMaxLength(20).IsRequired();
-            entityBuilder.Property(p => p.ModifiedDate).IsRequired();
-            entityBuilder.Property(p => p.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();      //.IsRowVersion();
+            entityBuilder.HasKey(a => a.CustomerId);
+            entityBuilder.Property(c => c.CustomerName).HasMaxLength(50);
+            entityBuilder.Property(c => c.CustomerNo).HasMaxLength(50);
+            entityBuilder.Property(a => a.ModifiedDate).IsRequired();
+            entityBuilder.Property(a => a.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
-            entityBuilder.HasMany(p => p.Operators).WithOne(o => o.Customer).HasForeignKey(o => o.CustomerId);
-            entityBuilder.HasMany(p => p.DeviceLocations).WithOne(l => l.Customer).HasForeignKey(l => l.CustomerId);
-            entityBuilder.HasMany(p => p.Groups).WithOne(l => l.Customer).HasForeignKey(l => l.CustomerId);
-            entityBuilder.HasMany(p => p.Scenes).WithOne(l => l.Customer).HasForeignKey(l => l.CustomerId);
-            entityBuilder.HasMany(p => p.Holidays).WithOne(l => l.Customer).HasForeignKey(l => l.CustomerId);
+            entityBuilder.HasMany(c => c.Projects).WithOne(p => p.Customer).HasForeignKey(p => p.CustomerId);
         }
     }
 }

@@ -8,9 +8,7 @@ namespace DpControl.Domain.Models
     public class MCustomer
     {
         public int CustomerId { get; set; }
-        public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
-        public string ProjectName { get; set; }
-        public string ProjectNo { get; set; }
+        public string CustomerNo { get; set; }
     }
 }

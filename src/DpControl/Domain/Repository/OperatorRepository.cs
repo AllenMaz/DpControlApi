@@ -31,7 +31,7 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Operator
-            var _customer = await _context.Customers
+            var _customer = await _context.Projects
                 .Include(c => c.Operators)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
@@ -44,7 +44,7 @@ namespace DpControl.Domain.Repository
                 Description=mOperator.Description,
                 Password=mOperator.Password,
                 ModifiedDate = DateTime.Now,
-                CustomerId = _customer.CustomerId
+                ProjectId = _customer.ProjectId
             };
             _context.Operators.Add(_operator);
             await _context.SaveChangesAsync();
@@ -58,7 +58,7 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Operator
-            var _customer = await _context.Customers
+            var _customer = await _context.Projects
                 .Include(c => c.Operators)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
@@ -107,7 +107,7 @@ namespace DpControl.Domain.Repository
 
         public async Task UpdateById(MOperator mOperator, string projectNo)
         {
-            var _customer = await _context.Customers
+            var _customer = await _context.Projects
                 .Include(c => c.Operators)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
