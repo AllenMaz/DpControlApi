@@ -13,6 +13,18 @@ using System.Threading.Tasks;
 
 namespace DpControl.Utility.Authentication
 {
+    /*  User this Middleware you must add:
+             app.UseIdentity();
+
+            //Add API Authentication Middleware
+            //app.UseMiddleware<APIAuthenticationMiddleware>(
+            //    new AuthenticationOptions()
+            //    {
+            //        Path = "/v1"  //只对API进行身份验证
+            //    }
+            // );
+       and set this config after  app.UseIdentity();
+    */
     /// <summary>
     /// API Authentication 
     /// </summary>
@@ -41,7 +53,9 @@ namespace DpControl.Utility.Authentication
         {
             if (httpContext.Request.Path.StartsWithSegments(_path))
             {
-                string userName =  _authentication.DoAuthentication(httpContext);
+                //string userName =  _authentication.DoAuthentication(httpContext);
+                string userName = "";
+
                 if (!string.IsNullOrEmpty(userName))
                 {
                     SetIdentity(httpContext,userName);

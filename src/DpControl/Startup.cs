@@ -15,37 +15,40 @@ using DpControl.Utility.Authentication;
 using Serilog.Core;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNet.Http;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace DpControl
 {
     public class Startup
     {
-        private string pathToDoc ;
+        private string pathToDoc;
         public static IConfigurationRoot Configuration { get; set; }
 
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsEnvironment("Development"))
             {
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
-
-            //pathToDoc = env.MapPath("../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml");
+            
             //使用MapPath或者Combine，Migration数据库的时候会报错？
-            pathToDoc = env.MapPath("../DpControl.xml");
+            //pathToDoc = env.MapPath("DpControl.xml");
+            pathToDoc = "../wwwroot/DpControl.xml";
             builder.AddEnvironmentVariables();
-            Configuration = builder.Build().ReloadOnChanged("appsettings.json");
+            Configuration = builder.Build();
         }
-
-
-        //private string pathToDoc = "../../../artifacts/bin/DpControl/Debug/dnx451/DpControl.xml";
-
-
+        
+        
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
@@ -54,7 +57,7 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer();
-
+            
             var mvcBuilder = services.AddMvc(config =>
             {
                // config.Filters.Add(new DigestAuthorizationAttribute());
@@ -84,6 +87,31 @@ namespace DpControl
             services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ShadingContext>()
             .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Cookies.ApplicationCookie.LoginPath = new PathString("/Account/Login");
+                options.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
+                {
+                    OnRedirectToLogin = ctx =>
+                    {
+                        int httpStatusCode = ctx.Response.StatusCode;
+                        if (ctx.Request.Path.StartsWithSegments("/v1") &&
+                        (httpStatusCode == (int)HttpStatusCode.OK //使用Identity Authoriz授权失败时httpStatusCode == (int)HttpStatusCode.OK
+                        || httpStatusCode == (int)HttpStatusCode.Unauthorized
+                        || httpStatusCode == (int)HttpStatusCode.MethodNotAllowed))
+                        {
+
+                            return Task.FromResult<object>(null);
+                        }
+                        else
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                            return Task.FromResult<object>(null);
+                        }
+                    }
+                };
+            });
             #endregion
             #region  swagger
             services.AddSwaggerGen();
@@ -110,13 +138,19 @@ namespace DpControl
             #region Register Dependency Injection
             services.AddSingleton<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
-            services.AddSingleton<IProjectRepository, CustomerRepository>();
+            services.AddSingleton<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton<IGroupRepository, GroupRepository>();
+            services.AddSingleton<ILocationRepository, LocationRepository>();
+            services.AddSingleton<IOperatorRepository, OperatorRepository>();
+            services.AddSingleton<ISceneRepository, SceneRepository>();
+            services.AddSingleton<ISceneSegmentRepository, SceneSegmentRepository>();
+
             #endregion
         }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
+    {
             
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -140,22 +174,15 @@ namespace DpControl
             app.UseApplicationInsightsExceptionTelemetry();
 
             //捕获全局异常消息
-            app.UseExceptionHandler(errorApp =>GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+            app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
 
-            //Add API Authentication Middleware
-            app.UseMiddleware<APIAuthenticationMiddleware>(
-                new AuthenticationOptions()
-                {
-                    Path = "/v1"  //只对API进行身份验证
-                }
-             );
+            //Identity
+            app.UseIdentity();
+            
             //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();
-
-            //Identity
-            app.UseIdentity();
 
             //app.UseMvc();
             app.UseMvc(routes =>
@@ -164,7 +191,7 @@ namespace DpControl
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
+            
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
@@ -177,4 +204,5 @@ namespace DpControl
         // Entry point for the application.
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
+
 }

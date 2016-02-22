@@ -21,7 +21,7 @@ namespace DpControl.Utility.Authentication
         /// </summary>
         /// <param name="httpContext"></param>
         /// <returns></returns>
-        public string DoAuthentication(HttpContext httpContext)
+        public async Task<string> DoAuthentication(HttpContext httpContext)
         {
             string userName = string.Empty;
             StringValues authHeader;
@@ -30,7 +30,7 @@ namespace DpControl.Utility.Authentication
                 authHeader[0].StartsWith(_scheme))
             {
                 var headParams = authHeader.First().Substring(_scheme.Length);
-                userName = CheckUserInfo(headParams,httpContext);
+                userName = await CheckUserInfo(headParams,httpContext);
 
             }
             return userName;
@@ -46,6 +46,6 @@ namespace DpControl.Utility.Authentication
         }
         
 
-        protected abstract string CheckUserInfo(string headParams, HttpContext httpContext);
+        protected abstract Task<string> CheckUserInfo(string headParams, HttpContext httpContext);
     }
 }

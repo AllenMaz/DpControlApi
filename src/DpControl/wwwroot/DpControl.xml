@@ -1,0 +1,343 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DpControl</name>
+    </assembly>
+    <members>
+        <member name="M:DpControl.APIControllers.CustomersController.GetAll(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.GetByCustomerNo(System.String)">
+            <summary>
+            Search data by CustomerNo
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.Post(DpControl.Domain.Models.MCustomer)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.Update(System.Int32,DpControl.Domain.Models.MCustomer)">
+            <summary>
+            Edit data by CustomerId
+            </summary>
+            <param name="customerNo"></param>
+            <param name="customer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.DeleteByCustomerId(System.Int32)">
+            <summary>
+            Delete data by CustomerNo
+            </summary>
+            <param name="customerId"></param>
+        </member>
+        <member name="P:DpControl.Domain.Models.Query.orderby">
+            <summary>
+            orderby 
+            </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.Query.skip">
+            <summary>
+            跳过前N条
+            </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.Query.top">
+            <summary>
+            返回前N条
+            </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.Query.select">
+            <summary>
+            选中要返回的属性结果
+            </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.OrderBy.OrderbyField">
+            <summary>
+            orderby field name
+            </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.OrderBy.OrderbyBehavior">
+            <summary>
+            orderby behavior (desc/asc or empty)
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Repository.SceneSegmentRepository.UpdateById(DpControl.Domain.Models.MSceneSegment,System.Int32)">
+            <summary>
+            update a single segment by segmentId
+            </summary>
+            <param name="msceneSegment"></param>
+            <param name="sceneId"></param>
+            <returns></returns>
+        </member>
+        <member name="F:DpControl.Models.Common.ActionReturnType_GetList">
+            <summary>
+            Action使用GET返回List数据
+            </summary>
+        </member>
+        <member name="F:DpControl.Models.Common.ActionReturnType_GetSingle">
+            <summary>
+            Action使用GET返回单条数据
+            </summary>
+        </member>
+        <member name="F:DpControl.Models.Common.ActionReturnType_Post">
+            <summary>
+            Action使用POST
+            </summary>
+        </member>
+        <member name="F:DpControl.Models.Common.ActionReturnType_Put">
+            <summary>
+            Action使用PUT
+            </summary>
+        </member>
+        <member name="F:DpControl.Models.Common.ActionReturnType_Delete">
+            <summary>
+            Action使用DELETE
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.QueryModel.orderby">
+            <summary>
+            排序
+            格式：orderby=name,price desc/asc
+                  orderby=name 
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.QueryModel.skip">
+            <summary>
+            跳过前N条
+            格式：skip=10
+            @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.QueryModel.top">
+            <summary>
+            返回前N条
+            格式：top=20
+            @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.QueryModel.select">
+            <summary>
+            选中要返回的属性结果
+            格式：select = name,price
+            </summary>
+        </member>
+        <member name="M:DpControl.Models.QueryModel.#ctor">
+            <summary>
+            Conver s value to result
+            </summary>
+            <param name="s"></param>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="P:DpControl.Models.OrderBy.OrderbyField">
+            <summary>
+            orderby field name
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.OrderBy.OrderbyBehavior">
+            <summary>
+            orderby behavior (desc/asc or empty)
+            </summary>
+        </member>
+        <member name="T:DpControl.Models.ListResponseModel`1">
+            <summary>
+            返回结果是list的消息构造
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:DpControl.Models.SingleResponseModel`1">
+            <summary>
+            返回结果是单条数据的消息构造
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:DpControl.Models.ErrorResponseModel">
+            <summary>
+            API错误消息构造
+            </summary>
+        </member>
+        <member name="M:DpControl.Utility.ModelHandler.ConverEntityToModel``2(System.Collections.Generic.List{``1})">
+            <summary>
+            Conver Entity To Model
+            </summary>
+            <typeparam name="M"></typeparam>
+            <typeparam name="E"></typeparam>
+            <param name="entitys"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.ModelHandler.ConverEntityToModel``2(``1)">
+            <summary>
+            Conver Entity To Model
+            </summary>
+            <typeparam name="M"></typeparam>
+            <typeparam name="E"></typeparam>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.ModelHandler.ConverModelToEntity``2(System.Collections.Generic.List{``0})">
+            <summary>
+            Conver Model To Entity
+            </summary>
+            <typeparam name="M"></typeparam>
+            <typeparam name="E"></typeparam>
+            <param name="models"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.ModelHandler.ConverModelToEntity``2(``0)">
+            <summary>
+            Conver Model To Entity
+            </summary>
+            <typeparam name="M"></typeparam>
+            <typeparam name="E"></typeparam>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.ResponseHandler.ListResponse``1(``0)">
+            <summary>
+            返回数据是List的消息构造
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.ResponseHandler.SingleResponse``1(``0)">
+            <summary>
+            返回数据是单条数据的消息构造
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.ResponseHandler.ReturnError(System.String)">
+            <summary>
+            返回错误消息
+            </summary>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.ExceptionHandler.GlobalExceptionBuilder.ExceptionBuilder(Microsoft.AspNet.Builder.IApplicationBuilder)">
+            <summary>
+            判断不同的异常并将不同类型的异常转换为HttpStatusCode
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DpControl.Utility.ExceptionHandler.GlobalExceptionFilter">
+            <summary>
+            全局捕获异常
+            把异常转换为HTTP消息
+            </summary>
+        </member>
+        <member name="T:DpControl.Utility.Filters.EnableQueryAttribute">
+            <summary>
+            查询过滤器
+            该类允许对Controller取得的结果集进行过滤，排序等查询操作
+            </summary>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OnActionExecuted(Microsoft.AspNet.Mvc.Filters.ActionExecutedContext)">
+            <summary>
+            在controller action执行之后调用 
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OnActionExecuting(Microsoft.AspNet.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            在controller action执行之前调用 
+            在方法执行前获取过滤，排序，搜索等查询条件
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetSkipParam(System.String)">
+            <summary>
+            获取skip参数
+            </summary>
+            <param name="skipString"></param>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetTopParam(System.String)">
+            <summary>
+            获取top参数
+            </summary>
+            <param name="topString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetOrderbyParam(System.String,System.Type)">
+            <summary>
+            获取orderby参数
+            </summary>
+            <param name="orderbyString"></param>
+            <param name="actionReturnType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetSelectParam(System.String,System.Type)">
+            <summary>
+            获取select参数
+            </summary>
+            <param name="orderbyString"></param>
+            <param name="actionReturnType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OnResultExecuting(Microsoft.AspNet.Mvc.Filters.ResultExecutingContext)">
+            <summary>
+            在controller action result执行之前调用 
+            获取返回结果后，对结果进行过滤，排序，搜索等操作
+            </summary>
+            <param name="context"></param>
+            
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OrderByResult(System.Collections.IList,DpControl.Models.OrderBy)">
+            <summary>
+            对查询结果进行排序
+            </summary>
+            <param name="listData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.PageResult(System.Collections.IList,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            对结果进行分页
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.CreateList(System.Type,System.Type,System.Object[])">
+            <summary>
+            根据类型，生成实例
+            </summary>
+            <param name="genericType"></param>
+            <param name="innerType"></param>
+            <param name="args">实例值</param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:DpControl.Utility.Filters.EnableQueryAttribute.GetActionReturnType``1(``0)" -->
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetClassType(System.Type)">
+            <summary>
+            获取Class类型
+            </summary>
+            <param name="converType"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DpControl.Utility.Filters.FormatReturnTypeAttribute">
+            <summary>
+            格式化List数据返回类型
+            </summary>
+        </member>
+        <member name="M:DpControl.Utility.Filters.FormatReturnTypeAttribute.OnResultExecuting(Microsoft.AspNet.Mvc.Filters.ResultExecutingContext)">
+            <summary>
+            在controller action result执行之前调用 
+            统一数据返回类型
+            </summary>
+            <param name="context"></param>
+            
+        </member>
+        <member name="T:DpControl.Utility.Middlewares.XHttpHeaderOverrideMiddleware">
+            <summary>
+            允许通过POST方法覆盖http方法
+            </summary>
+        </member>
+    </members>
+</doc>
