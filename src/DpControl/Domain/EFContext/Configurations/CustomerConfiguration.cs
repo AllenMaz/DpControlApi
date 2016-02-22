@@ -19,7 +19,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(c => c.ProjectName).HasMaxLength(60).IsRequired();            // Name
             entityBuilder.Property(c => c.ProjectNo).HasMaxLength(20).IsRequired();
             entityBuilder.Property(p => p.ModifiedDate).IsRequired();
-            entityBuilder.Property(p => p.RowVersion).IsConcurrencyToken();      //.IsRowVersion();
+            entityBuilder.Property(p => p.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();      //.IsRowVersion();
 
             entityBuilder.HasMany(p => p.Operators).WithOne(o => o.Customer).HasForeignKey(o => o.CustomerId);
             entityBuilder.HasMany(p => p.DeviceLocations).WithOne(l => l.Customer).HasForeignKey(l => l.CustomerId);

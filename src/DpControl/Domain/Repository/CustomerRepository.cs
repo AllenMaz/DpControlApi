@@ -6,11 +6,8 @@ using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
-using System.Net.Http;
-using System.Web.Http;
-using System.Net;
-using DpControl.Controllers.ExceptionHandler;
 using DpControl.Domain.Models;
+using System.Reflection;
 //using Microsoft.Extensions.DependencyInjection;
 
 
@@ -35,9 +32,9 @@ namespace DpControl.Domain.Repository
 
         public async Task<IEnumerable<MCustomer>> GetAll()
         {
-            var customers = await _context.Customers.Select(c=> new MCustomer
+            var customers = await _context.Customers.Select(c => new MCustomer
             {
-                    CustomerId = c.CustomerId,
+                    CustomerId      =   c.CustomerId,
                     CustomerName = c.CustomerName,
                     CustomerNo = c.CustomerNo,
                     ProjectName = c.ProjectName,
@@ -45,23 +42,23 @@ namespace DpControl.Domain.Repository
                 })
                 .OrderBy(c => c.CustomerNo)
             .ToListAsync<MCustomer>();
-
-
             return customers;
         }
-        public async Task<MCustomer> Find(string customerNo)
+        public async Task<IEnumerable<MCustomer>> FindByCustomerNo(string customerNo)
         {
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerNo == customerNo);
+            var customer =  _context.Customers
+                        .Where(c => c.CustomerNo == customerNo)
+                        .Select(c=> new MCustomer
+                        {
+                            CustomerId = c.CustomerId,
+                            CustomerName = c.CustomerName,
+                            CustomerNo = c.CustomerNo,
+                            ProjectName = c.ProjectName,
+                            ProjectNo = c.ProjectNo
+                        });
                 if (customer == null)
                     throw new KeyNotFoundException();
-                return new MCustomer
-                {
-                    CustomerId = customer.CustomerId,
-                    CustomerName = customer.CustomerName,
-                    CustomerNo = customer.CustomerNo,
-                    ProjectName = customer.ProjectName,
-                    ProjectNo = customer.ProjectNo
-                };
+            return await customer.ToListAsync<MCustomer>();
         }
 
         public async Task Add(MCustomer customer)
@@ -81,8 +78,7 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
         }
  
-
-        public async Task UpdateById(MCustomer mcustomer)
+        public async Task Update(MCustomer mcustomer)
         {
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == mcustomer.CustomerId);
                 if (customer == null)
@@ -96,7 +92,7 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task Remove(int Id)
+        public async Task RemoveById(int Id)
                 {
             var toDelete = new Customer { CustomerId = Id };
             _context.Customers.Attach(toDelete);
@@ -108,5 +104,36 @@ namespace DpControl.Domain.Repository
         {
             return await _context.Customers.Select(c => c.CustomerName).Distinct().ToListAsync<String>();
         }
+
+        //public async Task<IEnumerable<MCustomer>> FindRangeByOrder(Query query)
+        //{
+        //    var customers =  _context.Customers.Select(c => new MCustomer
+        //    {
+        //        CustomerId = c.CustomerId,
+        //        CustomerName = c.CustomerName,
+        //        CustomerNo = c.CustomerNo,
+        //        ProjectName = c.ProjectName,
+        //        ProjectNo = c.ProjectNo
+        //    });
+
+        //    if (query.orderby.OrderbyBehavior == "DESC")
+        //    {
+        //        for(int i = 0; i < query.orderby.OrderbyField.Length; i++)
+        //        {
+        //            if(typeof(MCustomer).GetProperty)
+        //            customers = customers.OrderBy();
+
+        //        }
+        //    }
+        //    else
+        //    {
+        //        customers.OrderBy()
+        //    }
+        //    .OrderBy(c => c.CustomerNo)
+        //    .ToListAsync<MCustomer>();
+        //    return customers;
+        //}
+
+//        Array
     }
 }

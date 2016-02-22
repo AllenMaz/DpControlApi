@@ -13,7 +13,7 @@ namespace DpControl.Domain.Entities
         public int Volumn { get; set; }
 
         #region relationship
-        public int SenseId { get; set; }
+        public int SceneId { get; set; }
         public virtual Scene Scene { get; set; }
         #endregion
 

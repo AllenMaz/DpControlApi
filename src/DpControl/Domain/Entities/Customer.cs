@@ -12,6 +12,7 @@ namespace DpControl.Domain.Entities
         public string CustomerName { get; set; }
         public string ProjectName { get; set; }
         public string ProjectNo { get; set; }
+
         #region relationship
         public virtual List<Operator> Operators { get; set; }
         public virtual List<Location> DeviceLocations { get; set; }           // Devices contained in a company accessed through Locations

@@ -10,8 +10,8 @@ using Microsoft.Data.Entity;
 
 namespace DpControl.Domain.Repository
 {
-    public class GroupRepository 
-        {
+    public class GroupRepository : IGroupRepository
+    {
         private ShadingContext _context;
 
         #region Constructors
@@ -27,65 +27,69 @@ namespace DpControl.Domain.Repository
 
         public async Task Add(string groupName, string projectNo)
         {
-            if (groupName == null || projectNo==null)
+            if (groupName == null || string.IsNullOrEmpty(projectNo))
             {
                 throw new ArgumentNullException();
             }
 
-            int _customerId;
+            // the GroupName is set as  an Index, so the same name will be validated in database
 
-            // get groups with projectNo = projectNo
-            var query = await GetCustomerByProjectNo(projectNo);
-
-            _customerId = query.CustomerId;
-
-            // does the Name exist?
-            if (query.Groups.Select(g => g.GroupName).Contains(groupName))
-            {
-                throw new Exception("The group already exist.");
-            }
+            var _customer = _context.Customers.Single(c => c.ProjectNo == projectNo);
 
             // create new Group
-            Group group = new Group
+            _context.Groups.Add(new Group
             {
                 GroupName = groupName,
                 ModifiedDate = DateTime.Now,
-                CustomerId = _customerId
-            };
-            _context.Groups.Add(group);
+                CustomerId = _customer.CustomerId
+            });
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<MGroup>> GetAllAsync(string projectNo)
+        public async Task<IEnumerable<MGroup>> GetAll(string projectNo)
         {
-            // get groups by the projectNo
-            var query = await GetCustomerByProjectNo(projectNo);
+            var _customer= await _context.Customers
+                        .Include(c => c.Groups)
+                        .Where(c => c.ProjectNo == projectNo)
+                        .SingleAsync();
 
-            return query.Groups.Select(g => new MGroup
-            {
-                GroupId = g.GroupId,
-                GroupName = g.GroupName
-            })
-            .ToList<MGroup>();
+            return _customer.Groups.Select(g => new MGroup
+                    {
+                        GroupId = g.GroupId,
+                        GroupName = g.GroupName
+                    }).ToList<MGroup>();
         }
 
-        public async Task Remove(string groupName, string projectNo)
+        public async Task RemoveByName(string groupName, string projectNo)
         {
-            var query = await GetCustomerByProjectNo(projectNo);
+            //           var query = await GetCustomerByProjectNo(projectNo);
+            var _single = _context.Customers
+                       .Include(c => c.Groups)
+                       .Where(c => c.ProjectNo == projectNo)
+                       .Single()
+                       .Groups.Where(g => g.GroupName == groupName).Single();       // InvalidOperationException, if no element, 
 
-            var removeItem = query.Groups.Single(g => g.GroupName == groupName);
-            if (removeItem == null)
+            // remove data in related table - GroupLocation
+            var _groupLocation = _context.GroupLocations.Where(gl => gl.GroupId == _single.GroupId);
+            foreach(var gl in _groupLocation)
             {
-                throw new Exception("The group does not exist.");
+                _context.GroupLocations.Remove(gl);
             }
-            else
+
+            // remove data in related table - GroupOperator
+            var _groupOperator = _context.GroupOperators.Where(gl => gl.GroupId == _single.GroupId);
+            foreach (var gl in _groupOperator)
             {
-                _context.Remove(removeItem);
-                await _context.SaveChangesAsync();
+                _context.GroupOperators.Remove(gl);
             }
+
+            _context.Remove(_single);
+            await _context.SaveChangesAsync();
+
+            // remove 
         }
 
-        public async Task Remove(int Id)
+        public async Task RemoveById(int Id)
         {
             if (Id == 0)
             {
@@ -94,39 +98,60 @@ namespace DpControl.Domain.Repository
 
             var toDelete = new Group { GroupId = Id };
             _context.Groups.Attach(toDelete);
+
+            // remove data in related table - GroupLocation
+            var _groupLocation = _context.GroupLocations.Where(gl => gl.GroupId ==Id);
+            foreach (var gl in _groupLocation)
+            {
+                _context.GroupLocations.Remove(gl);
+            }
+
+            // remove data in related table - GroupOperator
+            var _groupOperator = _context.GroupOperators.Where(gl => gl.GroupId == Id);
+            foreach (var gl in _groupOperator)
+            {
+                _context.GroupOperators.Remove(gl);
+            }
+
             _context.Groups.Remove(toDelete);
             await _context.SaveChangesAsync();
 
             //            _context.Database.ExecuteSqlCommandAsync("Delete From operators where OperatorId = Id");
         }
 
-
-        public async Task UpdateById(MGroup mGroup, string projectNo)
+        public async Task Update(MGroup mGroup, string projectNo)
         {
-            // get groups by the projectNo
-            var query = await GetCustomerByProjectNo(projectNo);
-
-            var _single = query.Groups.Where(g => g.GroupId == mGroup.GroupId).Single();
-            if (_single == null)
-            {
-                throw new KeyNotFoundException();
-            }
+            var _single =_context.Customers
+                        .Include(c => c.Groups)
+                        .Where(c => c.ProjectNo == projectNo)
+                        .Single()
+                        .Groups.Where(g => g.GroupId == mGroup.GroupId).Single();       // InvalidOperationException, if no element, 
             _single.GroupName = mGroup.GroupName;
             _context.Groups.Update(_single);
             await _context.SaveChangesAsync();
         }
 
-        async Task<Customer> GetCustomerByProjectNo(string projectNo)
+        public async Task AddLocationToGroup(int locationId, int groupId)
         {
-            var query = await _context.Customers
-                        .Include(c => c.Groups)
-                        .Where(c => c.ProjectNo == projectNo)
-                        .SingleAsync();
-            if (query == null)
+            var _group = _context.Groups.Where(g => g.GroupId == groupId);
+            var _location = _context.Locations.Where(g => g.LocationId == locationId);
+
+            _context.GroupLocations.Add(new GroupLocation
             {
-                throw new KeyNotFoundException();
-            }
-            return query;
+                GroupId = groupId,
+                LocationId = locationId
+            });
+            await _context.SaveChangesAsync();
         }
+
+
+        //Customer GetCustomerByProjectNo(string projectNo)
+        //{
+        //    var query =  _context.Customers
+        //                .Include(c => c.Groups)
+        //                .Where(c => c.ProjectNo == projectNo)
+        //                .Single();
+        //    return query;
+        //}
     }
 }

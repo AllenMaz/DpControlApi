@@ -1,0 +1,171 @@
+﻿<div class="container">
+    <div id="toolbar">
+        <button id="btnAdd" class="btn btn-primary">
+            <i class="glyphicon glyphicon-plus"></i>Add
+        </button>
+        <button id="btnEdit" class="btn btn-success">
+            <i class="glyphicon glyphicon-plus"></i>Edit
+        </button>
+        <button id="btnDelete" class="btn btn-danger">
+            <i class="glyphicon glyphicon-remove"></i> Delete
+        </button>
+
+    </div>
+    <table id="table"></table>
+</div>
+
+<!--Script要放在HTML标签后，才能将值绑定到标签-->
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        InitTable();
+        InitToolBarButton();
+    });
+
+    function InitTable()
+    {
+        $('#table').bootstrapTable({
+            height: $(document.body).height() - $("#toolbar").height(),
+            method: 'post',                 //The method type to request remote data.
+            url: '/Manage/GetUserPageData',
+            dataType: "json",               //The type of data that you are expecting back from the server.
+            contentType:'application/json',
+            pagination: true,               //True to show a pagination toolbar on table bottom.
+            pageSize: 10,                   //初始化每页显示几条
+            pageNumber:1,                   //初始化在第几页
+            pageList: [10,25,50,100,200,'All'],
+            sidePagination: "server",       //服务端请求
+            idField:'Id',
+            toolbar:'#toolbar',
+            showRefresh:true,
+            search:true,
+            queryParams: ConstructQueryParams,
+            //queryParamsType: "limit",
+            locale:'en-US',
+            columns: [{
+                checkbox: true
+            },
+            {
+                field: 'Id',
+                title: 'Id',
+                visible:false,
+            },
+            {
+                field: 'UserName',
+                title: 'UserName',
+                sortable: true
+               
+            },
+            {
+                field: 'Roles',
+                title: 'Roles',
+                width:'60%',
+                formatter: function (value, row, index) {
+                    
+                    return ConstructRolesByUserName(row.UserName);
+                }
+            }
+            ]
+        });
+    }
+
+    function ConstructQueryParams(param)
+    {
+        var params = {
+            limit: param.limit, //页面大小
+            offset:param.offset,//偏移数量
+            page: param.offset/param.limit, //页码
+
+        };
+        return params;
+    }
+
+    function InitToolBarButton()
+    {
+        $("#btnAdd").click(function(){
+            location.href="/Manage/CreateUser";
+        });
+
+        $("#btnEdit").click(function () {
+            layer.alert("Edit is not enabled", {
+                skin: 'layui-layer-molv'
+                           , closeBtn: 0
+                           , shift: 5 //动画类型
+            });
+        });
+
+        $("#btnDelete").click(function(){
+
+            var selections = $('#table').bootstrapTable('getSelections');
+            if(selections.length == 0)
+            {
+                layer.alert("Please select records", {
+                    skin: 'layui-layer-molv'
+                            ,closeBtn: 0
+                            ,shift: 5 //动画类型
+                });
+                return ;
+            }
+
+            var userIds =[];
+            for(var i=0;i<selections.length;i++)
+            {
+                var id = selections[i].Id;
+                userIds.push(id);
+            }
+
+            //delete records
+            var jsonUserId = JSON.stringify(userIds);
+            $.ajax({
+                type: "get",//使用get方法访问后台
+                dataType: "json",//返回json格式的数据
+                url: "/Manage/BachDeleteByUserId",
+                data: {"UserIds":jsonUserId},
+                async:false,
+                success: function(message){
+                    if(message.Success)
+                    {
+                        location.href ="/Manage/IndexForUser";
+                    }else{
+                        layer.alert(message.Content, {
+                            skin: 'layui-layer-molv'
+                            ,closeBtn: 0
+                            ,shift: 5 //动画类型
+                        });
+                    }
+               
+                }
+            });
+        });
+    }
+
+    function ConstructRolesByUserName(userName) {
+
+        var roleNames = '';
+        $.ajax({
+            type: "get",//使用get方法访问后台
+            dataType: "json",//返回json格式的数据
+            url: "/Manage/GetRolesByUserName",
+            data: { "UserName": userName },
+            async: false,
+            success: function (data) {
+
+                for (var i = 0; i < data.length; i++) {
+                    if (i == 0) {
+                        roleNames += data[i];
+
+                    } else {
+                        roleNames += "、" + data[i];
+
+                    }
+                }
+
+            }
+        });
+        return roleNames;
+
+    }
+    
+
+
+</script>    
