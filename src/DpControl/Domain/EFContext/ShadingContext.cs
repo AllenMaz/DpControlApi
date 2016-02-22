@@ -34,6 +34,7 @@ namespace DpControl.Domain.EFContext
 
             new AlarmMessageConfiguration(modelBuilder.Entity<AlarmMessage>());
             new AlarmConfiguration(modelBuilder.Entity<Alarm>());
+            new CustomerConfiguration(modelBuilder.Entity<Customer>());
             new ProjectConfiguration(modelBuilder.Entity<Project>());
             new GroupConfiguration(modelBuilder.Entity<Group>());
             new GroupOperatorConfiguration(modelBuilder.Entity<GroupOperator>());

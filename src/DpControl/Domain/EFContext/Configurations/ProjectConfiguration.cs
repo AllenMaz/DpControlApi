@@ -12,10 +12,10 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public ProjectConfiguration(EntityTypeBuilder<Project> entityBuilder)
         {
-            entityBuilder.HasKey(c => c.ProjectId);
-            entityBuilder.ToTable("Customers", "ControlSystem");
-            entityBuilder.Property(c => c.ProjectName).HasMaxLength(50).IsRequired();            // Name
-            entityBuilder.Property(c => c.ProjectNo).HasMaxLength(50).IsRequired();
+            entityBuilder.ToTable("Projects", "ControlSystem");
+            entityBuilder.HasKey(p => p.ProjectId);
+            entityBuilder.Property(p => p.ProjectName).HasMaxLength(50).IsRequired();            // Name
+            entityBuilder.Property(p => p.ProjectNo).HasMaxLength(50).IsRequired();
             entityBuilder.Property(p => p.ModifiedDate).IsRequired();
             entityBuilder.Property(p => p.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();      //.IsRowVersion();
 

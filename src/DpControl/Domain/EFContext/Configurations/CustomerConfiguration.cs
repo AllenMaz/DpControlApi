@@ -13,11 +13,11 @@ namespace DpControl.Domain.EFContext.Configurations
         public CustomerConfiguration(EntityTypeBuilder<Customer> entityBuilder)
         {
             entityBuilder.ToTable("Customers", "ControlSystem");
-            entityBuilder.HasKey(a => a.CustomerId);
+            entityBuilder.HasKey(c => c.CustomerId);
             entityBuilder.Property(c => c.CustomerName).HasMaxLength(50);
             entityBuilder.Property(c => c.CustomerNo).HasMaxLength(50);
-            entityBuilder.Property(a => a.ModifiedDate).IsRequired();
-            entityBuilder.Property(a => a.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
+            entityBuilder.Property(c => c.ModifiedDate).IsRequired();
+            entityBuilder.Property(c => c.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
             entityBuilder.HasMany(c => c.Projects).WithOne(p => p.Customer).HasForeignKey(p => p.CustomerId);
         }
