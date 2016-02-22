@@ -11,8 +11,8 @@ namespace DpControl.Domain.Entities
         public string GroupName { get; set; }
 
         #region relationship
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
         public virtual List<GroupLocation> GroupLocations { get; set; }     // many-to-many
         public virtual List<GroupOperator> GroupOperators { get; set; }       // many-to-many
         public int? SceneId { get; set; }

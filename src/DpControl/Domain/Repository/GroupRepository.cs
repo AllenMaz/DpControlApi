@@ -34,21 +34,21 @@ namespace DpControl.Domain.Repository
 
             // the GroupName is set as  an Index, so the same name will be validated in database
 
-            var _customer = _context.Customers.Single(c => c.ProjectNo == projectNo);
+            var _project = _context.Projects.Single(c => c.ProjectNo == projectNo);
 
             // create new Group
             _context.Groups.Add(new Group
             {
                 GroupName = groupName,
                 ModifiedDate = DateTime.Now,
-                CustomerId = _customer.CustomerId
+                ProjectId = _project.ProjectId,
             });
             await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<MGroup>> GetAll(string projectNo)
         {
-            var _customer= await _context.Customers
+            var _customer= await _context.Projects
                         .Include(c => c.Groups)
                         .Where(c => c.ProjectNo == projectNo)
                         .SingleAsync();
@@ -63,7 +63,7 @@ namespace DpControl.Domain.Repository
         public async Task RemoveByName(string groupName, string projectNo)
         {
             //           var query = await GetCustomerByProjectNo(projectNo);
-            var _single = _context.Customers
+            var _single = _context.Projects
                        .Include(c => c.Groups)
                        .Where(c => c.ProjectNo == projectNo)
                        .Single()
@@ -96,46 +96,50 @@ namespace DpControl.Domain.Repository
                 throw new Exception("The group does not exist.");
             }
 
-            var toDelete = new Group { GroupId = Id };
-            _context.Groups.Attach(toDelete);
+            //var toDelete = new Group { GroupId = Id };
+            //_context.Groups.Attach(toDelete);
 
-            // remove data in related table - GroupLocation
-            var _groupLocation = _context.GroupLocations.Where(gl => gl.GroupId ==Id);
-            foreach (var gl in _groupLocation)
-            {
-                _context.GroupLocations.Remove(gl);
-            }
+            //// remove data in related table - GroupLocation
+            //var _groupLocation = _context.GroupLocations.Where(gl => gl.GroupId == Id);
+            //foreach (var gl in _groupLocation)
+            //{
+            //    _context.GroupLocations.Remove(gl);
+            //}
+
+            //// remove data in related table - GroupOperator
+            //var _groupOperator = _context.GroupOperators.Where(gl => gl.GroupId == Id);
+            //foreach (var gl in _groupOperator)
+            //{
+            //    _context.GroupOperators.Remove(gl);
+            //}
+
+            //_context.Groups.Remove(toDelete);
+            //await _context.SaveChangesAsync();
+
+
+            await _context.Database.ExecuteSqlCommandAsync("Delete From groups where groupId = " + Id);
+
+             // remove data in related table - GroupLocation
+            await _context.Database.ExecuteSqlCommandAsync("Delete From groupLocations where groupId = " + Id);
 
             // remove data in related table - GroupOperator
-            var _groupOperator = _context.GroupOperators.Where(gl => gl.GroupId == Id);
-            foreach (var gl in _groupOperator)
-            {
-                _context.GroupOperators.Remove(gl);
-            }
-
-            _context.Groups.Remove(toDelete);
-            await _context.SaveChangesAsync();
-
-            //            _context.Database.ExecuteSqlCommandAsync("Delete From operators where OperatorId = Id");
+            await _context.Database.ExecuteSqlCommandAsync("Delete From groupOperators where groupId = " + Id);
         }
 
         public async Task Update(MGroup mGroup, string projectNo)
         {
-            var _single =_context.Customers
+            var _single =_context.Projects
                         .Include(c => c.Groups)
                         .Where(c => c.ProjectNo == projectNo)
                         .Single()
                         .Groups.Where(g => g.GroupId == mGroup.GroupId).Single();       // InvalidOperationException, if no element, 
             _single.GroupName = mGroup.GroupName;
-            _context.Groups.Update(_single);
+ //           _context.Groups.Update(_single);
             await _context.SaveChangesAsync();
         }
 
         public async Task AddLocationToGroup(int locationId, int groupId)
         {
-            var _group = _context.Groups.Where(g => g.GroupId == groupId);
-            var _location = _context.Locations.Where(g => g.LocationId == locationId);
-
             _context.GroupLocations.Add(new GroupLocation
             {
                 GroupId = groupId,

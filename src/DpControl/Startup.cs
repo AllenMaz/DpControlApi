@@ -88,7 +88,7 @@ namespace DpControl
             #endregion
 
             services.AddTransient<ShadingContext, ShadingContext>();
-            services.AddSingleton<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton<IProjectRepository, ProjectRepository>();
             
         }
 

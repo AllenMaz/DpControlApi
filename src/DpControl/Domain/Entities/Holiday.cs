@@ -9,8 +9,8 @@ namespace DpControl.Domain.Entities
     {
         public int HolidayId { get; set; }
         public int Day { get; set; }
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
 
         public DateTime ModifiedDate { get; set; }
         public byte[] RowVersion { get; set; }

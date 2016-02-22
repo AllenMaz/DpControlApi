@@ -15,8 +15,8 @@ namespace DpControl.Domain.Entities
         public string Password { get; set; }
 
         #region relationship
-        public int CustomerId { get; set; }
-        public virtual Customer Customer { get; set; }
+        public int ProjectId { get; set; }
+        public virtual Project Project { get; set; }
 
         public virtual List<GroupOperator> GroupOperators { get; set; }        //many-to-many: operator can contorl multiple-location motors
         public virtual List<OperatorLocation> OperatorLocations { get; set; }      //many-to-many: operator can contorl multiple-location motors

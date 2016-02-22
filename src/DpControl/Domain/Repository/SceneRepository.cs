@@ -33,7 +33,7 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Customer
-            var _customer = await _context.Customers
+            var _project = await _context.Projects
                 .Include(c => c.Scenes)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
@@ -44,7 +44,7 @@ namespace DpControl.Domain.Repository
                 Name = sceneName,
                 Enable = false,
                 ModifiedDate = DateTime.Now,
-                CustomerId = _customer.CustomerId
+                ProjectId = _project.ProjectId
             });
             await _context.SaveChangesAsync();
         }
@@ -56,12 +56,12 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Customer
-            var _customer = await _context.Customers
+            var _project = await _context.Projects
                 .Include(c => c.Scenes)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
 
-            return _customer.Scenes.Select(s => new MScene
+            return _project.Scenes.Select(s => new MScene
             {
                 SceneId = s.SceneId,
                 Name = s.Name
@@ -89,12 +89,12 @@ namespace DpControl.Domain.Repository
         public async Task UpdateById(MScene mScene, string projectNo)
         {
             // get projectNo from Customer
-            var _customer = await _context.Customers
+            var _project = await _context.Projects
                 .Include(c => c.Scenes)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
 
-            var _single = _customer.Scenes.Where(s => s.SceneId == mScene.SceneId).Single();
+            var _single = _project.Scenes.Where(s => s.SceneId == mScene.SceneId).Single();
             _single.Name = mScene.Name;
             await _context.SaveChangesAsync();
         }

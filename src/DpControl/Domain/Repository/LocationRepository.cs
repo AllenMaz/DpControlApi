@@ -30,7 +30,7 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Customer
-            var _customer = await _context.Customers
+            var _customer = await _context.Projects
                 .Include(c => c.DeviceLocations)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
@@ -64,7 +64,7 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Customer
-            var _customer = await _context.Customers
+            var _customer = await _context.Projects
                 .Include(c => c.DeviceLocations)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
@@ -89,12 +89,12 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Customer
-            var _customer = await _context.Customers
+            var _project = await _context.Projects
                 .Include(c => c.DeviceLocations)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
 
-            _customer.DeviceLocations.Add(new Location
+            _project.DeviceLocations.Add(new Location
             {
                 Building = mLocation.Building,
                 Floor = mLocation.Floor,
@@ -111,7 +111,7 @@ namespace DpControl.Domain.Repository
                 FavorPositionrSecond = mLocation.FavorPositionrSecond,
                 FavorPositionThird = mLocation.FavorPositionThird,
                 ModifiedDate = DateTime.Now,
-                CustomerId = _customer.CustomerId
+                ProjectId = _project.ProjectId
             });
             await _context.SaveChangesAsync();
         }
@@ -124,14 +124,14 @@ namespace DpControl.Domain.Repository
             }
 
             // get projectNo from Customer
-            var _customer = await _context.Customers
+            var _project = await _context.Projects
                 .Include(c => c.DeviceLocations)
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
 
-            var _single = _customer.DeviceLocations.Where(l => l.LocationId == mLocation.LocationId).Single();
+            var _single = _project.DeviceLocations.Where(l => l.LocationId == mLocation.LocationId).Single();
 
-            _single.CustomerId = _customer.CustomerId;
+            _single.ProjectId = _project.CustomerId;
             _single.Building = mLocation.Building;
             _single.Floor = mLocation.Floor;
             _single.RoomNo = mLocation.RoomNo;
