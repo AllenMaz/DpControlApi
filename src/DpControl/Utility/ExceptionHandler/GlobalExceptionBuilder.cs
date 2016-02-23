@@ -12,6 +12,7 @@ using System.Text;
 using DpControl.Models;
 using DpControl.Utility;
 using Microsoft.Extensions.Logging;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Utility.ExceptionHandler
 {
@@ -45,7 +46,9 @@ namespace DpControl.Utility.ExceptionHandler
                     var exceptionType = error.Error.GetType();
                     var exceptionMessage = error.Error.Message;
                     
-                    if(exceptionType != typeof(Exception))
+                    if(exceptionType != typeof(AddException) 
+                    && exceptionType != typeof(UpdateException)
+                    && exceptionType != typeof(DeleteException))
                     {
                         //系统异常
                         exceptionMessage = "System is abnormal ！Error：" + exceptionMessage;

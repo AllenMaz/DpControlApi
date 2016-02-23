@@ -8,11 +8,16 @@ namespace DpControl.Domain.IRepository
 {
     public interface ICustomerRepository
     {
-        Task Add(MCustomer item);
-        Task<IEnumerable<MCustomer>> GetAll();
-        Task<IEnumerable<MCustomer>> FindByCustomerNo(string customerNo);
-        Task RemoveById(int Id);
-        Task Update(MCustomer mcustomer);
-//        Task<IEnumerable<String>> GetCustomerName();
+        
+        void Add(CustomerAddModel customer);
+        Task AddAsync(CustomerAddModel customer);
+        IEnumerable<CustomerSearchModel> GetAll();
+        Task<IEnumerable<CustomerSearchModel>> GetAllAsync();
+        IEnumerable<CustomerSearchModel> FindByCustomerNo(string customerNo);
+        Task<IEnumerable<CustomerSearchModel>> FindByCustomerNoAsync(string customerNo);
+        void Update(CustomerUpdateModel mcustomer);
+        Task UpdateAsync(CustomerUpdateModel mcustomer);
+        void RemoveById(int id);
+        Task RemoveByIdAsync(int id);
     }
 }
