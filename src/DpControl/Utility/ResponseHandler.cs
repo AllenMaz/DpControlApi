@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DpControl.Utility
@@ -36,16 +37,24 @@ namespace DpControl.Utility
             return responseData;
         }
 
+        public static string ReturnBadRequestError(string error)
+        {
+            int httpStatusCode = (int)HttpStatusCode.BadRequest;
+
+            return ReturnError(httpStatusCode,new List<string>() { error});
+        }
+
         /// <summary>
         /// 返回错误消息
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public static string ReturnError(int httpStatusCode,string message)
+        public static string ReturnError(int httpStatusCode,List<string> errors)
         {
             ErrorResponseModel errResponse = new ErrorResponseModel();
             errResponse.code = httpStatusCode;
-            errResponse.error = message;
+            errResponse.errors = errors;
+
             string errJson = JsonHandler.ToJson(errResponse);
 
             return errJson;

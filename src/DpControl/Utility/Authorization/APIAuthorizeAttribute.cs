@@ -1,4 +1,5 @@
 ﻿using DpControl.Domain.Models;
+using DpControl.Models;
 using DpControl.Utility.Authentication;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
@@ -22,7 +23,7 @@ namespace DpControl.Utility.Authorization
         private AbstractAuthentication _authentication;
         private IMemoryCache _memoryCache;
         private UserManager<ApplicationUser> _userManager;
-
+        
 
         /// <summary>
         /// 获取依赖注入实例
@@ -40,7 +41,7 @@ namespace DpControl.Utility.Authorization
 
         public string Roles { get; set; }
         
-        
+         
         public override async Task OnAuthorizationAsync(AuthorizationContext context)
         {
             //if allowanonymous
@@ -65,6 +66,8 @@ namespace DpControl.Utility.Authorization
                     _authentication.Challenge(httpContext);
                     Fail(context);
                 }
+                
+                
             }
             
         }
@@ -93,7 +96,7 @@ namespace DpControl.Utility.Authorization
         {
             int httpStatusCode = (int)HttpStatusCode.MethodNotAllowed;
             context.Response.StatusCode = httpStatusCode;
-            string errMessage = ResponseHandler.ReturnError(httpStatusCode,"You have no permission!");
+            string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { "You have no permission!" });
             await context.Response.WriteAsync(errMessage);
 
         }

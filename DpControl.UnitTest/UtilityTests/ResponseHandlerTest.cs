@@ -13,7 +13,7 @@ namespace DpControl.UnitTest.UtilityTests
         [InlineData(new object[] { 404, "Cound not found" })]
         public void TestReturnError(int httpStatusCode,string message)
         {
-            string errorJson = ResponseHandler.ReturnError(httpStatusCode,message);
+            string errorJson = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { message });
             Assert.IsType(typeof(string), errorJson);
         }
     }

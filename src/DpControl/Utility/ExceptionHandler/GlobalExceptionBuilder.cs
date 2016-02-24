@@ -42,21 +42,19 @@ namespace DpControl.Utility.ExceptionHandler
                 var error = context.Features.Get<IExceptionHandlerFeature>();
                 if (error != null)
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     var exceptionType = error.Error.GetType();
                     var exceptionMessage = error.Error.Message;
                     
-                    if(exceptionType != typeof(AddException) 
-                    && exceptionType != typeof(UpdateException)
-                    && exceptionType != typeof(DeleteException))
+                    if(exceptionType != typeof(ExpectException))
                     {
                         //系统异常
                         exceptionMessage = "System is abnormal ！Error：" + exceptionMessage;
                         //记录异常日志
                         _logger.LogWarning(exceptionMessage ,error.Error);
                     }
-                    int httpStatusCode = (int)HttpStatusCode.InternalServerError;
-                    string errMessage = ResponseHandler.ReturnError(httpStatusCode, exceptionMessage);
+                    int httpStatusCode = (int)HttpStatusCode.BadRequest;
+                    string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { exceptionMessage });
                     
                     await context.Response.WriteAsync(errMessage, Encoding.UTF8);
                     

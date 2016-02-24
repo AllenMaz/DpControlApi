@@ -32,18 +32,20 @@ namespace DpControl.APIControllers
         [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
 
+
+
         /// <summary>
         /// Add data
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
+        [APIAuthorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest();
-                
+                return HttpBadRequest(ModelStateError());
             }
 
             await _customerRepository.AddAsync(mCustomer);
@@ -55,10 +57,15 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Public")]
+        [APIAuthorize(Roles = "Admin")]
         [HttpGet("{customerNo}", Name = "GetByCustomerNoAsync")]
         public async Task<IActionResult> GetByCustomerNoAsync(string customerNo)
         {
+            if (string.IsNullOrEmpty(customerNo))
+            {
+               return HttpBadRequest(ResponseHandler.ReturnBadRequestError("CustomerNo can't be empty"));
+
+            }
 
             var customer = await _customerRepository.FindByCustomerNoAsync(customerNo);
             if (customer == null)
@@ -72,7 +79,7 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Public")]
+        [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
@@ -114,15 +121,16 @@ namespace DpControl.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="customer"></param>
         /// <returns></returns>
+        [APIAuthorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] CustomerUpdateModel mCustomer)
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest();
+                return HttpBadRequest(ModelStateError());
             }
-            mCustomer.CustomerId = id;
-            await _customerRepository.UpdateAsync(mCustomer);
+
+            await _customerRepository.UpdateByIdAsync(id,mCustomer);
             return CreatedAtRoute("GetByCustomerNoAsync", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
 
         }
@@ -131,11 +139,12 @@ namespace DpControl.APIControllers
         /// Delete data by CustomerNo
         /// </summary>
         /// <param name="customerId"></param>
+        [APIAuthorize(Roles = "Admin")]
         [HttpDelete("{customerId}")]
-        public async Task DeleteByCustomerIdAsync(int customerId)
+        public async Task<IActionResult> DeleteByCustomerIdAsync(int customerId)
         {
             await _customerRepository.RemoveByIdAsync(customerId);
-
+            return Ok();
         }
     }
 }

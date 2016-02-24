@@ -15,9 +15,9 @@ namespace DpControl.Domain.IRepository
         Task<IEnumerable<CustomerSearchModel>> GetAllAsync();
         IEnumerable<CustomerSearchModel> FindByCustomerNo(string customerNo);
         Task<IEnumerable<CustomerSearchModel>> FindByCustomerNoAsync(string customerNo);
-        void Update(CustomerUpdateModel mcustomer);
-        Task UpdateAsync(CustomerUpdateModel mcustomer);
-        void RemoveById(int id);
-        Task RemoveByIdAsync(int id);
+        void UpdateById(int customerId,CustomerUpdateModel mcustomer);
+        Task UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer);
+        void RemoveById(int customerId);
+        Task RemoveByIdAsync(int customerId);
     }
 }

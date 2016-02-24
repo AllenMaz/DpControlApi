@@ -39,7 +39,7 @@ namespace DpControl.Utility.Authorization
         {
             int httpStatusCode = (int)HttpStatusCode.MethodNotAllowed;
             context.Response.StatusCode = httpStatusCode;
-            string errMessage = ResponseHandler.ReturnError(httpStatusCode, "You have no permission!");
+            string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { "You have no permission!" });
             await context.Response.WriteAsync(errMessage);
 
         }

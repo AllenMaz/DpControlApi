@@ -38,7 +38,7 @@ namespace DpControl.Models
 
         public int code { get; set; }
 
-        public string error { get; set; }
+        public List<string> errors { get; set; }
     }
     
 }

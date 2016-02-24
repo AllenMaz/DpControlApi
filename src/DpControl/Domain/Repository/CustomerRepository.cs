@@ -28,42 +28,30 @@ namespace DpControl.Domain.Repository
 
         public void Add(CustomerAddModel customer)
         {
-            try
+            
+            _context.Customers.Add(new Customer
             {
-                _context.Customers.Add(new Customer
-                {
-                    CustomerName = customer.CustomerName,
-                    CustomerNo = customer.CustomerNo,
-                    CreateDate = DateTime.Now,
-                    Creator = "System"
-                });
+                CustomerName = customer.CustomerName,
+                CustomerNo = customer.CustomerNo,
+                CreateDate = DateTime.Now
+            });
 
-                _context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                throw new AddException(e.Message);
-            }
+            _context.SaveChanges();
+            
         }
 
         public async Task AddAsync(CustomerAddModel customer)
         {
-            try
+            
+            _context.Customers.Add(new Customer
             {
-                _context.Customers.Add(new Customer
-                {
-                    CustomerName = customer.CustomerName,
-                    CustomerNo = customer.CustomerNo,
-                    CreateDate = DateTime.Now,
-                    Creator = "System"
-                });
+                CustomerName = customer.CustomerName,
+                CustomerNo = customer.CustomerNo,
+                CreateDate = DateTime.Now
+            });
 
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                throw new AddException(e.Message);
-            }
+            await _context.SaveChangesAsync();
+           
 
         }
 
@@ -104,10 +92,7 @@ namespace DpControl.Domain.Repository
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                Creator = c.Creator,
-                CreateDate = c.CreateDate,
-                Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate
+                CreateDate = c.CreateDate
             })
                 .OrderBy(c => c.CustomerNo)
                 .ToList<CustomerSearchModel>();
@@ -122,10 +107,7 @@ namespace DpControl.Domain.Repository
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                Creator = c.Creator,
-                CreateDate = c.CreateDate,
-                Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate
+                CreateDate = c.CreateDate
             })
                 .OrderBy(c => c.CustomerNo)
                 .ToListAsync<CustomerSearchModel>();
@@ -133,30 +115,27 @@ namespace DpControl.Domain.Repository
             return customers;
         }
 
-        public void Update(CustomerUpdateModel mcustomer)
+        public void UpdateById(int customerId,CustomerUpdateModel mcustomer)
         {
-            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == mcustomer.CustomerId);
+            
+            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
             if (customer == null)
-                throw new DeleteException("Could not find data which CustomerId equal to " + mcustomer.CustomerId);
+                throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
-            customer.Modifier = "System";
-            customer.ModifiedDate = DateTime.Now;
 
             _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(CustomerUpdateModel mcustomer)
+        public async Task UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer)
         {
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == mcustomer.CustomerId);
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
             if (customer == null)
-                throw new DeleteException("Could not find data which CustomerId equal to " + mcustomer.CustomerId);
+                throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
-            customer.Modifier = "System";
-            customer.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
             
@@ -172,7 +151,7 @@ namespace DpControl.Domain.Repository
         {
             var customer = await _context.Customers.FirstOrDefaultAsync(v => v.CustomerId == id);
             if (customer == null)
-                throw new DeleteException("Could not find data which CustomerId equal to "+id);
+                throw new ExpectException("Could not find data which CustomerId equal to "+id);
 
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
@@ -181,46 +160,7 @@ namespace DpControl.Domain.Repository
 
         #endregion
 
-        //#region
-
-        
-
-        //public async Task<IEnumerable<String>> GetProjectName()
-        //{
-        //    return await _context.Projects.Select(c => c.ProjectName).ToListAsync<String>();
-        //}
-
-        ////public async Task<IEnumerable<MCustomer>> FindRangeByOrder(Query query)
-        ////{
-        ////    var customers =  _context.Customers.Select(c => new MCustomer
-        ////    {
-        ////        CustomerId = c.CustomerId,
-        ////        CustomerName = c.CustomerName,
-        ////        CustomerNo = c.CustomerNo,
-        ////        ProjectName = c.ProjectName,
-        ////        ProjectNo = c.ProjectNo
-        ////    });
-
-        ////    if (query.orderby.OrderbyBehavior == "DESC")
-        ////    {
-        ////        for(int i = 0; i < query.orderby.OrderbyField.Length; i++)
-        ////        {
-        ////            if(typeof(MCustomer).GetProperty)
-        ////            customers = customers.OrderBy();
-
-        ////        }
-        ////    }
-        ////    else
-        ////    {
-        ////        customers.OrderBy()
-        ////    }
-        ////    .OrderBy(c => c.CustomerNo)
-        ////    .ToListAsync<MCustomer>();
-        ////    return customers;
-        ////}
-
-        ////        Array
-        //#endregion
+       
     }
 
 }
