@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
 using DpControl.Domain.Execptions;
+
 
 namespace DpControl.Domain.Repository
 {
@@ -114,7 +116,7 @@ namespace DpControl.Domain.Repository
             return await customer.ToListAsync<CustomerSearchModel>();
         }
 
-        public IEnumerable<CustomerSearchModel> GetAll()
+        public IEnumerable<CustomerSearchModel> GetAll(Query query)
         {
             var customers = _context.Customers.Include(c=>c.Projects).Select(c => new CustomerSearchModel
             {
@@ -137,27 +139,36 @@ namespace DpControl.Domain.Repository
             return customers;
         }
 
-        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
+        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync(Query query)
         {
-            var customers = await _context.Customers.Include(c=>c.Projects).Select(c => new CustomerSearchModel
+            
+            var queryData = from P in _context.Customers
+                        select P;
+
+            var result = QueryOperate<Customer>.Execute(queryData, query);
+            
+            var customers = await result.Include(c => c.Projects).ToListAsync();
+
+            var customerSearch = customers.Select(c => new CustomerSearchModel
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
                 CreateDate = c.CreateDate,
-                Projects = c.Projects.Select(p=>new ProjectSearchModel {
+                Projects = c.Projects.Select(p => new ProjectSearchModel
+                {
                     CustomerId = p.CustomerId,
                     ProjectId = p.ProjectId,
                     ProjectName = p.ProjectName,
                     ProjectNo = p.ProjectNo,
                     CreateDate = p.CreateDate
                 }).ToList()
-            })
-                .OrderBy(c => c.CustomerNo)
-                .ToListAsync<CustomerSearchModel>();
+            });
 
-            return customers;
+            return customerSearch;
         }
+
+        
 
         public int UpdateById(int customerId,CustomerUpdateModel mcustomer)
         {

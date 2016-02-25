@@ -11,8 +11,8 @@ namespace DpControl.Domain.IRepository
         
         int Add(CustomerAddModel customer);
         Task<int> AddAsync(CustomerAddModel customer);
-        IEnumerable<CustomerSearchModel> GetAll();
-        Task<IEnumerable<CustomerSearchModel>> GetAllAsync();
+        IEnumerable<CustomerSearchModel> GetAll(Query query);
+        Task<IEnumerable<CustomerSearchModel>> GetAllAsync(Query query);
         CustomerSearchModel FindByCustomerId(int customerId);
         Task<CustomerSearchModel> FindByCustomerIdAsync(int customerId);
         IEnumerable<CustomerSearchModel> FindByCustomerNo(string customerNo);

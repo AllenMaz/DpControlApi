@@ -31,9 +31,12 @@ namespace DpControl.Migrations
                 {
                     CustomerId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CustomerName = table.Column<string>(nullable: true),
-                    CustomerNo = table.Column<string>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: false),
+                    CustomerName = table.Column<string>(nullable: false),
+                    CustomerNo = table.Column<string>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    Modifier = table.Column<string>(nullable: true),
                     RowVersion = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>

@@ -1,12 +1,8 @@
 ﻿
 using DpControl.Controllers;
 using DpControl.Utility.Filters;
-using DpControl.Domain.EFContext;
-using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
-using DpControl.Domain.Repository;
-using DpControl.Models;
 using DpControl.Utility;
 using Microsoft.AspNet.Mvc;
 using System;
@@ -16,10 +12,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Caching.SqlServer;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.AspNet.Authorization;
 using DpControl.Utility.Authorization;
+
+
 
 namespace DpControl.APIControllers
 {
@@ -80,32 +76,32 @@ namespace DpControl.APIControllers
         [FormatReturnType]
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync([FromUri] Query query)
         {
-            string cacheKey = "CustomerGetAllCache";
-            IEnumerable<CustomerSearchModel> result;
+            //string cacheKey = "CustomerGetAllCache";
+            //IEnumerable<CustomerSearchModel> result;
 
-            byte[] cacheResult = await _sqlServerCache.GetAsync(cacheKey);
-            if (cacheResult == null)
-            {
-                //如果没有缓存，则从数据库查询数据，并缓存数据
-                result = await _customerRepository.GetAllAsync();
+            //byte[] cacheResult = await _sqlServerCache.GetAsync(cacheKey);
+            //if (cacheResult == null)
+            //{
+            //    //如果没有缓存，则从数据库查询数据，并缓存数据
+            //    result = await _customerRepository.GetAllAsync(query);
 
-                string jsonResult = JsonHandler.ToJson(result);
-                var value = Encoding.UTF8.GetBytes(jsonResult);
-                await _sqlServerCache.SetAsync(
-                    cacheKey,
-                    value,
-                    new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
-            }
-            else
-            {
-                //如果有缓存，则直接返回缓存数据
-                string cacheResultStr = Encoding.UTF8.GetString(cacheResult);
-                result = JsonHandler.UnJson<IEnumerable<CustomerSearchModel>>(cacheResultStr);
+            //    string jsonResult = JsonHandler.ToJson(result);
+            //    var value = Encoding.UTF8.GetBytes(jsonResult);
+            //    await _sqlServerCache.SetAsync(
+            //        cacheKey,
+            //        value,
+            //        new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10))
+            //        .SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+            //}
+            //else
+            //{
+            //    //如果有缓存，则直接返回缓存数据
+            //    string cacheResultStr = Encoding.UTF8.GetString(cacheResult);
+            //    result = JsonHandler.UnJson<IEnumerable<CustomerSearchModel>>(cacheResultStr);
 
-            }
+            //}
 
-
+            var result = await _customerRepository.GetAllAsync(query);
 
             return result;
         }

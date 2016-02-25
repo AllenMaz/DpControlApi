@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Collections;
 using System.Dynamic;
 using System.Linq.Expressions;
+using DpControl.Domain.Models;
 
 namespace DpControl.Utility.Filters
 {
@@ -22,11 +23,11 @@ namespace DpControl.Utility.Filters
     public class EnableQueryAttribute : ActionFilterAttribute
     {
         //查询参数对象
-        private QueryModel query ;
+        private Query query ;
 
         public EnableQueryAttribute()
         {
-            query = new QueryModel();
+            query = new Query();
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace DpControl.Utility.Filters
             string queryKey = string.Empty;
             foreach (string key in actionArguments.Keys)
             {
-                if (actionArguments[key].GetType() == typeof(QueryModel))
+                if (actionArguments[key].GetType() == typeof(Query))
                 {
                     queryKey = key;
                     break;
@@ -195,6 +196,8 @@ namespace DpControl.Utility.Filters
         /// 
         public override void OnResultExecuting(ResultExecutingContext context)
         {
+            #region 
+            /*
             try
             {
                 //获取方法的返回值类型
@@ -223,6 +226,8 @@ namespace DpControl.Utility.Filters
             {
                 //出现异常，则不做处理，返回原数据
             }
+            */
+            #endregion
 
         }
 
