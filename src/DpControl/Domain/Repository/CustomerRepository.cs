@@ -26,35 +26,64 @@ namespace DpControl.Domain.Repository
             _context = dbContext;
         }
 
-        public void Add(CustomerAddModel customer)
+        public int Add(CustomerAddModel customer)
         {
-            
-            _context.Customers.Add(new Customer
+            var model = new Customer
             {
                 CustomerName = customer.CustomerName,
                 CustomerNo = customer.CustomerNo,
                 CreateDate = DateTime.Now
-            });
+            };
+            _context.Customers.Add(model);
 
-            _context.SaveChanges();
-            
+           _context.SaveChanges();
+            return model.CustomerId; 
         }
 
-        public async Task AddAsync(CustomerAddModel customer)
+        public async Task<int> AddAsync(CustomerAddModel customer)
         {
-            
-            _context.Customers.Add(new Customer
+            var model = new Customer
             {
                 CustomerName = customer.CustomerName,
                 CustomerNo = customer.CustomerNo,
                 CreateDate = DateTime.Now
-            });
+            };
+
+            _context.Customers.Add(model);
 
             await _context.SaveChangesAsync();
-           
+            return model.CustomerId;
 
         }
+        public CustomerSearchModel FindByCustomerId(int customerId)
+        {
+            var customer = _context.Customers
+                        .Where(c => c.CustomerId == customerId)
+                        .Select(c => new CustomerSearchModel
+                        {
+                            CustomerId = c.CustomerId,
+                            CustomerName = c.CustomerName,
+                            CustomerNo = c.CustomerNo,
+                            CreateDate = c.CreateDate
+                        }).FirstOrDefault();
 
+            return customer;
+        }
+
+        public async Task<CustomerSearchModel> FindByCustomerIdAsync(int customerId)
+        {
+            var customer =await _context.Customers
+                        .Where(c => c.CustomerId == customerId)
+                        .Select(c => new CustomerSearchModel
+                        {
+                            CustomerId = c.CustomerId,
+                            CustomerName = c.CustomerName,
+                            CustomerNo = c.CustomerNo,
+                            CreateDate = c.CreateDate
+                        }).FirstOrDefaultAsync();
+
+            return customer;
+        }
         public IEnumerable<CustomerSearchModel> FindByCustomerNo(string customerNo)
         {
             var customer = _context.Customers
@@ -64,7 +93,7 @@ namespace DpControl.Domain.Repository
                                 CustomerId = c.CustomerId,
                                 CustomerName = c.CustomerName,
                                 CustomerNo = c.CustomerNo,
-
+                                CreateDate = c.CreateDate
                             });
 
             return customer.ToList<CustomerSearchModel>();
@@ -79,7 +108,7 @@ namespace DpControl.Domain.Repository
                             CustomerId = c.CustomerId,
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
-                                
+                            CreateDate = c.CreateDate
                         });
 
             return await customer.ToListAsync<CustomerSearchModel>();
@@ -87,12 +116,20 @@ namespace DpControl.Domain.Repository
 
         public IEnumerable<CustomerSearchModel> GetAll()
         {
-            var customers = _context.Customers.Select(c => new CustomerSearchModel
+            var customers = _context.Customers.Include(c=>c.Projects).Select(c => new CustomerSearchModel
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate
+                CreateDate = c.CreateDate,
+                Projects = c.Projects.Select(p => new ProjectSearchModel
+                {
+                    CustomerId = p.CustomerId,
+                    ProjectId = p.ProjectId,
+                    ProjectName = p.ProjectName,
+                    ProjectNo = p.ProjectNo,
+                    CreateDate = p.CreateDate
+                }).ToList()
             })
                 .OrderBy(c => c.CustomerNo)
                 .ToList<CustomerSearchModel>();
@@ -102,12 +139,19 @@ namespace DpControl.Domain.Repository
 
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
         {
-            var customers = await _context.Customers.Select(c => new CustomerSearchModel
+            var customers = await _context.Customers.Include(c=>c.Projects).Select(c => new CustomerSearchModel
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate
+                CreateDate = c.CreateDate,
+                Projects = c.Projects.Select(p=>new ProjectSearchModel {
+                    CustomerId = p.CustomerId,
+                    ProjectId = p.ProjectId,
+                    ProjectName = p.ProjectName,
+                    ProjectNo = p.ProjectNo,
+                    CreateDate = p.CreateDate
+                }).ToList()
             })
                 .OrderBy(c => c.CustomerNo)
                 .ToListAsync<CustomerSearchModel>();
@@ -115,7 +159,7 @@ namespace DpControl.Domain.Repository
             return customers;
         }
 
-        public void UpdateById(int customerId,CustomerUpdateModel mcustomer)
+        public int UpdateById(int customerId,CustomerUpdateModel mcustomer)
         {
             
             var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
@@ -125,10 +169,12 @@ namespace DpControl.Domain.Repository
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
 
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
+
+            return customer.CustomerId;
         }
 
-        public async Task UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer)
+        public async Task<int> UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer)
         {
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
             if (customer == null)
@@ -138,7 +184,7 @@ namespace DpControl.Domain.Repository
             customer.CustomerNo = mcustomer.CustomerNo;
 
             await _context.SaveChangesAsync();
-            
+            return customer.CustomerId; 
         }
 
         public void RemoveById(int id)
@@ -156,11 +202,10 @@ namespace DpControl.Domain.Repository
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
         }
-
-
+        
         #endregion
 
-       
+
     }
 
 }

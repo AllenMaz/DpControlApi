@@ -51,7 +51,15 @@ namespace DpControl.Utility.ExceptionHandler
                         //系统异常
                         exceptionMessage = "System is abnormal ！Error：" + exceptionMessage;
                         //记录异常日志
-                        _logger.LogWarning(exceptionMessage ,error.Error);
+                        try
+                        {
+                            _logger.LogWarning(exceptionMessage, error.Error);
+
+                        }
+                        catch
+                        {
+                           //记录日志出现异常
+                        }
                     }
                     int httpStatusCode = (int)HttpStatusCode.BadRequest;
                     string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { exceptionMessage });

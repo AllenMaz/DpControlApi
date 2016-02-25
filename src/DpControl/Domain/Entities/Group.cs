@@ -9,6 +9,9 @@ namespace DpControl.Domain.Entities
     {
         public int GroupId { get; set; }
         public string GroupName { get; set; }
+        
+        public DateTime CreateData { get; set; }
+        public byte[] RowVersion { get; set; }
 
         #region relationship
         public int ProjectId { get; set; }
@@ -19,8 +22,6 @@ namespace DpControl.Domain.Entities
         public Scene Scene { get; set; }         // one-to-many: one Scene can have multi-group; but one group only belong to a single scene.
         #endregion
 
-        public DateTime ModifiedDate { get; set; }
-        public byte[] RowVersion { get; set; }
 
         public Group()
         {

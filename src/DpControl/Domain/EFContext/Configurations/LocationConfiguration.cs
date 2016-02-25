@@ -20,6 +20,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(l => l.RoomNo).HasMaxLength(50);
             entityBuilder.Property(l => l.CommAddress).HasMaxLength(40);
             entityBuilder.Property(i => i.DeviceSerialNo).HasMaxLength(16);
+            entityBuilder.Property(i => i.Description).HasMaxLength(200);
 
             entityBuilder.Property(l => l.ModifiedDate).IsRequired();
             entityBuilder.Property(l => l.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();

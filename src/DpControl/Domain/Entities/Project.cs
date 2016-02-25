@@ -8,11 +8,9 @@ namespace DpControl.Domain.Entities
     public class Project
     {
         public int ProjectId { get; set; }
-        //public string CustomerNo { get; set; }
-        //public string CustomerName { get; set; }
         public string ProjectName { get; set; }
         public string ProjectNo { get; set; }
-
+        public bool Completed { get; set; }
         #region relationship
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
@@ -23,7 +21,7 @@ namespace DpControl.Domain.Entities
         public virtual List<Holiday> Holidays { get; set; }
         #endregion
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public byte[] RowVersion { get; set; }
 
         public Project()

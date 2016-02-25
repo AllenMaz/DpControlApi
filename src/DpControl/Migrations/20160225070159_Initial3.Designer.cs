@@ -8,8 +8,8 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    [Migration("20160222081251_Initial")]
-    partial class Initial
+    [Migration("20160225070159_Initial3")]
+    partial class Initial3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,13 +61,15 @@ namespace DpControl.Migrations
                     b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreateDate");
+
                     b.Property<string>("CustomerName")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("CustomerNo")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
-
-                    b.Property<DateTime>("ModifiedDate");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -85,11 +87,11 @@ namespace DpControl.Migrations
                     b.Property<int>("GroupId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreateData");
+
                     b.Property<string>("GroupName")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
-
-                    b.Property<DateTime>("ModifiedDate");
 
                     b.Property<int>("ProjectId");
 
@@ -186,6 +188,9 @@ namespace DpControl.Migrations
                     b.Property<int>("CommMode");
 
                     b.Property<int>("CurrentPosition");
+
+                    b.Property<string>("Description")
+                        .HasAnnotation("MaxLength", 200);
 
                     b.Property<string>("DeviceSerialNo")
                         .HasAnnotation("MaxLength", 16);
@@ -329,9 +334,13 @@ namespace DpControl.Migrations
                     b.Property<int>("ProjectId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CustomerId");
+                    b.Property<bool>("Completed")
+                        .HasAnnotation("Relational:DefaultValue", "False")
+                        .HasAnnotation("Relational:DefaultValueType", "System.Boolean");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<int>("CustomerId");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()

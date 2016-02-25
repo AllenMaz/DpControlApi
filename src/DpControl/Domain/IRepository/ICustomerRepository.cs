@@ -9,14 +9,16 @@ namespace DpControl.Domain.IRepository
     public interface ICustomerRepository
     {
         
-        void Add(CustomerAddModel customer);
-        Task AddAsync(CustomerAddModel customer);
+        int Add(CustomerAddModel customer);
+        Task<int> AddAsync(CustomerAddModel customer);
         IEnumerable<CustomerSearchModel> GetAll();
         Task<IEnumerable<CustomerSearchModel>> GetAllAsync();
+        CustomerSearchModel FindByCustomerId(int customerId);
+        Task<CustomerSearchModel> FindByCustomerIdAsync(int customerId);
         IEnumerable<CustomerSearchModel> FindByCustomerNo(string customerNo);
         Task<IEnumerable<CustomerSearchModel>> FindByCustomerNoAsync(string customerNo);
-        void UpdateById(int customerId,CustomerUpdateModel mcustomer);
-        Task UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer);
+        int UpdateById(int customerId,CustomerUpdateModel mcustomer);
+        Task<int> UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer);
         void RemoveById(int customerId);
         Task RemoveByIdAsync(int customerId);
     }

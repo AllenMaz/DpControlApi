@@ -48,26 +48,21 @@ namespace DpControl.APIControllers
                 return HttpBadRequest(ModelStateError());
             }
 
-            await _customerRepository.AddAsync(mCustomer);
-            return CreatedAtRoute("GetByCustomerNoAsync", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
+            int customerId =  await _customerRepository.AddAsync(mCustomer);
+            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
         }
 
+       
         /// <summary>
-        /// Search data by CustomerNo
+        /// Search data by CustomerId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [HttpGet("{customerNo}", Name = "GetByCustomerNoAsync")]
-        public async Task<IActionResult> GetByCustomerNoAsync(string customerNo)
+        [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
+        public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
         {
-            if (string.IsNullOrEmpty(customerNo))
-            {
-               return HttpBadRequest(ResponseHandler.ReturnBadRequestError("CustomerNo can't be empty"));
-
-            }
-
-            var customer = await _customerRepository.FindByCustomerNoAsync(customerNo);
+            var customer = await _customerRepository.FindByCustomerIdAsync(customerId);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -130,8 +125,8 @@ namespace DpControl.APIControllers
                 return HttpBadRequest(ModelStateError());
             }
 
-            await _customerRepository.UpdateByIdAsync(id,mCustomer);
-            return CreatedAtRoute("GetByCustomerNoAsync", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
+            var customerId = await _customerRepository.UpdateByIdAsync(id,mCustomer);
+            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
 
         }
 

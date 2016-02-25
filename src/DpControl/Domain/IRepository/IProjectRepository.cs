@@ -7,13 +7,15 @@ namespace DpControl.Domain.IRepository
 {
     public interface IProjectRepository
     {
-        Task Add( MProject item);
-        Task<IEnumerable<MProject>> GetAll();
-        Task<IEnumerable<MProject>> FindByCustomerNo(string customerNo);
-        Task RemoveById(int Id);
-        Task Update(MProject mcustomer);
- //       Task<IEnumerable<String>> GetCustomerName();
-
-        //Task<IEnumerable<MCustomer>> FindRangeByOrder(Query query);
+        int Add(ProjectAddModel project);
+        Task<int> AddAsync(ProjectAddModel project);
+        IEnumerable<ProjectSearchModel> GetAll();
+        Task<IEnumerable<ProjectSearchModel>> GetAllAsync();
+        ProjectSearchModel FindByProjectId(int projectId);
+        Task<ProjectSearchModel> FindByProjectIdAsync(int projectId);
+        int UpdateById(int projectId, ProjectUpdateModel project);
+        Task<int> UpdateByIdAsync(int projectId, ProjectUpdateModel project);
+        void RemoveById(int projectId);
+        Task RemoveByIdAsync(int projectId);
     }
 }

@@ -8,7 +8,7 @@ using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
 using DpControl.Domain.Models;
 using System.Reflection;
-//using Microsoft.Extensions.DependencyInjection;
+using DpControl.Domain.Execptions;
 
 
 namespace DpControl.Domain.Repository
@@ -30,110 +30,157 @@ namespace DpControl.Domain.Repository
 
         #endregion
 
-        public async Task<IEnumerable<MProject>> GetAll()
+        public int Add(ProjectAddModel project)
         {
-            var projects = await _context.Projects.Select(c => new MProject
-                {
-                    ProjectId      =   c.ProjectId,
-                    //CustomerName = c.CustomerName,
-                    //CustomerNo = c.CustomerNo,
-                    ProjectName = c.ProjectName,
-                    ProjectNo = c.ProjectNo
-                })
-                .OrderBy(c => c.ProjectNo)
-                .ToListAsync<MProject>();
-            return projects;
-        }
-        public async Task<IEnumerable<MProject>> FindByCustomerNo(string projectNo)
-        {
-            var customer =  _context.Projects
-                        .Where(c => c.ProjectNo == projectNo)
-                        .Select(c=> new MProject
-                        {
-                            ProjectId = c.ProjectId,
-                            //CustomerName = c.CustomerName,
-                            //CustomerNo = c.CustomerNo,
-                            ProjectName = c.ProjectName,
-                            ProjectNo = c.ProjectNo
-                        });
+            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == project.CustomerId);
             if (customer == null)
-                throw new KeyNotFoundException();
-            return await customer.ToListAsync<MProject>();
-        }
+                throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
 
-        public async Task Add(MProject project)
-        {
-            if (project == null)
+            var model = new Project
             {
-                throw new ArgumentNullException();
-            }
-            _context.Projects.Add(new Project
-            {
-                //CustomerName = project.CustomerName,
-                //CustomerNo = project.CustomerNo,
+                CustomerId = project.CustomerId,
                 ProjectName = project.ProjectName,
                 ProjectNo = project.ProjectNo,
-                ModifiedDate = DateTime.Now
-            });
+                CreateDate = DateTime.Now
+            };
+            _context.Projects.Add(model);
+            _context.SaveChanges();
+            return model.ProjectId;
+
+        }
+
+        public async Task<int> AddAsync(ProjectAddModel project)
+        {
+            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == project.CustomerId);
+            if (customer == null)
+                throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
+
+            var model = new Project
+            {
+                CustomerId = project.CustomerId,
+                ProjectName = project.ProjectName,
+                ProjectNo = project.ProjectNo,
+                CreateDate = DateTime.Now
+            };
+            _context.Projects.Add(model);
+            await _context.SaveChangesAsync();
+            return model.ProjectId;
+        }
+
+        public ProjectSearchModel FindByProjectId(int projectId)
+        {
+            var projects = _context.Projects.Where(v => v.ProjectId == projectId)
+                .Select(v=>new ProjectSearchModel() {
+                    ProjectId = v.ProjectId,
+                    ProjectNo = v.ProjectNo,
+                    ProjectName = v.ProjectName,
+                    CustomerId = v.CustomerId,
+                    CreateDate = v.CreateDate,
+                    Completed = v.Completed
+                }).FirstOrDefault();
+
+            return projects;
+        }
+
+        public async Task<ProjectSearchModel> FindByProjectIdAsync(int projectId)
+        {
+            var projects = _context.Projects.Where(v => v.ProjectId == projectId)
+                .Select(v => new ProjectSearchModel()
+                {
+                    ProjectId = v.ProjectId,
+                    ProjectNo = v.ProjectNo,
+                    ProjectName = v.ProjectName,
+                    CustomerId = v.CustomerId,
+                    CreateDate = v.CreateDate,
+                    Completed = v.Completed
+                }).FirstOrDefaultAsync();
+
+            return await projects;
+        }
+
+        public IEnumerable<ProjectSearchModel> GetAll()
+        {
+            var projects = _context.Projects.Select(v => new ProjectSearchModel
+            {
+                ProjectId = v.ProjectId,
+                ProjectNo = v.ProjectNo,
+                ProjectName = v.ProjectName,
+                CustomerId = v.CustomerId,
+                CreateDate = v.CreateDate,
+                Completed = v.Completed
+            })
+                .OrderBy(v =>v.ProjectNo )
+                .ToList<ProjectSearchModel>();
+
+            return projects;
+        }
+
+        public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync()
+        {
+            var projects = await _context.Projects.Select(v => new ProjectSearchModel
+            {
+                ProjectId = v.ProjectId,
+                ProjectNo = v.ProjectNo,
+                ProjectName = v.ProjectName,
+                CustomerId = v.CustomerId,
+                CreateDate = v.CreateDate,
+                Completed = v.Completed
+            })
+               .OrderBy(v => v.ProjectNo)
+               .ToListAsync<ProjectSearchModel>();
+
+            return projects;
+        }
+
+        public void RemoveById(int projectId)
+        {
+            var project = _context.Projects.FirstOrDefault(c => c.ProjectId == projectId);
+            if (project == null)
+                throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
+
+            _context.Projects.Remove(project);
+            _context.SaveChanges();
+        }
+
+        public async Task RemoveByIdAsync(int projectId)
+        {
+            var project = _context.Projects.FirstOrDefault(c => c.ProjectId == projectId);
+            if (project == null)
+                throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
+
+            _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
         }
- 
-        public async Task Update(MProject mcustomer)
+
+        public int UpdateById(int projectId, ProjectUpdateModel mproject)
         {
-            var customer = await _context.Projects.FirstOrDefaultAsync(c => c.ProjectId == mcustomer.ProjectId);
-                if (customer == null)
-                    throw new KeyNotFoundException();
-                //customer.CustomerName = mcustomer.CustomerName;
-                //customer.CustomerNo = mcustomer.CustomerNo;
-                customer.ProjectName = mcustomer.ProjectName;
-                customer.ProjectNo = mcustomer.ProjectNo;
-                customer.ModifiedDate = DateTime.Now;
+            var project = _context.Projects.FirstOrDefault(c => c.ProjectId == projectId);
+            if (project == null)
+                throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
+
+            project.ProjectName = mproject.ProjectName;
+            project.ProjectNo = mproject.ProjectNo;
+            project.Completed = mproject.Completed;
+
+            _context.SaveChanges();
+            return project.ProjectId;
+        }
+
+        public async Task<int> UpdateByIdAsync(int projectId, ProjectUpdateModel mproject)
+        {
+            var project = _context.Projects.FirstOrDefault(c => c.ProjectId == projectId);
+            if (project == null)
+                throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
+
+            project.ProjectName = mproject.ProjectName;
+            project.ProjectNo = mproject.ProjectNo;
+            project.Completed = mproject.Completed;
 
             await _context.SaveChangesAsync();
+            return project.ProjectId;
         }
 
-        public async Task RemoveById(int Id)
-        {
-            var toDelete = new Project { CustomerId = Id };
-            _context.Projects.Attach(toDelete);
-            _context.Projects.Remove(toDelete);
-            await _context.SaveChangesAsync();
-        }
+       
 
-        public async Task<IEnumerable<String>> GetProjectName()
-        {
-            return await _context.Projects.Select(c => c.ProjectName).ToListAsync<String>();
-        }
-
-        //public async Task<IEnumerable<MCustomer>> FindRangeByOrder(Query query)
-        //{
-        //    var customers =  _context.Customers.Select(c => new MCustomer
-        //    {
-        //        CustomerId = c.CustomerId,
-        //        CustomerName = c.CustomerName,
-        //        CustomerNo = c.CustomerNo,
-        //        ProjectName = c.ProjectName,
-        //        ProjectNo = c.ProjectNo
-        //    });
-
-        //    if (query.orderby.OrderbyBehavior == "DESC")
-        //    {
-        //        for(int i = 0; i < query.orderby.OrderbyField.Length; i++)
-        //        {
-        //            if(typeof(MCustomer).GetProperty)
-        //            customers = customers.OrderBy();
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        customers.OrderBy()
-        //    }
-        //    .OrderBy(c => c.CustomerNo)
-        //    .ToListAsync<MCustomer>();
-        //    return customers;
-        //}
-
-//        Array
     }
 }

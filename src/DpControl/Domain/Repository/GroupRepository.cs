@@ -40,7 +40,7 @@ namespace DpControl.Domain.Repository
             _context.Groups.Add(new Group
             {
                 GroupName = groupName,
-                ModifiedDate = DateTime.Now,
+                CreateData = DateTime.Now,
                 ProjectId = _project.ProjectId,
             });
             await _context.SaveChangesAsync();

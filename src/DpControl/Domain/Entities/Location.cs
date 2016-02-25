@@ -23,6 +23,7 @@ namespace DpControl.Domain.Entities
         public int FavorPositionrSecond { get; set; }
         public int FavorPositionThird { get; set; }
 
+        public string Description { get; set; }
         #region Realtionship
         public virtual List<GroupLocation> GroupLocations { get; set; }                // many-to-many： 
         public virtual List<OperatorLocation> OperatorLocations { get; set; }

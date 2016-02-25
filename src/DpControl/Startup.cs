@@ -136,14 +136,15 @@ namespace DpControl
 
             #endregion
             #region Register Dependency Injection
-            services.AddSingleton<ShadingContext, ShadingContext>();
+            services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
-            services.AddSingleton<ICustomerRepository, CustomerRepository>();
-            services.AddSingleton<IGroupRepository, GroupRepository>();
-            services.AddSingleton<ILocationRepository, LocationRepository>();
-            services.AddSingleton<IOperatorRepository, OperatorRepository>();
-            services.AddSingleton<ISceneRepository, SceneRepository>();
-            services.AddSingleton<ISceneSegmentRepository, SceneSegmentRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IOperatorRepository, OperatorRepository>();
+            services.AddScoped<ISceneRepository, SceneRepository>();
+            services.AddScoped<ISceneSegmentRepository, SceneSegmentRepository>();
 
             #endregion
         }
