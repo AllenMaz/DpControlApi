@@ -147,6 +147,7 @@ namespace DpControl.Domain.Repository
 
             var result = QueryOperate<Customer>.Execute(queryData, query);
             
+            //以下执行完后才会去数据库中查询
             var customers = await result.Include(c => c.Projects).ToListAsync();
 
             var customerSearch = customers.Select(c => new CustomerSearchModel

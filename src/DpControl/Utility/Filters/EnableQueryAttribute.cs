@@ -13,6 +13,7 @@ using System.Collections;
 using System.Dynamic;
 using System.Linq.Expressions;
 using DpControl.Domain.Models;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Utility.Filters
 {
@@ -51,11 +52,13 @@ namespace DpControl.Utility.Filters
             var skipString = context.HttpContext.Request.Query["skip"].ToString().Trim();
             var topString = context.HttpContext.Request.Query["top"].ToString().Trim();
             var orderbyString = context.HttpContext.Request.Query["orderby"].ToString().Trim();
+            var filterString = context.HttpContext.Request.Query["filter"].ToString().Trim();
             var selectString = context.HttpContext.Request.Query["select"].ToString().Trim();
             
             query.skip = GetSkipParam(skipString);
             query.top = GetTopParam(topString);
             query.orderby = GetOrderbyParam(orderbyString,actionReturnType);
+            query.filter = GetFilterParam(filterString,actionReturnType);
             query.select = GetSelectParam(selectString,actionReturnType);
             #endregion
 
@@ -142,8 +145,8 @@ namespace DpControl.Utility.Filters
                 var property = actionReturnType.GetProperty(arrOrderby[i]);
                 if (property == null)
                 {
-                    //如果有任意一个值不属于方法返回值类型，则返回null
-                    return null;
+                    //如果有任意一个值不属于方法返回值类型，则返回错误
+                    throw new ExpectException("The query(filter) syntax errors");
                 }
                 else
                 {
@@ -174,8 +177,7 @@ namespace DpControl.Utility.Filters
                 var property = actionReturnType.GetProperty(arrSelect[i]);
                 if (property == null)
                 {
-                    //如果有任意一个值不属于方法返回值类型，则返回null
-                    return null;
+                    throw new ExpectException("The query(select) syntax errors");
                 }
                 else
                 {
@@ -187,6 +189,71 @@ namespace DpControl.Utility.Filters
             return selectField;
 
         }
+
+        /// <summary>
+        /// 获取filter参数
+        /// </summary>
+        /// <param name="filterString"></param>
+        /// <param name="actionReturnType"></param>
+        /// <returns></returns>
+        private string[] GetFilterParam(string filterString, Type actionReturnType)
+        {
+            //split by "and" logical operator
+            string[] arrFilter = filterString.Split(new string[] { FilterOperators.And }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < arrFilter.Length; i++)
+            {
+                string splitStr = string.Empty;
+                if (arrFilter[i].Contains(FilterOperators.LessThan))
+                {
+                    splitStr = FilterOperators.LessThan;
+                }
+                else if (arrFilter[i].Contains(FilterOperators.MoreThan))
+                {
+                    splitStr = FilterOperators.MoreThan;
+                } else if (arrFilter[i].Contains(FilterOperators.Equal))
+                {
+                    splitStr = FilterOperators.Equal;
+                }
+                string[] arrFieldAndValue = arrFilter[i].Split(new string[] { splitStr }, StringSplitOptions.RemoveEmptyEntries);
+                if (arrFieldAndValue.Length !=2)
+                    throw new ExpectException("The query(filter) syntax errors");
+                //校验输入的filter参数的属性值的范围必须在当前方法返回类型中的字段值中
+                if (!CheckPropertyAndValueType(actionReturnType,arrFieldAndValue[0],arrFieldAndValue[1]))
+                {
+                    //如果有任意一个值不属于方法返回值类型，则返回null
+                    throw new ExpectException("The query(filter) syntax errors");
+                }
+                
+            }
+
+            return arrFilter;
+
+        }
+
+        private bool CheckPropertyAndValueType(Type actionReturnType, string propertyName,string value)
+        {
+            bool success = false;
+            var property = actionReturnType.GetProperty(propertyName);
+            if (property != null)
+            {
+                //值类型要与属性类型一致,如果转换失败则会抛出异常
+                try
+                {
+                    Common.ConverValueToType(property.PropertyType, value);
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                }
+                
+                
+
+            }
+            return success;
+        }
+
+       
 
         /// <summary>
         /// 在controller action result执行之前调用 

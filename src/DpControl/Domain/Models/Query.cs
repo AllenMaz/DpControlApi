@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Reflection;
+using DpControl.Domain.Execptions;
+using Microsoft.AspNet.Mvc.ViewFeatures;
+using System.Linq.Expressions;
 
 namespace DpControl.Domain.Models
 {
@@ -42,10 +45,10 @@ namespace DpControl.Domain.Models
         //private string expand { get; set; }
 
         /// <summary>
-        /// 
+        /// Filter
         /// </summary>
-        //private string filter { get; set; }
-
+        public string[] filter { get; set; }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -75,23 +78,196 @@ namespace DpControl.Domain.Models
         public string OrderbyBehavior { get; set; }
     }
 
+    public static class FilterOperators
+    {
+        public const string Equal = " eq ";
+        public const string LessThan = " lt ";
+        public const string MoreThan = " gt ";
+        public const string And = " and ";
+        public const string Or = " or ";
+
+        public static readonly List<string> CompareOperators = new List<string>() {
+            Equal,
+            LessThan,
+            MoreThan
+        };
+        
+        public static readonly List<string> LogicalOperators = new List<string>() {
+            And
+        };
+    }
+
     public static class QueryOperate<T>
     {
         public static IQueryable<T> Execute(IQueryable<T> queryData,Query query)
         {
-            int? skip = query.skip;
-            int? top = query.top;
-            OrderBy orderbyParam = query.orderby;
 
-            //paging operate
-            var result = Paging(queryData,skip,top);
-            //orderby operate
-            result = OrderBy(result, orderbyParam);
+            if (query != null)
+            {
+                int? skip = query.skip;
+                int? top = query.top;
+                OrderBy orderbyParam = query.orderby;
+                string[] filterParams = query.filter;
 
-            return result;
+                //Filter operate
+                queryData = Filter(queryData,filterParams);
+                //paging operate
+                queryData = Paging(queryData, skip, top);
+                //orderby operate
+                queryData = OrderBy(queryData, orderbyParam);
+            }
+            return queryData;
+        }
+        #region Filter
+        private static IQueryable<T> Filter(IQueryable<T> query, string[] filterParams)
+        {
+            for (int i = 0; i < filterParams.Length; i++)
+            {
+                string filterOperator = string.Empty;
+                if (filterParams[i].Contains(FilterOperators.LessThan))
+                {
+                    filterOperator = FilterOperators.LessThan;
+                    string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
+                    query = ConstructWhereLessThanCondition(query, arrFieldAndValue[0], arrFieldAndValue[1]);
+                }
+                else if (filterParams[i].Contains(FilterOperators.MoreThan))
+                {
+                    filterOperator = FilterOperators.MoreThan;
+                    string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
+                    query = ConstructWhereMoreThanCondition(query, arrFieldAndValue[0], arrFieldAndValue[1]);
+
+                }
+                else if (filterParams[i].Contains(FilterOperators.Equal))
+                {
+                    filterOperator = FilterOperators.Equal;
+                    string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
+                    query = ConstructWhereEqualCondition(query, arrFieldAndValue[0], arrFieldAndValue[1]);
+
+                }
+                //string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
+                //query = ConstructWhereCondition(query,arrFieldAndValue[0],arrFieldAndValue[1],filterOperator);
+
+            }
+            return query;
         }
 
-        #region Paging
+        private static IQueryable<T> ConstructWhereCondition(IQueryable<T> query,string propertyName,object value,string filterOperator)
+        {
+            ParameterExpression param = Expression.Parameter(typeof(T), "c");
+            Expression left = Expression.Property(param, typeof(T).GetProperty(propertyName));
+            Expression right = Expression.Constant(value);
+            Expression filter = Expression.Equal(left, right);
+            if (filterOperator.Equals(FilterOperators.LessThan))
+            {
+                filter = Expression.LessThanOrEqual(left, right);
+            }
+            else if (filterOperator.Equals(FilterOperators.MoreThan))
+            {
+                filter = Expression.GreaterThanOrEqual(left, right);
+
+            }
+            else if (filterOperator.Equals(FilterOperators.Equal))
+            {
+                filter = Expression.Equal(left, right);
+            }
+
+            return query = query.Where(Expression.Lambda<Func<T, bool>>(filter, param));
+        }
+
+        private static IQueryable<T> ConstructWhereLessThanCondition(IQueryable<T> query, string propertyName, object value)
+        {
+
+            var property = typeof(T).GetProperty(propertyName);
+            string typeName = property.PropertyType.Name;
+           
+            if (typeName == "Int16")
+            {
+                query = query.Where(v => System.Convert.ToInt16(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToInt16(value));
+
+            }
+            else if (typeName == "Int32")
+            {
+                query = query.Where(v => System.Convert.ToInt32(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToInt32(value));
+            }
+            else if (typeName == "Int64")
+            {
+                query = query.Where(v => System.Convert.ToInt64(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToInt64(value));
+            }
+            else if (typeName == "DateTime")
+            {
+                query = query.Where(v => System.Convert.ToDateTime(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToDateTime(value));
+            }
+            return query;
+        }
+
+        private static IQueryable<T> ConstructWhereMoreThanCondition(IQueryable<T> query, string propertyName, object value)
+        {
+
+            var property = typeof(T).GetProperty(propertyName);
+            string typeName = property.PropertyType.Name;
+
+            if (typeName == "Int16")
+            {
+                query = query.Where(v => System.Convert.ToInt16(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToInt16(value));
+
+            }
+            else if (typeName == "Int32")
+            {
+                query = query.Where(v => System.Convert.ToInt32(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToInt32(value));
+            }
+            else if (typeName == "Int64")
+            {
+                query = query.Where(v => System.Convert.ToInt64(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToInt64(value));
+            }
+            else if (typeName == "DateTime")
+            {
+                query = query.Where(v => System.Convert.ToDateTime(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToDateTime(value));
+            }
+            return query;
+        }
+
+
+        private static IQueryable<T> ConstructWhereEqualCondition(IQueryable<T> query,string propertyName,object value)
+        {
+
+            var property = typeof(T).GetProperty(propertyName);
+            string typeName = property.PropertyType.Name;
+            if (typeName == "String")
+            {
+                ParameterExpression param = Expression.Parameter(typeof(T), "c");
+                Expression left = Expression.Property(param, typeof(T).GetProperty(propertyName));
+                Expression right = Expression.Constant(value);
+                Expression filter = Expression.Equal(left, right);
+                query = query.Where(Expression.Lambda<Func<T, bool>>(filter, param));
+
+                query = query.Where(v => System.Convert.ToString(v.GetType().GetProperty(propertyName).GetValue(v, null)) == value.ToString());
+
+            }
+            else if (typeName == "Int16")
+            {
+                query = query.Where(v => System.Convert.ToInt16(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToInt16(value));
+                
+            }
+            else if (typeName == "Int32")
+            {
+                query = query.Where(v => System.Convert.ToInt32(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToInt32(value));
+            }
+            else if (typeName == "Int64")
+            {
+                query = query.Where(v => System.Convert.ToInt64(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToInt64(value));
+            }
+            else if (typeName == "Boolean")
+            {
+                query = query.Where(v => System.Convert.ToBoolean(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToBoolean(value));
+            }
+            else if (typeName == "DateTime")
+            {
+                query = query.Where(v => System.Convert.ToDateTime(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToDateTime(value));
+            }
+            return query;
+        }
+        #endregion
+            #region Paging
         private static IQueryable<T> Paging(IQueryable<T> query, int? skip, int? top)
         {
             #region paging by skip and top
@@ -121,37 +297,39 @@ namespace DpControl.Domain.Models
         #region Order By
         private static IQueryable<T> OrderBy(IQueryable<T> query,OrderBy orderbyParam)
         {
-            if (orderbyParam.OrderbyField.Length > 0)
+            if (orderbyParam != null)
             {
-                string orderbyBehavior = orderbyParam.OrderbyBehavior;
-                string[] orderbyField = orderbyParam.OrderbyField;
-
-                if (!string.IsNullOrEmpty(orderbyBehavior) && orderbyBehavior.Trim().ToLower() == "desc")
+                if (orderbyParam.OrderbyField.Length > 0)
                 {
-                    var result = query.OrderByDescending(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
-                    for (int i = 1; i < orderbyField.Length; i++)
+                    string orderbyBehavior = orderbyParam.OrderbyBehavior;
+                    string[] orderbyField = orderbyParam.OrderbyField;
+
+                    if (!string.IsNullOrEmpty(orderbyBehavior) && orderbyBehavior.Trim().ToLower() == "desc")
                     {
-                        result = result.ThenByDescending(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
-                        if (i == orderbyField.Length - 1)
+                        var result = query.OrderByDescending(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
+                        for (int i = 1; i < orderbyField.Length; i++)
                         {
-                            return result;
+                            result = result.ThenByDescending(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
+                            if (i == orderbyField.Length - 1)
+                            {
+                                return result;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    var result = query.OrderBy(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
-                    for (int i = 1; i < orderbyField.Length; i++)
+                    else
                     {
-                        result = result.ThenBy(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
-                        if (i == orderbyField.Length - 1)
+                        var result = query.OrderBy(v => v.GetType().GetProperty(orderbyField[0]).GetValue(v, null));
+                        for (int i = 1; i < orderbyField.Length; i++)
                         {
-                            return result;
+                            result = result.ThenBy(v => v.GetType().GetProperty(orderbyField[i]).GetValue(v, null));
+                            if (i == orderbyField.Length - 1)
+                            {
+                                return result;
+                            }
                         }
                     }
                 }
             }
-
             return query;
         }
 
