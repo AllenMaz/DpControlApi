@@ -26,6 +26,7 @@ namespace DpControl.Domain.Models
     {
         public int CustomerId { get; set; }
         public DateTime? CreateDate { get; set; }
+        
         public ICollection<ProjectSearchModel> Projects {get;set;}
     }
 

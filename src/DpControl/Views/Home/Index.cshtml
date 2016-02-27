@@ -13,6 +13,14 @@
         margin: 0px 2px;
         font-style: italic;
     }
+
+    .tipStyle {
+        color:deeppink;
+        font-size: large;
+        margin: 0px 2px;
+        font-style: italic;
+    }
+
     li{padding:10px 0px;}
     a { text-decoration:underline; }
     .firstRetract {padding-left:25px;}
@@ -34,24 +42,27 @@
     <label style="font-size:large;font-weight:700">There are some Features:</label>
     <ul>
         <li class="content">
-            * Filter by &filter param.
-            <p>example:<label style="color:blue"> Return all Customers with CustomerName equal to 'Allen' and CustomerNo equal to '333'</label><br/>
-            <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">https://ip:port/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
-               
-            </p>
-            <p>example:<label style="color:blue">Return all Customers where CustomerId >= 15</label><br/>
-                <a href="/v1/Customers?filter=CustomerId gt 15">https://ip:port/v1/Customers?filter=CustomerId gt 15</a>
-            </p>
-            <p>example:<label style="color:blue"> Return all Customers where CustomerId <= 10</label><br/>
-                <a href="/v1/Customers?filter=CustomerId lt 10">https://ip:port/v1/Customers?filter=CustomerId lt 10</a>
-   
-            </p>
-        </li>
-
-        <li class="content">* Test Account   <sup class="newStyle">new</sup>
+            * Test Account   <sup class="tipStyle">note</sup>
             <div style="margin:0px 10px;font-size:medium">UserName = Test,Password = Test_123</div>
         </li>
-        
+
+        <li class="content">
+            * Filter by &filter param. <sup class="newStyle">new</sup>
+            <p>
+                example:<label style="color:blue"> Return all Customers with CustomerName equal to 'Allen' and CustomerNo equal to '333'</label><br />
+                <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">https://ip:port/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
+
+            </p>
+            <p>
+                example:<label style="color:blue">Return all Customers where CustomerId >= 15</label><br />
+                <a href="/v1/Customers?filter=CustomerId gt 15">https://ip:port/v1/Customers?filter=CustomerId gt 15</a>
+            </p>
+            <p>
+                example:<label style="color:blue"> Return all Customers where CustomerId <= 10</label><br />
+                <a href="/v1/Customers?filter=CustomerId lt 10">https://ip:port/v1/Customers?filter=CustomerId lt 10</a>
+
+            </p>
+        </li>
 
         <li class="content">* Support Logging by Serilog <sup class="newStyle"></sup></li>
 

@@ -6,6 +6,7 @@ using System.Reflection;
 using DpControl.Domain.Execptions;
 using Microsoft.AspNet.Mvc.ViewFeatures;
 using System.Linq.Expressions;
+using DpControl.Domain.Entities;
 
 namespace DpControl.Domain.Models
 {
@@ -114,7 +115,7 @@ namespace DpControl.Domain.Models
                 //paging operate
                 queryData = Paging(queryData, skip, top);
                 //orderby operate
-                queryData = OrderBy(queryData, orderbyParam);
+                queryData = OrderBy(queryData,orderbyParam);
             }
             return queryData;
         }
@@ -127,25 +128,19 @@ namespace DpControl.Domain.Models
                 if (filterParams[i].Contains(FilterOperators.LessThan))
                 {
                     filterOperator = FilterOperators.LessThan;
-                    string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
-                    query = ConstructWhereLessThanCondition(query, arrFieldAndValue[0], arrFieldAndValue[1]);
                 }
                 else if (filterParams[i].Contains(FilterOperators.MoreThan))
                 {
                     filterOperator = FilterOperators.MoreThan;
-                    string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
-                    query = ConstructWhereMoreThanCondition(query, arrFieldAndValue[0], arrFieldAndValue[1]);
 
                 }
                 else if (filterParams[i].Contains(FilterOperators.Equal))
                 {
                     filterOperator = FilterOperators.Equal;
-                    string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
-                    query = ConstructWhereEqualCondition(query, arrFieldAndValue[0], arrFieldAndValue[1]);
 
                 }
-                //string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
-                //query = ConstructWhereCondition(query,arrFieldAndValue[0],arrFieldAndValue[1],filterOperator);
+                string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
+                query = ConstructWhereCondition(query,arrFieldAndValue[0],arrFieldAndValue[1],filterOperator);
 
             }
             return query;
@@ -153,9 +148,12 @@ namespace DpControl.Domain.Models
 
         private static IQueryable<T> ConstructWhereCondition(IQueryable<T> query,string propertyName,object value,string filterOperator)
         {
+            var valueTypr = typeof(T).GetProperty(propertyName).PropertyType;
             ParameterExpression param = Expression.Parameter(typeof(T), "c");
             Expression left = Expression.Property(param, typeof(T).GetProperty(propertyName));
-            Expression right = Expression.Constant(value);
+            //Conver value to propertyType
+            var converValue = Convert.ChangeType(value,valueTypr);
+            Expression right = Expression.Constant(converValue);
             Expression filter = Expression.Equal(left, right);
             if (filterOperator.Equals(FilterOperators.LessThan))
             {
@@ -170,7 +168,7 @@ namespace DpControl.Domain.Models
             {
                 filter = Expression.Equal(left, right);
             }
-
+            
             return query = query.Where(Expression.Lambda<Func<T, bool>>(filter, param));
         }
 
@@ -199,7 +197,6 @@ namespace DpControl.Domain.Models
             }
             return query;
         }
-
         private static IQueryable<T> ConstructWhereMoreThanCondition(IQueryable<T> query, string propertyName, object value)
         {
 
@@ -225,8 +222,6 @@ namespace DpControl.Domain.Models
             }
             return query;
         }
-
-
         private static IQueryable<T> ConstructWhereEqualCondition(IQueryable<T> query,string propertyName,object value)
         {
 
@@ -267,7 +262,7 @@ namespace DpControl.Domain.Models
             return query;
         }
         #endregion
-            #region Paging
+        #region Paging
         private static IQueryable<T> Paging(IQueryable<T> query, int? skip, int? top)
         {
             #region paging by skip and top
@@ -315,6 +310,7 @@ namespace DpControl.Domain.Models
                                 return result;
                             }
                         }
+                        return result;
                     }
                     else
                     {
@@ -327,6 +323,7 @@ namespace DpControl.Domain.Models
                                 return result;
                             }
                         }
+                        return result;
                     }
                 }
             }

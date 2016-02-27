@@ -66,5 +66,12 @@ namespace DpControl.Utility
 
             return null;
         }
+
+
+        public static bool PropertyExists<T>(string propertyName)
+        {
+            return typeof(T).GetProperty(propertyName, BindingFlags.IgnoreCase |
+                BindingFlags.Public | BindingFlags.Instance) != null;
+        }
     }
 }
