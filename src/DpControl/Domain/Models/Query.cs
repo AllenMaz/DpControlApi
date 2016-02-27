@@ -48,7 +48,7 @@ namespace DpControl.Domain.Models
         /// <summary>
         /// Filter
         /// </summary>
-        public string[] filter { get; set; }
+        public Filter[] filter { get; set; }
         
         /// <summary>
         /// 
@@ -61,6 +61,7 @@ namespace DpControl.Domain.Models
             this.skip = null;
             this.top = null;
             this.select = null;
+            this.filter = null;
         }
 
         
@@ -77,6 +78,17 @@ namespace DpControl.Domain.Models
         /// orderby behavior (desc/asc or empty)
         /// </summary>
         public string OrderbyBehavior { get; set; }
+    }
+
+    public class Filter
+    {
+        /// <summary>
+        /// key:PropertyName
+        /// value:PropertyValue
+        /// </summary>
+        public Dictionary<string, string> FilterPropertyValue { get; set; }
+
+        public string FilterOperater { get; set; }
     }
 
     public static class FilterOperators
@@ -108,7 +120,7 @@ namespace DpControl.Domain.Models
                 int? skip = query.skip;
                 int? top = query.top;
                 OrderBy orderbyParam = query.orderby;
-                string[] filterParams = query.filter;
+                Filter[] filterParams = query.filter;
 
                 //Filter operate
                 queryData = Filter(queryData,filterParams);
@@ -120,27 +132,14 @@ namespace DpControl.Domain.Models
             return queryData;
         }
         #region Filter
-        private static IQueryable<T> Filter(IQueryable<T> query, string[] filterParams)
+        private static IQueryable<T> Filter(IQueryable<T> query, Filter[] filterParams)
         {
             for (int i = 0; i < filterParams.Length; i++)
             {
-                string filterOperator = string.Empty;
-                if (filterParams[i].Contains(FilterOperators.LessThan))
-                {
-                    filterOperator = FilterOperators.LessThan;
-                }
-                else if (filterParams[i].Contains(FilterOperators.MoreThan))
-                {
-                    filterOperator = FilterOperators.MoreThan;
-
-                }
-                else if (filterParams[i].Contains(FilterOperators.Equal))
-                {
-                    filterOperator = FilterOperators.Equal;
-
-                }
-                string[] arrFieldAndValue = filterParams[i].Split(new string[] { filterOperator }, StringSplitOptions.RemoveEmptyEntries);
-                query = ConstructWhereCondition(query,arrFieldAndValue[0],arrFieldAndValue[1],filterOperator);
+                string propertyName = filterParams[i].FilterPropertyValue.First().Key;
+                string propertyValue = filterParams[i].FilterPropertyValue.First().Value;
+                string filterOperator = filterParams[i].FilterOperater;
+                query = ConstructWhereCondition(query, propertyName, propertyValue, filterOperator);
 
             }
             return query;

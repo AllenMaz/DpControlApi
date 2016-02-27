@@ -88,12 +88,16 @@ namespace DpControl.Utility.Filters
         private int? GetSkipParam(string skipString)
         {
             int? skipParma = null;
-            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
-            bool isSkipaAvailable = Regex.IsMatch(skipString, regex);
-            if (isSkipaAvailable)
+            if (!string.IsNullOrEmpty(skipString))
             {
+                var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
+                bool isSkipaAvailable = Regex.IsMatch(skipString, regex);
+                if (!isSkipaAvailable)
+                    throw new ExpectException("The query(paging) syntax errors: skip param format error");
                 skipParma = System.Convert.ToInt32(skipString);
             }
+            
+            
             return skipParma;
         }
 
@@ -105,12 +109,16 @@ namespace DpControl.Utility.Filters
         private int? GetTopParam(string topString)
         {
             int? topParam = null;
-            var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
-            bool isSkipaAvailable = Regex.IsMatch(topString, regex);
-            if (isSkipaAvailable)
+            if (!string.IsNullOrEmpty(topString))
             {
+                var regex = @"^[1-9]([0-9]*)$|^[0-9]$";
+                bool isSkipaAvailable = Regex.IsMatch(topString, regex);
+                if (!isSkipaAvailable)
+                    throw new ExpectException("The query(paging) syntax errors: top param format error");
                 topParam = System.Convert.ToInt32(topString);
+
             }
+
             return topParam;
         }
 
@@ -125,16 +133,15 @@ namespace DpControl.Utility.Filters
             OrderBy orderbyParam = new OrderBy();
             string orderbyParamString = orderbyString;
             //校验字符串是否匹配 desc asc后缀
-            bool isOrderbyHasBehavior = Regex.IsMatch(orderbyString, @".*( desc| asc)$");
+            bool isOrderbyHasBehavior = Regex.IsMatch(orderbyString, @".*( desc| asc)$", RegexOptions.IgnoreCase);
             if (isOrderbyHasBehavior)
             {
                 //如果查询后带 desc,或者 asc则把这部分内容截掉
-                string regex = @"( desc| asc)";
-                Regex re = new Regex(regex);
-                orderbyParamString = Regex.Replace(orderbyString, regex, "");
+                string regex = @"( desc| asc)$";
+                orderbyParamString = Regex.Replace(orderbyString, regex, "", RegexOptions.IgnoreCase);
                 //同时获取orderbybehavior
-                Regex reg = new Regex(regex);
-                orderbyParam.OrderbyBehavior = reg.Match(orderbyString).Groups[1].Value.Trim();
+                Regex reg = new Regex(regex,RegexOptions.IgnoreCase);
+                orderbyParam.OrderbyBehavior = reg.Match(orderbyString).Groups[1].Value.Trim().ToLower();
             }
             //以逗号分隔字符串
             string[] arrOrderby = orderbyParamString.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
@@ -144,15 +151,11 @@ namespace DpControl.Utility.Filters
             {
                 var property = actionReturnType.GetProperty(arrOrderby[i]);
                 if (property == null)
-                {
                     //如果有任意一个值不属于方法返回值类型，则返回错误
-                    throw new ExpectException("The query(filter) syntax errors");
-                }
-                else
-                {
-                    //去除每个排序参数的前后空格
-                    OrderbyField[i] = arrOrderby[i].Trim();
-                }
+                    throw new ExpectException("The query(filter) syntax errors:Property '"+arrOrderby[i]+"' not exist");
+
+                //去除每个排序参数的前后空格
+                OrderbyField[i] = arrOrderby[i].Trim();
             }
 
             orderbyParam.OrderbyField = OrderbyField;
@@ -176,14 +179,11 @@ namespace DpControl.Utility.Filters
             {
                 var property = actionReturnType.GetProperty(arrSelect[i]);
                 if (property == null)
-                {
-                    throw new ExpectException("The query(select) syntax errors");
-                }
-                else
-                {
-                    //去除每个select参数的前后空格
-                    selectField[i] = arrSelect[i].Trim();
-                }
+                    throw new ExpectException("The query(select) syntax errors:Property '" + arrSelect[i] + "' not exist");
+                
+                //去除每个select参数的前后空格
+                selectField[i] = arrSelect[i].Trim();
+                
             }
             
             return selectField;
@@ -196,37 +196,50 @@ namespace DpControl.Utility.Filters
         /// <param name="filterString"></param>
         /// <param name="actionReturnType"></param>
         /// <returns></returns>
-        private string[] GetFilterParam(string filterString, Type actionReturnType)
+        private Filter[] GetFilterParam(string filterString, Type actionReturnType)
         {
             //split by "and" logical operator
-            string[] arrFilter = filterString.Split(new string[] { FilterOperators.And }, StringSplitOptions.RemoveEmptyEntries);
+            //case sensitive Conver filter operator to lower
+            string lowerFilterString = Regex.Replace(filterString, FilterOperators.And, FilterOperators.And, RegexOptions.IgnoreCase);
+            lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.LessThan, FilterOperators.LessThan, RegexOptions.IgnoreCase);
+            lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.MoreThan, FilterOperators.MoreThan, RegexOptions.IgnoreCase);
+            lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.Equal, FilterOperators.Equal, RegexOptions.IgnoreCase);
+            
+            string[] arrFilter = lowerFilterString.Split(new string[] { FilterOperators.And }, StringSplitOptions.RemoveEmptyEntries);
+
+            Filter[] filterParams = new Filter[arrFilter.Length];
             for (int i = 0; i < arrFilter.Length; i++)
             {
-                string splitStr = string.Empty;
+                string filterOperater = string.Empty;
                 if (arrFilter[i].Contains(FilterOperators.LessThan))
                 {
-                    splitStr = FilterOperators.LessThan;
+                    filterOperater = FilterOperators.LessThan;
                 }
                 else if (arrFilter[i].Contains(FilterOperators.MoreThan))
                 {
-                    splitStr = FilterOperators.MoreThan;
+                    filterOperater = FilterOperators.MoreThan;
                 } else if (arrFilter[i].Contains(FilterOperators.Equal))
                 {
-                    splitStr = FilterOperators.Equal;
+                    filterOperater = FilterOperators.Equal;
                 }
-                string[] arrFieldAndValue = arrFilter[i].Split(new string[] { splitStr }, StringSplitOptions.RemoveEmptyEntries);
+                string[] arrFieldAndValue = arrFilter[i].Split(new string[] { filterOperater }, StringSplitOptions.RemoveEmptyEntries);
                 if (arrFieldAndValue.Length !=2)
                     throw new ExpectException("The query(filter) syntax errors");
                 //校验输入的filter参数的属性值的范围必须在当前方法返回类型中的字段值中
                 if (!CheckPropertyAndValueType(actionReturnType,arrFieldAndValue[0],arrFieldAndValue[1]))
-                {
                     //如果有任意一个值不属于方法返回值类型，则返回null
                     throw new ExpectException("The query(filter) syntax errors");
-                }
-                
+
+                Filter filterParam = new Filter();
+                Dictionary<string, string> propertyValue = new Dictionary<string, string>();
+                propertyValue[arrFieldAndValue[0]] = arrFieldAndValue[1];
+                filterParam.FilterPropertyValue = propertyValue;
+                filterParam.FilterOperater = filterOperater;
+                filterParams[i] = filterParam;
+
             }
 
-            return arrFilter;
+            return filterParams;
 
         }
 
