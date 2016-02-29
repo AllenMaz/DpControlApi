@@ -118,25 +118,23 @@ namespace DpControl.Domain.Repository
 
         public IEnumerable<CustomerSearchModel> GetAll(Query query)
         {
-            var customers = _context.Customers.Include(c=>c.Projects).Select(c => new CustomerSearchModel
+            var queryData = from P in _context.Customers
+                            select P;
+
+            var result = QueryOperate<Customer>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var customers = result.Include(c => c.Projects).ToList();
+
+            var customerSearch = customers.Select(c => new CustomerSearchModel
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate,
-                Projects = c.Projects.Select(p => new ProjectSearchModel
-                {
-                    CustomerId = p.CustomerId,
-                    ProjectId = p.ProjectId,
-                    ProjectName = p.ProjectName,
-                    ProjectNo = p.ProjectNo,
-                    CreateDate = p.CreateDate
-                }).ToList()
-            })
-                .OrderBy(c => c.CustomerNo)
-                .ToList<CustomerSearchModel>();
+                CreateDate = c.CreateDate
+            });
 
-            return customers;
+            return customerSearch;
         }
 
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync(Query query)
@@ -155,15 +153,7 @@ namespace DpControl.Domain.Repository
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate,
-                Projects = c.Projects.Select(p => new ProjectSearchModel
-                {
-                    CustomerId = p.CustomerId,
-                    ProjectId = p.ProjectId,
-                    ProjectName = p.ProjectName,
-                    ProjectNo = p.ProjectNo,
-                    CreateDate = p.CreateDate
-                }).ToList()
+                CreateDate = c.CreateDate
             });
 
             return customerSearch;
