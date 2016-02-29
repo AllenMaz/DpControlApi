@@ -9,8 +9,8 @@ namespace DpControl.Domain.IRepository
     {
         int Add(ProjectAddModel project);
         Task<int> AddAsync(ProjectAddModel project);
-        IEnumerable<ProjectSearchModel> GetAll();
-        Task<IEnumerable<ProjectSearchModel>> GetAllAsync();
+        IEnumerable<ProjectSearchModel> GetAll(Query query);
+        Task<IEnumerable<ProjectSearchModel>> GetAllAsync(Query query);
         ProjectSearchModel FindByProjectId(int projectId);
         Task<ProjectSearchModel> FindByProjectIdAsync(int projectId);
         int UpdateById(int projectId, ProjectUpdateModel project);

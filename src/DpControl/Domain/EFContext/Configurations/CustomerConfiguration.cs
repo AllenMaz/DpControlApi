@@ -16,6 +16,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.HasKey(c => c.CustomerId);
             entityBuilder.Property(c => c.CustomerName).HasMaxLength(50).IsRequired();
             entityBuilder.Property(c => c.CustomerNo).HasMaxLength(50).IsRequired();
+            entityBuilder.HasIndex(c => c.CustomerNo).IsUnique();
             entityBuilder.Property(c => c.CreateDate).IsRequired();
             entityBuilder.Property(c => c.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 

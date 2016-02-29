@@ -30,6 +30,12 @@ namespace DpControl.Domain.Repository
 
         public int Add(CustomerAddModel customer)
         {
+            //Check whether the CustomerNo already exist
+            var checkData = _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToList().Count ;
+            if (checkData >0)
+                throw new ExpectException(customer.CustomerNo +" already exist in system.");
+            
+
             var model = new Customer
             {
                 CustomerName = customer.CustomerName,
@@ -44,6 +50,11 @@ namespace DpControl.Domain.Repository
 
         public async Task<int> AddAsync(CustomerAddModel customer)
         {
+            //Check whether the CustomerNo already exist
+            var checkData = await _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException(customer.CustomerNo + " already exist in system.");
+
             var model = new Customer
             {
                 CustomerName = customer.CustomerName,
@@ -66,7 +77,7 @@ namespace DpControl.Domain.Repository
                             CustomerId = c.CustomerId,
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
-                            CreateDate = c.CreateDate
+                            CreateDate = c.CreateDate.ToString()
                         }).FirstOrDefault();
 
             return customer;
@@ -81,7 +92,7 @@ namespace DpControl.Domain.Repository
                             CustomerId = c.CustomerId,
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
-                            CreateDate = c.CreateDate
+                            CreateDate = c.CreateDate.ToString()
                         }).FirstOrDefaultAsync();
 
             return customer;
@@ -95,7 +106,7 @@ namespace DpControl.Domain.Repository
                                 CustomerId = c.CustomerId,
                                 CustomerName = c.CustomerName,
                                 CustomerNo = c.CustomerNo,
-                                CreateDate = c.CreateDate
+                                CreateDate = c.CreateDate.ToString()
                             });
 
             return customer.ToList<CustomerSearchModel>();
@@ -110,7 +121,7 @@ namespace DpControl.Domain.Repository
                             CustomerId = c.CustomerId,
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
-                            CreateDate = c.CreateDate
+                            CreateDate = c.CreateDate.ToString()
                         });
 
             return await customer.ToListAsync<CustomerSearchModel>();
@@ -131,7 +142,7 @@ namespace DpControl.Domain.Repository
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate
+                CreateDate = c.CreateDate.ToString()
             });
 
             return customerSearch;
@@ -153,7 +164,7 @@ namespace DpControl.Domain.Repository
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate
+                CreateDate = c.CreateDate.ToString()
             });
 
             return customerSearch;

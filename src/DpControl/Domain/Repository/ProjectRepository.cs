@@ -35,6 +35,10 @@ namespace DpControl.Domain.Repository
             var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == project.CustomerId);
             if (customer == null)
                 throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
+            //Check whether the ProjectNo already exist
+            var checkData = _context.Projects.Where(p => p.ProjectNo == project.ProjectNo).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException(project.ProjectNo + " already exist in system.");
 
             var model = new Project
             {
@@ -54,6 +58,11 @@ namespace DpControl.Domain.Repository
             var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == project.CustomerId);
             if (customer == null)
                 throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
+
+            //Check whether the ProjectNo already exist
+            var checkData = await _context.Projects.Where(p =>p.ProjectNo == project.ProjectNo).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException(project.ProjectNo + " already exist in system.");
 
             var model = new Project
             {
@@ -75,7 +84,7 @@ namespace DpControl.Domain.Repository
                     ProjectNo = v.ProjectNo,
                     ProjectName = v.ProjectName,
                     CustomerId = v.CustomerId,
-                    CreateDate = v.CreateDate,
+                    CreateDate = v.CreateDate.ToString(),
                     Completed = v.Completed
                 }).FirstOrDefault();
 
@@ -91,45 +100,58 @@ namespace DpControl.Domain.Repository
                     ProjectNo = v.ProjectNo,
                     ProjectName = v.ProjectName,
                     CustomerId = v.CustomerId,
-                    CreateDate = v.CreateDate,
+                    CreateDate = v.CreateDate.ToString(),
                     Completed = v.Completed
                 }).FirstOrDefaultAsync();
 
             return await projects;
         }
 
-        public IEnumerable<ProjectSearchModel> GetAll()
+        public IEnumerable<ProjectSearchModel> GetAll(Query query)
         {
-            var projects = _context.Projects.Select(v => new ProjectSearchModel
+            var queryData = from P in _context.Projects
+                            select P;
+
+            var result = QueryOperate<Project>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var projects = result.ToList();
+
+            var projectSearch = projects.Select(v => new ProjectSearchModel
             {
                 ProjectId = v.ProjectId,
                 ProjectNo = v.ProjectNo,
                 ProjectName = v.ProjectName,
                 CustomerId = v.CustomerId,
-                CreateDate = v.CreateDate,
+                CreateDate = v.CreateDate.ToString(),
                 Completed = v.Completed
-            })
-                .OrderBy(v =>v.ProjectNo )
-                .ToList<ProjectSearchModel>();
+            });
 
-            return projects;
+            return projectSearch;
         }
 
-        public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync()
+        public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync(Query query)
         {
-            var projects = await _context.Projects.Select(v => new ProjectSearchModel
+            var queryData = from P in _context.Projects
+                            select P;
+
+            var result = QueryOperate<Project>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var projects = await result.ToListAsync();
+
+            var projectSearch = projects.Select(v => new ProjectSearchModel
             {
                 ProjectId = v.ProjectId,
                 ProjectNo = v.ProjectNo,
                 ProjectName = v.ProjectName,
                 CustomerId = v.CustomerId,
-                CreateDate = v.CreateDate,
+                CreateDate = v.CreateDate.ToString(),
                 Completed = v.Completed
-            })
-               .OrderBy(v => v.ProjectNo)
-               .ToListAsync<ProjectSearchModel>();
+            });
 
-            return projects;
+            return projectSearch;
+
         }
 
         public void RemoveById(int projectId)

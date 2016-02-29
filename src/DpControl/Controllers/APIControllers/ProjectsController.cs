@@ -35,7 +35,7 @@ namespace DpControl.Controllers.APIControllers
             return CreatedAtRoute("GetByProjectIdAsync", new { controller = "Projects", projectId = projectId }, mProject);
         }
         /// <summary>
-        /// Search data by ProjectNo
+        /// Search data by ProjectId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -62,7 +62,7 @@ namespace DpControl.Controllers.APIControllers
         public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync([FromUri] Query query)
         {
 
-            var result = await _projectRepository.GetAllAsync(); ;
+            var result = await _projectRepository.GetAllAsync(query); ;
             
             return result;
         }

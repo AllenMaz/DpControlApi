@@ -8,11 +8,15 @@ namespace DpControl.Domain.IRepository
 {
     public interface IGroupRepository
     {
-        Task Add(string groupName, string ProjectNo);
-        Task<IEnumerable<MGroup>> GetAll(string projectNo);
-        Task RemoveByName(string groupName, string projectNo);
-        Task RemoveById(int Id);
-        Task Update(MGroup mGroup, string projectNo);
-        Task AddLocationToGroup(int locationId, int groupId);
+        int Add(GroupAddModel group);
+        Task<int> AddAsync(GroupAddModel group);
+        IEnumerable<GroupSearchModel> GetAll(Query query);
+        Task<IEnumerable<GroupSearchModel>> GetAllAsync(Query query);
+        GroupSearchModel FindByGroupId(int groupId);
+        Task<GroupSearchModel> FindByGroupIdAsync(int groupId);
+        int UpdateById(int groupId, GroupUpdateModel mgroup);
+        Task<int> UpdateByIdAsync(int groupId, GroupUpdateModel mgroup);
+        void RemoveById(int groupId);
+        Task RemoveByIdAsync(int groupId);
     }
 }   

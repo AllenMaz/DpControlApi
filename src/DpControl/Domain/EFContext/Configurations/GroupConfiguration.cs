@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Builders;
 using DpControl.Domain.Entities;
+using Microsoft.Data.Entity.Metadata;
 
 namespace DpControl.Domain.EFContext.Configurations
 {
@@ -16,10 +17,11 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.HasKey(g => g.GroupId);
             entityBuilder.HasIndex(g => g.GroupName).IsUnique();
             entityBuilder.Property(g => g.GroupName).HasMaxLength(50).IsRequired();
-            entityBuilder.Property(g => g.CreateData).IsRequired();
+            entityBuilder.Property(g => g.CreateDate).IsRequired();
             entityBuilder.Property(g => g.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
-
-            entityBuilder.HasOne(g => g.Scene).WithMany(s => s.LocationGroups).IsRequired(false);
+           
+           // entityBuilder.HasOne(g => g.Scene).WithMany(s => s.Groups).HasForeignKey(c => c.SceneId)
+           //.OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

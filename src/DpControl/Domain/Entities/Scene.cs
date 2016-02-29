@@ -15,7 +15,7 @@ namespace DpControl.Domain.Entities
         public int ProjectId { get; set; }
         public Project Project { get; set; }
 
-        public virtual List<Group> LocationGroups { get; set; }           // one-to-many: one Scene can have multiple group; but one group only belong to one scene.
+        public virtual List<Group> Groups { get; set; }           // one-to-many: one Scene can have multiple group; but one group only belong to one scene.
         public virtual List<SceneSegment> SceneSegments { get; set; }
         #endregion
 
@@ -24,7 +24,7 @@ namespace DpControl.Domain.Entities
 
         public Scene()
         {
-            this.LocationGroups = new List<Group>();
+            this.Groups = new List<Group>();
             this.SceneSegments = new List<SceneSegment>();
         }
     }

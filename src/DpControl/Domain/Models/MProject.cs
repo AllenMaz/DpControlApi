@@ -34,7 +34,7 @@ namespace DpControl.Domain.Models
     {
         public int CustomerId { get; set; }
         public int ProjectId { get; set; }
-        public DateTime CreateDate { get; set; }
+        public string CreateDate { get; set; }
         public bool Completed { get; set; }
     }
 }

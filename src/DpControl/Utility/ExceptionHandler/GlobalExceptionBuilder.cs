@@ -53,7 +53,8 @@ namespace DpControl.Utility.ExceptionHandler
                         //记录异常日志
                         try
                         {
-                            _logger.LogError(exceptionMessage, error.Error);
+
+                            _logger.LogError(exceptionMessage,error.Error);
 
                         }
                         catch
