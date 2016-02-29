@@ -224,11 +224,20 @@ namespace DpControl.Utility.Filters
                 }
                 string[] arrFieldAndValue = arrFilter[i].Split(new string[] { filterOperater }, StringSplitOptions.RemoveEmptyEntries);
                 if (arrFieldAndValue.Length !=2)
-                    throw new ExpectException("The query(filter) syntax errors");
+                    throw new ExpectException("The query(filter) syntax errors:'"+arrFilter[i] +"' syntax error");
                 //校验输入的filter参数的属性值的范围必须在当前方法返回类型中的字段值中
-                if (!CheckPropertyAndValueType(actionReturnType,arrFieldAndValue[0],arrFieldAndValue[1]))
-                    //如果有任意一个值不属于方法返回值类型，则返回null
-                    throw new ExpectException("The query(filter) syntax errors");
+                var property = actionReturnType.GetProperty(arrFieldAndValue[0]);
+                if (property == null)
+                    throw new ExpectException("The query(select) syntax errors:Property '" + arrFieldAndValue[0] + "' not exist");
+                try
+                {
+                    //Check if the value match the type of property
+                    Common.ConverValueToType(property.PropertyType, arrFieldAndValue[1]);
+                }
+                catch (Exception e)
+                {
+                    throw new ExpectException("The query(select) syntax errors:Property '" + e.Message);
+                }
 
                 Filter filterParam = new Filter();
                 Dictionary<string, string> propertyValue = new Dictionary<string, string>();

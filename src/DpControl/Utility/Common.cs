@@ -54,7 +54,7 @@ namespace DpControl.Utility
                     return new Guid(value.ToString());
                 }
                 else {
-                    throw new ExpectException("Conver value to Type Failed: Type "+type.Name+" is not supported");
+                    throw new ExpectException(type.Name+" is not supported");
                 }
                 
 

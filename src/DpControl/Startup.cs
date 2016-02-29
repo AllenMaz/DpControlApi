@@ -158,9 +158,9 @@ namespace DpControl
 
             #region Serilog Logging
             var logWarning = new Serilog.LoggerConfiguration()
-                .MinimumLevel.Warning()
+                .MinimumLevel.Error()
                 .WriteTo.RollingFile(
-                pathFormat: env.MapPath("Warning/Exception.log"),
+                pathFormat: env.MapPath("Error/Exception.log"),
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}{NewLine}{NewLine}"
                 ).CreateLogger();
             
