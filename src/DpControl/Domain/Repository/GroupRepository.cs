@@ -88,7 +88,7 @@ namespace DpControl.Domain.Repository
             return model.GroupId;
         }
 
-        public GroupSearchModel FindByGroupId(int groupId)
+        public GroupSearchModel FindById(int groupId)
         {
             var group = _context.Groups.Where(v => v.GroupId == groupId)
                 .Select(v => new GroupSearchModel()
@@ -103,7 +103,7 @@ namespace DpControl.Domain.Repository
             return group;
         }
 
-        public async Task<GroupSearchModel> FindByGroupIdAsync(int groupId)
+        public async Task<GroupSearchModel> FindByIdAsync(int groupId)
         {
             var group = await _context.Groups.Where(v => v.GroupId == groupId)
                 .Select(v => new GroupSearchModel()

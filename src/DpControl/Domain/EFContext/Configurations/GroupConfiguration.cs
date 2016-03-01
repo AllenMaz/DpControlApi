@@ -19,9 +19,8 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(g => g.GroupName).HasMaxLength(50).IsRequired();
             entityBuilder.Property(g => g.CreateDate).IsRequired();
             entityBuilder.Property(g => g.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
-           
-           // entityBuilder.HasOne(g => g.Scene).WithMany(s => s.Groups).HasForeignKey(c => c.SceneId)
-           //.OnDelete(DeleteBehavior.Restrict);
+
+            
         }
     }
 }

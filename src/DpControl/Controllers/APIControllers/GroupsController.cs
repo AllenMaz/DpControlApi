@@ -43,7 +43,7 @@ namespace DpControl.Controllers.APIControllers
         [HttpGet("{groupId}", Name = "GetByGroupIdAsync")]
         public async Task<IActionResult> GetByProjectIdAsync(int groupId)
         {
-            var group = await _groupRepository.FindByGroupIdAsync(groupId);
+            var group = await _groupRepository.FindByIdAsync(groupId);
             if (group == null)
             {
                 return HttpNotFound();

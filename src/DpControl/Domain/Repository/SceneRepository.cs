@@ -7,6 +7,7 @@ using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Domain.Repository
 {
@@ -23,93 +24,165 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
+
         #endregion
 
-        public async  Task Add(string sceneName, string projectNo)
+        public int Add(SceneAddModel scene)
         {
-            if (string.IsNullOrEmpty(sceneName) || string.IsNullOrEmpty(projectNo))
-            {
-                throw new ArgumentNullException();
-            }
+            var project = _context.Projects.FirstOrDefault(c => c.ProjectId == scene.ProjectId);
+            if (project == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + scene.ProjectId);
 
-            // get projectNo from Customer
-            var _project = await _context.Projects
-                .Include(c => c.Scenes)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            // create new Group
-            _context.Scenes.Add(new Scene
+            var model = new Scene
             {
-                Name = sceneName,
-                Enable = false,
-                ModifiedDate = DateTime.Now,
-                ProjectId = _project.ProjectId
+                ProjectId = scene.ProjectId,
+                SceneName = scene.SceneName,
+                Enable = scene.Enable,
+                CreateDate = DateTime.Now
+            };
+            _context.Scenes.Add(model);
+            _context.SaveChanges();
+            return model.SceneId;
+        }
+
+        public async Task<int> AddAsync(SceneAddModel scene)
+        {
+            var project = _context.Projects.FirstOrDefault(c => c.ProjectId == scene.ProjectId);
+            if (project == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + scene.ProjectId);
+
+            var model = new Scene
+            {
+                ProjectId = scene.ProjectId,
+                SceneName = scene.SceneName,
+                Enable = scene.Enable,
+                CreateDate = DateTime.Now
+            };
+            _context.Scenes.Add(model);
+            await _context.SaveChangesAsync();
+            return model.SceneId;
+        }
+
+        public SceneSearchMoodel FindById(int sceneId)
+        {
+            var scene = _context.Scenes.Where(v => v.SceneId == sceneId)
+                .Select(v => new SceneSearchMoodel()
+                {
+                    SceneId = v.SceneId,
+                    SceneName = v.SceneName,
+                    ProjectId = v.ProjectId,
+                    Enable = v.Enable,
+                    CreateDate = v.CreateDate.ToString(),
+                }).FirstOrDefault();
+
+            return scene;
+        }
+
+        public async Task<SceneSearchMoodel> FindByIdAsync(int sceneId)
+        {
+            var scene =await _context.Scenes.Where(v => v.SceneId == sceneId)
+                .Select(v => new SceneSearchMoodel()
+                {
+                    SceneId = v.SceneId,
+                    SceneName = v.SceneName,
+                    ProjectId = v.ProjectId,
+                    Enable = v.Enable,
+                    CreateDate = v.CreateDate.ToString()
+                }).FirstOrDefaultAsync();
+
+            return scene;
+        }
+
+        public IEnumerable<SceneSearchMoodel> GetAll(Query query)
+        {
+            var queryData = from S in _context.Scenes
+                            select S;
+
+            var result = QueryOperate<Scene>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var scenes = result.ToList();
+
+            var scenesSearch = scenes.Select(v => new SceneSearchMoodel
+            {
+                SceneId = v.SceneId,
+                SceneName = v.SceneName,
+                ProjectId = v.ProjectId,
+                Enable = v.Enable,
+                CreateDate = v.CreateDate.ToString()
             });
-            await _context.SaveChangesAsync();
-        }
-        public async Task<IEnumerable<MScene>> GetAll(string projectNo)
-        {
-            if (string.IsNullOrWhiteSpace(projectNo))
-            {
-                throw new ArgumentNullException();
-            }
 
-            // get projectNo from Customer
-            var _project = await _context.Projects
-                .Include(c => c.Scenes)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            return _project.Scenes.Select(s => new MScene
-            {
-                SceneId = s.SceneId,
-                Name = s.Name
-            })
-            .ToList<MScene>();
+            return scenesSearch;
         }
 
-        public async Task Remove(int Id)
+        public async Task<IEnumerable<SceneSearchMoodel>> GetAllAsync(Query query)
         {
-            if (Id == 0)
+            var queryData = from S in _context.Scenes
+                            select S;
+
+            var result = QueryOperate<Scene>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var scenes = await result.ToListAsync();
+
+            var scenesSearch = scenes.Select(v => new SceneSearchMoodel
             {
-                throw new ArgumentNullException();
-            }
+                SceneId = v.SceneId,
+                SceneName = v.SceneName,
+                ProjectId = v.ProjectId,
+                Enable = v.Enable,
+                CreateDate = v.CreateDate.ToString()
+            });
 
-            var toDelete = new Scene { SceneId = Id };
-            _context.Scenes.Attach(toDelete);
-
-            //remove data in related table - Groups - optional relationship with data undeleted (set to Null), just load data into memory
-            _context.Groups.Where(l => l.SceneId == Id).Load();
-
-            // Scensegments will be deleted by Cascade setting in database
-            _context.Scenes.Remove(toDelete);
-            await _context.SaveChangesAsync();
+            return scenesSearch;
         }
-        public async Task UpdateById(MScene mScene, string projectNo)
-        {
-            // get projectNo from Customer
-            var _project = await _context.Projects
-                .Include(c => c.Scenes)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
 
-            var _single = _project.Scenes.Where(s => s.SceneId == mScene.SceneId).Single();
-            _single.Name = mScene.Name;
+        public void RemoveById(int sceneId)
+        {
+            var scene = _context.Scenes.Include(c => c.Groups).FirstOrDefault(c => c.SceneId == sceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
+
+            _context.Scenes.Remove(scene);
+            _context.SaveChanges();
+        }
+
+        public async Task RemoveByIdAsync(int sceneId)
+        {
+            var scene = _context.Scenes.Include(c=>c.Groups).FirstOrDefault(c => c.SceneId == sceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
+
+            _context.Remove(scene);
             await _context.SaveChangesAsync();
         }
 
-        //async Task<Customer> GetCustomerByProjectNo(string projectNo)
-        //{
-        //    var query = await _context.Customers
-        //                .Include(c => c.Scenes)
-        //                .Where(c => c.ProjectNo == projectNo)
-        //                .SingleAsync();
-        //    if (query == null)
-        //    {
-        //        throw new KeyNotFoundException();
-        //    }
-        //    return query;
-        //}
+        public int UpdateById(int sceneId, SceneUpdateModel mScene)
+        {
+            var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == sceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
+
+            scene.SceneName = mScene.SceneName;
+            scene.Enable = mScene.Enable;
+
+            _context.SaveChanges();
+            return scene.SceneId;
+        }
+
+        public async Task<int> UpdateByIdAsync(int sceneId, SceneUpdateModel mScene)
+        {
+            var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == sceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
+
+            scene.SceneName = mScene.SceneName;
+            scene.Enable = mScene.Enable;
+
+            await _context.SaveChangesAsync();
+            return scene.SceneId;
+        }
+        
+
     }
 }

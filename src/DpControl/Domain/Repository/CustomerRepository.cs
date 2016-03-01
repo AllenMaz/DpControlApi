@@ -68,7 +68,7 @@ namespace DpControl.Domain.Repository
             return model.CustomerId;
 
         }
-        public CustomerSearchModel FindByCustomerId(int customerId)
+        public CustomerSearchModel FindById(int customerId)
         {
             var customer = _context.Customers
                         .Where(c => c.CustomerId == customerId)
@@ -83,7 +83,7 @@ namespace DpControl.Domain.Repository
             return customer;
         }
 
-        public async Task<CustomerSearchModel> FindByCustomerIdAsync(int customerId)
+        public async Task<CustomerSearchModel> FindByIdAsync(int customerId)
         {
             var customer =await _context.Customers
                         .Where(c => c.CustomerId == customerId)
@@ -97,35 +97,7 @@ namespace DpControl.Domain.Repository
 
             return customer;
         }
-        public IEnumerable<CustomerSearchModel> FindByCustomerNo(string customerNo)
-        {
-            var customer = _context.Customers
-                            .Where(c => c.CustomerNo == customerNo)
-                            .Select(c => new CustomerSearchModel
-                            {
-                                CustomerId = c.CustomerId,
-                                CustomerName = c.CustomerName,
-                                CustomerNo = c.CustomerNo,
-                                CreateDate = c.CreateDate.ToString()
-                            });
 
-            return customer.ToList<CustomerSearchModel>();
-        }
-
-        public async Task<IEnumerable<CustomerSearchModel>> FindByCustomerNoAsync(string customerNo)
-        {
-            var customer = _context.Customers
-                        .Where(c => c.CustomerNo == customerNo)
-                        .Select(c => new CustomerSearchModel
-                        {
-                            CustomerId = c.CustomerId,
-                            CustomerName = c.CustomerName,
-                            CustomerNo = c.CustomerNo,
-                            CreateDate = c.CreateDate.ToString()
-                        });
-
-            return await customer.ToListAsync<CustomerSearchModel>();
-        }
 
         public IEnumerable<CustomerSearchModel> GetAll(Query query)
         {

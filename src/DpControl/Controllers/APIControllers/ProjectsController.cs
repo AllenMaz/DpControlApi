@@ -43,7 +43,7 @@ namespace DpControl.Controllers.APIControllers
         [HttpGet("{projectId}", Name = "GetByProjectIdAsync")]
         public async Task<IActionResult> GetByProjectIdAsync(int projectId)
         {
-            var project = await _projectRepository.FindByProjectIdAsync(projectId);
+            var project = await _projectRepository.FindByIdAsync(projectId);
             if (project == null)
             {
                 return HttpNotFound();

@@ -8,7 +8,7 @@ namespace DpControl.Domain.Entities
     public class Scene
     {
         public int SceneId { get; set; }
-        public String Name { get; set; }
+        public String SceneName { get; set; }
         public bool Enable { get; set; }
 
         #region relationship
@@ -19,7 +19,7 @@ namespace DpControl.Domain.Entities
         public virtual List<SceneSegment> SceneSegments { get; set; }
         #endregion
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public byte[] RowVersion { get; set; }
 
         public Scene()

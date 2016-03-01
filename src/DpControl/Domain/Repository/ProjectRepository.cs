@@ -76,7 +76,7 @@ namespace DpControl.Domain.Repository
             return model.ProjectId;
         }
 
-        public ProjectSearchModel FindByProjectId(int projectId)
+        public ProjectSearchModel FindById(int projectId)
         {
             var projects = _context.Projects.Where(v => v.ProjectId == projectId)
                 .Select(v=>new ProjectSearchModel() {
@@ -91,9 +91,9 @@ namespace DpControl.Domain.Repository
             return projects;
         }
 
-        public async Task<ProjectSearchModel> FindByProjectIdAsync(int projectId)
+        public async Task<ProjectSearchModel> FindByIdAsync(int projectId)
         {
-            var projects = _context.Projects.Where(v => v.ProjectId == projectId)
+            var projects =await _context.Projects.Where(v => v.ProjectId == projectId)
                 .Select(v => new ProjectSearchModel()
                 {
                     ProjectId = v.ProjectId,
@@ -104,7 +104,7 @@ namespace DpControl.Domain.Repository
                     Completed = v.Completed
                 }).FirstOrDefaultAsync();
 
-            return await projects;
+            return projects;
         }
 
         public IEnumerable<ProjectSearchModel> GetAll(Query query)

@@ -6,11 +6,7 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface ISceneRepository
+    public interface ISceneRepository:IBaseRepository<SceneAddModel,SceneUpdateModel,SceneSearchMoodel>
     {
-        Task Add(string sceneName, string projectNo);
-        Task<IEnumerable<MScene>> GetAll(string projectNo);
-        Task Remove(int Id);
-        Task UpdateById(MScene mscene, string projectNo);
     }
 }

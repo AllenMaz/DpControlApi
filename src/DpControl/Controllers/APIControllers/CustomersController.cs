@@ -58,7 +58,7 @@ namespace DpControl.APIControllers
         [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
         public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
         {
-            var customer = await _customerRepository.FindByCustomerIdAsync(customerId);
+            var customer = await _customerRepository.FindByIdAsync(customerId);
             if (customer == null)
             {
                 return HttpNotFound();

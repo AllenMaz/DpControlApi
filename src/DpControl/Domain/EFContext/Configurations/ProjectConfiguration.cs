@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Builders;
 using DpControl.Domain.Entities;
+using Microsoft.Data.Entity.Metadata;
 
 namespace DpControl.Domain.EFContext.Configurations
 {

@@ -10,6 +10,5 @@ namespace DpControl.Domain.IRepository
     {
         Task Add(string sceneName, string projectNo);
         Task<IEnumerable<MAlarm>> GetAll(string projectNo);
-        Task UpdateById(MScene mscene, string projectNo);
     }
 }
