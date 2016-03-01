@@ -8,13 +8,7 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "Hosting:Environment": "Development"
-      }
-    },
+
     "Development-IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
@@ -27,6 +21,13 @@
       "launchBrowser": true,
       "environmentVariables": {
         "Hosting:Environment": "Production"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "Hosting:Environment": "Development"
       }
     },
     "web": {
