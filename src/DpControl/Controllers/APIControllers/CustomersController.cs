@@ -43,6 +43,7 @@ namespace DpControl.APIControllers
             {
                 return HttpBadRequest(ModelStateError());
             }
+            throw new Exception("");
 
             int customerId =  await _customerRepository.AddAsync(mCustomer);
             return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
