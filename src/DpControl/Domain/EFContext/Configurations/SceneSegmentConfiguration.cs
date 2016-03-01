@@ -18,7 +18,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(s => s.SequenceNo).IsRequired();
             entityBuilder.Property(s => s.StartTime).HasMaxLength(10).IsRequired();
 
-            entityBuilder.Property(s => s.ModifiedDate).IsRequired();
+            entityBuilder.Property(s => s.CreateDate).IsRequired();
             entityBuilder.Property(s => s.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 
         }

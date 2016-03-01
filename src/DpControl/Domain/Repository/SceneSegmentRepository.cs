@@ -7,6 +7,7 @@ using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Domain.Repository
 {
@@ -25,117 +26,175 @@ namespace DpControl.Domain.Repository
         }
         #endregion
 
-        public async Task Add(int sceneId, List<MSceneSegment> segments)
+        public int Add(SceneSegmentAddModel mSceneSegment)
         {
-            if (sceneId == 0 || segments == null)
-            {
-                throw new ArgumentNullException();
-            }
+            var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == mSceneSegment.SceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
 
-            // create new Group
-            for (int i= 0;i< segments.OrderBy(s => s.SequenceNo).ToList().Count; i++)
+
+            var model = new SceneSegment
             {
-                _context.SceneSegments.Add(new SceneSegment
-                {
-                    SequenceNo = i + 1,
-                    StartTime = segments.ElementAt(i).StartTime,
-                    Volumn = segments.ElementAt(i).Volumn,
-                    SceneId = sceneId,
-                    ModifiedDate = DateTime.Now
-                });
-            }
+                SceneId = mSceneSegment.SceneId,
+                SequenceNo = mSceneSegment.SequenceNo,
+                StartTime = mSceneSegment.StartTime,
+                Volumn = mSceneSegment.Volumn,
+                CreateDate = DateTime.Now
+            };
+            _context.SceneSegments.Add(model);
+            _context.SaveChanges();
+            return model.SceneSegmentId;
+        }
+
+        public async Task<int> AddAsync(SceneSegmentAddModel mSceneSegment)
+        {
+            var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == mSceneSegment.SceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
+            
+
+            var model = new SceneSegment
+            {
+                SceneId = mSceneSegment.SceneId,
+                SequenceNo = mSceneSegment.SequenceNo,
+                StartTime = mSceneSegment.StartTime,
+                Volumn = mSceneSegment.Volumn,
+                CreateDate = DateTime.Now
+            };
+            _context.SceneSegments.Add(model);
             await _context.SaveChangesAsync();
+            return model.SceneSegmentId;
         }
 
-        public async Task<IEnumerable<MSceneSegment>> GetAll(int Id)
+        public SceneSegmentSearchModel FindById(int sceneSegmentId)
         {
-            if (Id == 0)
-            {
-                throw new ArgumentNullException();
-            }
+            var sceneSegment = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId)
+               .Select(v => new SceneSegmentSearchModel()
+               {
+                   SceneSegmentId = v.SceneSegmentId,
+                   SceneId = v.SceneId,
+                   SequenceNo = v.SequenceNo,
+                   StartTime = v.StartTime,
+                   Volumn = v.Volumn,
+                   CreateDate = v.CreateDate.ToString()
+               }).FirstOrDefault();
 
-            return await _context.SceneSegments.Where(ss=>ss.SceneId==Id).OrderBy(s=>s.SequenceNo).Select(s => new MSceneSegment
-            {
-                SceneSegmentId=s.SceneSegmentId,
-                SequenceNo =s.SequenceNo,
-                StartTime=s.StartTime,
-                Volumn=s.Volumn
-            })
-            .ToListAsync<MSceneSegment>();
+            return sceneSegment;
         }
 
-        // remove segment by SegmentId
-        public async Task Remove(int Id)
+        public async Task<SceneSegmentSearchModel> FindByIdAsync(int sceneSegmentId)
         {
-            if (Id == 0)
-            {
-                throw new ArgumentNullException();
-            }
+            var sceneSegment = await _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId)
+               .Select(v => new SceneSegmentSearchModel()
+               {
+                   SceneSegmentId = v.SceneSegmentId,
+                   SceneId = v.SceneId,
+                   SequenceNo = v.SequenceNo,
+                   StartTime = v.StartTime,
+                   Volumn = v.Volumn,
+                   CreateDate = v.CreateDate.ToString()
+               }).FirstOrDefaultAsync();
 
-            var toDelete = new SceneSegment { SceneId = Id };
-            _context.SceneSegments.Attach(toDelete);
-            _context.SceneSegments.Remove(toDelete);
-            await _context.SaveChangesAsync();
-        }
-        /// <summary>
-        /// update a single segment by segmentId
-        /// </summary>
-        /// <param name="msceneSegment"></param>
-        /// <param name="sceneId"></param>
-        /// <returns></returns>
-        public async Task UpdateById(MSceneSegment msceneSegment, int sceneId)
-        {
-            if(sceneId==0 || msceneSegment == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            var _single = _context.SceneSegments.Where(s => s.SceneSegmentId == msceneSegment.SceneSegmentId).Single();
-
-            _single.SequenceNo = msceneSegment.SequenceNo;
-            _single.StartTime = msceneSegment.StartTime;
-            _single.Volumn = msceneSegment.Volumn;
-            _single.SceneId = sceneId;
-
-            await _context.SaveChangesAsync();
+            return sceneSegment;
         }
 
-        public async Task UpdateSegmentsBySceneId(List<MSceneSegment> segments, int sceneId)
+        public IEnumerable<SceneSegmentSearchModel> GetAll(Query query)
         {
-            if (sceneId == 0 || segments == null)
-            {
-                throw new ArgumentNullException();
-            }
+            var queryData = from S in _context.SceneSegments
+                            select S;
 
-            var _single = _context.Scenes.Where(s => s.SceneId == sceneId).Single();
+            var result = QueryOperate<SceneSegment>.Execute(queryData, query);
 
-            segments.ForEach(delegate (MSceneSegment sg)
+            //以下执行完后才会去数据库中查询
+            var sceneSegments = result.ToList();
+
+            var sceneSegmentsSearch = sceneSegments.Select(v => new SceneSegmentSearchModel
             {
-                _context.SceneSegments.Add(new SceneSegment
-                {
-                    SequenceNo = sg.SequenceNo,
-                    StartTime = sg.StartTime,
-                    Volumn = sg.Volumn,
-                    SceneId = sceneId,
-                    ModifiedDate = DateTime.Now
-                });
+                SceneSegmentId = v.SceneSegmentId,
+                SceneId = v.SceneId,
+                SequenceNo = v.SequenceNo,
+                StartTime = v.StartTime,
+                Volumn = v.Volumn,
+                CreateDate = v.CreateDate.ToString()
             });
 
+            return sceneSegmentsSearch;
+        }
+
+        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync(Query query)
+        {
+            var queryData = from S in _context.SceneSegments
+                            select S;
+
+            var result = QueryOperate<SceneSegment>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var sceneSegments = await result.ToListAsync();
+
+            var sceneSegmentsSearch = sceneSegments.Select(v => new SceneSegmentSearchModel
+            {
+                SceneSegmentId = v.SceneSegmentId,
+                SceneId = v.SceneId,
+                SequenceNo = v.SequenceNo,
+                StartTime = v.StartTime,
+                Volumn = v.Volumn,
+                CreateDate = v.CreateDate.ToString()
+            });
+
+            return sceneSegmentsSearch;
+        }
+
+        public void RemoveById(int sceneSegmentId)
+        {
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
+
+            _context.SceneSegments.Remove(sceneSegment);
+            _context.SaveChanges();
+        }
+
+        public async Task RemoveByIdAsync(int sceneSegmentId)
+        {
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
+
+            _context.SceneSegments.Remove(sceneSegment);
             await _context.SaveChangesAsync();
         }
 
-        //async Task<Scene> GetCustomerByProjectNo(string projectNo, int Id )
-        //{
-        //    var query = await _context.Customers
-        //                .Include(c => c.Scenes)
-        //                .Where(c => c.ProjectNo == projectNo)
-        //                .SingleAsync();
-        //    if (query == null)
-        //    {
-        //        throw new KeyNotFoundException();
-        //    }
-        //    return query.Scenes.Where(s=>s.SceneId==Id).Single();
-        //}
+        public int UpdateById(int sceneSegmentId, SceneSegmentUpdateModel mSceneSegment)
+        {
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
+
+
+            sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
+            sceneSegment.StartTime = mSceneSegment.StartTime;
+            sceneSegment.Volumn = mSceneSegment.Volumn;
+
+             _context.SaveChanges();
+            return sceneSegment.SceneSegmentId;
+        }
+
+        public async Task<int> UpdateByIdAsync(int sceneSegmentId, SceneSegmentUpdateModel mSceneSegment)
+        {
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
+
+
+            sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
+            sceneSegment.StartTime = mSceneSegment.StartTime;
+            sceneSegment.Volumn = mSceneSegment.Volumn;
+
+            await _context.SaveChangesAsync();
+            return sceneSegment.SceneSegmentId;
+        }
+       
+
 
     }
 }

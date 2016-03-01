@@ -371,19 +371,21 @@ namespace DpControl.Migrations
                     b.Property<int>("SceneId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("Enable");
+                    b.Property<DateTime>("CreateDate");
 
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
+                    b.Property<bool>("Enable")
+                        .HasAnnotation("Relational:DefaultValue", "False")
+                        .HasAnnotation("Relational:DefaultValueType", "System.Boolean");
 
                     b.Property<int>("ProjectId");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<string>("SceneName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("SceneId");
 
@@ -397,7 +399,7 @@ namespace DpControl.Migrations
                     b.Property<int>("SceneSegmentId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime>("CreateDate");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()

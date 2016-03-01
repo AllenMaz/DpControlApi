@@ -4,7 +4,7 @@ using Microsoft.Data.Entity.Migrations;
 
 namespace DpControl.Migrations
 {
-    public partial class @group : Migration
+    public partial class SceneSegment : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,25 +22,13 @@ namespace DpControl.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserLogin<string>_ApplicationUser_UserId", table: "AspNetUserLogins");
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_IdentityRole_RoleId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
-            migrationBuilder.DropColumn(name: "CreateData", schema: "ControlSystem", table: "Groups");
-            migrationBuilder.CreateIndex(
-                name: "IX_Project_ProjectNo",
-                schema: "ControlSystem",
-                table: "Projects",
-                column: "ProjectNo",
-                unique: true);
+            migrationBuilder.DropColumn(name: "ModifiedDate", schema: "ControlSystem", table: "SceneSegments");
             migrationBuilder.AddColumn<DateTime>(
                 name: "CreateDate",
                 schema: "ControlSystem",
-                table: "Groups",
+                table: "SceneSegments",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-            migrationBuilder.CreateIndex(
-                name: "IX_Customer_CustomerNo",
-                schema: "ControlSystem",
-                table: "Customers",
-                column: "CustomerNo",
-                unique: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_Alarm_AlarmMessage_AlarmMessageId",
                 schema: "ControlSystem",
@@ -175,13 +163,11 @@ namespace DpControl.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserLogin<string>_ApplicationUser_UserId", table: "AspNetUserLogins");
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_IdentityRole_RoleId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
-            migrationBuilder.DropIndex(name: "IX_Project_ProjectNo", schema: "ControlSystem", table: "Projects");
-            migrationBuilder.DropIndex(name: "IX_Customer_CustomerNo", schema: "ControlSystem", table: "Customers");
-            migrationBuilder.DropColumn(name: "CreateDate", schema: "ControlSystem", table: "Groups");
+            migrationBuilder.DropColumn(name: "CreateDate", schema: "ControlSystem", table: "SceneSegments");
             migrationBuilder.AddColumn<DateTime>(
-                name: "CreateData",
+                name: "ModifiedDate",
                 schema: "ControlSystem",
-                table: "Groups",
+                table: "SceneSegments",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
             migrationBuilder.AddForeignKey(

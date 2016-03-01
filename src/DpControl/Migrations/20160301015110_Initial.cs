@@ -4,7 +4,7 @@ using Microsoft.Data.Entity.Migrations;
 
 namespace DpControl.Migrations
 {
-    public partial class Group2 : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -8,8 +8,8 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    [Migration("20160229054605_Group2")]
-    partial class Group2
+    [Migration("20160301015110_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -372,19 +372,21 @@ namespace DpControl.Migrations
                     b.Property<int>("SceneId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("Enable");
+                    b.Property<DateTime>("CreateDate");
 
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
+                    b.Property<bool>("Enable")
+                        .HasAnnotation("Relational:DefaultValue", "False")
+                        .HasAnnotation("Relational:DefaultValueType", "System.Boolean");
 
                     b.Property<int>("ProjectId");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<string>("SceneName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("SceneId");
 
