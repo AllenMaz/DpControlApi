@@ -12,7 +12,7 @@ namespace DpControl.Domain.Entities
         public int ProjectId { get; set; }
         public Project Project { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public byte[] RowVersion { get; set; }
     }
 }

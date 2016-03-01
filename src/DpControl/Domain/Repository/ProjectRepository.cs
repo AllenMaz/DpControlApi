@@ -172,6 +172,7 @@ namespace DpControl.Domain.Repository
 
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
+
         }
 
         public int UpdateById(int projectId, ProjectUpdateModel mproject)

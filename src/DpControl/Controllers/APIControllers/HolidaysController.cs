@@ -11,10 +11,10 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
-    public class SceneSegmentsController:BaseAPIController
+    public class HolidaysController:BaseAPIController
     {
         [FromServices]
-        public ISceneSegmentRepository _sceneSegmentRepository { get; set; }
+        public IHolidayRepository _holidayRepository { get; set; }
 
         /// <summary>
         /// Add data
@@ -23,31 +23,31 @@ namespace DpControl.Controllers.APIControllers
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] SceneSegmentAddModel mSceneSegment)
+        public async Task<IActionResult> AddAsync([FromBody] HolidayAddModel mHoliday)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
             }
 
-            var sceneSegmentId = await _sceneSegmentRepository.AddAsync(mSceneSegment);
-            return CreatedAtRoute("GetBySceneSegmentIdAsync", new { controller = "SceneSegments", sceneSegmentId = sceneSegmentId }, mSceneSegment);
+            var holidayId = await _holidayRepository.AddAsync(mHoliday);
+            return CreatedAtRoute("GetByHolidayIdAsync", new { controller = "Holidays", holidayId = holidayId }, mHoliday);
         }
         /// <summary>
-        /// Search data by sceneSegmentId
+        /// Search data by holidayId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [HttpGet("{sceneSegmentId}", Name = "GetBySceneSegmentIdAsync")]
-        public async Task<IActionResult> GetBySceneSegmentIdAsync(int sceneSegmentId)
+        [HttpGet("{holidayId}", Name = "GetByHolidayIdAsync")]
+        public async Task<IActionResult> GetByHolidayIdAsync(int holidayId)
         {
-            var sceneSegment = await _sceneSegmentRepository.FindByIdAsync(sceneSegmentId);
-            if (sceneSegment == null)
+            var holiday = await _holidayRepository.FindByIdAsync(holidayId);
+            if (holiday == null)
             {
                 return HttpNotFound();
             }
-            return new ObjectResult(sceneSegment);
+            return new ObjectResult(holiday);
         }
 
         /// <summary>
@@ -58,43 +58,43 @@ namespace DpControl.Controllers.APIControllers
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
-        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<HolidaySearchModel>> GetAllAsync([FromUri] Query query)
         {
 
-            var result = await _sceneSegmentRepository.GetAllAsync(query); ;
+            var result = await _holidayRepository.GetAllAsync(query); ;
 
             return result;
         }
 
         /// <summary>
-        /// Edit data by sceneSegmentId
+        /// Edit data by holidayId
         /// </summary>
         /// <param name="customerNo"></param>
         /// <param name="project"></param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [HttpPut("{sceneSegmentId}")]
-        public async Task<IActionResult> UpdateAsync(int sceneSegmentId, [FromBody] SceneSegmentUpdateModel mSceneSegment)
+        [HttpPut("{holidayId}")]
+        public async Task<IActionResult> UpdateAsync(int holidayId, [FromBody] HolidayUpdateModel mHoliday)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
             }
 
-            var id = await _sceneSegmentRepository.UpdateByIdAsync(sceneSegmentId, mSceneSegment);
-            return CreatedAtRoute("GetBySceneSegmentIdAsync", new { controller = "SceneSegments", sceneSegmentId = id }, mSceneSegment);
+            var id = await _holidayRepository.UpdateByIdAsync(holidayId, mHoliday);
+            return CreatedAtRoute("GetByHolidayIdAsync", new { controller = "Holidays", holidayId = id }, mHoliday);
 
         }
 
         /// <summary>
-        /// Delete data by SceneSegmentId
+        /// Delete data by HolidayId
         /// </summary>
         /// <param name="customerId"></param>
         [APIAuthorize(Roles = "Admin")]
-        [HttpDelete("{sceneSegmentId}")]
-        public async Task<IActionResult> DeleteByProjectIdIdAsync(int sceneSegmentId)
+        [HttpDelete("{holidayId}")]
+        public async Task<IActionResult> DeleteByProjectIdIdAsync(int holidayId)
         {
-            await _sceneSegmentRepository.RemoveByIdAsync(sceneSegmentId);
+            await _holidayRepository.RemoveByIdAsync(holidayId);
             return Ok();
         }
     }

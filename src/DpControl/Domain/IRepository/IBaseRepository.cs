@@ -15,7 +15,7 @@ namespace DpControl.Domain.IRepository
         TSearchModel FindById(int itemId);
         Task<TSearchModel> FindByIdAsync(int itemId);
         int UpdateById(int itemId, TUpdateModel item);
-        Task<int> UpdateByIdAsync(int projectId, TUpdateModel item);
+        Task<int> UpdateByIdAsync(int itemId, TUpdateModel item);
         void RemoveById(int itemId);
         Task RemoveByIdAsync(int itemId);
     }

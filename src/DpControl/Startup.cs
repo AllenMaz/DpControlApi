@@ -145,7 +145,7 @@ namespace DpControl
             services.AddScoped<IOperatorRepository, OperatorRepository>();
             services.AddScoped<ISceneRepository, SceneRepository>();
             services.AddScoped<ISceneSegmentRepository, SceneSegmentRepository>();
-
+            services.AddScoped<IHolidayRepository, HolidayRepository>();
             #endregion
         }
 

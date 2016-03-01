@@ -4,27 +4,209 @@
         <name>DpControl</name>
     </assembly>
     <members>
-        <member name="M:DpControl.APIControllers.CustomersController.GetAll(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.ManageController.GetUserPageData">
             <summary>
-            Search all data
+            Get User Paging Data
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.APIControllers.CustomersController.GetByCustomerNo(System.String)">
+        <member name="M:DpControl.Controllers.ManageController.GetRolePageData">
             <summary>
-            Search data by CustomerNo
+            Get Role Paging Data
             </summary>
-            <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.APIControllers.CustomersController.Post(DpControl.Domain.Models.MCustomer)">
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.AddAsync(DpControl.Domain.Models.GroupAddModel)">
             <summary>
             Add data
             </summary>
             <param name="item"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.APIControllers.CustomersController.Update(System.Int32,DpControl.Domain.Models.MCustomer)">
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetByProjectIdAsync(System.Int32)">
+            <summary>
+            Search data by GroupId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.UpdateAsync(System.Int32,DpControl.Domain.Models.GroupUpdateModel)">
+            <summary>
+            Edit data by GroupId
+            </summary>
+            <param name="GroupId"></param>
+            <param name="Group"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.DeleteByGroupIdIdAsync(System.Int32)">
+            <summary>
+            Delete data by GroupId
+            </summary>
+            <param name="groupId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.AddAsync(DpControl.Domain.Models.HolidayAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.GetByHolidayIdAsync(System.Int32)">
+            <summary>
+            Search data by holidayId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.UpdateAsync(System.Int32,DpControl.Domain.Models.HolidayUpdateModel)">
+            <summary>
+            Edit data by holidayId
+            </summary>
+            <param name="customerNo"></param>
+            <param name="project"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.DeleteByProjectIdIdAsync(System.Int32)">
+            <summary>
+            Delete data by HolidayId
+            </summary>
+            <param name="customerId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.AddAsync(DpControl.Domain.Models.ProjectAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetByProjectIdAsync(System.Int32)">
+            <summary>
+            Search data by ProjectId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.UpdateAsync(System.Int32,DpControl.Domain.Models.ProjectUpdateModel)">
+            <summary>
+            Edit data by ProjectId
+            </summary>
+            <param name="customerNo"></param>
+            <param name="project"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.DeleteByProjectIdIdAsync(System.Int32)">
+            <summary>
+            Delete data by CustomerNo
+            </summary>
+            <param name="customerId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.AddAsync(DpControl.Domain.Models.SceneAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetBySceneIdAsync(System.Int32)">
+            <summary>
+            Search data by SceneId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.UpdateAsync(System.Int32,DpControl.Domain.Models.SceneUpdateModel)">
+            <summary>
+            Edit data by SceneId
+            </summary>
+            <param name="SceneId"></param>
+            <param name="project"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.DeleteByProjectIdIdAsync(System.Int32)">
+            <summary>
+            Delete data by SceneId
+            </summary>
+            <param name="customerId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.AddAsync(DpControl.Domain.Models.SceneSegmentAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.GetBySceneSegmentIdAsync(System.Int32)">
+            <summary>
+            Search data by sceneSegmentId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.UpdateAsync(System.Int32,DpControl.Domain.Models.SceneSegmentUpdateModel)">
+            <summary>
+            Edit data by sceneSegmentId
+            </summary>
+            <param name="customerNo"></param>
+            <param name="project"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.DeleteByProjectIdIdAsync(System.Int32)">
+            <summary>
+            Delete data by SceneSegmentId
+            </summary>
+            <param name="customerId"></param>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.AddAsync(DpControl.Domain.Models.CustomerAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.GetByCustomerIdAsync(System.Int32)">
+            <summary>
+            Search data by CustomerId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.UpdateAsync(System.Int32,DpControl.Domain.Models.CustomerUpdateModel)">
             <summary>
             Edit data by CustomerId
             </summary>
@@ -32,30 +214,52 @@
             <param name="customer"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.APIControllers.CustomersController.DeleteByCustomerId(System.Int32)">
+        <member name="M:DpControl.APIControllers.CustomersController.DeleteByCustomerIdAsync(System.Int32)">
             <summary>
             Delete data by CustomerNo
             </summary>
             <param name="customerId"></param>
         </member>
+        <member name="T:DpControl.Domain.Execptions.ExpectException">
+            <summary>
+            Expect Exception which use to catch error tip
+            </summary>
+        </member>
         <member name="P:DpControl.Domain.Models.Query.orderby">
             <summary>
-            orderby 
+            排序
+            格式：orderby=name,price desc/asc
+                  orderby=name 
             </summary>
         </member>
         <member name="P:DpControl.Domain.Models.Query.skip">
             <summary>
             跳过前N条
+            格式：skip=10
+            @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
             </summary>
         </member>
         <member name="P:DpControl.Domain.Models.Query.top">
             <summary>
             返回前N条
+            格式：top=20
+            @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
             </summary>
         </member>
         <member name="P:DpControl.Domain.Models.Query.select">
             <summary>
             选中要返回的属性结果
+            格式：select = name,price
+            </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.Query.filter">
+            <summary>
+            Filter
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.Query.#ctor">
+            <summary>
+            
             </summary>
         </member>
         <member name="P:DpControl.Domain.Models.OrderBy.OrderbyField">
@@ -68,83 +272,19 @@
             orderby behavior (desc/asc or empty)
             </summary>
         </member>
-        <member name="M:DpControl.Domain.Repository.SceneSegmentRepository.UpdateById(DpControl.Domain.Models.MSceneSegment,System.Int32)">
+        <member name="P:DpControl.Domain.Models.Filter.FilterPropertyValue">
             <summary>
-            update a single segment by segmentId
+            key:PropertyName
+            value:PropertyValue
             </summary>
-            <param name="msceneSegment"></param>
-            <param name="sceneId"></param>
+        </member>
+        <member name="M:DpControl.Domain.Repository.OperatorRepository.AddGroupToOperator(System.Int32,System.Int32)">
+            <summary>
+            after set a group to operator, means the operator has ability to control the motor group
+            </summary>
+            <param name="groupId"></param>
+            <param name="operatorId"></param>
             <returns></returns>
-        </member>
-        <member name="F:DpControl.Models.Common.ActionReturnType_GetList">
-            <summary>
-            Action使用GET返回List数据
-            </summary>
-        </member>
-        <member name="F:DpControl.Models.Common.ActionReturnType_GetSingle">
-            <summary>
-            Action使用GET返回单条数据
-            </summary>
-        </member>
-        <member name="F:DpControl.Models.Common.ActionReturnType_Post">
-            <summary>
-            Action使用POST
-            </summary>
-        </member>
-        <member name="F:DpControl.Models.Common.ActionReturnType_Put">
-            <summary>
-            Action使用PUT
-            </summary>
-        </member>
-        <member name="F:DpControl.Models.Common.ActionReturnType_Delete">
-            <summary>
-            Action使用DELETE
-            </summary>
-        </member>
-        <member name="P:DpControl.Models.QueryModel.orderby">
-            <summary>
-            排序
-            格式：orderby=name,price desc/asc
-                  orderby=name 
-            </summary>
-        </member>
-        <member name="P:DpControl.Models.QueryModel.skip">
-            <summary>
-            跳过前N条
-            格式：skip=10
-            @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
-            </summary>
-        </member>
-        <member name="P:DpControl.Models.QueryModel.top">
-            <summary>
-            返回前N条
-            格式：top=20
-            @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
-            </summary>
-        </member>
-        <member name="P:DpControl.Models.QueryModel.select">
-            <summary>
-            选中要返回的属性结果
-            格式：select = name,price
-            </summary>
-        </member>
-        <member name="M:DpControl.Models.QueryModel.#ctor">
-            <summary>
-            Conver s value to result
-            </summary>
-            <param name="s"></param>
-            <param name="result"></param>
-            <returns></returns>
-        </member>
-        <member name="P:DpControl.Models.OrderBy.OrderbyField">
-            <summary>
-            orderby field name
-            </summary>
-        </member>
-        <member name="P:DpControl.Models.OrderBy.OrderbyBehavior">
-            <summary>
-            orderby behavior (desc/asc or empty)
-            </summary>
         </member>
         <member name="T:DpControl.Models.ListResponseModel`1">
             <summary>
@@ -162,6 +302,15 @@
             <summary>
             API错误消息构造
             </summary>
+        </member>
+        <member name="M:DpControl.Utility.Common.ConverValueToType(System.Type,System.Object)">
+            <summary>
+            Conver object value to Type
+            if falied throw exception
+            </summary>
+            <param name="type"></param>
+            <param name="value"></param>
+            <returns></returns>
         </member>
         <member name="M:DpControl.Utility.ModelHandler.ConverEntityToModel``2(System.Collections.Generic.List{``1})">
             <summary>
@@ -215,12 +364,61 @@
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.ResponseHandler.ReturnError(System.String)">
+        <member name="M:DpControl.Utility.ResponseHandler.ReturnError(System.Int32,System.Collections.Generic.List{System.String})">
             <summary>
             返回错误消息
             </summary>
             <param name="message"></param>
             <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Authentication.AbstractAuthentication.DoAuthentication(Microsoft.AspNet.Http.HttpContext)">
+            <summary>
+            Do Authentication and return userName;
+            </summary>
+            <param name="httpContext"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DpControl.Utility.Authentication.APIAuthenticationMiddleware">
+            <summary>
+            API Authentication 
+            </summary>
+        </member>
+        <member name="T:DpControl.Utility.Authentication.BasicAuthentication">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:DpControl.Utility.Authentication.BasicAuthentication.DoIdentity(System.String,System.String)">
+            <summary>
+            校验用户名和密码
+            </summary>
+            <param name="userName"></param>
+            <param name="password"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DpControl.Utility.Authentication.DigestAuthentication">
+            <summary>
+            Digest Authentication
+            </summary>
+        </member>
+        <member name="M:DpControl.Utility.Authentication.DigestAuthentication.CheckUserInfo(System.String,Microsoft.AspNet.Http.HttpContext)">
+            <summary>
+            
+            </summary>
+            <param name="actionContext"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:DpControl.Utility.Authorization.APIAuthorizationHandler" -->
+        <member name="T:DpControl.Utility.Authorization.APIAuthorizeAttribute">
+            <summary>
+            Restful web api Authorization 
+            </summary>
+        </member>
+        <member name="M:DpControl.Utility.Authorization.APIAuthorizeAttribute.InitServices(Microsoft.AspNet.Http.HttpContext)">
+            <summary>
+            获取依赖注入实例
+            </summary>
+            <param name="httpContext"></param>
         </member>
         <member name="M:DpControl.Utility.ExceptionHandler.GlobalExceptionBuilder.ExceptionBuilder(Microsoft.AspNet.Builder.IApplicationBuilder)">
             <summary>
@@ -283,6 +481,14 @@
             <param name="actionReturnType"></param>
             <returns></returns>
         </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetFilterParam(System.String,System.Type)">
+            <summary>
+            获取filter参数
+            </summary>
+            <param name="filterString"></param>
+            <param name="actionReturnType"></param>
+            <returns></returns>
+        </member>
         <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OnResultExecuting(Microsoft.AspNet.Mvc.Filters.ResultExecutingContext)">
             <summary>
             在controller action result执行之前调用 
@@ -291,7 +497,7 @@
             <param name="context"></param>
             
         </member>
-        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OrderByResult(System.Collections.IList,DpControl.Models.OrderBy)">
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OrderByResult(System.Collections.IList,DpControl.Domain.Models.OrderBy)">
             <summary>
             对查询结果进行排序
             </summary>
