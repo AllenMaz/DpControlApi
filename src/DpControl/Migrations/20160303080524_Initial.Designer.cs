@@ -8,7 +8,7 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    [Migration("20160301015110_Initial")]
+    [Migration("20160303080524_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,12 +63,20 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("CustomerNo")
                         .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<byte[]>("RowVersion")
@@ -92,9 +100,16 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<string>("GroupName")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<int>("ProjectId");
 
@@ -159,9 +174,16 @@ namespace DpControl.Migrations
                     b.Property<int>("HolidayId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<int>("Day");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<int>("ProjectId");
 
@@ -343,7 +365,14 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<int>("CustomerId");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
@@ -374,9 +403,16 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<bool>("Enable")
                         .HasAnnotation("Relational:DefaultValue", "False")
                         .HasAnnotation("Relational:DefaultValueType", "System.Boolean");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<int>("ProjectId");
 
@@ -400,7 +436,14 @@ namespace DpControl.Migrations
                     b.Property<int>("SceneSegmentId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()

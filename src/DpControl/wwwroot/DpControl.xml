@@ -371,9 +371,35 @@
             <param name="message"></param>
             <returns></returns>
         </member>
+        <member name="M:DpControl.Utility.UserInfoManager.GetUserInfo">
+            <summary>
+            Get UserInfo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.UserInfoManager.GetUserInfoAsync">
+            <summary>
+            Get UserInfo
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:DpControl.Utility.Authentication.AbstractAuthentication.DoAuthentication(Microsoft.AspNet.Http.HttpContext)">
             <summary>
             Do Authentication and return userName;
+            </summary>
+            <param name="httpContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Authentication.AbstractAuthentication.DoAuthenticationAndLogin(Microsoft.AspNet.Http.HttpContext)">
+            <summary>
+            Do Authentication and Login;
+            </summary>
+            <param name="httpContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Authentication.AbstractAuthentication.GetUserInfo(Microsoft.AspNet.Http.HttpContext)">
+            <summary>
+            Get User Info
             </summary>
             <param name="httpContext"></param>
             <returns></returns>
@@ -388,13 +414,11 @@
             
             </summary>
         </member>
-        <member name="M:DpControl.Utility.Authentication.BasicAuthentication.DoIdentity(System.String,System.String)">
+        <member name="M:DpControl.Utility.Authentication.BasicAuthentication.InitServices(Microsoft.AspNet.Http.HttpContext)">
             <summary>
-            校验用户名和密码
+            获取依赖注入实例
             </summary>
-            <param name="userName"></param>
-            <param name="password"></param>
-            <returns></returns>
+            <param name="httpContext"></param>
         </member>
         <member name="T:DpControl.Utility.Authentication.DigestAuthentication">
             <summary>
@@ -408,7 +432,7 @@
             <param name="actionContext"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:DpControl.Utility.Authorization.APIAuthorizationHandler" -->
+        <!-- Badly formed XML comment ignored for member "T:DpControl.Utility.Authorization.APIAuthorizationRequirement" -->
         <member name="T:DpControl.Utility.Authorization.APIAuthorizeAttribute">
             <summary>
             Restful web api Authorization 

@@ -62,12 +62,20 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("CustomerNo")
                         .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<byte[]>("RowVersion")
@@ -91,9 +99,16 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<string>("GroupName")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<int>("ProjectId");
 
@@ -160,7 +175,14 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<int>("Day");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<int>("ProjectId");
 
@@ -342,7 +364,14 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<int>("CustomerId");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
@@ -373,9 +402,16 @@ namespace DpControl.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
                     b.Property<bool>("Enable")
                         .HasAnnotation("Relational:DefaultValue", "False")
                         .HasAnnotation("Relational:DefaultValueType", "System.Boolean");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<int>("ProjectId");
 
@@ -400,6 +436,13 @@ namespace DpControl.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreateDate");
+
+                    b.Property<string>("Creator")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()

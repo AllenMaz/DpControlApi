@@ -69,7 +69,6 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [RequireHttps]
         [APIAuthorize(Roles ="Admin")]
         [HttpGet]
         [EnableQuery]
