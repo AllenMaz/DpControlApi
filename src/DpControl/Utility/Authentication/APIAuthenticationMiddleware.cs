@@ -1,4 +1,5 @@
 ﻿using DpControl.Domain.Models;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Authentication;
@@ -16,13 +17,14 @@ namespace DpControl.Utility.Authentication
     /*  User this Middleware you must add:
              app.UseIdentity();
 
-            //Add API Authentication Middleware
-            //app.UseMiddleware<APIAuthenticationMiddleware>(
-            //    new AuthenticationOptions()
-            //    {
-            //        Path = "/v1"  //只对API进行身份验证
-            //    }
-            // );
+             //Add API Authentication Middleware
+            app.UseMiddleware<APIAuthenticationMiddleware>(
+                new APIAuthenticationOptions()
+                {
+                    Path = "/v1",  //只对API进行身份验证
+                    PolicyName = "APIPolicy"
+                }
+             );
        and set this config after  app.UseIdentity();
     */
     /// <summary>
@@ -34,10 +36,12 @@ namespace DpControl.Utility.Authentication
         private AbstractAuthentication _authentication;
         private IMemoryCache _memoryCache;
         private PathString _path;
+        private string _policyName;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public APIAuthenticationMiddleware(RequestDelegate next, 
-            AuthenticationOptions options,
+            APIAuthenticationOptions options,
             AbstractAuthentication authentication,
             IMemoryCache memoryCache,
             UserManager<ApplicationUser> userManager)
@@ -46,30 +50,26 @@ namespace DpControl.Utility.Authentication
             _authentication = authentication;
             _memoryCache = memoryCache;
             _path = options.Path;
+            _policyName = options.PolicyName;
             _userManager = userManager;
 
         }
-        public Task Invoke(HttpContext httpContext)
+        public async Task Invoke(HttpContext httpContext, IAuthorizationService authorizationService)
         {
             if (httpContext.Request.Path.StartsWithSegments(_path))
             {
-                //string userName =  _authentication.DoAuthentication(httpContext);
-                string userName = "";
-
-                if (!string.IsNullOrEmpty(userName))
+                //Authentication
+                string userName = await _authentication.DoAuthentication(httpContext);
+                if (string.IsNullOrEmpty(userName))
                 {
-                    SetIdentity(httpContext,userName);
-                }
-                else
-                {
-                    //if authentication fail,return HttpUnauthorizedResult
                     _authentication.Challenge(httpContext);
-                    return Task.FromResult(new HttpUnauthorizedResult());
-
+                    return;
                 }
+                
+
             }
 
-            return  _next.Invoke(httpContext);
+            await _next(httpContext);
         }
 
         private void SetIdentity(HttpContext context, string userName)

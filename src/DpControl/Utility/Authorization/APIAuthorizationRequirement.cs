@@ -12,11 +12,16 @@ namespace DpControl.Utility.Authorization
     #region doc
     /*
     to user this handler you must add :
-        services.AddAuthorization(options =>
-        {
-            //Add API Authorization
-            options.AddPolicy("APIAuthorize", policy => policy.Requirements.Add(new APIAuthorizationHandler()));
-        });
+       services.AddAuthorization(options =>
+            {
+                //Add API Authorization
+                options.AddPolicy("APIPolicy",
+                    policy => {
+                        //policy.RequireAuthenticatedUser();
+                        policy.Requirements.Add(new APIAuthorizationRequirement());
+                    }
+                 );
+            });
     then you can user like [Authorize(Policy ="APIAuthorize")]
 
     */
@@ -26,9 +31,9 @@ namespace DpControl.Utility.Authorization
     /// API Authorization
     //  then you can user like [Authorize(Policy ="APIAuthorize")]
     /// </summary>
-    public class APIAuthorizationHandler : AuthorizationHandler<APIAuthorizationHandler>, IAuthorizationRequirement
+    public class APIAuthorizationRequirement : AuthorizationHandler<APIAuthorizationRequirement>, IAuthorizationRequirement
     {
-        protected override void Handle(AuthorizationContext context, APIAuthorizationHandler requirement)
+        protected override void Handle(AuthorizationContext context, APIAuthorizationRequirement requirement)
         {
             //ChallengeForAuthorization();
             context.Succeed(requirement);

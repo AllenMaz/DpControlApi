@@ -181,6 +181,11 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
 
+            var checkData = _context.Projects.Where(p => p.ProjectNo == mproject.ProjectNo
+                                                        && p.ProjectId != projectId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException(mproject.ProjectNo + " already exist in system.");
+
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;
             project.Completed = mproject.Completed;
@@ -194,6 +199,11 @@ namespace DpControl.Domain.Repository
             var project = _context.Projects.FirstOrDefault(c => c.ProjectId == projectId);
             if (project == null)
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
+
+            var checkData = _context.Projects.Where(p => p.ProjectNo == mproject.ProjectNo
+                                                        && p.ProjectId != projectId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException(mproject.ProjectNo + " already exist in system.");
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;

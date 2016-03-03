@@ -1,6 +1,7 @@
 ﻿using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
 using DpControl.Utility;
+using DpControl.Utility.Authentication;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
 using Microsoft.AspNet.Mvc;

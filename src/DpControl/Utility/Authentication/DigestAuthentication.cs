@@ -24,7 +24,14 @@ namespace DpControl.Utility.Authentication
             base._scheme = "Digest ";
             _userManager = userManager;
         }
-        
+
+        protected override async Task<bool> Login(string headParams, HttpContext httpContext)
+        {
+            bool loginSuccess = false;
+            // logic...
+
+            return loginSuccess;
+        }
 
         /// <summary>
         /// 
@@ -85,6 +92,19 @@ namespace DpControl.Utility.Authentication
         {
             return userName;
         }
-        
+
+        protected override async Task<ApplicationUser> GetUserInfo(string headParams, HttpContext httpContext)
+        {
+            ApplicationUser currentUser = null;
+            var header = DigestHeader.Create(headParams, httpContext.Request.Method);
+            string userName = header.UserName;
+
+            if (DigestNonce.IsValid(header.Nonce, header.NounceCounter))
+            {
+                currentUser = await _userManager.FindByNameAsync(header.UserName);
+               
+            }
+            return currentUser;
+        }
     }
 }

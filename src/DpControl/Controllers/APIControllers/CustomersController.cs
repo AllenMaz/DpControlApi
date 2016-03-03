@@ -14,8 +14,8 @@ using System.Web.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.Distributed;
 using DpControl.Utility.Authorization;
-
-
+using Microsoft.AspNet.Authorization;
+using DpControl.Utility.Authentication;
 
 namespace DpControl.APIControllers
 {
@@ -27,8 +27,7 @@ namespace DpControl.APIControllers
 
         [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
-
-
+        
 
         /// <summary>
         /// Add data
@@ -43,8 +42,7 @@ namespace DpControl.APIControllers
             {
                 return HttpBadRequest(ModelStateError());
             }
-            throw new Exception("");
-
+            
             int customerId =  await _customerRepository.AddAsync(mCustomer);
             return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
         }
@@ -71,7 +69,8 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [RequireHttps]
+        [APIAuthorize(Roles ="Admin")]
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]

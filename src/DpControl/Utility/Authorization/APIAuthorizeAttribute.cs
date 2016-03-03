@@ -15,6 +15,15 @@ using System.Threading.Tasks;
 
 namespace DpControl.Utility.Authorization
 {
+    /*
+    you can use this Attribute  like:
+
+    [APIAuthorize(Roles = "Admin")]
+    public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync([FromUri] Query query)
+    {
+        //logic
+    }
+    */
     /// <summary>
     /// Restful web api Authorization 
     /// </summary>
@@ -94,7 +103,7 @@ namespace DpControl.Utility.Authorization
 
         private async void Challenge(HttpContext context)
         {
-            int httpStatusCode = (int)HttpStatusCode.MethodNotAllowed;
+            int httpStatusCode = (int)HttpStatusCode.NotFound;
             context.Response.StatusCode = httpStatusCode;
             string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { "You have no permission!" });
             await context.Response.WriteAsync(errMessage);

@@ -9,7 +9,7 @@ using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
 using DpControl.Domain.Execptions;
-
+using DpControl.Utility.Authentication;
 
 namespace DpControl.Domain.Repository
 {
@@ -17,6 +17,7 @@ namespace DpControl.Domain.Repository
     {
 
         private ShadingContext _context;
+        private readonly IUserInfoRepository _userInfo;
 
         #region Constructors
         public CustomerRepository()
@@ -28,26 +29,37 @@ namespace DpControl.Domain.Repository
             _context = dbContext;
         }
 
+        public CustomerRepository(ShadingContext dbContext,IUserInfoRepository userInfo)
+        {
+            _context = dbContext;
+            _userInfo = userInfo;
+        }
+
+        #region Add
         public int Add(CustomerAddModel customer)
         {
             //Check whether the CustomerNo already exist
             var checkData = _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToList().Count ;
             if (checkData >0)
                 throw new ExpectException(customer.CustomerNo +" already exist in system.");
-            
+
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             var model = new Customer
             {
                 CustomerName = customer.CustomerName,
                 CustomerNo = customer.CustomerNo,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
+
             _context.Customers.Add(model);
 
            _context.SaveChanges();
             return model.CustomerId; 
         }
-
+        
         public async Task<int> AddAsync(CustomerAddModel customer)
         {
             //Check whether the CustomerNo already exist
@@ -55,10 +67,14 @@ namespace DpControl.Domain.Repository
             if (checkData.Count > 0)
                 throw new ExpectException(customer.CustomerNo + " already exist in system.");
 
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
+
             var model = new Customer
             {
                 CustomerName = customer.CustomerName,
                 CustomerNo = customer.CustomerNo,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
 
@@ -68,6 +84,9 @@ namespace DpControl.Domain.Repository
             return model.CustomerId;
 
         }
+        
+        #endregion
+
         public CustomerSearchModel FindById(int customerId)
         {
             var customer = _context.Customers
@@ -77,7 +96,10 @@ namespace DpControl.Domain.Repository
                             CustomerId = c.CustomerId,
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
-                            CreateDate = c.CreateDate.ToString()
+                            Creator = c.Creator ,
+                            CreateDate = c.CreateDate.ToString(),
+                            Modifier = c.Modifier,
+                            ModifiedDate = c.ModifiedDate.ToString()
                         }).FirstOrDefault();
 
             return customer;
@@ -92,7 +114,10 @@ namespace DpControl.Domain.Repository
                             CustomerId = c.CustomerId,
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
-                            CreateDate = c.CreateDate.ToString()
+                            Creator = c.Creator,
+                            CreateDate = c.CreateDate.ToString(),
+                            Modifier = c.Modifier,
+                            ModifiedDate = c.ModifiedDate.ToString()
                         }).FirstOrDefaultAsync();
 
             return customer;
@@ -114,7 +139,10 @@ namespace DpControl.Domain.Repository
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate.ToString()
+                Creator = c.Creator,
+                CreateDate = c.CreateDate.ToString(),
+                Modifier = c.Modifier,
+                ModifiedDate = c.ModifiedDate.ToString()
             });
 
             return customerSearch;
@@ -136,7 +164,10 @@ namespace DpControl.Domain.Repository
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
-                CreateDate = c.CreateDate.ToString()
+                Creator = c.Creator,
+                CreateDate = c.CreateDate.ToString(),
+                Modifier = c.Modifier,
+                ModifiedDate = c.ModifiedDate.ToString()
             });
 
             return customerSearch;
@@ -151,8 +182,19 @@ namespace DpControl.Domain.Repository
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
 
+            //Check Edit value which is unique in database ,already exist in system or not 
+            var checkData =  _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo
+                                                            && c.CustomerId != customerId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException(customer.CustomerNo + " already exist in system.");
+
+            //Get UserInfo
+            var user =  _userInfo.GetUserInfo();
+
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
+            customer.Modifier = user.UserName;
+            customer.ModifiedDate = DateTime.Now;
 
             _context.SaveChanges();
 
@@ -164,9 +206,19 @@ namespace DpControl.Domain.Repository
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
+            //Check Edit value which is unique in database ,already exist in system or not 
+            var checkData = await _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo 
+                                                            && c.CustomerId != customerId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException(mcustomer.CustomerNo + " already exist in system.");
+
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
+            customer.Modifier = user.UserName;
+            customer.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
             return customer.CustomerId; 

@@ -18,6 +18,8 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(c => c.CustomerNo).HasMaxLength(50).IsRequired();
             entityBuilder.HasIndex(c => c.CustomerNo).IsUnique();
             entityBuilder.Property(c => c.CreateDate).IsRequired();
+            entityBuilder.Property(c => c.Creator).HasMaxLength(50).IsRequired();
+            entityBuilder.Property(c => c.Modifier).HasMaxLength(50);
             entityBuilder.Property(c => c.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
             entityBuilder.HasMany(c => c.Projects).WithOne(p => p.Customer).HasForeignKey(p => p.CustomerId);

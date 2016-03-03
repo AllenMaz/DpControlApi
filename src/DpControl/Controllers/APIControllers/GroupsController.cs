@@ -1,5 +1,6 @@
 ﻿using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
+using DpControl.Utility.Authentication;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
 using Microsoft.AspNet.Mvc;
@@ -15,6 +16,7 @@ namespace DpControl.Controllers.APIControllers
     {
         [FromServices]
         public IGroupRepository _groupRepository { get; set; }
+        
 
         /// <summary>
         /// Add data
@@ -29,7 +31,7 @@ namespace DpControl.Controllers.APIControllers
             {
                 return HttpBadRequest(ModelStateError());
             }
-
+            
             var groupId = await _groupRepository.AddAsync(mGroup);
             return CreatedAtRoute("GetByGroupIdAsync", new { controller = "Groups", groupId = groupId }, mGroup);
         }

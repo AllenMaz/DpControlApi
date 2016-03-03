@@ -20,6 +20,8 @@ using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
 using System.Net;
+using DpControl.Utility.Authorization;
+using DpControl.Utility;
 
 namespace DpControl
 {
@@ -59,20 +61,9 @@ namespace DpControl
 
             services.AddEntityFramework()
                 .AddSqlServer();
-            
-            var mvcBuilder = services.AddMvc(config =>
-            {
-               // config.Filters.Add(new DigestAuthorizationAttribute());
-            });
-            #region 增加支持XML Formatter
-            //mvcBuilder.AddXmlDataContractSerializerFormatters();
 
-            //services.Configure<MvcOptions>(options =>
-            //{
-            //    options.Filters.Add(new GlobalExceptionFilter());
+            services.AddMvc();
 
-            //});
-            #endregion
             #region Cache
             //Add MemoryCache
             services.AddCaching();
@@ -89,7 +80,7 @@ namespace DpControl
             services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ShadingContext>()
             .AddDefaultTokenProviders();
-
+            
             services.Configure<IdentityOptions>(options =>
             {
                 options.Cookies.ApplicationCookie.LoginPath = new PathString("/Account/Login");
@@ -140,6 +131,8 @@ namespace DpControl
             #region Register Dependency Injection
             services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
+            services.AddScoped<IUserInfoRepository, UserInfoManager>();
+
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
@@ -182,6 +175,7 @@ namespace DpControl
             //Identity
             app.UseIdentity();
             
+
             //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
