@@ -34,9 +34,9 @@ namespace DpControl.Domain.Models
         public int ProjectId { get; set; }
 
         private DateTime _createDate;
-        public string CreateDate
-        {
-            get; set;
-        }
+        public string Creator { get; set; }
+        public string CreateDate { get; set; }
+        public string Modifier { get; set; }
+        public string ModifiedDate { get; set; }
     }
 }

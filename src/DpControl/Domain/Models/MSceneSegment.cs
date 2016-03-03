@@ -37,6 +37,9 @@ namespace DpControl.Domain.Models
     {
         public int SceneSegmentId { get; set; }
         public int SceneId { get; set; }
+        public string Creator { get; set; }
         public string CreateDate { get; set; }
+        public string Modifier { get; set; }
+        public string ModifiedDate { get; set; }
     }
 }

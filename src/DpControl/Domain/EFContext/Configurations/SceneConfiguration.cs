@@ -17,6 +17,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.HasKey(s => s.SceneId);
             entityBuilder.Property(s => s.SceneName).IsRequired().HasMaxLength(50);
             entityBuilder.Property(s => s.Enable).IsRequired().HasDefaultValue(false);
+            entityBuilder.Property(s => s.Creator).IsRequired();
             entityBuilder.Property(s => s.CreateDate).IsRequired();
             entityBuilder.Property(s => s.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 

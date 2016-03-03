@@ -19,6 +19,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(p => p.ProjectNo).HasMaxLength(50).IsRequired();
             entityBuilder.HasIndex(p => p.ProjectNo).IsUnique();
 
+            entityBuilder.Property(p => p.Creator).IsRequired();
             entityBuilder.Property(p => p.CreateDate).IsRequired();
             entityBuilder.Property(p => p.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();      //.IsRowVersion();
             entityBuilder.Property(p => p.Completed).HasDefaultValue(false).IsRequired();

@@ -41,7 +41,7 @@ namespace DpControl.Domain.Repository
             //Check whether the CustomerNo already exist
             var checkData = _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToList().Count ;
             if (checkData >0)
-                throw new ExpectException(customer.CustomerNo +" already exist in system.");
+                throw new ExpectException("The data which CustomerNo equal to '"+customer.CustomerNo +"' already exist in system");
 
             //Get UserInfo
             var user = _userInfo.GetUserInfo();
@@ -65,7 +65,7 @@ namespace DpControl.Domain.Repository
             //Check whether the CustomerNo already exist
             var checkData = await _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToListAsync();
             if (checkData.Count > 0)
-                throw new ExpectException(customer.CustomerNo + " already exist in system.");
+                throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
             var user = await _userInfo.GetUserInfoAsync();
@@ -186,7 +186,7 @@ namespace DpControl.Domain.Repository
             var checkData =  _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo
                                                             && c.CustomerId != customerId).ToList();
             if (checkData.Count > 0)
-                throw new ExpectException(customer.CustomerNo + " already exist in system.");
+                throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
             var user =  _userInfo.GetUserInfo();
@@ -210,7 +210,7 @@ namespace DpControl.Domain.Repository
             var checkData = await _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo 
                                                             && c.CustomerId != customerId).ToListAsync();
             if (checkData.Count > 0)
-                throw new ExpectException(mcustomer.CustomerNo + " already exist in system.");
+                throw new ExpectException("The data which CustomerNo equal to '" + mcustomer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
             var user = await _userInfo.GetUserInfoAsync();
@@ -226,7 +226,7 @@ namespace DpControl.Domain.Repository
 
         public void RemoveById(int id)
         {
-            _context.Database.ExecuteSqlCommand("delete from controlsystem.customers where customerId=" + id);
+            _context.Database.ExecuteSqlCommand("delete from controlsystem.customers where customerId equal to " + id);
 
         }
 

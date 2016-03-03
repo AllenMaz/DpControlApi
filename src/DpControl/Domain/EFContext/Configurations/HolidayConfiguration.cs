@@ -16,6 +16,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.ToTable("Holidays", "ControlSystem");
 
             entityBuilder.Property(h => h.CreateDate).IsRequired();
+            entityBuilder.Property(h => h.Creator).IsRequired();
             entityBuilder.Property(h => h.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
         }
     }

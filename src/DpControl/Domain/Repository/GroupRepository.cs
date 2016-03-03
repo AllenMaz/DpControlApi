@@ -14,6 +14,7 @@ namespace DpControl.Domain.Repository
     public class GroupRepository : IGroupRepository
     {
         private ShadingContext _context;
+        private readonly IUserInfoRepository _userInfo;
 
         #region Constructors
         public GroupRepository()
@@ -24,6 +25,12 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
+        public GroupRepository(ShadingContext dbContext, IUserInfoRepository userInfo)
+        {
+            _context = dbContext;
+            _userInfo = userInfo;
+        }
+        #endregion
 
         public int Add(GroupAddModel group)
         {
@@ -41,13 +48,17 @@ namespace DpControl.Domain.Repository
             //Check whether the GroupName already exist
             var checkData = _context.Groups.Where(g => g.GroupName == group.GroupName).ToList();
             if (checkData.Count > 0)
-                throw new ExpectException(group.GroupName + " already exist in system.");
+                throw new ExpectException("The data which GroupName equal to '" + group.GroupName + "' already exist in system.");
+
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             var model = new Group
             {
                 GroupName = group.GroupName,
                 ProjectId = group.ProjectId,
                 SceneId = group.SceneId,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Groups.Add(model);
@@ -74,13 +85,17 @@ namespace DpControl.Domain.Repository
             //Check whether the GroupName already exist
             var checkData =await _context.Groups.Where(g => g.GroupName == group.GroupName).ToListAsync();
             if (checkData.Count > 0)
-                throw new ExpectException("The data which GroupName equal to "+group.GroupName + " already exist in system.");
+                throw new ExpectException("The data which GroupName equal to '"+group.GroupName + "' already exist in system.");
+
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
 
             var model = new Group
             {
                 GroupName = group.GroupName,
                 ProjectId = group.ProjectId,
                 SceneId = group.SceneId,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Groups.Add(model);
@@ -97,7 +112,10 @@ namespace DpControl.Domain.Repository
                     GroupName = v.GroupName,
                     ProjectId = v.ProjectId,
                     SceneId = v.SceneId,
-                    CreateDate = v.CreateDate.ToString()
+                    Creator = v.Creator,
+                    CreateDate = v.CreateDate.ToString(),
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate.ToString()
                 }).FirstOrDefault();
 
             return group;
@@ -112,7 +130,10 @@ namespace DpControl.Domain.Repository
                     GroupName = v.GroupName,
                     ProjectId = v.ProjectId,
                     SceneId = v.SceneId,
-                    CreateDate = v.CreateDate.ToString()
+                    Creator = v.Creator,
+                    CreateDate = v.CreateDate.ToString(),
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate.ToString()
                 }).FirstOrDefaultAsync();
 
             return group;
@@ -134,7 +155,10 @@ namespace DpControl.Domain.Repository
                 GroupName = c.GroupName,
                 ProjectId = c.ProjectId,
                 SceneId = c.SceneId,
-                CreateDate = c.CreateDate.ToString()
+                Creator = c.Creator,
+                CreateDate = c.CreateDate.ToString(),
+                Modifier = c.Modifier,
+                ModifiedDate = c.ModifiedDate.ToString()
             });
 
             return groupsSearch;
@@ -156,7 +180,10 @@ namespace DpControl.Domain.Repository
                 GroupName = c.GroupName,
                 ProjectId = c.ProjectId,
                 SceneId = c.SceneId,
-                CreateDate = c.CreateDate.ToString()
+                Creator = c.Creator,
+                CreateDate = c.CreateDate.ToString(),
+                Modifier = c.Modifier,
+                ModifiedDate = c.ModifiedDate.ToString()
             });
 
             return groupsSearch;
@@ -184,7 +211,33 @@ namespace DpControl.Domain.Repository
 
         public int UpdateById(int groupId, GroupUpdateModel mgroup)
         {
-            throw new NotImplementedException();
+            var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
+            if (group == null)
+                throw new ExpectException("Could not find data which GroupId equal to " + groupId);
+            //Chech whether the Foreign key SceneId data exist
+            if (mgroup.SceneId != null)
+            {
+                var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == mgroup.SceneId);
+                if (scene == null)
+                    throw new ExpectException("Could not find Scenes data which SceneId equal to " + mgroup.SceneId);
+            }
+            //Check Edit value which is unique in database ,already exist in system or not 
+            var checkData = _context.Groups.Where(g => g.GroupName == mgroup.GroupName
+                                                        && g.GroupId != groupId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which GroupName equal to '" + mgroup.GroupName + "' already exist in system.");
+
+
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
+
+            group.GroupName = mgroup.GroupName;
+            group.SceneId = mgroup.SceneId;
+            group.Modifier = user.UserName;
+            group.ModifiedDate = DateTime.Now;
+
+            _context.SaveChanges();
+            return group.GroupId;
         }
 
         public async Task<int> UpdateByIdAsync(int groupId, GroupUpdateModel mgroup)
@@ -199,14 +252,25 @@ namespace DpControl.Domain.Repository
                 if (scene == null)
                     throw new ExpectException("Could not find Scenes data which SceneId equal to " + mgroup.SceneId);
             }
+            //Check Edit value which is unique in database ,already exist in system or not 
+            var checkData = await _context.Groups.Where(g => g.GroupName == mgroup.GroupName
+                                                        && g.GroupId != groupId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which GroupName equal to '" + mgroup.GroupName + "' already exist in system.");
+
+
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
 
             group.GroupName = mgroup.GroupName;
             group.SceneId = mgroup.SceneId;
+            group.Modifier = user.UserName;
+            group.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
             return group.GroupId;
         }
-        #endregion
+        
 
     }
 }

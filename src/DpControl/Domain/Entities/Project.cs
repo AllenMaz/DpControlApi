@@ -21,7 +21,10 @@ namespace DpControl.Domain.Entities
         public virtual List<Holiday> Holidays { get; set; }
         #endregion
 
+        public string Creator { get; set; }
         public DateTime CreateDate { get; set; }
+        public string Modifier { get; set; }
+        public DateTime? ModifiedDate { get; set; }
         public byte[] RowVersion { get; set; }
 
         public Project()

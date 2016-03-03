@@ -16,8 +16,10 @@ namespace DpControl.Domain.Entities
         public int SceneId { get; set; }
         public virtual Scene Scene { get; set; }
         #endregion
-
+        public string Creator { get; set; }
         public DateTime CreateDate { get; set; }
+        public string Modifier { get; set; }
+        public DateTime? ModifiedDate { get; set; }
         public byte[] RowVersion { get; set; }
     }
 }

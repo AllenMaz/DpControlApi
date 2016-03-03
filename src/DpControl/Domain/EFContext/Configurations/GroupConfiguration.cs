@@ -17,6 +17,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.HasKey(g => g.GroupId);
             entityBuilder.HasIndex(g => g.GroupName).IsUnique();
             entityBuilder.Property(g => g.GroupName).HasMaxLength(50).IsRequired();
+            entityBuilder.Property(g => g.Creator).IsRequired();
             entityBuilder.Property(g => g.CreateDate).IsRequired();
             entityBuilder.Property(g => g.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 

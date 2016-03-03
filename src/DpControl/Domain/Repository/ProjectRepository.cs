@@ -17,6 +17,7 @@ namespace DpControl.Domain.Repository
     {
 
         private ShadingContext _context;
+        private readonly IUserInfoRepository _userInfo;
 
         #region Constructors
         public ProjectRepository()
@@ -26,6 +27,12 @@ namespace DpControl.Domain.Repository
         public ProjectRepository(ShadingContext dbContext)
         {
             _context = dbContext;
+        }
+
+        public ProjectRepository(ShadingContext dbContext,IUserInfoRepository userInfo)
+        {
+            _context = dbContext;
+            _userInfo = userInfo;
         }
 
         #endregion
@@ -38,13 +45,17 @@ namespace DpControl.Domain.Repository
             //Check whether the ProjectNo already exist
             var checkData = _context.Projects.Where(p => p.ProjectNo == project.ProjectNo).ToList();
             if (checkData.Count > 0)
-                throw new ExpectException(project.ProjectNo + " already exist in system.");
+                throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
+
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             var model = new Project
             {
                 CustomerId = project.CustomerId,
                 ProjectName = project.ProjectName,
                 ProjectNo = project.ProjectNo,
+                Creator = user.UserName ,
                 CreateDate = DateTime.Now
             };
             _context.Projects.Add(model);
@@ -62,13 +73,17 @@ namespace DpControl.Domain.Repository
             //Check whether the ProjectNo already exist
             var checkData = await _context.Projects.Where(p =>p.ProjectNo == project.ProjectNo).ToListAsync();
             if (checkData.Count > 0)
-                throw new ExpectException(project.ProjectNo + " already exist in system.");
+                throw new ExpectException("The data which ProjectNo '" + project.ProjectNo + "' already exist in system");
+
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
 
             var model = new Project
             {
                 CustomerId = project.CustomerId,
                 ProjectName = project.ProjectName,
                 ProjectNo = project.ProjectNo,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Projects.Add(model);
@@ -84,8 +99,11 @@ namespace DpControl.Domain.Repository
                     ProjectNo = v.ProjectNo,
                     ProjectName = v.ProjectName,
                     CustomerId = v.CustomerId,
+                    Completed = v.Completed,
+                    Creator = v.Creator,
                     CreateDate = v.CreateDate.ToString(),
-                    Completed = v.Completed
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate.ToString()
                 }).FirstOrDefault();
 
             return projects;
@@ -100,8 +118,11 @@ namespace DpControl.Domain.Repository
                     ProjectNo = v.ProjectNo,
                     ProjectName = v.ProjectName,
                     CustomerId = v.CustomerId,
+                    Completed = v.Completed,
+                    Creator = v.Creator,
                     CreateDate = v.CreateDate.ToString(),
-                    Completed = v.Completed
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate.ToString()
                 }).FirstOrDefaultAsync();
 
             return projects;
@@ -123,8 +144,11 @@ namespace DpControl.Domain.Repository
                 ProjectNo = v.ProjectNo,
                 ProjectName = v.ProjectName,
                 CustomerId = v.CustomerId,
+                Completed = v.Completed,
+                Creator = v.Creator,
                 CreateDate = v.CreateDate.ToString(),
-                Completed = v.Completed
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return projectSearch;
@@ -146,8 +170,11 @@ namespace DpControl.Domain.Repository
                 ProjectNo = v.ProjectNo,
                 ProjectName = v.ProjectName,
                 CustomerId = v.CustomerId,
+                Completed = v.Completed,
+                Creator = v.Creator,
                 CreateDate = v.CreateDate.ToString(),
-                Completed = v.Completed
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return projectSearch;
@@ -184,11 +211,16 @@ namespace DpControl.Domain.Repository
             var checkData = _context.Projects.Where(p => p.ProjectNo == mproject.ProjectNo
                                                         && p.ProjectId != projectId).ToList();
             if (checkData.Count > 0)
-                throw new ExpectException(mproject.ProjectNo + " already exist in system.");
+                throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
+
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;
             project.Completed = mproject.Completed;
+            project.Modifier = user.UserName;
+            project.ModifiedDate = DateTime.Now;
 
             _context.SaveChanges();
             return project.ProjectId;
@@ -203,11 +235,16 @@ namespace DpControl.Domain.Repository
             var checkData = _context.Projects.Where(p => p.ProjectNo == mproject.ProjectNo
                                                         && p.ProjectId != projectId).ToList();
             if (checkData.Count > 0)
-                throw new ExpectException(mproject.ProjectNo + " already exist in system.");
+                throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
+
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;
             project.Completed = mproject.Completed;
+            project.Modifier = user.UserName;
+            project.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
             return project.ProjectId;

@@ -14,6 +14,7 @@ namespace DpControl.Domain.Repository
     public class SceneRepository : ISceneRepository
     {
         ShadingContext _context;
+        private readonly IUserInfoRepository _userInfo;
 
         #region Constructors
         public SceneRepository()
@@ -24,7 +25,11 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
-
+        public SceneRepository(ShadingContext dbContext, IUserInfoRepository userInfo)
+        {
+            _context = dbContext;
+            _userInfo = userInfo;
+        }
         #endregion
 
         public int Add(SceneAddModel scene)
@@ -33,11 +38,15 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + scene.ProjectId);
 
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
+
             var model = new Scene
             {
                 ProjectId = scene.ProjectId,
                 SceneName = scene.SceneName,
                 Enable = scene.Enable,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Scenes.Add(model);
@@ -51,11 +60,14 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + scene.ProjectId);
 
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
             var model = new Scene
             {
                 ProjectId = scene.ProjectId,
                 SceneName = scene.SceneName,
                 Enable = scene.Enable,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Scenes.Add(model);
@@ -72,7 +84,10 @@ namespace DpControl.Domain.Repository
                     SceneName = v.SceneName,
                     ProjectId = v.ProjectId,
                     Enable = v.Enable,
+                    Creator = v.Creator,
                     CreateDate = v.CreateDate.ToString(),
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate.ToString()
                 }).FirstOrDefault();
 
             return scene;
@@ -87,7 +102,10 @@ namespace DpControl.Domain.Repository
                     SceneName = v.SceneName,
                     ProjectId = v.ProjectId,
                     Enable = v.Enable,
-                    CreateDate = v.CreateDate.ToString()
+                    Creator = v.Creator,
+                    CreateDate = v.CreateDate.ToString(),
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate.ToString()
                 }).FirstOrDefaultAsync();
 
             return scene;
@@ -109,7 +127,10 @@ namespace DpControl.Domain.Repository
                 SceneName = v.SceneName,
                 ProjectId = v.ProjectId,
                 Enable = v.Enable,
-                CreateDate = v.CreateDate.ToString()
+                Creator = v.Creator,
+                CreateDate = v.CreateDate.ToString(),
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return scenesSearch;
@@ -131,7 +152,10 @@ namespace DpControl.Domain.Repository
                 SceneName = v.SceneName,
                 ProjectId = v.ProjectId,
                 Enable = v.Enable,
-                CreateDate = v.CreateDate.ToString()
+                Creator = v.Creator,
+                CreateDate = v.CreateDate.ToString(),
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return scenesSearch;
@@ -163,8 +187,13 @@ namespace DpControl.Domain.Repository
             if (scene == null)
                 throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
 
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
+
             scene.SceneName = mScene.SceneName;
             scene.Enable = mScene.Enable;
+            scene.Modifier = user.UserName;
+            scene.ModifiedDate = DateTime.Now;
 
             _context.SaveChanges();
             return scene.SceneId;
@@ -176,8 +205,13 @@ namespace DpControl.Domain.Repository
             if (scene == null)
                 throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
 
+            //Get UserInfo
+            var user =await _userInfo.GetUserInfoAsync();
+
             scene.SceneName = mScene.SceneName;
             scene.Enable = mScene.Enable;
+            scene.Modifier = user.UserName;
+            scene.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
             return scene.SceneId;

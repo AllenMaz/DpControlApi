@@ -14,6 +14,7 @@ namespace DpControl.Domain.Repository
     public class SceneSegmentRepository : ISceneSegmentRepository
     {
         ShadingContext _context;
+        private readonly IUserInfoRepository _userInfo;
 
         #region Constructors
         public SceneSegmentRepository()
@@ -24,6 +25,11 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
+        public SceneSegmentRepository(ShadingContext dbContext, IUserInfoRepository userInfo)
+        {
+            _context = dbContext;
+            _userInfo = userInfo;
+        }
         #endregion
 
         public int Add(SceneSegmentAddModel mSceneSegment)
@@ -32,6 +38,8 @@ namespace DpControl.Domain.Repository
             if (scene == null)
                 throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
 
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             var model = new SceneSegment
             {
@@ -39,6 +47,7 @@ namespace DpControl.Domain.Repository
                 SequenceNo = mSceneSegment.SequenceNo,
                 StartTime = mSceneSegment.StartTime,
                 Volumn = mSceneSegment.Volumn,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.SceneSegments.Add(model);
@@ -51,14 +60,16 @@ namespace DpControl.Domain.Repository
             var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == mSceneSegment.SceneId);
             if (scene == null)
                 throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
-            
 
+            //Get UserInfo
+            var user =await _userInfo.GetUserInfoAsync();
             var model = new SceneSegment
             {
                 SceneId = mSceneSegment.SceneId,
                 SequenceNo = mSceneSegment.SequenceNo,
                 StartTime = mSceneSegment.StartTime,
                 Volumn = mSceneSegment.Volumn,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.SceneSegments.Add(model);
@@ -76,7 +87,10 @@ namespace DpControl.Domain.Repository
                    SequenceNo = v.SequenceNo,
                    StartTime = v.StartTime,
                    Volumn = v.Volumn,
-                   CreateDate = v.CreateDate.ToString()
+                   Creator = v.Creator,
+                   CreateDate = v.CreateDate.ToString(),
+                   Modifier = v.Modifier,
+                   ModifiedDate = v.ModifiedDate.ToString()
                }).FirstOrDefault();
 
             return sceneSegment;
@@ -92,7 +106,10 @@ namespace DpControl.Domain.Repository
                    SequenceNo = v.SequenceNo,
                    StartTime = v.StartTime,
                    Volumn = v.Volumn,
-                   CreateDate = v.CreateDate.ToString()
+                   Creator = v.Creator,
+                   CreateDate = v.CreateDate.ToString(),
+                   Modifier = v.Modifier,
+                   ModifiedDate = v.ModifiedDate.ToString()
                }).FirstOrDefaultAsync();
 
             return sceneSegment;
@@ -115,7 +132,10 @@ namespace DpControl.Domain.Repository
                 SequenceNo = v.SequenceNo,
                 StartTime = v.StartTime,
                 Volumn = v.Volumn,
-                CreateDate = v.CreateDate.ToString()
+                Creator = v.Creator,
+                CreateDate = v.CreateDate.ToString(),
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return sceneSegmentsSearch;
@@ -138,7 +158,10 @@ namespace DpControl.Domain.Repository
                 SequenceNo = v.SequenceNo,
                 StartTime = v.StartTime,
                 Volumn = v.Volumn,
-                CreateDate = v.CreateDate.ToString()
+                Creator = v.Creator,
+                CreateDate = v.CreateDate.ToString(),
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return sceneSegmentsSearch;
@@ -170,10 +193,14 @@ namespace DpControl.Domain.Repository
             if (sceneSegment == null)
                 throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
 
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
             sceneSegment.StartTime = mSceneSegment.StartTime;
             sceneSegment.Volumn = mSceneSegment.Volumn;
+            sceneSegment.Modifier = user.UserName;
+            sceneSegment.ModifiedDate = DateTime.Now;
 
              _context.SaveChanges();
             return sceneSegment.SceneSegmentId;
@@ -185,10 +212,14 @@ namespace DpControl.Domain.Repository
             if (sceneSegment == null)
                 throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
 
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
 
             sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
             sceneSegment.StartTime = mSceneSegment.StartTime;
             sceneSegment.Volumn = mSceneSegment.Volumn;
+            sceneSegment.Modifier = user.UserName;
+            sceneSegment.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
             return sceneSegment.SceneSegmentId;

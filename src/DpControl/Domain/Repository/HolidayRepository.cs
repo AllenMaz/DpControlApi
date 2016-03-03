@@ -14,6 +14,7 @@ namespace DpControl.Domain.Repository
     public class HolidayRepository : IHolidayRepository
     {
         ShadingContext _context;
+        private readonly IUserInfoRepository _userInfo;
 
         #region Constructors
         public HolidayRepository()
@@ -24,6 +25,11 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
+        public HolidayRepository(ShadingContext dbContext, IUserInfoRepository userInfo)
+        {
+            _context = dbContext;
+            _userInfo = userInfo;
+        }
         #endregion
 
         public int Add(HolidayAddModel mHoliday)
@@ -32,11 +38,14 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + mHoliday.ProjectId);
 
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             var model = new Holiday
             {
                 ProjectId = mHoliday.ProjectId,
                 Day = mHoliday.Day,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Holidays.Add(model);
@@ -50,11 +59,14 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + mHoliday.ProjectId);
 
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
 
             var model = new Holiday
             {
                 ProjectId = mHoliday.ProjectId,
                 Day = mHoliday.Day,
+                Creator = user.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Holidays.Add(model);
@@ -70,7 +82,10 @@ namespace DpControl.Domain.Repository
                    HolidayId = v.HolidayId,
                    ProjectId = v.ProjectId,
                    Day = v.Day,
-                   CreateDate = v.CreateDate.ToString()
+                   Creator = v.Creator,
+                   CreateDate = v.CreateDate.ToString(),
+                   Modifier = v.Modifier,
+                   ModifiedDate = v.ModifiedDate.ToString()
                }).FirstOrDefault();
 
             return holiday;
@@ -84,7 +99,10 @@ namespace DpControl.Domain.Repository
                    HolidayId = v.HolidayId,
                    ProjectId = v.ProjectId,
                    Day =v.Day,
-                   CreateDate = v.CreateDate.ToString()
+                   Creator = v.Creator,
+                   CreateDate = v.CreateDate.ToString(),
+                   Modifier = v.Modifier,
+                   ModifiedDate = v.ModifiedDate.ToString()
                }).FirstOrDefaultAsync();
 
             return holiday;
@@ -105,7 +123,10 @@ namespace DpControl.Domain.Repository
                 HolidayId = v.HolidayId,
                 ProjectId = v.ProjectId,
                 Day = v.Day,
-                CreateDate = v.CreateDate.ToString()
+                Creator = v.Creator,
+                CreateDate = v.CreateDate.ToString(),
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return holidaysSearch;
@@ -126,7 +147,10 @@ namespace DpControl.Domain.Repository
                 HolidayId = v.HolidayId,
                 ProjectId = v.ProjectId,
                 Day = v.Day,
-                CreateDate = v.CreateDate.ToString()
+                Creator = v.Creator,
+                CreateDate = v.CreateDate.ToString(),
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate.ToString()
             });
 
             return holidaysSearch;
@@ -158,8 +182,12 @@ namespace DpControl.Domain.Repository
             if (holiday == null)
                 throw new ExpectException("Could not find data which HolidayId equal to " + holidayId);
 
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
 
             holiday.Day = mHoliday.Day;
+            holiday.Modifier = user.UserName;
+            holiday.ModifiedDate = DateTime.Now;
 
             _context.SaveChanges();
             return holiday.HolidayId;
@@ -171,8 +199,12 @@ namespace DpControl.Domain.Repository
             if (holiday == null)
                 throw new ExpectException("Could not find data which HolidayId equal to " + holidayId);
 
+            //Get UserInfo
+            var user =await _userInfo.GetUserInfoAsync();
 
             holiday.Day = mHoliday.Day;
+            holiday.Modifier = user.UserName;
+            holiday.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
             return holiday.HolidayId;
