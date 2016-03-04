@@ -1,120 +1,82 @@
 ﻿@{
     ViewBag.Title = "DpControl";
 }
-<style>
-    .content {
-        color: black;
-        font-size: large;
-    }
 
-    .newStyle {
-        color: red;
-        font-size: large;
-        margin: 0px 2px;
-        font-style: italic;
-    }
-
-    .tipStyle {
-        color:deeppink;
-        font-size: large;
-        margin: 0px 2px;
-        font-style: italic;
-    }
-
-    li{padding:10px 0px;}
-    a { text-decoration:underline; }
-    .firstRetract {padding-left:25px;}
-    .secondRetract {padding-left:35px;}
-    .thirdRetract {padding-left:45px;}
-    .fourRetract {padding-left:55px;}
-    .fiveRetract {padding-left:65px;}
-
-</style>
 <script>
     $(document).ready(function () {
         $("#aShowCodeTitle").click(function () {
             $("#divShowCode").toggle();
         });
+
+        $('#myCarousel').carousel({
+            interval: 5000,
+            pause:'cycle'
+        });
     });
+        
 
-</script>    
-<div >
-    <label style="font-size:large;font-weight:700">There are some Features:</label>
-    <ul>
-        <li class="content">
-            * Test Account   <sup class="tipStyle">note</sup>
-            <div style="margin:0px 10px;font-size:medium">UserName = Test,Password = Test_123</div>
-        </li>
-
-        <li class="content">
-            * Filter by &filter param. <sup class="newStyle">new</sup>
-            <p>
-                example:<label style="color:blue"> Return all Customers with CustomerName equal to 'Allen' and CustomerNo equal to '333'</label><br />
-                <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">https://ip:port/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
-
+</script> 
+<div id="myCarousel" class="carousel slide">
+    <!-- 轮播（Carousel）指标 -->
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <!-- 轮播（Carousel）项目 -->
+    <div class="carousel-inner">
+        <div class="item active">
+            <img src="~/images/open.jpg" style="height:300px;width:auto"  alt="First slide">
+        </div>
+        <div class="item">
+            <img src="~/images/azure.png" style="height:300px; width:100%" alt="Second slide">
+        </div>
+        <div class="item">
+            <img src="~/images/web.jpg" style="height:300px;" alt="Third slide">
+        </div>
+    </div>
+    <!-- 轮播（Carousel）导航 -->
+    <a class="carousel-control left" href="#myCarousel"
+       data-slide="prev">&lsaquo;</a>
+    <a class="carousel-control right" href="#myCarousel"
+       data-slide="next">&rsaquo;</a>
+</div> 
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <h3>There are some Features:</h3>
+        <ul>
+            <li class="lead">Filter by filter
+             <p class="text-lowercase">
+                 <span class="glyphicon glyphicon-leaf"></span> Return all Customers with CustomerName equal to 'Allen' and CustomerNo equal to '333'<br />
+                 <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
+             </p>  
+            <p class="text-lowercase">
+                <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId >= 15<br />
+                <a href="/v1/Customers?filter=CustomerId gt 15">/v1/Customers?filter=CustomerId gt 15</a>
             </p>
-            <p>
-                example:<label style="color:blue">Return all Customers where CustomerId >= 15</label><br />
-                <a href="/v1/Customers?filter=CustomerId gt 15">https://ip:port/v1/Customers?filter=CustomerId gt 15</a>
+            <p class="text-lowercase">
+                <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId <= 10<br />
+                <a href="/v1/Customers?filter=CustomerId lt 10">/v1/Customers?filter=CustomerId lt 10</a>
             </p>
-            <p>
-                example:<label style="color:blue"> Return all Customers where CustomerId <= 10</label><br />
-                <a href="/v1/Customers?filter=CustomerId lt 10">https://ip:port/v1/Customers?filter=CustomerId lt 10</a>
-
-            </p>
-        </li>
-
-        <li class="content">* Support Logging by Serilog <sup class="newStyle"></sup></li>
-
-        <li class="content">* Support Basic Authentication <sup class="newStyle"></sup>
-            <br />
-            <a href="javaScript:void(0)" id="aShowCodeTitle" style="margin-left:20px;">HttpClient Call Method(C#)</a>
-            <div id="divShowCode" style="border:solid;border-color:gray;padding:10px 20px;display:none ;">
-                <div>    public class Program  </div>
-                <div>      {                    </div>
-                <div class="firstRetract">      public static void Main(string[] args)</div>
-                <div class="firstRetract">{</div>
-                <div class="secondRetract">     var requestUri = new Uri("http://localhost:44354/v1/Customers");</div>
-                <div class="secondRetract">     var credCache = new CredentialCache</div>
-                <div class="secondRetract">{</div>
-                <div class="thirdRetract"> {</div>
-                <div class="fourRetract"> requestUri,</div>
-                <div class="fourRetract"> "Basic",// "Digest",</div>
-                <div class="fourRetract"> new NetworkCredential("Test", "Test1", "localhost")</div>
-                <div class="thirdRetract"> }</div>
-                <div class="secondRetract">  };</div>
-                <div class="secondRetract">using (var clientHander = new HttpClientHandler</div>
-                <div class="secondRetract"> {</div>
-                <div class="thirdRetract"> Credentials = credCache,</div>
-                <div class="thirdRetract">PreAuthenticate = true</div>
-                <div class="secondRetract"> })</div>
-                <div class="secondRetract">using (var httpClient = new HttpClient(clientHander))</div>
-                <div class="secondRetract">{</div>
-                <div class="thirdRetract">for (var i = 0; i < 5; i++)</div>
-                <div class="thirdRetract"> {</div>
-                <div class="fourRetract"> var responseTask = httpClient.GetAsync(requestUri);</div>
-                <div class="fourRetract"> var bb = responseTask.Result.Content.ReadAsStringAsync();</div>
-                <div class="fourRetract"> responseTask.Result.EnsureSuccessStatusCode();</div>
-                <div class="thirdRetract">}</div>
-                <div class="secondRetract">}</div>
-                <div class="firstRetract">}</div>
-                <div> }</div>
-
-                </div>
-        </li>
-        <li class="content">* Support Distributed Cache by SqlServerCache <sup class="newStyle"></sup></li>
-        <li class="content">
-            * Paging by skip and top param.
-            <p>example:<a href="/v1/Customers?skip=3&top=10">https://ip:port/v1/Customers?skip=3&top=10</a> </p>
-        </li>
-        <li class="content">
-            * Orderby by orderby(desc/asc) param.
-            <p>example:<a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">https://ip:port/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a></p>
-
-        </li>
-        <li class="content">* Via Post method to request Put,Patch,Delete by X-HTTP-Method-Override</li>
-
-    </ul>
+            </li>
+            <li class="lead">OrderBy orderby(desc/asc)
+                <p class="text-lowercase">
+                    <a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a>
+                </p>  
+            </li>
+            <li class="lead">
+                Paging by skip and top 
+                <p class="text-lowercase">
+                    <a href="/v1/Customers?skip=3&top=10">/v1/Customers?skip=3&top=10</a>
+                </p>
+            </li>
+            <li class="lead">
+                Support X-HTTP-Method-Override (Via Post to request Put,Patch,Delete)
+            </li>
+        </ul>
+        
+    </div>
 
 </div>
+
 

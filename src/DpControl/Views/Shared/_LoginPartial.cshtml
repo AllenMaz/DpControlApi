@@ -4,16 +4,25 @@
 {
     <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
        
-        <label style="color:white;margin-right:10px;">Hello @User.GetUserName()!</label>
-        <a asp-controller="Manage" asp-action="IndexForRole" style="color:white;margin-right:10px;">Add Role</a>
-        <a asp-controller="Manage" asp-action="IndexForUser" style="color:white;margin-right:10px;">Add User</a>
-        
-        <button type="submit" class="btn-link navbar-link" style="color:white">Log off</button>
-            
+        <ul class="nav navbar-nav navbar-right">
+
+            <li>
+                Hello @User.GetUserName()!
+            </li>
+            <li><a asp-controller="Manage" asp-action="IndexForRole" >Add Role</a></li>
+            <li><a asp-controller="Manage" asp-action="IndexForUser" >Add User</a></li>
+            <li>
+                <a href="javascript:document.getElementById('logoutForm').submit()" >注销</a>
+            </li>
+        </ul>
+           
     </form>
+    
 }
 else
 {
-    <a asp-controller="Account" asp-action="InitAdmin" style="color:white;margin-right:10px;">初始化管理员用户</a>
-    <a asp-controller="Account" asp-action="Login" style="color:white">Sign In</a>
+    <ul class="nav navbar-nav navbar-right">
+        <li><a asp-controller="Account" asp-action="InitAdmin">初始化管理员用户</a></li>
+        <li><a asp-controller="Account" asp-action="Login">Sign In</a></li>
+    </ul>
 }

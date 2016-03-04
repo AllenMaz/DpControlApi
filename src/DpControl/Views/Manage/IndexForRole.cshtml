@@ -69,7 +69,7 @@
     function InitTable()
     {
         $('#table').bootstrapTable({
-            height: $(document.body).height() - $("#divSearch").height() - $("#toolbar").height(),
+            height: 500,
             method: 'post',                 //The method type to request remote data.
             url: '/Manage/GetRolePageData',
             dataType: "json",               //The type of data that you are expecting back from the server.
