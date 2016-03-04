@@ -113,9 +113,9 @@ namespace DpControl.Domain.Repository
                     ProjectId = v.ProjectId,
                     SceneId = v.SceneId,
                     Creator = v.Creator,
-                    CreateDate = v.CreateDate.ToString(),
+                    CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate.ToString()
+                    ModifiedDate = v.ModifiedDate
                 }).FirstOrDefault();
 
             return group;
@@ -131,9 +131,9 @@ namespace DpControl.Domain.Repository
                     ProjectId = v.ProjectId,
                     SceneId = v.SceneId,
                     Creator = v.Creator,
-                    CreateDate = v.CreateDate.ToString(),
+                    CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate.ToString()
+                    ModifiedDate = v.ModifiedDate
                 }).FirstOrDefaultAsync();
 
             return group;
@@ -156,9 +156,9 @@ namespace DpControl.Domain.Repository
                 ProjectId = c.ProjectId,
                 SceneId = c.SceneId,
                 Creator = c.Creator,
-                CreateDate = c.CreateDate.ToString(),
+                CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate.ToString()
+                ModifiedDate = c.ModifiedDate
             });
 
             return groupsSearch;
@@ -181,9 +181,9 @@ namespace DpControl.Domain.Repository
                 ProjectId = c.ProjectId,
                 SceneId = c.SceneId,
                 Creator = c.Creator,
-                CreateDate = c.CreateDate.ToString(),
+                CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate.ToString()
+                ModifiedDate = c.ModifiedDate
             });
 
             return groupsSearch;

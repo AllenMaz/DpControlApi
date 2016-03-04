@@ -97,9 +97,9 @@ namespace DpControl.Domain.Repository
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
                             Creator = c.Creator ,
-                            CreateDate = c.CreateDate.ToString(),
+                            CreateDate = c.CreateDate,
                             Modifier = c.Modifier,
-                            ModifiedDate = c.ModifiedDate.ToString()
+                            ModifiedDate = c.ModifiedDate
                         }).FirstOrDefault();
 
             return customer;
@@ -115,9 +115,9 @@ namespace DpControl.Domain.Repository
                             CustomerName = c.CustomerName,
                             CustomerNo = c.CustomerNo,
                             Creator = c.Creator,
-                            CreateDate = c.CreateDate.ToString(),
+                            CreateDate = c.CreateDate,
                             Modifier = c.Modifier,
-                            ModifiedDate = c.ModifiedDate.ToString()
+                            ModifiedDate = c.ModifiedDate
                         }).FirstOrDefaultAsync();
 
             return customer;
@@ -140,9 +140,9 @@ namespace DpControl.Domain.Repository
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
                 Creator = c.Creator,
-                CreateDate = c.CreateDate.ToString(),
+                CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate.ToString()
+                ModifiedDate = c.ModifiedDate
             });
 
             return customerSearch;
@@ -165,9 +165,9 @@ namespace DpControl.Domain.Repository
                 CustomerName = c.CustomerName,
                 CustomerNo = c.CustomerNo,
                 Creator = c.Creator,
-                CreateDate = c.CreateDate.ToString(),
+                CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate.ToString()
+                ModifiedDate = c.ModifiedDate
             });
 
             return customerSearch;

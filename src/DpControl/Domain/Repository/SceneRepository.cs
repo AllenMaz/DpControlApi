@@ -85,9 +85,9 @@ namespace DpControl.Domain.Repository
                     ProjectId = v.ProjectId,
                     Enable = v.Enable,
                     Creator = v.Creator,
-                    CreateDate = v.CreateDate.ToString(),
+                    CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate.ToString()
+                    ModifiedDate = v.ModifiedDate
                 }).FirstOrDefault();
 
             return scene;
@@ -103,9 +103,9 @@ namespace DpControl.Domain.Repository
                     ProjectId = v.ProjectId,
                     Enable = v.Enable,
                     Creator = v.Creator,
-                    CreateDate = v.CreateDate.ToString(),
+                    CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate.ToString()
+                    ModifiedDate = v.ModifiedDate
                 }).FirstOrDefaultAsync();
 
             return scene;
@@ -128,9 +128,9 @@ namespace DpControl.Domain.Repository
                 ProjectId = v.ProjectId,
                 Enable = v.Enable,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return scenesSearch;
@@ -153,9 +153,9 @@ namespace DpControl.Domain.Repository
                 ProjectId = v.ProjectId,
                 Enable = v.Enable,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return scenesSearch;

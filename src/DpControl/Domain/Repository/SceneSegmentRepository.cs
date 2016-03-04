@@ -88,9 +88,9 @@ namespace DpControl.Domain.Repository
                    StartTime = v.StartTime,
                    Volumn = v.Volumn,
                    Creator = v.Creator,
-                   CreateDate = v.CreateDate.ToString(),
+                   CreateDate = v.CreateDate,
                    Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate.ToString()
+                   ModifiedDate = v.ModifiedDate
                }).FirstOrDefault();
 
             return sceneSegment;
@@ -107,9 +107,9 @@ namespace DpControl.Domain.Repository
                    StartTime = v.StartTime,
                    Volumn = v.Volumn,
                    Creator = v.Creator,
-                   CreateDate = v.CreateDate.ToString(),
+                   CreateDate = v.CreateDate,
                    Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate.ToString()
+                   ModifiedDate = v.ModifiedDate
                }).FirstOrDefaultAsync();
 
             return sceneSegment;
@@ -133,9 +133,9 @@ namespace DpControl.Domain.Repository
                 StartTime = v.StartTime,
                 Volumn = v.Volumn,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return sceneSegmentsSearch;
@@ -159,9 +159,9 @@ namespace DpControl.Domain.Repository
                 StartTime = v.StartTime,
                 Volumn = v.Volumn,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return sceneSegmentsSearch;

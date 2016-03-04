@@ -101,9 +101,9 @@ namespace DpControl.Domain.Repository
                     CustomerId = v.CustomerId,
                     Completed = v.Completed,
                     Creator = v.Creator,
-                    CreateDate = v.CreateDate.ToString(),
+                    CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate.ToString()
+                    ModifiedDate = v.ModifiedDate
                 }).FirstOrDefault();
 
             return projects;
@@ -120,9 +120,9 @@ namespace DpControl.Domain.Repository
                     CustomerId = v.CustomerId,
                     Completed = v.Completed,
                     Creator = v.Creator,
-                    CreateDate = v.CreateDate.ToString(),
+                    CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate.ToString()
+                    ModifiedDate = v.ModifiedDate
                 }).FirstOrDefaultAsync();
 
             return projects;
@@ -146,9 +146,9 @@ namespace DpControl.Domain.Repository
                 CustomerId = v.CustomerId,
                 Completed = v.Completed,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return projectSearch;
@@ -172,9 +172,9 @@ namespace DpControl.Domain.Repository
                 CustomerId = v.CustomerId,
                 Completed = v.Completed,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return projectSearch;

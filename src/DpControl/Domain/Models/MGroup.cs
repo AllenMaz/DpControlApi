@@ -32,11 +32,10 @@ namespace DpControl.Domain.Models
     {
         public int GroupId { get; set; }
         public int ProjectId { get; set; }
-
-        private DateTime _createDate;
+        
         public string Creator { get; set; }
-        public string CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
-        public string ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
     }
 }

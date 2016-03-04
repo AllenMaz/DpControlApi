@@ -48,30 +48,16 @@
                 @await Html.PartialAsync("_LoginPartial")
             </div>
             <div class="row" style="padding-left:15px;">
-                <label style="font-size:large;color:#EEE">More Detail,Click: </label><a style="font-size:large;" href="/Swagger/ui">API Document</a>
+                <label style="color:#EEE">More Detail,Click: </label>
+                <a href="/Swagger/ui">API Document</a> 
                 <br />
-                <label><a href="http://192.168.20.239:8080/bugnet" target="_blank" style="color:#EEE">DpControl Project Management</a></label>
+                @*<label>
+                    <a href="http://192.168.20.239:8080/bugnet" target="_blank" style="color:#EEE">DpControl Project Management</a>
+                </label>*@
             </div>
         </div>
     </div>
 
-    <div class="divHead" style="display:none;">
-        <div id="divHeadTop">
-            <div id="divHeadLeft">&nbsp;</div>
-            <div id="divHeadRight">
-                @await Html.PartialAsync("_LoginPartial")
-
-            </div>
-            <div class="clear"></div>
-        </div>
-        <div id="divHeadBottom">
-            <label style="font-size:x-large"><a class="aHome" href="/" style="text-decoration:none;color:black">Restful WebApi For DpControl v1  </a></label>
-            <label style="font-size:large">More Detail,Click: </label><a style="font-size:large;" href="/Swagger/ui">API Document</a>
-            <br />
-            <label><a href="http://192.168.20.239:8080/bugnet" target="_blank"  style="color:#EEE">DpControl Project Management</a></label>
-        </div>
-
-    </div>
     <div class="container body-content">
         @RenderBody()
         <hr />

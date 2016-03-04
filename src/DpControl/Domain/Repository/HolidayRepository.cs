@@ -83,9 +83,9 @@ namespace DpControl.Domain.Repository
                    ProjectId = v.ProjectId,
                    Day = v.Day,
                    Creator = v.Creator,
-                   CreateDate = v.CreateDate.ToString(),
+                   CreateDate = v.CreateDate,
                    Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate.ToString()
+                   ModifiedDate = v.ModifiedDate
                }).FirstOrDefault();
 
             return holiday;
@@ -100,9 +100,9 @@ namespace DpControl.Domain.Repository
                    ProjectId = v.ProjectId,
                    Day =v.Day,
                    Creator = v.Creator,
-                   CreateDate = v.CreateDate.ToString(),
+                   CreateDate = v.CreateDate,
                    Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate.ToString()
+                   ModifiedDate = v.ModifiedDate
                }).FirstOrDefaultAsync();
 
             return holiday;
@@ -124,9 +124,9 @@ namespace DpControl.Domain.Repository
                 ProjectId = v.ProjectId,
                 Day = v.Day,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return holidaysSearch;
@@ -148,9 +148,9 @@ namespace DpControl.Domain.Repository
                 ProjectId = v.ProjectId,
                 Day = v.Day,
                 Creator = v.Creator,
-                CreateDate = v.CreateDate.ToString(),
+                CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate.ToString()
+                ModifiedDate = v.ModifiedDate
             });
 
             return holidaysSearch;
