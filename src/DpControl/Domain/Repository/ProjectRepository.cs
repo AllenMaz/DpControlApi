@@ -73,7 +73,7 @@ namespace DpControl.Domain.Repository
             //Check whether the ProjectNo already exist
             var checkData = await _context.Projects.Where(p =>p.ProjectNo == project.ProjectNo).ToListAsync();
             if (checkData.Count > 0)
-                throw new ExpectException("The data which ProjectNo '" + project.ProjectNo + "' already exist in system");
+                throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
 
             //Get UserInfo
             var user = await _userInfo.GetUserInfoAsync();

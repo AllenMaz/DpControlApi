@@ -8,7 +8,7 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    [Migration("20160303080524_Initial")]
+    [Migration("20160303100233_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
