@@ -4,12 +4,12 @@
 
 <script>
     $(document).ready(function () {
-        $("#aShowCodeTitle").click(function () {
-            $("#divShowCode").toggle();
+        $("#aHttpOverrideTitle").click(function () {
+            $("#divHttpOverride").toggle();
         });
 
         $('#myCarousel').carousel({
-            interval: 5000,
+            interval: 8000,
             pause:'cycle'
         });
     });
@@ -26,7 +26,7 @@
     <!-- 轮播（Carousel）项目 -->
     <div class="carousel-inner">
         <div class="item active">
-            <img src="~/images/open.jpg" style="height:300px;width:auto"  alt="First slide">
+            <img src="~/images/open.jpg" style="height:300px;width:100%"  alt="First slide">
         </div>
         <div class="item">
             <img src="~/images/azure.png" style="height:300px; width:100%" alt="Second slide">
@@ -72,6 +72,11 @@
             </li>
             <li class="lead">
                 Support X-HTTP-Method-Override (Via Post to request Put,Patch,Delete)
+                <br/>
+                <a id="aHttpOverrideTitle" href="#" style="cursor:help">Example</a>
+                <div id="divHttpOverride" style="display:none">
+                    <img src="~/images/httpOverride.png" style="width:50%"/>
+                </div>
             </li>
         </ul>
         
