@@ -38,7 +38,7 @@ namespace DpControl.Domain.Repository
         #region Add
         public int Add(CustomerAddModel customer)
         {
-            //Check whether the CustomerNo already exist
+            //CustomerNo must be unique
             var checkData = _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToList().Count ;
             if (checkData >0)
                 throw new ExpectException("The data which CustomerNo equal to '"+customer.CustomerNo +"' already exist in system");
@@ -62,7 +62,7 @@ namespace DpControl.Domain.Repository
         
         public async Task<int> AddAsync(CustomerAddModel customer)
         {
-            //Check whether the CustomerNo already exist
+            //CustomerNo must be unique
             var checkData = await _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToListAsync();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
@@ -182,7 +182,7 @@ namespace DpControl.Domain.Repository
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
 
-            //Check Edit value which is unique in database ,already exist in system or not 
+            //Check CustomerNo must be unique 
             var checkData =  _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo
                                                             && c.CustomerId != customerId).ToList();
             if (checkData.Count > 0)
@@ -206,7 +206,7 @@ namespace DpControl.Domain.Repository
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
-            //Check Edit value which is unique in database ,already exist in system or not 
+            //Check CustomerNo must be unique 
             var checkData = await _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo 
                                                             && c.CustomerId != customerId).ToListAsync();
             if (checkData.Count > 0)
