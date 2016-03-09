@@ -38,6 +38,12 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + scene.ProjectId);
 
+            //SceneName must be unique
+            var checkData = _context.Scenes.Where(s=>s.SceneName == scene.SceneName).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SceneName equal to '" + scene.SceneName + "' already exist in system");
+
+
             //Get UserInfo
             var user = _userInfo.GetUserInfo();
 
@@ -59,6 +65,12 @@ namespace DpControl.Domain.Repository
             var project = _context.Projects.FirstOrDefault(c => c.ProjectId == scene.ProjectId);
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + scene.ProjectId);
+
+            //SceneName must be unique
+            var checkData =await _context.Scenes.Where(s => s.SceneName == scene.SceneName).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SceneName equal to '" + scene.SceneName + "' already exist in system");
+
 
             //Get UserInfo
             var user = await _userInfo.GetUserInfoAsync();
@@ -163,6 +175,7 @@ namespace DpControl.Domain.Repository
 
         public void RemoveById(int sceneId)
         {
+            //When delete Scenes,dependent group's foreign key (SceneId) will be SetNull
             var scene = _context.Scenes.Include(c => c.Groups).FirstOrDefault(c => c.SceneId == sceneId);
             if (scene == null)
                 throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
@@ -173,6 +186,7 @@ namespace DpControl.Domain.Repository
 
         public async Task RemoveByIdAsync(int sceneId)
         {
+            //When delete Scenes,dependent group's foreign key (SceneId) will be SetNull
             var scene = _context.Scenes.Include(c=>c.Groups).FirstOrDefault(c => c.SceneId == sceneId);
             if (scene == null)
                 throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
@@ -186,6 +200,12 @@ namespace DpControl.Domain.Repository
             var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == sceneId);
             if (scene == null)
                 throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
+
+            //SceneName must be unique
+            var checkData = _context.Scenes.Where(s => s.SceneName == mScene.SceneName
+                                                        && s.SceneId != sceneId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SceneName '" + mScene.SceneName + "' already exist in system");
 
             //Get UserInfo
             var user = _userInfo.GetUserInfo();
@@ -204,6 +224,13 @@ namespace DpControl.Domain.Repository
             var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == sceneId);
             if (scene == null)
                 throw new ExpectException("Could not find data which SceneId equal to " + sceneId);
+
+            //SceneName must be unique
+            var checkData = await _context.Scenes.Where(s=>s.SceneName == mScene.SceneName
+                                                        && s.SceneId != sceneId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SceneName '" + mScene.SceneName + "' already exist in system");
+
 
             //Get UserInfo
             var user =await _userInfo.GetUserInfoAsync();

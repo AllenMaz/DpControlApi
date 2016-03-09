@@ -37,7 +37,8 @@ namespace DpControl.Domain.Repository
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == group.ProjectId);
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + group.ProjectId);
-            //Chech whether the Foreign key SceneId data exist
+            
+            //If SceneId not null,check whether corresponding Scenes data existed
             if (group.SceneId != null)
             {
                 var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == group.SceneId);
@@ -45,7 +46,7 @@ namespace DpControl.Domain.Repository
                     throw new ExpectException("Could not find Scenes data which SceneId equal to " + group.SceneId);
             }
 
-            //Check whether the GroupName already exist
+            //GroupName must be unique
             var checkData = _context.Groups.Where(g => g.GroupName == group.GroupName).ToList();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which GroupName equal to '" + group.GroupName + "' already exist in system.");
@@ -73,16 +74,15 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + group.ProjectId);
 
-            //Chech whether the Foreign key SceneId data exist
+            //If SceneId not null,check whether corresponding Scenes data existed
             if (group.SceneId !=null)
             {
                 var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == group.SceneId);
                 if (scene == null)
                     throw new ExpectException("Could not find Scenes data which SceneId equal to " + group.SceneId);
             }
-            
 
-            //Check whether the GroupName already exist
+            //GroupName must be unique
             var checkData =await _context.Groups.Where(g => g.GroupName == group.GroupName).ToListAsync();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which GroupName equal to '"+group.GroupName + "' already exist in system.");
@@ -214,14 +214,14 @@ namespace DpControl.Domain.Repository
             var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
             if (group == null)
                 throw new ExpectException("Could not find data which GroupId equal to " + groupId);
-            //Chech whether the Foreign key SceneId data exist
+            //If SceneId not null,check whether corresponding Scenes data existed
             if (mgroup.SceneId != null)
             {
                 var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == mgroup.SceneId);
                 if (scene == null)
                     throw new ExpectException("Could not find Scenes data which SceneId equal to " + mgroup.SceneId);
             }
-            //Check Edit value which is unique in database ,already exist in system or not 
+            //GroupName must be unique
             var checkData = _context.Groups.Where(g => g.GroupName == mgroup.GroupName
                                                         && g.GroupId != groupId).ToList();
             if (checkData.Count > 0)
@@ -245,14 +245,14 @@ namespace DpControl.Domain.Repository
             var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
             if (group == null)
                 throw new ExpectException("Could not find data which GroupId equal to " + groupId);
-            //Chech whether the Foreign key SceneId data exist
+            //If SceneId not null,check whether corresponding Scenes data existed
             if (mgroup.SceneId != null)
             {
                 var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == mgroup.SceneId);
                 if (scene == null)
                     throw new ExpectException("Could not find Scenes data which SceneId equal to " + mgroup.SceneId);
             }
-            //Check Edit value which is unique in database ,already exist in system or not 
+            //GroupName must be unique
             var checkData = await _context.Groups.Where(g => g.GroupName == mgroup.GroupName
                                                         && g.GroupId != groupId).ToListAsync();
             if (checkData.Count > 0)

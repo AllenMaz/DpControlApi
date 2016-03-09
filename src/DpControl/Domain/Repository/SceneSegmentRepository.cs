@@ -37,6 +37,12 @@ namespace DpControl.Domain.Repository
             var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == mSceneSegment.SceneId);
             if (scene == null)
                 throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
+            
+            //SequenceNo must be unique
+            var checkData = _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo equal to '" + mSceneSegment.SequenceNo + "' already exist in system");
+
 
             //Get UserInfo
             var user = _userInfo.GetUserInfo();
@@ -60,6 +66,12 @@ namespace DpControl.Domain.Repository
             var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == mSceneSegment.SceneId);
             if (scene == null)
                 throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
+
+            //SequenceNo must be unique
+            var checkData = await _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo equal to '" + mSceneSegment.SequenceNo + "' already exist in system");
+
 
             //Get UserInfo
             var user =await _userInfo.GetUserInfoAsync();
@@ -193,6 +205,13 @@ namespace DpControl.Domain.Repository
             if (sceneSegment == null)
                 throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
 
+            //SequenceNo must be unique
+            var checkData = _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo
+                                                        && s.SceneSegmentId != sceneSegmentId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo '" + mSceneSegment.SequenceNo + "' already exist in system");
+
+
             //Get UserInfo
             var user = _userInfo.GetUserInfo();
 
@@ -211,6 +230,13 @@ namespace DpControl.Domain.Repository
             var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
             if (sceneSegment == null)
                 throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
+
+            //SequenceNo must be unique
+            var checkData = await _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo
+                                                        && s.SceneSegmentId != sceneSegmentId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo '" + mSceneSegment.SequenceNo + "' already exist in system");
+
 
             //Get UserInfo
             var user = await _userInfo.GetUserInfoAsync();
