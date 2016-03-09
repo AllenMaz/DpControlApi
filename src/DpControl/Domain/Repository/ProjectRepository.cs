@@ -42,7 +42,8 @@ namespace DpControl.Domain.Repository
             var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == project.CustomerId);
             if (customer == null)
                 throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
-            //Check whether the ProjectNo already exist
+
+            //ProjectNo must be unique
             var checkData = _context.Projects.Where(p => p.ProjectNo == project.ProjectNo).ToList();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
@@ -70,7 +71,7 @@ namespace DpControl.Domain.Repository
             if (customer == null)
                 throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
 
-            //Check whether the ProjectNo already exist
+            //ProjectNo must be unique
             var checkData = await _context.Projects.Where(p =>p.ProjectNo == project.ProjectNo).ToListAsync();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
@@ -188,6 +189,10 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
 
             _context.Projects.Remove(project);
+            #region Cascade Delete dependent entities
+
+
+            #endregion
             _context.SaveChanges();
         }
 
@@ -198,6 +203,10 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
 
             _context.Projects.Remove(project);
+            #region Cascade Delete dependent entities
+
+
+            #endregion
             await _context.SaveChangesAsync();
 
         }
@@ -208,6 +217,7 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
 
+            //ProjectNo must be unique
             var checkData = _context.Projects.Where(p => p.ProjectNo == mproject.ProjectNo
                                                         && p.ProjectId != projectId).ToList();
             if (checkData.Count > 0)
@@ -232,6 +242,7 @@ namespace DpControl.Domain.Repository
             if (project == null)
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
 
+            //ProjectNo must be unique
             var checkData = _context.Projects.Where(p => p.ProjectNo == mproject.ProjectNo
                                                         && p.ProjectId != projectId).ToList();
             if (checkData.Count > 0)
