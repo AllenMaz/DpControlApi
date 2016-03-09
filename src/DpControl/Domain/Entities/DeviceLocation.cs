@@ -11,14 +11,18 @@ namespace DpControl.Domain.Entities
         public string Building { get; set; }
         public string Floor { get; set; }
         public string RoomNo { get; set; }
-        public Orientation Orientation { get; set; }
+
+        //enum Orientation
+        public int Orientation { get; set; }
         public int InstallationNumber { get; set; }
 
         public int CurrentPosition { get; set; }
         public string CommAddress { get; set; }
         public string DeviceSerialNo { get; set; }
-        public ControllerType DeviceType { get; set; }
-        public CommMode CommMode { get; set; }
+        ////enum DeviceType
+        public int DeviceType { get; set; }
+        //enum CommMode
+        public int CommMode { get; set; }
         public int FavorPositionFirst { get; set; }
         public int FavorPositionrSecond { get; set; }
         public int FavorPositionThird { get; set; }
@@ -34,7 +38,11 @@ namespace DpControl.Domain.Entities
 
         #endregion
 
-        public DateTime ModifiedDate { get; set; }
+        public string Creator { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string Modifier { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+
         public byte[] RowVersion { get; set; }
 
         public DeviceLocation()
@@ -59,7 +67,7 @@ namespace DpControl.Domain.Entities
         Northwest
     }
 
-    public enum ControllerType
+    public enum DeviceType
     {
         Null,
         Controller,

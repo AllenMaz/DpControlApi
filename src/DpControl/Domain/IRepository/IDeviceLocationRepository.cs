@@ -6,12 +6,7 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface IDeviceLocationRepository
+    public interface IDeviceLocationRepository:IBaseRepository<DeviceLocationAddModel,DeviceLocationUpdateModel,DeviceLocationSearchModel>
     {
-        Task Add(MLocation item, string projectNo);
-        Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo);
-        Task<MLocationOnly> Find(string deviceNo, string projectNo);
-        Task Remove(int key);
-        Task Update(MLocation mcustomer, string projectNo);
     }
 }

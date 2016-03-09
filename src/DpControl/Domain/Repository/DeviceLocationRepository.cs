@@ -7,12 +7,16 @@ using DpControl.Domain.Entities;
 using DpControl.Domain.Models;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.EFContext;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Domain.Repository
 {
     public class DeviceLocationRepository : IDeviceLocationRepository
     {
         ShadingContext _context;
+        private readonly IUserInfoRepository _userInfo;
+
+        #region
         public DeviceLocationRepository()
         {
 
@@ -22,179 +26,416 @@ namespace DpControl.Domain.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo)
+        public DeviceLocationRepository(ShadingContext context, IUserInfoRepository userInfo)
         {
-            if( string.IsNullOrWhiteSpace(projectNo))
-            {
-                throw new ArgumentNullException();
-            }
-
-            // get projectNo from Customer
-            var _customer = await _context.Projects
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            return _customer.DeviceLocations.Select(l => new MLocation
-            {
-                DeviceLocationId = l.DeviceLocationId,
-                Building = l.Building,
-                Floor = l.Floor,
-                RoomNo = l.RoomNo,
-                Orientation = l.Orientation,
-                InstallationNumber = l.InstallationNumber,
-
-                DeviceType = l.DeviceType,
-                CommMode = l.CommMode,
-                DeviceSerialNo = l.DeviceSerialNo,
-                CommAddress = l.CommAddress,
-                CurrentPosition = l.CurrentPosition,
-                FavorPositionFirst = l.FavorPositionFirst,
-                FavorPositionrSecond = l.FavorPositionrSecond,
-                FavorPositionThird = l.FavorPositionThird,
-            }).ToList<MLocation>().OrderBy(m=>m.Building).ThenByDescending(m=>m.Floor).ThenByDescending(m=>m.Orientation);
+            _context = context;
+            _userInfo = userInfo;
         }
+        #endregion
 
-        //finding an device location through device serial no
-        public async Task<MLocationOnly> Find(string serialNo, string projectNo)
+        public int Add(DeviceLocationAddModel mDeviceLocation)
         {
-            if (string.IsNullOrWhiteSpace(serialNo) || string.IsNullOrWhiteSpace(projectNo))
+            var customer = _context.Projects.FirstOrDefault(l => l.ProjectId == mDeviceLocation.ProjectId);
+            if (customer == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + mDeviceLocation.ProjectId);
+
+            //InstallationNumber must be unique
+            var checkData = _context.DeviceLocations.Where(dl => dl.InstallationNumber == mDeviceLocation.InstallationNumber).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mDeviceLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = _context.DeviceLocations.Where(dl => dl.DeviceSerialNo == mDeviceLocation.DeviceSerialNo).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mDeviceLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mDeviceLocation.Orientation))
             {
-                throw new ArgumentNullException();
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
             }
 
-            // get projectNo from Customer
-            var _customer = await _context.Projects
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            var location = _customer.DeviceLocations.FirstOrDefault(l => (l.DeviceSerialNo == serialNo) );
-            return new MLocationOnly
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mDeviceLocation.DeviceType))
             {
-                DeviceLocationId = location.DeviceLocationId,
-                Building = location.Building,
-                Floor = location.Floor,
-                Orientation = location.Orientation,
-                RoomNo = location.RoomNo,
-                InstallationNumber = location.InstallationNumber
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
+            }
+
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mDeviceLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
+
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
+
+            var model = new DeviceLocation
+            {
+                Building = mDeviceLocation.Building,
+                CommAddress = mDeviceLocation.CommAddress,
+                CommMode = mDeviceLocation.CommMode,
+                CurrentPosition = mDeviceLocation.CurrentPosition,
+                Description = mDeviceLocation.Description,
+                DeviceSerialNo = mDeviceLocation.DeviceSerialNo,
+                DeviceType = mDeviceLocation.DeviceType,
+                FavorPositionFirst = mDeviceLocation.FavorPositionFirst,
+                FavorPositionrSecond = mDeviceLocation.FavorPositionrSecond,
+                FavorPositionThird = mDeviceLocation.FavorPositionThird,
+                Floor = mDeviceLocation.Floor,
+                InstallationNumber = mDeviceLocation.InstallationNumber,
+                Orientation = mDeviceLocation.Orientation,
+                ProjectId = mDeviceLocation.ProjectId,
+                RoomNo = mDeviceLocation.RoomNo,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
             };
+            _context.DeviceLocations.Add(model);
+            _context.SaveChangesAsync();
+            return model.DeviceLocationId;
         }
 
-        public async Task Add(MLocation mLocation, string projectNo)
+        public async Task<int> AddAsync(DeviceLocationAddModel mDeviceLocation)
         {
-            if (mLocation == null || string.IsNullOrWhiteSpace(projectNo))
+            var customer = _context.Projects.FirstOrDefault(l=>l.ProjectId == mDeviceLocation.ProjectId);
+            if (customer == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + mDeviceLocation.ProjectId);
+
+            //InstallationNumber must be unique
+            var checkData = await _context.DeviceLocations.Where(dl=>dl.InstallationNumber == mDeviceLocation.InstallationNumber).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mDeviceLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = await _context.DeviceLocations.Where(dl => dl.DeviceSerialNo == mDeviceLocation.DeviceSerialNo).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mDeviceLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation),mDeviceLocation.Orientation))
             {
-                throw new ArgumentNullException();
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
             }
 
-            // get projectNo from Customer
-            var _project = await _context.Projects
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            _project.DeviceLocations.Add(new DeviceLocation
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mDeviceLocation.DeviceType))
             {
-                Building = mLocation.Building,
-                Floor = mLocation.Floor,
-                RoomNo = mLocation.RoomNo,
-                Orientation = mLocation.Orientation,
-                InstallationNumber = mLocation.InstallationNumber,
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
+            }
 
-                DeviceType = mLocation.DeviceType,
-                CommMode = mLocation.CommMode,
-                DeviceSerialNo = mLocation.DeviceSerialNo,
-                CommAddress = mLocation.CommAddress,
-                CurrentPosition = mLocation.CurrentPosition,
-                FavorPositionFirst = mLocation.FavorPositionFirst,
-                FavorPositionrSecond = mLocation.FavorPositionrSecond,
-                FavorPositionThird = mLocation.FavorPositionThird,
-                ModifiedDate = DateTime.Now,
-                ProjectId = _project.ProjectId
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mDeviceLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
+
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
+
+            var aa = (CommMode)Enum.ToObject(typeof(CommMode), mDeviceLocation.CommMode);
+
+
+            var model = new DeviceLocation
+            {
+                Building = mDeviceLocation.Building,
+                CommAddress = mDeviceLocation.CommAddress,
+                CommMode = mDeviceLocation.CommMode,
+                CurrentPosition = mDeviceLocation.CurrentPosition,
+                Description = mDeviceLocation.Description,
+                DeviceSerialNo = mDeviceLocation.DeviceSerialNo,
+                DeviceType = mDeviceLocation.DeviceType,
+                FavorPositionFirst = mDeviceLocation.FavorPositionFirst,
+                FavorPositionrSecond = mDeviceLocation.FavorPositionrSecond,
+                FavorPositionThird = mDeviceLocation.FavorPositionThird,
+                Floor = mDeviceLocation.Floor,
+                InstallationNumber = mDeviceLocation.InstallationNumber,
+                Orientation =mDeviceLocation.Orientation,
+                ProjectId = mDeviceLocation.ProjectId,
+                RoomNo = mDeviceLocation.RoomNo,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+            _context.DeviceLocations.Add(model);
+            await _context.SaveChangesAsync();
+            return model.DeviceLocationId;
+        }
+
+        public DeviceLocationSearchModel FindById(int deviceLocationId)
+        {
+            var deviceLocation = _context.DeviceLocations.Where(v => v.DeviceLocationId == deviceLocationId)
+                .Select(v => new DeviceLocationSearchModel()
+                {
+                    DeviceLocationId = v.DeviceLocationId,
+                    ProjectId = v.ProjectId,
+                    Building = v.Building,
+                    CommAddress = v.CommAddress,
+                    CommMode = v.CommMode,
+                    CurrentPosition = v.CurrentPosition,
+                    Description = v.Description,
+                    DeviceSerialNo = v.DeviceSerialNo,
+                    DeviceType = v.DeviceType,
+                    FavorPositionFirst = v.FavorPositionFirst,
+                    FavorPositionrSecond = v.FavorPositionrSecond,
+                    FavorPositionThird = v.FavorPositionThird,
+                    Floor = v.Floor,
+                    InstallationNumber = v.InstallationNumber,
+                    Orientation = v.Orientation,
+                    RoomNo = v.RoomNo,
+                    Creator = v.Creator,
+                    CreateDate = v.CreateDate,
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate
+                }).FirstOrDefault();
+
+            return deviceLocation;
+        }
+
+        public async Task<DeviceLocationSearchModel> FindByIdAsync(int deviceLocationId)
+        {
+            var deviceLocation = await _context.DeviceLocations.Where(v => v.DeviceLocationId == deviceLocationId)
+                .Select(v => new DeviceLocationSearchModel()
+                {
+                    DeviceLocationId = v.DeviceLocationId,
+                    ProjectId = v.ProjectId,
+                    Building = v.Building,
+                    CommAddress = v.CommAddress,
+                    CommMode = v.CommMode,
+                    CurrentPosition = v.CurrentPosition,
+                    Description = v.Description,
+                    DeviceSerialNo = v.DeviceSerialNo,
+                    DeviceType = v.DeviceType,
+                    FavorPositionFirst = v.FavorPositionFirst,
+                    FavorPositionrSecond = v.FavorPositionrSecond,
+                    FavorPositionThird = v.FavorPositionThird,
+                    Floor = v.Floor,
+                    InstallationNumber = v.InstallationNumber,
+                    Orientation = v.Orientation,
+                    RoomNo = v.RoomNo,
+                    Creator = v.Creator,
+                    CreateDate = v.CreateDate,
+                    Modifier = v.Modifier,
+                    ModifiedDate = v.ModifiedDate
+                }).FirstOrDefaultAsync();
+
+            return deviceLocation;
+        }
+
+        public IEnumerable<DeviceLocationSearchModel> GetAll(Query query)
+        {
+            var queryData = from L in _context.DeviceLocations
+                            select L;
+
+            var result = QueryOperate<DeviceLocation>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var deviceLocations =  result.ToList();
+
+            var deviceLocationsSearch = deviceLocations.Select(v => new DeviceLocationSearchModel
+            {
+                DeviceLocationId = v.DeviceLocationId,
+                ProjectId = v.ProjectId,
+                Building = v.Building,
+                CommAddress = v.CommAddress,
+                CommMode = v.CommMode,
+                CurrentPosition = v.CurrentPosition,
+                Description = v.Description,
+                DeviceSerialNo = v.DeviceSerialNo,
+                DeviceType = v.DeviceType,
+                FavorPositionFirst = v.FavorPositionFirst,
+                FavorPositionrSecond = v.FavorPositionrSecond,
+                FavorPositionThird = v.FavorPositionThird,
+                Floor = v.Floor,
+                InstallationNumber = v.InstallationNumber,
+                Orientation = v.Orientation,
+                RoomNo = v.RoomNo,
+                Creator = v.Creator,
+                CreateDate = v.CreateDate,
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate
             });
-            await _context.SaveChangesAsync();
+
+            return deviceLocationsSearch;
         }
 
-        public async Task Update(MLocation mLocation, string projectNo)
+        public async Task<IEnumerable<DeviceLocationSearchModel>> GetAllAsync(Query query)
         {
-            if (mLocation == null || string.IsNullOrWhiteSpace(projectNo))
+            var queryData = from L in _context.DeviceLocations
+                            select L;
+
+            var result = QueryOperate<DeviceLocation>.Execute(queryData, query);
+
+            //以下执行完后才会去数据库中查询
+            var deviceLocations = await result.ToListAsync();
+
+            var deviceLocationsSearch = deviceLocations.Select(v => new DeviceLocationSearchModel
             {
-                throw new ArgumentNullException();
-            }
+                DeviceLocationId = v.DeviceLocationId,
+                ProjectId = v.ProjectId,
+                Building = v.Building,
+                CommAddress = v.CommAddress,
+                CommMode = v.CommMode,
+                CurrentPosition = v.CurrentPosition,
+                Description = v.Description,
+                DeviceSerialNo = v.DeviceSerialNo,
+                DeviceType = v.DeviceType,
+                FavorPositionFirst = v.FavorPositionFirst,
+                FavorPositionrSecond = v.FavorPositionrSecond,
+                FavorPositionThird = v.FavorPositionThird,
+                Floor = v.Floor,
+                InstallationNumber = v.InstallationNumber,
+                Orientation = v.Orientation,
+                RoomNo = v.RoomNo,
+                Creator = v.Creator,
+                CreateDate = v.CreateDate,
+                Modifier = v.Modifier,
+                ModifiedDate = v.ModifiedDate
+            });
 
-            // get projectNo from Customer
-            var _project = await _context.Projects
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            var _single = _project.DeviceLocations.Where(l => l.DeviceLocationId == mLocation.DeviceLocationId).Single();
-
-            _single.ProjectId = _project.CustomerId;
-            _single.Building = mLocation.Building;
-            _single.Floor = mLocation.Floor;
-            _single.RoomNo = mLocation.RoomNo;
-            _single.Orientation = mLocation.Orientation;
-            _single.InstallationNumber = mLocation.InstallationNumber;
-
-            _single.DeviceType = mLocation.DeviceType;
-            _single.CommMode = mLocation.CommMode;
-            _single.DeviceSerialNo = mLocation.DeviceSerialNo;
-            _single.CommAddress = mLocation.CommAddress;
-            _single.CurrentPosition = mLocation.CurrentPosition;
-            _single.FavorPositionFirst = mLocation.FavorPositionFirst;
-            _single.FavorPositionrSecond = mLocation.FavorPositionrSecond;
-            _single.FavorPositionThird = mLocation.FavorPositionThird;
-            _single.ModifiedDate = DateTime.Now;
-
-            await _context.SaveChangesAsync();
+            return deviceLocationsSearch;
         }
 
-        // remove the item by id
-        public async Task Remove(int Id)
+        public void RemoveById(int deviceLocationId)
         {
-            if (Id == 0)
-            {
-                throw new Exception("The group does not exist.");
-            }
+            var deviceLocation = _context.DeviceLocations.FirstOrDefault(l => l.DeviceLocationId == deviceLocationId);
+            if (deviceLocation == null)
+                throw new ExpectException("Could not find data which DeviceLocation equal to " + deviceLocationId);
 
-            var toDelete = new DeviceLocation { DeviceLocationId = Id };
-            _context.DeviceLocations.Attach(toDelete);
+            _context.Remove(deviceLocation);
+             _context.SaveChanges();
+        }
 
-            // remove data in related table - GroupLocation
-            var _groupLocation = _context.GroupDeviceLocations.Where(gl => gl.DeviceLocationId == Id);
-            foreach (var gl in _groupLocation)
-            {
-                _context.GroupDeviceLocations.Remove(gl);
-            }
+        public async Task RemoveByIdAsync(int deviceLocationId)
+        {
+            var deviceLocation = _context.DeviceLocations.FirstOrDefault(l=>l.DeviceLocationId == deviceLocationId);
+            if (deviceLocation == null)
+                throw new ExpectException("Could not find data which DeviceLocation equal to " + deviceLocationId);
 
-            // remove data in related table - GroupOperator
-            var _groupOperator = _context.UserDeviceLocations.Where(ol => ol.DeviceLocationId == Id);
-            foreach (var ol in _groupOperator)
-            {
-                _context.UserDeviceLocations.Remove(ol);
-            }
-
-            //remove data in related table - Logs - optional relationship with data undeleted (set to Null), just load data into memory
-            _context.Logs.Where(l => l.DeviceLocationId == Id).Load();
-            _context.Alarms.Where(a => a.DeviceLocationId == Id).Load();
-
-            _context.DeviceLocations.Remove(toDelete);
+            _context.Remove(deviceLocation);
             await _context.SaveChangesAsync();
         }
 
-        //async Task<Customer> GetCustomerByProjectNo(string projectNo)
-        //{
-        //    var query = await _context.Customers
-        //                .Include(c => c.DeviceLocations)
-        //                .Where(c => c.ProjectNo == projectNo)
-        //                .SingleAsync();
-        //    if (query == null)
-        //    {
-        //        throw new KeyNotFoundException();
-        //    }
-        //    return query;
-        //}
+        public int UpdateById(int deviceLocationId, DeviceLocationUpdateModel mDeviceLocation)
+        {
+            var deviceLocation = _context.DeviceLocations.FirstOrDefault(l => l.DeviceLocationId == deviceLocationId);
+            if (deviceLocation == null)
+                throw new ExpectException("Could not find data which DeviceLocation equal to " + deviceLocationId);
+
+            //InstallationNumber must be unique
+            var checkData = _context.DeviceLocations
+                .Where(dl => dl.InstallationNumber == mDeviceLocation.InstallationNumber
+                && dl.DeviceLocationId != deviceLocationId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mDeviceLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = _context.DeviceLocations
+                .Where(dl => dl.DeviceSerialNo == mDeviceLocation.DeviceSerialNo
+                && dl.DeviceLocationId != deviceLocationId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mDeviceLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mDeviceLocation.Orientation))
+            {
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
+            }
+
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mDeviceLocation.DeviceType))
+            {
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
+            }
+
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mDeviceLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
+
+            //Get UserInfo
+            var user = _userInfo.GetUserInfo();
+
+            deviceLocation.Building = mDeviceLocation.Building;
+            deviceLocation.CommAddress = mDeviceLocation.CommAddress;
+            deviceLocation.CommMode = mDeviceLocation.CommMode;
+            deviceLocation.CurrentPosition = mDeviceLocation.CurrentPosition;
+            deviceLocation.Description = mDeviceLocation.Description;
+            deviceLocation.DeviceSerialNo = mDeviceLocation.DeviceSerialNo;
+            deviceLocation.DeviceType = mDeviceLocation.DeviceType;
+            deviceLocation.FavorPositionFirst = mDeviceLocation.FavorPositionFirst;
+            deviceLocation.FavorPositionrSecond = mDeviceLocation.FavorPositionrSecond;
+            deviceLocation.FavorPositionThird = mDeviceLocation.FavorPositionThird;
+            deviceLocation.Floor = mDeviceLocation.Floor;
+            deviceLocation.InstallationNumber = mDeviceLocation.InstallationNumber;
+            deviceLocation.Orientation = mDeviceLocation.Orientation;
+            deviceLocation.RoomNo = mDeviceLocation.RoomNo;
+            deviceLocation.Modifier = user.UserName;
+            deviceLocation.ModifiedDate = DateTime.Now;
+
+            _context.SaveChanges();
+            return deviceLocation.DeviceLocationId;
+        }
+
+        public async Task<int> UpdateByIdAsync(int deviceLocationId, DeviceLocationUpdateModel mDeviceLocation)
+        {
+            var deviceLocation = _context.DeviceLocations.FirstOrDefault(l => l.DeviceLocationId == deviceLocationId);
+            if (deviceLocation == null)
+                throw new ExpectException("Could not find data which DeviceLocation equal to " + deviceLocationId);
+
+            //InstallationNumber must be unique
+            var checkData = await _context.DeviceLocations
+                .Where(dl => dl.InstallationNumber == mDeviceLocation.InstallationNumber
+                && dl.DeviceLocationId != deviceLocationId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mDeviceLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = await _context.DeviceLocations
+                .Where(dl => dl.DeviceSerialNo == mDeviceLocation.DeviceSerialNo
+                && dl.DeviceLocationId != deviceLocationId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mDeviceLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mDeviceLocation.Orientation))
+            {
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
+            }
+
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mDeviceLocation.DeviceType))
+            {
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
+            }
+
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mDeviceLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
+
+            //Get UserInfo
+            var user = await _userInfo.GetUserInfoAsync();
+
+            deviceLocation.Building = mDeviceLocation.Building;
+            deviceLocation.CommAddress = mDeviceLocation.CommAddress;
+            deviceLocation.CommMode = mDeviceLocation.CommMode;
+            deviceLocation.CurrentPosition = mDeviceLocation.CurrentPosition;
+            deviceLocation.Description = mDeviceLocation.Description;
+            deviceLocation.DeviceSerialNo = mDeviceLocation.DeviceSerialNo;
+            deviceLocation.DeviceType = mDeviceLocation.DeviceType;
+            deviceLocation.FavorPositionFirst = mDeviceLocation.FavorPositionFirst;
+            deviceLocation.FavorPositionrSecond = mDeviceLocation.FavorPositionrSecond;
+            deviceLocation.FavorPositionThird = mDeviceLocation.FavorPositionThird;
+            deviceLocation.Floor = mDeviceLocation.Floor;
+            deviceLocation.InstallationNumber = mDeviceLocation.InstallationNumber;
+            deviceLocation.Orientation = mDeviceLocation.Orientation;
+            deviceLocation.RoomNo = mDeviceLocation.RoomNo;
+            deviceLocation.Modifier = user.UserName;
+            deviceLocation.ModifiedDate = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return deviceLocation.DeviceLocationId;
+        }
     }
 }

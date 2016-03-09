@@ -91,7 +91,7 @@ namespace DpControl.Controllers.APIControllers
         /// <summary>
         /// Delete data by SceneId
         /// </summary>
-        /// <param name="customerId"></param>
+        /// <param name="SceneId"></param>
         [APIAuthorize(Roles = "Admin")]
         [HttpDelete("{sceneId}")]
         public async Task<IActionResult> DeleteByProjectIdIdAsync(int sceneId)

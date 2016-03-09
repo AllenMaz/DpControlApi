@@ -228,7 +228,7 @@ namespace DpControl.Utility.Filters
                 //校验输入的filter参数的属性值的范围必须在当前方法返回类型中的字段值中
                 var property = actionReturnType.GetProperty(arrFieldAndValue[0]);
                 if (property == null)
-                    throw new ExpectException("The query(select) syntax errors:Property '" + arrFieldAndValue[0] + "' not exist");
+                    throw new ExpectException("The query(filter) syntax errors:Property '" + arrFieldAndValue[0] + "' not exist");
                 try
                 {
                     //Check if the value match the type of property
@@ -236,7 +236,7 @@ namespace DpControl.Utility.Filters
                 }
                 catch (Exception e)
                 {
-                    throw new ExpectException("The query(select) syntax errors:Property '" + e.Message);
+                    throw new ExpectException("The query(filter) syntax errors:Property '" + e.Message);
                 }
 
                 Filter filterParam = new Filter();
