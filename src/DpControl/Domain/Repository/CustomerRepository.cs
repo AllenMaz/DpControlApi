@@ -226,23 +226,41 @@ namespace DpControl.Domain.Repository
 
         public void RemoveById(int id)
         {
-            _context.Database.ExecuteSqlCommand("delete from controlsystem.customers where customerId equal to " + id);
+            var customer = _context.Customers.Include(c => c.Projects).FirstOrDefault(v => v.CustomerId == id);
+            if (customer == null)
+                throw new ExpectException("Could not find data which CustomerId equal to " + id);
+
+            _context.Customers.Remove(customer);
+
+            //Cascade delete Projects
+            _context.Projects.RemoveRange(customer.Projects);
+            //Casecade delete other 
+
+
+            #endregion
+
+            _context.SaveChanges();
 
         }
 
         public async Task RemoveByIdAsync(int id)
         {
-            var customer = await _context.Customers.FirstOrDefaultAsync(v => v.CustomerId == id);
+            var customer = await _context.Customers.Include(c=>c.Projects).FirstOrDefaultAsync(v => v.CustomerId == id);
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to "+id);
 
             _context.Customers.Remove(customer);
+            #region Cascade delete dependent entities
+            //Cascade delete Projects
+            _context.Projects.RemoveRange(customer.Projects);
+            //Casecade delete other 
+
+
+            #endregion
+
             await _context.SaveChangesAsync();
         }
         
-        #endregion
-
-
     }
 
 }
