@@ -17,7 +17,7 @@ namespace DpControl.Domain.Entities
         public byte[] RowVersion { get; set; }
 
         #region relationship
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
         public Project Project { get; set; }
         public virtual List<GroupDeviceLocation> GroupDeviceLocations { get; set; }     // many-to-many
         public List<UserGroup> UserGroups { get; set; }       // many-to-many

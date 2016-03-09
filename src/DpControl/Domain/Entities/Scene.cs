@@ -12,7 +12,7 @@ namespace DpControl.Domain.Entities
         public bool Enable { get; set; }
 
         #region relationship
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
         public Project Project { get; set; }
 
         public virtual List<Group> Groups { get; set; }           // one-to-many: one Scene can have multiple group; but one group only belong to one scene.

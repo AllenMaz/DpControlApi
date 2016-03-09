@@ -31,7 +31,7 @@ namespace DpControl.Domain.Models
     {
         public int SceneId { get; set; }
 
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
 
         public string Creator { get; set; }
         public DateTime CreateDate { get; set; }

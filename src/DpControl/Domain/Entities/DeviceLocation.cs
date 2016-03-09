@@ -27,7 +27,7 @@ namespace DpControl.Domain.Entities
         #region Realtionship
         public virtual List<GroupDeviceLocation> GroupDeviceLocations { get; set; }                // many-to-many： 
         public virtual List<UserDeviceLocation> UserDeviceLocation { get; set; }
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
         public virtual Project Project { get; set; }
         public virtual List<Alarm> Alarms { get; set; }
         public virtual List<Log> Logs { get; set; }

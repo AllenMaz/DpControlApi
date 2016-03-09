@@ -9,7 +9,7 @@ namespace DpControl.Domain.Entities
     public class ApplicationUser:IdentityUser
     {
         #region relationship
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
         public virtual Project Project { get; set; }
 
         public virtual List<UserGroup> UserGroups { get; set; }        //many-to-many: operator can contorl multiple-location motors
