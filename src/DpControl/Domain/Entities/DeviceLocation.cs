@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace DpControl.Domain.Entities
 {
-    public class Location
+    public class DeviceLocation
     {
-        public int LocationId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
+        public int DeviceLocationId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
         public string Building { get; set; }
         public string Floor { get; set; }
         public string RoomNo { get; set; }
@@ -25,8 +25,8 @@ namespace DpControl.Domain.Entities
 
         public string Description { get; set; }
         #region Realtionship
-        public virtual List<GroupLocation> GroupLocations { get; set; }                // many-to-many： 
-        public virtual List<OperatorLocation> OperatorLocations { get; set; }
+        public virtual List<GroupDeviceLocation> GroupDeviceLocations { get; set; }                // many-to-many： 
+        public virtual List<UserDeviceLocation> UserDeviceLocation { get; set; }
         public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
         public virtual List<Alarm> Alarms { get; set; }
@@ -37,10 +37,10 @@ namespace DpControl.Domain.Entities
         public DateTime ModifiedDate { get; set; }
         public byte[] RowVersion { get; set; }
 
-        public Location()
+        public DeviceLocation()
         {
-            this.GroupLocations = new List<GroupLocation>();
-            this.OperatorLocations = new List<OperatorLocation>();
+            this.GroupDeviceLocations = new List<GroupDeviceLocation>();
+            this.UserDeviceLocation = new List<UserDeviceLocation>();
             this.Alarms = new List<Alarm>();
             this.Logs = new List<Log>();
         }

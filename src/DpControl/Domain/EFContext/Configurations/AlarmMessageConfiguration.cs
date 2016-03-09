@@ -12,8 +12,8 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public AlarmMessageConfiguration(EntityTypeBuilder<AlarmMessage> entityBuilder)
         {
+            entityBuilder.ToTable("AlarmMessages");
             entityBuilder.HasKey(m => m.AlarmMessageId);
-            entityBuilder.ToTable("AlarmMessages", "ControlSystem");
             entityBuilder.Property(m => m.Message).HasMaxLength(100);
 
             entityBuilder.HasMany(m => m.Alarms).WithOne(a => a.AlarmMessage).HasForeignKey(a => a.AlarmMessageId);

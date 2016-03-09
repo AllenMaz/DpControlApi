@@ -9,7 +9,7 @@ namespace DpControl.Domain.Models
     public class MLocation
     {
         public string ProjectNo { get; set; }
-        public int LocationId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
+        public int DeviceLocationId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
         public string Building { get; set; }
         public string Floor { get; set; }
         public string RoomNo { get; set; }

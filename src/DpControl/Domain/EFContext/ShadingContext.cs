@@ -16,14 +16,13 @@ namespace DpControl.Domain.EFContext
         public DbSet<AlarmMessage> AlarmMessages { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Group> Groups { get; set; }
-        public DbSet<Operator> Operators { get; set; }
-        public DbSet<GroupLocation> GroupLocations { get; set; }
-        public DbSet<GroupOperator> GroupOperators { get; set; }
+        public DbSet<GroupDeviceLocation> GroupDeviceLocations { get; set; }
+        public DbSet<UserGroup> GroupOperators { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
-        public DbSet<Location> Locations { get; set; }
+        public DbSet<DeviceLocation> DeviceLocations { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<LogDescription> LogDescription { get; set; }
-        public DbSet<OperatorLocation> OperatorLocation { get; set; }
+        public DbSet<UserDeviceLocation> UserDeviceLocations { get; set; }
         public DbSet<Scene> Scenes { get; set; }
         public DbSet<SceneSegment> SceneSegments { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -32,21 +31,24 @@ namespace DpControl.Domain.EFContext
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.HasDefaultSchema("ControlSystem");
+
             new AlarmMessageConfiguration(modelBuilder.Entity<AlarmMessage>());
             new AlarmConfiguration(modelBuilder.Entity<Alarm>());
             new CustomerConfiguration(modelBuilder.Entity<Customer>());
             new ProjectConfiguration(modelBuilder.Entity<Project>());
             new GroupConfiguration(modelBuilder.Entity<Group>());
-            new GroupOperatorConfiguration(modelBuilder.Entity<GroupOperator>());
-            new GroupLocationConfiguration(modelBuilder.Entity<GroupLocation>());
+            new UserGroupConfiguration(modelBuilder.Entity<UserGroup>());
+            new GroupDeviceLocationConfiguration(modelBuilder.Entity<GroupDeviceLocation>());
             new HolidayConfiguration(modelBuilder.Entity<Holiday>());
-            new LocationConfiguration(modelBuilder.Entity<Location>());
+            new DeviceLocationConfiguration(modelBuilder.Entity<DeviceLocation>());
             new LogConfiguration(modelBuilder.Entity<Log>());
             new LogDescriptionConfiguration(modelBuilder.Entity<LogDescription>());
-            new OperatorLocationConfiguration(modelBuilder.Entity<OperatorLocation>());
+            new UserDeviceLocationConfiguration(modelBuilder.Entity<UserDeviceLocation>());
             new SceneConfiguration(modelBuilder.Entity<Scene>());
             new SceneSegmentConfiguration(modelBuilder.Entity<SceneSegment>());
-            new OperatorConfiguration(modelBuilder.Entity<Operator>());
+            new AspNetUserConfiguration(modelBuilder.Entity<ApplicationUser>());
+
             
         }
 

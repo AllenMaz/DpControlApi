@@ -1,4 +1,4 @@
-﻿using DpControl.Domain.Models;
+﻿using DpControl.Domain.Entities;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;

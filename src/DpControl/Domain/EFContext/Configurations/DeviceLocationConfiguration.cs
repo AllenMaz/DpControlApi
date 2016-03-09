@@ -8,12 +8,12 @@ using DpControl.Domain.Entities;
 
 namespace DpControl.Domain.EFContext.Configurations
 {
-    public class LocationConfiguration
+    public class DeviceLocationConfiguration
     {
-        public LocationConfiguration(EntityTypeBuilder<Location> entityBuilder)
+        public DeviceLocationConfiguration(EntityTypeBuilder<DeviceLocation> entityBuilder)
         {
-            entityBuilder.HasKey(l => l.LocationId);
-            entityBuilder.ToTable("DeviceLocations", "ControlSystem");
+            entityBuilder.HasKey(l => l.DeviceLocationId);
+            entityBuilder.ToTable("DeviceLocations");
 
             entityBuilder.Property(l => l.Building).HasMaxLength(80).IsRequired();
             entityBuilder.Property(l => l.Floor).HasMaxLength(20);
@@ -24,6 +24,7 @@ namespace DpControl.Domain.EFContext.Configurations
 
             entityBuilder.Property(l => l.ModifiedDate).IsRequired();
             entityBuilder.Property(l => l.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
+
         }
     }
 }

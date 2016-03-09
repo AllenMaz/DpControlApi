@@ -12,7 +12,7 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public CustomerConfiguration(EntityTypeBuilder<Customer> entityBuilder)
         {
-            entityBuilder.ToTable("Customers", "ControlSystem");
+            entityBuilder.ToTable("Customers");
             entityBuilder.HasKey(c => c.CustomerId);
             entityBuilder.Property(c => c.CustomerName).HasMaxLength(50).IsRequired();
             entityBuilder.Property(c => c.CustomerNo).HasMaxLength(50).IsRequired();

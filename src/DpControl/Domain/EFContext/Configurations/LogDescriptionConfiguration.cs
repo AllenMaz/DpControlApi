@@ -13,7 +13,7 @@ namespace DpControl.Domain.EFContext.Configurations
         public LogDescriptionConfiguration(EntityTypeBuilder<LogDescription> entityBuilder)
         {
             entityBuilder.HasKey(m => m.LogDescriptionId);
-            entityBuilder.ToTable("LogDescription", "ControlSystem");
+            entityBuilder.ToTable("LogDescription");
             entityBuilder.Property(m => m.Description).HasMaxLength(100);
 
             entityBuilder.HasMany(l => l.Logs).WithOne(d => d.Description).HasForeignKey(d => d.LogDescriptionId);

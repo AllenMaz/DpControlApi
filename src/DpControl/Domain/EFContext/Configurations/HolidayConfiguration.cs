@@ -13,7 +13,7 @@ namespace DpControl.Domain.EFContext.Configurations
         public HolidayConfiguration(EntityTypeBuilder<Holiday> entityBuilder)
         {
             entityBuilder.HasKey(c => c.HolidayId);
-            entityBuilder.ToTable("Holidays", "ControlSystem");
+            entityBuilder.ToTable("Holidays");
 
             entityBuilder.Property(h => h.CreateDate).IsRequired();
             entityBuilder.Property(h => h.Creator).IsRequired();

@@ -10,14 +10,14 @@ using DpControl.Domain.EFContext;
 
 namespace DpControl.Domain.Repository
 {
-    public class LocationRepository : ILocationRepository
+    public class DeviceLocationRepository : IDeviceLocationRepository
     {
         ShadingContext _context;
-        public LocationRepository()
+        public DeviceLocationRepository()
         {
 
         }
-        public LocationRepository(ShadingContext context)
+        public DeviceLocationRepository(ShadingContext context)
         {
             _context = context;
         }
@@ -37,7 +37,7 @@ namespace DpControl.Domain.Repository
 
             return _customer.DeviceLocations.Select(l => new MLocation
             {
-                LocationId = l.LocationId,
+                DeviceLocationId = l.DeviceLocationId,
                 Building = l.Building,
                 Floor = l.Floor,
                 RoomNo = l.RoomNo,
@@ -72,7 +72,7 @@ namespace DpControl.Domain.Repository
             var location = _customer.DeviceLocations.FirstOrDefault(l => (l.DeviceSerialNo == serialNo) );
             return new MLocationOnly
             {
-                LocationId = location.LocationId,
+                DeviceLocationId = location.DeviceLocationId,
                 Building = location.Building,
                 Floor = location.Floor,
                 Orientation = location.Orientation,
@@ -94,7 +94,7 @@ namespace DpControl.Domain.Repository
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
 
-            _project.DeviceLocations.Add(new Location
+            _project.DeviceLocations.Add(new DeviceLocation
             {
                 Building = mLocation.Building,
                 Floor = mLocation.Floor,
@@ -129,7 +129,7 @@ namespace DpControl.Domain.Repository
                 .Where(c => c.ProjectNo == projectNo)
                 .SingleAsync();
 
-            var _single = _project.DeviceLocations.Where(l => l.LocationId == mLocation.LocationId).Single();
+            var _single = _project.DeviceLocations.Where(l => l.DeviceLocationId == mLocation.DeviceLocationId).Single();
 
             _single.ProjectId = _project.CustomerId;
             _single.Building = mLocation.Building;
@@ -159,28 +159,28 @@ namespace DpControl.Domain.Repository
                 throw new Exception("The group does not exist.");
             }
 
-            var toDelete = new Location { LocationId = Id };
-            _context.Locations.Attach(toDelete);
+            var toDelete = new DeviceLocation { DeviceLocationId = Id };
+            _context.DeviceLocations.Attach(toDelete);
 
             // remove data in related table - GroupLocation
-            var _groupLocation = _context.GroupLocations.Where(gl => gl.LocationId == Id);
+            var _groupLocation = _context.GroupDeviceLocations.Where(gl => gl.DeviceLocationId == Id);
             foreach (var gl in _groupLocation)
             {
-                _context.GroupLocations.Remove(gl);
+                _context.GroupDeviceLocations.Remove(gl);
             }
 
             // remove data in related table - GroupOperator
-            var _groupOperator = _context.OperatorLocation.Where(ol => ol.LocationId == Id);
+            var _groupOperator = _context.UserDeviceLocations.Where(ol => ol.DeviceLocationId == Id);
             foreach (var ol in _groupOperator)
             {
-                _context.OperatorLocation.Remove(ol);
+                _context.UserDeviceLocations.Remove(ol);
             }
 
             //remove data in related table - Logs - optional relationship with data undeleted (set to Null), just load data into memory
-            _context.Logs.Where(l => l.LocationId == Id).Load();
-            _context.Alarms.Where(a => a.LocationId == Id).Load();
+            _context.Logs.Where(l => l.DeviceLocationId == Id).Load();
+            _context.Alarms.Where(a => a.DeviceLocationId == Id).Load();
 
-            _context.Locations.Remove(toDelete);
+            _context.DeviceLocations.Remove(toDelete);
             await _context.SaveChangesAsync();
         }
 

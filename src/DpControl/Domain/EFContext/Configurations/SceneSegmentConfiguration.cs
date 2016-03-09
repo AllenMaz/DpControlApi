@@ -12,7 +12,7 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public SceneSegmentConfiguration(EntityTypeBuilder<SceneSegment> entityBuilder)
         {
-            entityBuilder.ToTable("SceneSegments", "ControlSystem");
+            entityBuilder.ToTable("SceneSegments");
             entityBuilder.HasKey(s => s.SceneSegmentId);
 
             entityBuilder.Property(s => s.SequenceNo).IsRequired();

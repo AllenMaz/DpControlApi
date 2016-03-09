@@ -6,7 +6,7 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface ILocationRepository
+    public interface IDeviceLocationRepository
     {
         Task Add(MLocation item, string projectNo);
         Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo);

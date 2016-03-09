@@ -10,7 +10,7 @@ using DpControl.Domain.EFContext;
 using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Identity.EntityFramework;
-using DpControl.Domain.Models;
+using DpControl.Domain.Entities;
 using DpControl.Utility.Authentication;
 using Serilog.Core;
 using Serilog;
@@ -136,8 +136,7 @@ namespace DpControl
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
-            services.AddScoped<ILocationRepository, LocationRepository>();
-            services.AddScoped<IOperatorRepository, OperatorRepository>();
+            services.AddScoped<IDeviceLocationRepository, DeviceLocationRepository>();
             services.AddScoped<ISceneRepository, SceneRepository>();
             services.AddScoped<ISceneSegmentRepository, SceneSegmentRepository>();
             services.AddScoped<IHolidayRepository, HolidayRepository>();

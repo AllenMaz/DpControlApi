@@ -19,8 +19,8 @@ namespace DpControl.Domain.Entities
         #region relationship
         public int ProjectId { get; set; }
         public Project Project { get; set; }
-        public virtual List<GroupLocation> GroupLocations { get; set; }     // many-to-many
-        public virtual List<GroupOperator> GroupOperators { get; set; }       // many-to-many
+        public virtual List<GroupDeviceLocation> GroupDeviceLocations { get; set; }     // many-to-many
+        public List<UserGroup> UserGroups { get; set; }       // many-to-many
         public int? SceneId { get; set; }
         public virtual Scene Scene { get; set; }         // one-to-many: one Scene can have multi-group; but one group only belong to a single scene.
         #endregion
@@ -28,8 +28,8 @@ namespace DpControl.Domain.Entities
 
         public Group()
         {
-            this.GroupLocations = new List<GroupLocation>();
-            this.GroupOperators = new List<GroupOperator>();
+            this.GroupDeviceLocations = new List<GroupDeviceLocation>();
+            this.UserGroups = new List<UserGroup>();
         }
     }
 }

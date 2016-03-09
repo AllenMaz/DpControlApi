@@ -27,10 +27,10 @@ namespace DpControl.Domain.Repository
 
         public async Task Add(int groupId, int locationId)
         {
-            _context.Add(new GroupLocation
+            _context.Add(new GroupDeviceLocation
             {
                 GroupId = groupId,
-                LocationId = locationId
+                DeviceLocationId = locationId
             });
 
             await _context.SaveChangesAsync();

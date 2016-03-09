@@ -13,7 +13,7 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public GroupConfiguration(EntityTypeBuilder<Group> entityBuilder)
         {
-            entityBuilder.ToTable("Groups", "ControlSystem");
+            entityBuilder.ToTable("Groups");
             entityBuilder.HasKey(g => g.GroupId);
             entityBuilder.HasIndex(g => g.GroupName).IsUnique();
             entityBuilder.Property(g => g.GroupName).HasMaxLength(50).IsRequired();
@@ -21,7 +21,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(g => g.CreateDate).IsRequired();
             entityBuilder.Property(g => g.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 
-            
+
         }
     }
 }

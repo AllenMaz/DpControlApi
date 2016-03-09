@@ -13,7 +13,7 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public ProjectConfiguration(EntityTypeBuilder<Project> entityBuilder)
         {
-            entityBuilder.ToTable("Projects", "ControlSystem");
+            entityBuilder.ToTable("Projects");
             entityBuilder.HasKey(p => p.ProjectId);
             entityBuilder.Property(p => p.ProjectName).HasMaxLength(50).IsRequired();            // Name
             entityBuilder.Property(p => p.ProjectNo).HasMaxLength(50).IsRequired();
@@ -23,10 +23,17 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(p => p.CreateDate).IsRequired();
             entityBuilder.Property(p => p.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();      //.IsRowVersion();
             entityBuilder.Property(p => p.Completed).HasDefaultValue(false).IsRequired();
+            
+            //when delete project ,do not cascade delete Groups
+            entityBuilder.HasMany(p => p.Groups).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+            //when delete project ,do not cascade delete DeviceLocations
+            entityBuilder.HasMany(p => p.DeviceLocations).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+            //when delete project ,do not cascade delete AspNetUsers
+            entityBuilder.HasMany(p => p.Users).WithOne(o => o.Project).HasForeignKey(o => o.ProjectId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            entityBuilder.HasMany(p => p.Operators).WithOne(o => o.Project).HasForeignKey(o => o.ProjectId);
-            entityBuilder.HasMany(p => p.DeviceLocations).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId);
-            entityBuilder.HasMany(p => p.Groups).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId);
             entityBuilder.HasMany(p => p.Scenes).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId);
             entityBuilder.HasMany(p => p.Holidays).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId);
         }

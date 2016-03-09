@@ -13,7 +13,7 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public SceneConfiguration(EntityTypeBuilder<Scene> entityBuilder)
         {
-            entityBuilder.ToTable("Scenes", "ControlSystem");
+            entityBuilder.ToTable("Scenes");
             entityBuilder.HasKey(s => s.SceneId);
             entityBuilder.Property(s => s.SceneName).IsRequired().HasMaxLength(50);
             entityBuilder.Property(s => s.Enable).IsRequired().HasDefaultValue(false);
