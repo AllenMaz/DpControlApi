@@ -20,7 +20,7 @@ namespace DpControl.Domain.Models
     public class ProjectAddModel: ProjectBaseModel
     {
         [Required(ErrorMessage = "CustomerId is required!")]
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
 
     }
 
@@ -32,7 +32,7 @@ namespace DpControl.Domain.Models
 
     public class ProjectSearchModel : ProjectBaseModel
     {
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public int ProjectId { get; set; }
         public string Creator { get; set; }
         public DateTime CreateDate { get; set; }

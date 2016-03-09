@@ -16,7 +16,6 @@ namespace DpControl.Domain.Entities
         public DateTime? ModifiedDate { get; set; }
         public byte[] RowVersion { get; set; }
         public List<Project> Projects { get; set; }
-
-        
+        public virtual List<ApplicationUser> Users { get; set; }
     }
 }

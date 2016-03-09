@@ -9,6 +9,9 @@ namespace DpControl.Domain.Entities
     public class ApplicationUser:IdentityUser
     {
         #region relationship
+        public int? CustomerId { get; set; }
+        public virtual Customer Customer { get; set; }
+
         public int? ProjectId { get; set; }
         public virtual Project Project { get; set; }
 

@@ -24,7 +24,7 @@ namespace DpControl.Domain.Repository
             var project = await _context.Projects.SingleAsync(c => c.ProjectNo == projectNo);
             if (project == null)
                 throw new NullReferenceException();
-            return project.CustomerId;
+            return 1;
         }
     }
 }

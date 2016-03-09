@@ -12,7 +12,7 @@ namespace DpControl.Domain.Entities
         public string ProjectNo { get; set; }
         public bool Completed { get; set; }
         #region relationship
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public Customer Customer { get; set; }
         public virtual List<ApplicationUser> Users { get; set; }
         public virtual List<DeviceLocation> DeviceLocations { get; set; }           // Devices contained in a company accessed through Locations

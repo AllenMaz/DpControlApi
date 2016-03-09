@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Builders;
 using DpControl.Domain.Entities;
+using Microsoft.Data.Entity.Metadata;
 
 namespace DpControl.Domain.EFContext.Configurations
 {
@@ -22,7 +23,12 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(c => c.Modifier).HasMaxLength(50);
             entityBuilder.Property(c => c.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
-            entityBuilder.HasMany(c => c.Projects).WithOne(p => p.Customer).HasForeignKey(p => p.CustomerId);
+            entityBuilder.HasMany(c => c.Projects).WithOne(p => p.Customer).HasForeignKey(p => p.CustomerId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            //when delete Customer ,SetNull for AspNetUsers
+            entityBuilder.HasMany(c=>c.Users).WithOne(c=>c.Customer).HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
