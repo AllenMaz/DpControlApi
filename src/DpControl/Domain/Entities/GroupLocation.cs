@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace DpControl.Domain.Entities
 {
-    public class GroupDeviceLocation
+    public class GroupLocation
     {
-        
+        public int GroupLocationId { get; set; }
         public int GroupId { get; set; }
         public Group Group { get; set; }
-        public int? DeviceLocationId { get; set; }
-        public DeviceLocation DeviceLocation { get; set; }
+        public int LocationId { get; set; }
+        public Location Location { get; set; }
     }
 }

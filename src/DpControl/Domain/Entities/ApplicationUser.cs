@@ -16,7 +16,7 @@ namespace DpControl.Domain.Entities
         public virtual Project Project { get; set; }
 
         public virtual List<UserGroup> UserGroups { get; set; }        //many-to-many: operator can contorl multiple-location motors
-        public virtual List<UserDeviceLocation> UserDeviceLocations { get; set; }      //many-to-many: operator can contorl multiple-location motors
+        public virtual List<UserLocation> UserLocations { get; set; }      //many-to-many: operator can contorl multiple-location motors
         public virtual List<Log> Logs { get; set; }
 
         #endregion
@@ -24,7 +24,7 @@ namespace DpControl.Domain.Entities
         public ApplicationUser()
         {
             this.UserGroups = new List<UserGroup>();
-            this.UserDeviceLocations = new List<UserDeviceLocation>();
+            this.UserLocations = new List<UserLocation>();
             this.Logs = new List<Log>();
         }
 

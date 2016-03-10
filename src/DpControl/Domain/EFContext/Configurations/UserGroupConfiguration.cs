@@ -14,12 +14,12 @@ namespace DpControl.Domain.EFContext.Configurations
         public UserGroupConfiguration(EntityTypeBuilder<UserGroup> entityBuilder)
         {
             entityBuilder.ToTable("UserGroups");
-            entityBuilder.HasKey(gl => new { gl.GroupId,gl.UserId});
+            entityBuilder.HasKey(gl => gl.UserGroupId);
 
             entityBuilder.HasOne(gl => gl.Group).WithMany(g => g.UserGroups)
                 .HasForeignKey(g=>g.GroupId);
             entityBuilder.HasOne(gl => gl.User).WithMany(l => l.UserGroups)
-                .HasForeignKey(g=>g.UserId);
+                .HasForeignKey(g=>g.UserId).IsRequired();
         }
     }
 }

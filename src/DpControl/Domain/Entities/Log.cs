@@ -15,7 +15,7 @@ namespace DpControl.Domain.Entities
         public int LogDescriptionId { get; set; }
         public LogDescription Description { get; set; }
         public int? DeviceLocationId { get; set; }
-        public DeviceLocation DeviceLocation { get; set; }
+        public Location DeviceLocation { get; set; }
        
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }

@@ -44,6 +44,22 @@ namespace DpControl.Migrations
                     table.PrimaryKey("PK_Customer", x => x.CustomerId);
                 });
             migrationBuilder.CreateTable(
+                name: "Devices",
+                schema: "ControlSystem",
+                columns: table => new
+                {
+                    DeviceId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Diameter = table.Column<float>(nullable: false),
+                    RowVersion = table.Column<byte[]>(nullable: true),
+                    Torque = table.Column<float>(nullable: false),
+                    Voltage = table.Column<float>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Device", x => x.DeviceId);
+                });
+            migrationBuilder.CreateTable(
                 name: "LogDescription",
                 schema: "ControlSystem",
                 columns: table => new
@@ -58,31 +74,8 @@ namespace DpControl.Migrations
                     table.PrimaryKey("PK_LogDescription", x => x.LogDescriptionId);
                 });
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    NormalizedEmail = table.Column<string>(nullable: true),
-                    NormalizedUserName = table.Column<string>(nullable: true),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    UserName = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationUser", x => x.Id);
-                });
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
+                schema: "ControlSystem",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
@@ -104,7 +97,7 @@ namespace DpControl.Migrations
                     Completed = table.Column<bool>(nullable: false, defaultValue: false),
                     CreateDate = table.Column<DateTime>(nullable: false),
                     Creator = table.Column<string>(nullable: false),
-                    CustomerId = table.Column<int>(nullable: false),
+                    CustomerId = table.Column<int>(nullable: true),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     Modifier = table.Column<string>(nullable: true),
                     ProjectName = table.Column<string>(nullable: false),
@@ -120,49 +113,11 @@ namespace DpControl.Migrations
                         principalSchema: "ControlSystem",
                         principalTable: "Customers",
                         principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-            migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true),
-                    UserId = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IdentityUserClaim<string>", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_IdentityUserClaim<string>_ApplicationUser_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(nullable: false),
-                    ProviderKey = table.Column<string>(nullable: false),
-                    ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IdentityUserLogin<string>", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_IdentityUserLogin<string>_ApplicationUser_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
+                schema: "ControlSystem",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -177,32 +132,51 @@ namespace DpControl.Migrations
                     table.ForeignKey(
                         name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                         column: x => x.RoleId,
+                        principalSchema: "ControlSystem",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
+                name: "AspNetUsers",
+                schema: "ControlSystem",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(nullable: false),
-                    RoleId = table.Column<string>(nullable: false)
+                    Id = table.Column<string>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    CustomerId = table.Column<int>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    NormalizedEmail = table.Column<string>(nullable: true),
+                    NormalizedUserName = table.Column<string>(nullable: true),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    ProjectId = table.Column<int>(nullable: true),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    UserName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IdentityUserRole<string>", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_ApplicationUser", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IdentityUserRole<string>_IdentityRole_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_ApplicationUser_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "Customers",
+                        principalColumn: "CustomerId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_IdentityUserRole<string>_ApplicationUser_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_ApplicationUser_Project_ProjectId",
+                        column: x => x.ProjectId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "Projects",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.SetNull);
                 });
             migrationBuilder.CreateTable(
                 name: "Holidays",
@@ -231,7 +205,7 @@ namespace DpControl.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
-                name: "DeviceLocations",
+                name: "Locations",
                 schema: "ControlSystem",
                 columns: table => new
                 {
@@ -240,8 +214,11 @@ namespace DpControl.Migrations
                     Building = table.Column<string>(nullable: false),
                     CommAddress = table.Column<string>(nullable: true),
                     CommMode = table.Column<int>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: false),
                     CurrentPosition = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: true),
+                    DeviceId = table.Column<int>(nullable: false),
                     DeviceSerialNo = table.Column<string>(nullable: true),
                     DeviceType = table.Column<int>(nullable: false),
                     FavorPositionFirst = table.Column<int>(nullable: false),
@@ -249,9 +226,10 @@ namespace DpControl.Migrations
                     FavorPositionrSecond = table.Column<int>(nullable: false),
                     Floor = table.Column<string>(nullable: true),
                     InstallationNumber = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    Modifier = table.Column<string>(nullable: true),
                     Orientation = table.Column<int>(nullable: false),
-                    ProjectId = table.Column<int>(nullable: false),
+                    ProjectId = table.Column<int>(nullable: true),
                     RoomNo = table.Column<string>(nullable: true),
                     RowVersion = table.Column<byte[]>(nullable: true)
                 },
@@ -259,39 +237,19 @@ namespace DpControl.Migrations
                 {
                     table.PrimaryKey("PK_Location", x => x.LocationId);
                     table.ForeignKey(
+                        name: "FK_Location_Device_DeviceId",
+                        column: x => x.DeviceId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "Devices",
+                        principalColumn: "DeviceId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Location_Project_ProjectId",
                         column: x => x.ProjectId,
                         principalSchema: "ControlSystem",
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-            migrationBuilder.CreateTable(
-                name: "Operators",
-                schema: "ControlSystem",
-                columns: table => new
-                {
-                    OperatorId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Description = table.Column<string>(nullable: true),
-                    FirstName = table.Column<string>(nullable: false),
-                    LastName = table.Column<string>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: false),
-                    NickName = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
-                    ProjectId = table.Column<int>(nullable: false),
-                    RowVersion = table.Column<byte[]>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Operator", x => x.OperatorId);
-                    table.ForeignKey(
-                        name: "FK_Operator_Project_ProjectId",
-                        column: x => x.ProjectId,
-                        principalSchema: "ControlSystem",
-                        principalTable: "Projects",
-                        principalColumn: "ProjectId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
             migrationBuilder.CreateTable(
                 name: "Scenes",
@@ -305,7 +263,7 @@ namespace DpControl.Migrations
                     Enable = table.Column<bool>(nullable: false, defaultValue: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     Modifier = table.Column<string>(nullable: true),
-                    ProjectId = table.Column<int>(nullable: false),
+                    ProjectId = table.Column<int>(nullable: true),
                     RowVersion = table.Column<byte[]>(nullable: true),
                     SceneName = table.Column<string>(nullable: false)
                 },
@@ -318,6 +276,75 @@ namespace DpControl.Migrations
                         principalSchema: "ControlSystem",
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                schema: "ControlSystem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdentityUserClaim<string>", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IdentityUserClaim<string>_ApplicationUser_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                schema: "ControlSystem",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(nullable: false),
+                    ProviderKey = table.Column<string>(nullable: false),
+                    ProviderDisplayName = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdentityUserLogin<string>", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_IdentityUserLogin<string>_ApplicationUser_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                schema: "ControlSystem",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    RoleId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdentityUserRole<string>", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_IdentityUserRole<string>_IdentityRole_RoleId",
+                        column: x => x.RoleId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IdentityUserRole<string>_ApplicationUser_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "ControlSystem",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
@@ -328,7 +355,7 @@ namespace DpControl.Migrations
                     AlarmId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AlarmMessageId = table.Column<int>(nullable: false),
-                    LocationId = table.Column<int>(nullable: true),
+                    DeviceLocationId = table.Column<int>(nullable: true),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
                     RowVersion = table.Column<byte[]>(nullable: true)
                 },
@@ -343,10 +370,10 @@ namespace DpControl.Migrations
                         principalColumn: "AlarmMessageId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Alarm_Location_LocationId",
-                        column: x => x.LocationId,
+                        name: "FK_Alarm_Location_DeviceLocationId",
+                        column: x => x.DeviceLocationId,
                         principalSchema: "ControlSystem",
-                        principalTable: "DeviceLocations",
+                        principalTable: "Locations",
                         principalColumn: "LocationId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -358,20 +385,20 @@ namespace DpControl.Migrations
                     LogId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Comment = table.Column<string>(nullable: true),
-                    LocationId = table.Column<int>(nullable: true),
+                    DeviceLocationId = table.Column<int>(nullable: true),
                     LogDescriptionId = table.Column<int>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
-                    OperatorId = table.Column<int>(nullable: true),
-                    RowVersion = table.Column<byte[]>(nullable: true)
+                    RowVersion = table.Column<byte[]>(nullable: true),
+                    UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Log", x => x.LogId);
                     table.ForeignKey(
-                        name: "FK_Log_Location_LocationId",
-                        column: x => x.LocationId,
+                        name: "FK_Log_Location_DeviceLocationId",
+                        column: x => x.DeviceLocationId,
                         principalSchema: "ControlSystem",
-                        principalTable: "DeviceLocations",
+                        principalTable: "Locations",
                         principalColumn: "LocationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -382,42 +409,40 @@ namespace DpControl.Migrations
                         principalColumn: "LogDescriptionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Log_Operator_OperatorId",
-                        column: x => x.OperatorId,
+                        name: "FK_Log_ApplicationUser_UserId",
+                        column: x => x.UserId,
                         principalSchema: "ControlSystem",
-                        principalTable: "Operators",
-                        principalColumn: "OperatorId",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateTable(
-                name: "OperatorLocations",
+                name: "UserLocations",
                 schema: "ControlSystem",
                 columns: table => new
                 {
-                    OperatorLocationId = table.Column<int>(nullable: false)
+                    UserLocationId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     LocationId = table.Column<int>(nullable: false),
-                    LocationLocationId = table.Column<int>(nullable: true),
-                    OperatorId = table.Column<int>(nullable: false),
-                    OperatorOperatorId = table.Column<int>(nullable: true)
+                    UserId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OperatorLocation", x => x.OperatorLocationId);
+                    table.PrimaryKey("PK_UserLocation", x => x.UserLocationId);
                     table.ForeignKey(
-                        name: "FK_OperatorLocation_Location_LocationLocationId",
-                        column: x => x.LocationLocationId,
+                        name: "FK_UserLocation_Location_LocationId",
+                        column: x => x.LocationId,
                         principalSchema: "ControlSystem",
-                        principalTable: "DeviceLocations",
+                        principalTable: "Locations",
                         principalColumn: "LocationId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OperatorLocation_Operator_OperatorOperatorId",
-                        column: x => x.OperatorOperatorId,
+                        name: "FK_UserLocation_ApplicationUser_UserId",
+                        column: x => x.UserId,
                         principalSchema: "ControlSystem",
-                        principalTable: "Operators",
-                        principalColumn: "OperatorId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
                 name: "Groups",
@@ -431,7 +456,7 @@ namespace DpControl.Migrations
                     GroupName = table.Column<string>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     Modifier = table.Column<string>(nullable: true),
-                    ProjectId = table.Column<int>(nullable: false),
+                    ProjectId = table.Column<int>(nullable: true),
                     RowVersion = table.Column<byte[]>(nullable: true),
                     SceneId = table.Column<int>(nullable: true)
                 },
@@ -444,7 +469,7 @@ namespace DpControl.Migrations
                         principalSchema: "ControlSystem",
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Group_Scene_SceneId",
                         column: x => x.SceneId,
@@ -488,59 +513,65 @@ namespace DpControl.Migrations
                 {
                     GroupLocationId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GroupGroupId = table.Column<int>(nullable: true),
                     GroupId = table.Column<int>(nullable: false),
-                    LocationId = table.Column<int>(nullable: false),
-                    LocationLocationId = table.Column<int>(nullable: true)
+                    LocationId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GroupLocation", x => x.GroupLocationId);
                     table.ForeignKey(
-                        name: "FK_GroupLocation_Group_GroupGroupId",
-                        column: x => x.GroupGroupId,
+                        name: "FK_GroupLocation_Group_GroupId",
+                        column: x => x.GroupId,
                         principalSchema: "ControlSystem",
                         principalTable: "Groups",
                         principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GroupLocation_Location_LocationLocationId",
-                        column: x => x.LocationLocationId,
+                        name: "FK_GroupLocation_Location_LocationId",
+                        column: x => x.LocationId,
                         principalSchema: "ControlSystem",
-                        principalTable: "DeviceLocations",
+                        principalTable: "Locations",
                         principalColumn: "LocationId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
-                name: "GroupOperators",
+                name: "UserGroups",
                 schema: "ControlSystem",
                 columns: table => new
                 {
-                    GroupOperatorId = table.Column<int>(nullable: false)
+                    UserGroupId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GroupGroupId = table.Column<int>(nullable: true),
                     GroupId = table.Column<int>(nullable: false),
-                    OperatorId = table.Column<int>(nullable: false),
-                    OperatorOperatorId = table.Column<int>(nullable: true)
+                    UserId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupOperator", x => x.GroupOperatorId);
+                    table.PrimaryKey("PK_UserGroup", x => x.UserGroupId);
                     table.ForeignKey(
-                        name: "FK_GroupOperator_Group_GroupGroupId",
-                        column: x => x.GroupGroupId,
+                        name: "FK_UserGroup_Group_GroupId",
+                        column: x => x.GroupId,
                         principalSchema: "ControlSystem",
                         principalTable: "Groups",
                         principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GroupOperator_Operator_OperatorOperatorId",
-                        column: x => x.OperatorOperatorId,
+                        name: "FK_UserGroup_ApplicationUser_UserId",
+                        column: x => x.UserId,
                         principalSchema: "ControlSystem",
-                        principalTable: "Operators",
-                        principalColumn: "OperatorId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                schema: "ControlSystem",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                schema: "ControlSystem",
+                table: "AspNetUsers",
+                column: "NormalizedUserName");
             migrationBuilder.CreateIndex(
                 name: "IX_Customer_CustomerNo",
                 schema: "ControlSystem",
@@ -560,15 +591,8 @@ namespace DpControl.Migrations
                 column: "ProjectNo",
                 unique: true);
             migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers",
-                column: "NormalizedUserName");
-            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
+                schema: "ControlSystem",
                 table: "AspNetRoles",
                 column: "NormalizedName");
         }
@@ -577,23 +601,23 @@ namespace DpControl.Migrations
         {
             migrationBuilder.DropTable(name: "Alarms", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "GroupLocations", schema: "ControlSystem");
-            migrationBuilder.DropTable(name: "GroupOperators", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "Holidays", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "Logs", schema: "ControlSystem");
-            migrationBuilder.DropTable(name: "OperatorLocations", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "SceneSegments", schema: "ControlSystem");
-            migrationBuilder.DropTable("AspNetRoleClaims");
-            migrationBuilder.DropTable("AspNetUserClaims");
-            migrationBuilder.DropTable("AspNetUserLogins");
-            migrationBuilder.DropTable("AspNetUserRoles");
+            migrationBuilder.DropTable(name: "UserGroups", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "UserLocations", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "AspNetRoleClaims", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "AspNetUserClaims", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "AspNetUserLogins", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "AspNetUserRoles", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "AlarmMessages", schema: "ControlSystem");
-            migrationBuilder.DropTable(name: "Groups", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "LogDescription", schema: "ControlSystem");
-            migrationBuilder.DropTable(name: "DeviceLocations", schema: "ControlSystem");
-            migrationBuilder.DropTable(name: "Operators", schema: "ControlSystem");
-            migrationBuilder.DropTable("AspNetRoles");
-            migrationBuilder.DropTable("AspNetUsers");
+            migrationBuilder.DropTable(name: "Groups", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "Locations", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "AspNetRoles", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "AspNetUsers", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "Scenes", schema: "ControlSystem");
+            migrationBuilder.DropTable(name: "Devices", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "Projects", schema: "ControlSystem");
             migrationBuilder.DropTable(name: "Customers", schema: "ControlSystem");
         }

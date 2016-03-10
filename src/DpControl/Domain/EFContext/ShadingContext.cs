@@ -16,13 +16,14 @@ namespace DpControl.Domain.EFContext
         public DbSet<AlarmMessage> AlarmMessages { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Group> Groups { get; set; }
-        public DbSet<GroupDeviceLocation> GroupDeviceLocations { get; set; }
+        public DbSet<GroupLocation> GroupLocations { get; set; }
         public DbSet<UserGroup> GroupOperators { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
-        public DbSet<DeviceLocation> DeviceLocations { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Device> Devices { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<LogDescription> LogDescription { get; set; }
-        public DbSet<UserDeviceLocation> UserDeviceLocations { get; set; }
+        public DbSet<UserLocation> UserDeviceLocations { get; set; }
         public DbSet<Scene> Scenes { get; set; }
         public DbSet<SceneSegment> SceneSegments { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -39,12 +40,13 @@ namespace DpControl.Domain.EFContext
             new ProjectConfiguration(modelBuilder.Entity<Project>());
             new GroupConfiguration(modelBuilder.Entity<Group>());
             new UserGroupConfiguration(modelBuilder.Entity<UserGroup>());
-            new GroupDeviceLocationConfiguration(modelBuilder.Entity<GroupDeviceLocation>());
+            new GroupLocationConfiguration(modelBuilder.Entity<GroupLocation>());
             new HolidayConfiguration(modelBuilder.Entity<Holiday>());
-            new DeviceLocationConfiguration(modelBuilder.Entity<DeviceLocation>());
+            new LocationConfiguration(modelBuilder.Entity<Location>());
+            new DeviceConfiguration(modelBuilder.Entity<Device>());
             new LogConfiguration(modelBuilder.Entity<Log>());
             new LogDescriptionConfiguration(modelBuilder.Entity<LogDescription>());
-            new UserDeviceLocationConfiguration(modelBuilder.Entity<UserDeviceLocation>());
+            new UserLocationConfiguration(modelBuilder.Entity<UserLocation>());
             new SceneConfiguration(modelBuilder.Entity<Scene>());
             new SceneSegmentConfiguration(modelBuilder.Entity<SceneSegment>());
             new AspNetUserConfiguration(modelBuilder.Entity<ApplicationUser>());

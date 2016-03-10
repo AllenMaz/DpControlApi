@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace DpControl.Domain.Entities
 {
-    public class DeviceLocation
+    public class Location
     {
-        public int DeviceLocationId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
+        public int LocationId { get; set; }           // one-to-one relation with DeviceAlarm requires the primary key of dependent table used as the foreign key
         public string Building { get; set; }
         public string Floor { get; set; }
         public string RoomNo { get; set; }
@@ -29,13 +29,15 @@ namespace DpControl.Domain.Entities
 
         public string Description { get; set; }
         #region Realtionship
-        public virtual List<GroupDeviceLocation> GroupDeviceLocations { get; set; }                // many-to-many： 
-        public virtual List<UserDeviceLocation> UserDeviceLocation { get; set; }
+        public virtual List<GroupLocation> GroupLocations { get; set; }                // many-to-many： 
+        public virtual List<UserLocation> UserLocations { get; set; }
         public int? ProjectId { get; set; }
         public virtual Project Project { get; set; }
         public virtual List<Alarm> Alarms { get; set; }
         public virtual List<Log> Logs { get; set; }
 
+        public int DeviceId { get; set; }
+        public virtual Device Device { get; set; }
         #endregion
 
         public string Creator { get; set; }
@@ -45,10 +47,10 @@ namespace DpControl.Domain.Entities
 
         public byte[] RowVersion { get; set; }
 
-        public DeviceLocation()
+        public Location()
         {
-            this.GroupDeviceLocations = new List<GroupDeviceLocation>();
-            this.UserDeviceLocation = new List<UserDeviceLocation>();
+            this.GroupLocations = new List<GroupLocation>();
+            this.UserLocations = new List<UserLocation>();
             this.Alarms = new List<Alarm>();
             this.Logs = new List<Log>();
         }

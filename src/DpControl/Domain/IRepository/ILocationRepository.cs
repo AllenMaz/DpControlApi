@@ -6,7 +6,7 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface IDeviceLocationRepository:IBaseRepository<DeviceLocationAddModel,DeviceLocationUpdateModel,DeviceLocationSearchModel>
+    public interface ILocationRepository:IBaseRepository<LocationAddModel,LocationUpdateModel,LocationSearchModel>
     {
     }
 }

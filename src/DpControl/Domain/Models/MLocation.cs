@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DpControl.Domain.Models
 {
-    public class DeviceLocationBaseModel
+    public class LocationBaseModel
     {
         [Required(ErrorMessage = "Building is required!")]
         [MaxLength(10, ErrorMessage = "Building must be less than 10 characters!")]
@@ -40,6 +40,9 @@ namespace DpControl.Domain.Models
         [MaxLength(16, ErrorMessage = "DeviceSerialNo must be less than 16 characters!")]
         public string DeviceSerialNo { get; set; }
 
+        [Required(ErrorMessage = "DeviceId is required!")]
+        public int DeviceId { get; set; }
+
         //设备类型
         [Required(ErrorMessage = "DeviceType is required!")]
         public int DeviceType { get; set; }
@@ -64,20 +67,20 @@ namespace DpControl.Domain.Models
         public string Description { get; set; }
     }
 
-    public class DeviceLocationAddModel:DeviceLocationBaseModel
+    public class LocationAddModel:LocationBaseModel
     {
         [Required(ErrorMessage = "ProjectId is required!")]
         public int ProjectId { get; set; }
     }
 
-    public class DeviceLocationUpdateModel: DeviceLocationBaseModel
+    public class LocationUpdateModel: LocationBaseModel
     {
 
     }
 
-    public class DeviceLocationSearchModel: DeviceLocationBaseModel
+    public class LocationSearchModel: LocationBaseModel
     {
-        public int DeviceLocationId { get; set; }
+        public int LocationId { get; set; }
         public int? ProjectId { get; set; }
         public string Creator { get; set; }
         public DateTime CreateDate { get; set; }

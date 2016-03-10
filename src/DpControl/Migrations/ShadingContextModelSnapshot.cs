@@ -14,6 +14,7 @@ namespace DpControl.Migrations
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
+                .HasAnnotation("Relational:DefaultSchema", "ControlSystem")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("DpControl.Domain.Entities.Alarm", b =>
@@ -23,7 +24,7 @@ namespace DpControl.Migrations
 
                     b.Property<int>("AlarmMessageId");
 
-                    b.Property<int?>("LocationId");
+                    b.Property<int?>("DeviceLocationId");
 
                     b.Property<DateTime>("ModifiedDate");
 
@@ -32,8 +33,6 @@ namespace DpControl.Migrations
                         .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("AlarmId");
-
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
 
                     b.HasAnnotation("Relational:TableName", "Alarms");
                 });
@@ -50,9 +49,59 @@ namespace DpControl.Migrations
 
                     b.HasKey("AlarmMessageId");
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "AlarmMessages");
+                });
+
+            modelBuilder.Entity("DpControl.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id");
+
+                    b.Property<int>("AccessFailedCount");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken();
+
+                    b.Property<int?>("CustomerId");
+
+                    b.Property<string>("Email")
+                        .HasAnnotation("MaxLength", 256);
+
+                    b.Property<bool>("EmailConfirmed");
+
+                    b.Property<bool>("LockoutEnabled");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasAnnotation("MaxLength", 256);
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasAnnotation("MaxLength", 256);
+
+                    b.Property<string>("PasswordHash");
+
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<bool>("PhoneNumberConfirmed");
+
+                    b.Property<int?>("ProjectId");
+
+                    b.Property<string>("SecurityStamp");
+
+                    b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<string>("UserName")
+                        .HasAnnotation("MaxLength", 256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasAnnotation("Relational:Name", "EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .HasAnnotation("Relational:Name", "UserNameIndex");
+
+                    b.HasAnnotation("Relational:TableName", "AspNetUsers");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Customer", b =>
@@ -87,9 +136,27 @@ namespace DpControl.Migrations
                     b.HasIndex("CustomerNo")
                         .IsUnique();
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "Customers");
+                });
+
+            modelBuilder.Entity("DpControl.Domain.Entities.Device", b =>
+                {
+                    b.Property<int>("DeviceId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<float>("Diameter");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<float>("Torque");
+
+                    b.Property<float>("Voltage");
+
+                    b.HasKey("DeviceId");
+
+                    b.HasAnnotation("Relational:TableName", "Devices");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Group", b =>
@@ -110,7 +177,7 @@ namespace DpControl.Migrations
 
                     b.Property<string>("Modifier");
 
-                    b.Property<int>("ProjectId");
+                    b.Property<int?>("ProjectId");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -123,8 +190,6 @@ namespace DpControl.Migrations
                     b.HasIndex("GroupName")
                         .IsUnique();
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "Groups");
                 });
 
@@ -133,39 +198,13 @@ namespace DpControl.Migrations
                     b.Property<int>("GroupLocationId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("GroupGroupId");
-
                     b.Property<int>("GroupId");
 
                     b.Property<int>("LocationId");
 
-                    b.Property<int?>("LocationLocationId");
-
                     b.HasKey("GroupLocationId");
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "GroupLocations");
-                });
-
-            modelBuilder.Entity("DpControl.Domain.Entities.GroupOperator", b =>
-                {
-                    b.Property<int>("GroupOperatorId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("GroupGroupId");
-
-                    b.Property<int>("GroupId");
-
-                    b.Property<int>("OperatorId");
-
-                    b.Property<int?>("OperatorOperatorId");
-
-                    b.HasKey("GroupOperatorId");
-
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
-                    b.HasAnnotation("Relational:TableName", "GroupOperators");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Holiday", b =>
@@ -192,8 +231,6 @@ namespace DpControl.Migrations
 
                     b.HasKey("HolidayId");
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "Holidays");
                 });
 
@@ -204,17 +241,25 @@ namespace DpControl.Migrations
 
                     b.Property<string>("Building")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 80);
+                        .HasAnnotation("MaxLength", 10);
 
                     b.Property<string>("CommAddress")
                         .HasAnnotation("MaxLength", 40);
 
                     b.Property<int>("CommMode");
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<int>("CurrentPosition");
 
                     b.Property<string>("Description")
-                        .HasAnnotation("MaxLength", 200);
+                        .HasAnnotation("MaxLength", 2000);
+
+                    b.Property<int>("DeviceId");
 
                     b.Property<string>("DeviceSerialNo")
                         .HasAnnotation("MaxLength", 16);
@@ -232,11 +277,13 @@ namespace DpControl.Migrations
 
                     b.Property<int>("InstallationNumber");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Modifier");
 
                     b.Property<int>("Orientation");
 
-                    b.Property<int>("ProjectId");
+                    b.Property<int?>("ProjectId");
 
                     b.Property<string>("RoomNo")
                         .HasAnnotation("MaxLength", 50);
@@ -247,9 +294,7 @@ namespace DpControl.Migrations
 
                     b.HasKey("LocationId");
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
-                    b.HasAnnotation("Relational:TableName", "DeviceLocations");
+                    b.HasAnnotation("Relational:TableName", "Locations");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Log", b =>
@@ -260,21 +305,19 @@ namespace DpControl.Migrations
                     b.Property<string>("Comment")
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<int?>("LocationId");
+                    b.Property<int?>("DeviceLocationId");
 
                     b.Property<int>("LogDescriptionId");
 
                     b.Property<DateTime>("ModifiedDate");
 
-                    b.Property<int?>("OperatorId");
-
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
 
-                    b.HasKey("LogId");
+                    b.Property<string>("UserId");
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
+                    b.HasKey("LogId");
 
                     b.HasAnnotation("Relational:TableName", "Logs");
                 });
@@ -291,66 +334,7 @@ namespace DpControl.Migrations
 
                     b.HasKey("LogDescriptionId");
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "LogDescription");
-                });
-
-            modelBuilder.Entity("DpControl.Domain.Entities.Operator", b =>
-                {
-                    b.Property<int>("OperatorId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 30);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 30);
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("NickName")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<string>("Password")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<int>("ProjectId");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.HasKey("OperatorId");
-
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
-                    b.HasAnnotation("Relational:TableName", "Operators");
-                });
-
-            modelBuilder.Entity("DpControl.Domain.Entities.OperatorLocation", b =>
-                {
-                    b.Property<int>("OperatorLocationId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("LocationId");
-
-                    b.Property<int?>("LocationLocationId");
-
-                    b.Property<int>("OperatorId");
-
-                    b.Property<int?>("OperatorOperatorId");
-
-                    b.HasKey("OperatorLocationId");
-
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
-                    b.HasAnnotation("Relational:TableName", "OperatorLocations");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Project", b =>
@@ -367,7 +351,7 @@ namespace DpControl.Migrations
                     b.Property<string>("Creator")
                         .IsRequired();
 
-                    b.Property<int>("CustomerId");
+                    b.Property<int?>("CustomerId");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -390,8 +374,6 @@ namespace DpControl.Migrations
                     b.HasIndex("ProjectNo")
                         .IsUnique();
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "Projects");
                 });
 
@@ -413,7 +395,7 @@ namespace DpControl.Migrations
 
                     b.Property<string>("Modifier");
 
-                    b.Property<int>("ProjectId");
+                    b.Property<int?>("ProjectId");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -424,8 +406,6 @@ namespace DpControl.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("SceneId");
-
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
 
                     b.HasAnnotation("Relational:TableName", "Scenes");
                 });
@@ -460,57 +440,37 @@ namespace DpControl.Migrations
 
                     b.HasKey("SceneSegmentId");
 
-                    b.HasAnnotation("Relational:Schema", "ControlSystem");
-
                     b.HasAnnotation("Relational:TableName", "SceneSegments");
                 });
 
-            modelBuilder.Entity("DpControl.Domain.Models.ApplicationUser", b =>
+            modelBuilder.Entity("DpControl.Domain.Entities.UserGroup", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<int>("UserGroupId")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AccessFailedCount");
+                    b.Property<int>("GroupId");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken();
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
-                    b.Property<string>("Email")
-                        .HasAnnotation("MaxLength", 256);
+                    b.HasKey("UserGroupId");
 
-                    b.Property<bool>("EmailConfirmed");
+                    b.HasAnnotation("Relational:TableName", "UserGroups");
+                });
 
-                    b.Property<bool>("LockoutEnabled");
+            modelBuilder.Entity("DpControl.Domain.Entities.UserLocation", b =>
+                {
+                    b.Property<int>("UserLocationId")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<DateTimeOffset?>("LockoutEnd");
+                    b.Property<int>("LocationId");
 
-                    b.Property<string>("NormalizedEmail")
-                        .HasAnnotation("MaxLength", 256);
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
-                    b.Property<string>("NormalizedUserName")
-                        .HasAnnotation("MaxLength", 256);
+                    b.HasKey("UserLocationId");
 
-                    b.Property<string>("PasswordHash");
-
-                    b.Property<string>("PhoneNumber");
-
-                    b.Property<bool>("PhoneNumberConfirmed");
-
-                    b.Property<string>("SecurityStamp");
-
-                    b.Property<bool>("TwoFactorEnabled");
-
-                    b.Property<string>("UserName")
-                        .HasAnnotation("MaxLength", 256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasAnnotation("Relational:Name", "EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .HasAnnotation("Relational:Name", "UserNameIndex");
-
-                    b.HasAnnotation("Relational:TableName", "AspNetUsers");
+                    b.HasAnnotation("Relational:TableName", "UserLocations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRole", b =>
@@ -603,7 +563,18 @@ namespace DpControl.Migrations
 
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationId");
+                        .HasForeignKey("DeviceLocationId");
+                });
+
+            modelBuilder.Entity("DpControl.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("DpControl.Domain.Entities.Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("DpControl.Domain.Entities.Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Group", b =>
@@ -621,22 +592,11 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Group")
                         .WithMany()
-                        .HasForeignKey("GroupGroupId");
+                        .HasForeignKey("GroupId");
 
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationLocationId");
-                });
-
-            modelBuilder.Entity("DpControl.Domain.Entities.GroupOperator", b =>
-                {
-                    b.HasOne("DpControl.Domain.Entities.Group")
-                        .WithMany()
-                        .HasForeignKey("GroupGroupId");
-
-                    b.HasOne("DpControl.Domain.Entities.Operator")
-                        .WithMany()
-                        .HasForeignKey("OperatorOperatorId");
+                        .HasForeignKey("LocationId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Holiday", b =>
@@ -648,6 +608,10 @@ namespace DpControl.Migrations
 
             modelBuilder.Entity("DpControl.Domain.Entities.Location", b =>
                 {
+                    b.HasOne("DpControl.Domain.Entities.Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId");
+
                     b.HasOne("DpControl.Domain.Entities.Project")
                         .WithMany()
                         .HasForeignKey("ProjectId");
@@ -657,33 +621,15 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("LocationId");
+                        .HasForeignKey("DeviceLocationId");
 
                     b.HasOne("DpControl.Domain.Entities.LogDescription")
                         .WithMany()
                         .HasForeignKey("LogDescriptionId");
 
-                    b.HasOne("DpControl.Domain.Entities.Operator")
+                    b.HasOne("DpControl.Domain.Entities.ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("OperatorId");
-                });
-
-            modelBuilder.Entity("DpControl.Domain.Entities.Operator", b =>
-                {
-                    b.HasOne("DpControl.Domain.Entities.Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId");
-                });
-
-            modelBuilder.Entity("DpControl.Domain.Entities.OperatorLocation", b =>
-                {
-                    b.HasOne("DpControl.Domain.Entities.Location")
-                        .WithMany()
-                        .HasForeignKey("LocationLocationId");
-
-                    b.HasOne("DpControl.Domain.Entities.Operator")
-                        .WithMany()
-                        .HasForeignKey("OperatorOperatorId");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Project", b =>
@@ -707,6 +653,28 @@ namespace DpControl.Migrations
                         .HasForeignKey("SceneId");
                 });
 
+            modelBuilder.Entity("DpControl.Domain.Entities.UserGroup", b =>
+                {
+                    b.HasOne("DpControl.Domain.Entities.Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.HasOne("DpControl.Domain.Entities.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("DpControl.Domain.Entities.UserLocation", b =>
+                {
+                    b.HasOne("DpControl.Domain.Entities.Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("DpControl.Domain.Entities.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNet.Identity.EntityFramework.IdentityRole")
@@ -716,14 +684,14 @@ namespace DpControl.Migrations
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DpControl.Domain.Models.ApplicationUser")
+                    b.HasOne("DpControl.Domain.Entities.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DpControl.Domain.Models.ApplicationUser")
+                    b.HasOne("DpControl.Domain.Entities.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
@@ -734,7 +702,7 @@ namespace DpControl.Migrations
                         .WithMany()
                         .HasForeignKey("RoleId");
 
-                    b.HasOne("DpControl.Domain.Models.ApplicationUser")
+                    b.HasOne("DpControl.Domain.Entities.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });

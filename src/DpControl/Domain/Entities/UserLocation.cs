@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace DpControl.Domain.Entities
 {
-    public class UserDeviceLocation
+    public class UserLocation
     {
-        public int DeviceLocationId { get; set; }
+        public int UserLocationId { get; set; }
+        public int LocationId { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-        public DeviceLocation DeviceLocation { get; set; }
+        public Location Location { get; set; }
     }
 }
