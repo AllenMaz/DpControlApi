@@ -16,6 +16,126 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.AddAsync(DpControl.Domain.Models.AlarmMessageAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.GetByAlarmMessageIdAsync(System.Int32)">
+            <summary>
+            Search data by AlarmMessageId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.DeleteByAlarmMessageIdAsync(System.Int32)">
+            <summary>
+            Delete data by AlarmMessageId
+            </summary>
+            <param name="alarmMessageId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.UpdateAsync(System.Int32,DpControl.Domain.Models.AlarmMessageUpdateModel)">
+            <summary>
+            Edit data by AlarmMessageId
+            </summary>
+            <param name="AlarmMessageId"></param>
+            <param name="AlarmMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.AddAsync(DpControl.Domain.Models.AlarmAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetByAlarmIdAsync(System.Int32)">
+            <summary>
+            Search data by AlarmId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.DeleteByAlarmIdAsync(System.Int32)">
+            <summary>
+            Delete data by AlarmId
+            </summary>
+            <param name="alarmId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.AddAsync(DpControl.Domain.Models.DeviceAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetBySceneIdAsync(System.Int32)">
+            <summary>
+            Search data by DeviceId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.UpdateAsync(System.Int32,DpControl.Domain.Models.DeviceUpdateModel)">
+            <summary>
+            Edit data by deviceId
+            </summary>
+            <param name="deviceId"></param>
+            <param name="Location"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.DeleteByDeviceIdAsync(System.Int32)">
+            <summary>
+            Delete data by DeviceId
+            </summary>
+            <param name="DeviceId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.AddAsync(DpControl.Domain.Models.GroupLocationAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.GetByGroupLocationIdAsync(System.Int32)">
+            <summary>
+            Search data by GroupLocationId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.DeleteByGroupLocationIdAsync(System.Int32)">
+            <summary>
+            Delete data by GroupLocationId
+            </summary>
+            <param name="groupLocationId"></param>
+        </member>
         <member name="M:DpControl.Controllers.APIControllers.GroupsController.AddAsync(DpControl.Domain.Models.GroupAddModel)">
             <summary>
             Add data
@@ -78,11 +198,105 @@
             <param name="project"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.DeleteByProjectIdIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.DeleteByHolidayIdAsync(System.Int32)">
             <summary>
             Delete data by HolidayId
             </summary>
             <param name="customerId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.AddAsync(DpControl.Domain.Models.LocationAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetBySceneIdAsync(System.Int32)">
+            <summary>
+            Search data by LocationId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.UpdateAsync(System.Int32,DpControl.Domain.Models.LocationUpdateModel)">
+            <summary>
+            Edit data by locationId
+            </summary>
+            <param name="locationId"></param>
+            <param name="Location"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.DeleteByLocationIdAsync(System.Int32)">
+            <summary>
+            Delete data by LocationId
+            </summary>
+            <param name="LocationId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogController.AddAsync(DpControl.Domain.Models.LogAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogController.GetByLogIdAsync(System.Int32)">
+            <summary>
+            Search data by LogId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogController.DeleteByLogIdAsync(System.Int32)">
+            <summary>
+            Delete data by LogId
+            </summary>
+            <param name="logId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.AddAsync(DpControl.Domain.Models.LogDescriptionAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.GetByLogDescriptionIdAsync(System.Int32)">
+            <summary>
+            Search data by LogDescriptionId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.DeleteByLogDescriptionIdAsync(System.Int32)">
+            <summary>
+            Delete data by LogDescriptionId
+            </summary>
+            <param name="logDescriptionId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.UpdateAsync(System.Int32,DpControl.Domain.Models.LogDescriptionUpdateModel)">
+            <summary>
+            Edit data by LogDescriptionId
+            </summary>
+            <param name="LogDescriptionId"></param>
+            <param name="LogDescription"></param>
+            <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.AddAsync(DpControl.Domain.Models.ProjectAddModel)">
             <summary>
@@ -146,11 +360,11 @@
             <param name="project"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.ScenesController.DeleteByProjectIdIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.DeleteBySceneIdAsync(System.Int32)">
             <summary>
             Delete data by SceneId
             </summary>
-            <param name="customerId"></param>
+            <param name="SceneId"></param>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.AddAsync(DpControl.Domain.Models.SceneSegmentAddModel)">
             <summary>
@@ -180,11 +394,63 @@
             <param name="project"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.DeleteByProjectIdIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.DeleteBySceneSegmentIdAsync(System.Int32)">
             <summary>
             Delete data by SceneSegmentId
             </summary>
             <param name="customerId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.AddAsync(DpControl.Domain.Models.UserGroupAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.GetByUserGroupIdAsync(System.Int32)">
+            <summary>
+            Search data by UserGroupId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.DeleteByUserGroupIdAsync(System.Int32)">
+            <summary>
+            Delete data by UserGroupId
+            </summary>
+            <param name="userGroupId"></param>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.AddAsync(DpControl.Domain.Models.UserLocationAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.GetByUserLocationIdAsync(System.Int32)">
+            <summary>
+            Search data by UserLocationId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.DeleteByUserLocationIdAsync(System.Int32)">
+            <summary>
+            Delete data by UserLocationId
+            </summary>
+            <param name="userLocationId"></param>
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.AddAsync(DpControl.Domain.Models.CustomerAddModel)">
             <summary>
@@ -277,14 +543,6 @@
             key:PropertyName
             value:PropertyValue
             </summary>
-        </member>
-        <member name="M:DpControl.Domain.Repository.OperatorRepository.AddGroupToOperator(System.Int32,System.Int32)">
-            <summary>
-            after set a group to operator, means the operator has ability to control the motor group
-            </summary>
-            <param name="groupId"></param>
-            <param name="operatorId"></param>
-            <returns></returns>
         </member>
         <member name="T:DpControl.Models.ListResponseModel`1">
             <summary>
