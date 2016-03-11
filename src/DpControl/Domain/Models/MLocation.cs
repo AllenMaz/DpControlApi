@@ -39,9 +39,8 @@ namespace DpControl.Domain.Models
 
         [MaxLength(16, ErrorMessage = "DeviceSerialNo must be less than 16 characters!")]
         public string DeviceSerialNo { get; set; }
-
-        [Required(ErrorMessage = "DeviceId is required!")]
-        public int DeviceId { get; set; }
+        
+        public int? DeviceId { get; set; }
 
         //设备类型
         [Required(ErrorMessage = "DeviceType is required!")]

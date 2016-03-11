@@ -25,6 +25,8 @@ namespace DpControl.Domain.Repository
             _context = dbContext;
         }
 
+        #endregion
+
         public int Add(GroupLocationAddModel mGroupLocation)
         {
             var group = _context.Groups.FirstOrDefault(c => c.GroupId == mGroupLocation.GroupId);
@@ -64,7 +66,7 @@ namespace DpControl.Domain.Repository
             if (location == null)
                 throw new ExpectException("Could not find Location data which LocationId equal to " + mGroupLocation.LocationId);
 
-            //As primary key ,GroupId and LocationId must be unique
+            //GroupId and LocationId must be unique
             var checkData = await _context.GroupLocations
                 .Where(c => c.GroupId == mGroupLocation.GroupId
                                     && c.LocationId == mGroupLocation.LocationId).ToListAsync();
@@ -83,10 +85,10 @@ namespace DpControl.Domain.Repository
             return model.GroupLocationId;
         }
 
-        public GroupLocationSearchModel FindById(int groupDeviceLocationId)
+        public GroupLocationSearchModel FindById(int groupLocationId)
         {
-            var groupDeviceLocation = _context.GroupLocations
-                .Where(v => v.GroupLocationId == groupDeviceLocationId)
+            var groupLocation = _context.GroupLocations
+                .Where(v => v.GroupLocationId == groupLocationId)
                 .Select(v => new GroupLocationSearchModel()
                 {
                     GroupLocationId = v.GroupLocationId,
@@ -94,13 +96,13 @@ namespace DpControl.Domain.Repository
                     LocationId = v.LocationId
                 }).FirstOrDefault();
 
-            return groupDeviceLocation;
+            return groupLocation;
         }
 
-        public async Task<GroupLocationSearchModel> FindByIdAsync(int groupDeviceLocationId)
+        public async Task<GroupLocationSearchModel> FindByIdAsync(int groupLocationId)
         {
-            var groupDeviceLocation = await _context.GroupLocations
-                .Where(v => v.GroupLocationId == groupDeviceLocationId)
+            var groupLocation = await _context.GroupLocations
+                .Where(v => v.GroupLocationId == groupLocationId)
                 .Select(v => new GroupLocationSearchModel()
                 {
                     GroupLocationId = v.GroupLocationId,
@@ -108,7 +110,7 @@ namespace DpControl.Domain.Repository
                     LocationId = v.LocationId
                 }).FirstOrDefaultAsync();
 
-            return groupDeviceLocation;
+            return groupLocation;
         }
 
         public IEnumerable<GroupLocationSearchModel> GetAll(Query query)
@@ -119,16 +121,16 @@ namespace DpControl.Domain.Repository
             var result = QueryOperate<GroupLocation>.Execute(queryData, query);
 
             //以下执行完后才会去数据库中查询
-            var scenes = result.ToList();
+            var groupLocations = result.ToList();
 
-            var groupDeviceLocationsSearch = scenes.Select(v => new GroupLocationSearchModel
+            var groupLocationsSearch = groupLocations.Select(v => new GroupLocationSearchModel
             {
                 GroupLocationId = v.GroupLocationId,
                 GroupId = v.GroupId,
                 LocationId = v.LocationId
             });
 
-            return groupDeviceLocationsSearch;
+            return groupLocationsSearch;
         }
 
         public async Task<IEnumerable<GroupLocationSearchModel>> GetAllAsync(Query query)
@@ -139,49 +141,49 @@ namespace DpControl.Domain.Repository
             var result = QueryOperate<GroupLocation>.Execute(queryData, query);
 
             //以下执行完后才会去数据库中查询
-            var scenes = await result.ToListAsync();
+            var groupLocations = await result.ToListAsync();
 
-            var groupDeviceLocationsSearch = scenes.Select(v => new GroupLocationSearchModel
+            var groupLocationsSearch = groupLocations.Select(v => new GroupLocationSearchModel
             {
                 GroupLocationId = v.GroupLocationId,
                 GroupId = v.GroupId,
                 LocationId = v.LocationId
             });
 
-            return groupDeviceLocationsSearch;
+            return groupLocationsSearch;
         }
 
-        public void RemoveById(int groupDeviceLocationId)
+        public void RemoveById(int groupLocationId)
         {
-            var groupDeviceLocation = _context.GroupLocations.FirstOrDefault(c => c.GroupLocationId == groupDeviceLocationId);
-            if (groupDeviceLocation == null)
-                throw new ExpectException("Could not find data which groupDeviceLocationId equal to " + groupDeviceLocationId);
+            var groupLocation = _context.GroupLocations.FirstOrDefault(c => c.GroupLocationId == groupLocationId);
+            if (groupLocation == null)
+                throw new ExpectException("Could not find data which groupLocationId equal to " + groupLocationId);
 
-            _context.Remove(groupDeviceLocation);
+            _context.Remove(groupLocation);
             _context.SaveChanges();
         }
 
-        public async Task RemoveByIdAsync(int groupDeviceLocationId)
+        public async Task RemoveByIdAsync(int groupLocationId)
         {
-            var groupDeviceLocation = _context.GroupLocations.FirstOrDefault(c => c.GroupLocationId == groupDeviceLocationId);
-            if (groupDeviceLocation == null)
-                throw new ExpectException("Could not find data which groupDeviceLocationId equal to " + groupDeviceLocationId);
+            var groupLocation = _context.GroupLocations.FirstOrDefault(c => c.GroupLocationId == groupLocationId);
+            if (groupLocation == null)
+                throw new ExpectException("Could not find data which groupLocationId equal to " + groupLocationId);
 
-            _context.Remove(groupDeviceLocation);
+            _context.Remove(groupLocation);
             await _context.SaveChangesAsync();
         }
 
-        public int UpdateById(int groupDeviceLocationId, GroupLocationUpdateModel mGroupLocation)
+        public int UpdateById(int groupLocationId, GroupLocationUpdateModel mGroupLocation)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateByIdAsync(int groupDeviceLocationId, GroupLocationUpdateModel mGroupLocation)
+        public Task<int> UpdateByIdAsync(int groupLocationId, GroupLocationUpdateModel mGroupLocation)
         {
             throw new NotImplementedException();
         }
 
-        #endregion
+        
 
 
     }

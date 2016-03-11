@@ -17,13 +17,13 @@ namespace DpControl.Domain.EFContext
         public DbSet<Project> Projects { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupLocation> GroupLocations { get; set; }
-        public DbSet<UserGroup> GroupOperators { get; set; }
+        public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<LogDescription> LogDescription { get; set; }
-        public DbSet<UserLocation> UserDeviceLocations { get; set; }
+        public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<Scene> Scenes { get; set; }
         public DbSet<SceneSegment> SceneSegments { get; set; }
         public DbSet<Customer> Customers { get; set; }

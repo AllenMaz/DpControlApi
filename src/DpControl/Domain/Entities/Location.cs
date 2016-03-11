@@ -36,7 +36,7 @@ namespace DpControl.Domain.Entities
         public virtual List<Alarm> Alarms { get; set; }
         public virtual List<Log> Logs { get; set; }
 
-        public int DeviceId { get; set; }
+        public int? DeviceId { get; set; }
         public virtual Device Device { get; set; }
         #endregion
 

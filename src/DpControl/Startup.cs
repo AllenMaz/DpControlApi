@@ -141,6 +141,8 @@ namespace DpControl
             services.AddScoped<ISceneRepository, SceneRepository>();
             services.AddScoped<ISceneSegmentRepository, SceneSegmentRepository>();
             services.AddScoped<IGroupLocationRepository, GroupLocationRepository>();
+            services.AddScoped<IUserGroupRepository, UserGroupRepository>();
+            services.AddScoped<IUserLocationRepository, UserLocationRepository>();
             services.AddScoped<IHolidayRepository, HolidayRepository>();
             #endregion
         }
