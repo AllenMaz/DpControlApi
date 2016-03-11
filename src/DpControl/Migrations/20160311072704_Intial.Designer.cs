@@ -8,8 +8,8 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    [Migration("20160310033153_Initial")]
-    partial class Initial
+    [Migration("20160311072704_Intial")]
+    partial class Intial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,11 +23,11 @@ namespace DpControl.Migrations
                     b.Property<int>("AlarmId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AlarmMessageId");
+                    b.Property<int?>("AlarmMessageId");
 
-                    b.Property<int?>("DeviceLocationId");
+                    b.Property<DateTime>("CreateDate");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<int?>("LocationId");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -43,10 +43,10 @@ namespace DpControl.Migrations
                     b.Property<int>("AlarmMessageId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ErrorNo");
+                    b.Property<int>("ErrorCode");
 
                     b.Property<string>("Message")
-                        .HasAnnotation("MaxLength", 100);
+                        .HasAnnotation("MaxLength", 500);
 
                     b.HasKey("AlarmMessageId");
 
@@ -260,7 +260,7 @@ namespace DpControl.Migrations
                     b.Property<string>("Description")
                         .HasAnnotation("MaxLength", 2000);
 
-                    b.Property<int>("DeviceId");
+                    b.Property<int?>("DeviceId");
 
                     b.Property<string>("DeviceSerialNo")
                         .HasAnnotation("MaxLength", 16);
@@ -304,19 +304,26 @@ namespace DpControl.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Comment")
+                        .HasAnnotation("MaxLength", 500);
+
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<int?>("DeviceLocationId");
+                    b.Property<int?>("LocationId");
 
-                    b.Property<int>("LogDescriptionId");
+                    b.Property<int?>("LogDescriptionId");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .IsRequired();
+
+                    b.Property<string>("Modifier");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
-
-                    b.Property<string>("UserId");
 
                     b.HasKey("LogId");
 
@@ -329,9 +336,9 @@ namespace DpControl.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Description")
-                        .HasAnnotation("MaxLength", 100);
+                        .HasAnnotation("MaxLength", 500);
 
-                    b.Property<int>("DescriptionNo");
+                    b.Property<int>("DescriptionCode");
 
                     b.HasKey("LogDescriptionId");
 
@@ -564,7 +571,7 @@ namespace DpControl.Migrations
 
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("DeviceLocationId");
+                        .HasForeignKey("LocationId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.ApplicationUser", b =>
@@ -622,15 +629,11 @@ namespace DpControl.Migrations
                 {
                     b.HasOne("DpControl.Domain.Entities.Location")
                         .WithMany()
-                        .HasForeignKey("DeviceLocationId");
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("DpControl.Domain.Entities.LogDescription")
                         .WithMany()
                         .HasForeignKey("LogDescriptionId");
-
-                    b.HasOne("DpControl.Domain.Entities.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("DpControl.Domain.Entities.Project", b =>

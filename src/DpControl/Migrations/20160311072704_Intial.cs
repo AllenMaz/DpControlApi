@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Metadata;
 
 namespace DpControl.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Intial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,7 @@ namespace DpControl.Migrations
                 {
                     AlarmMessageId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ErrorNo = table.Column<int>(nullable: false),
+                    ErrorCode = table.Column<int>(nullable: false),
                     Message = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -67,7 +67,7 @@ namespace DpControl.Migrations
                     LogDescriptionId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Description = table.Column<string>(nullable: true),
-                    DescriptionNo = table.Column<int>(nullable: false)
+                    DescriptionCode = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -218,7 +218,7 @@ namespace DpControl.Migrations
                     Creator = table.Column<string>(nullable: false),
                     CurrentPosition = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    DeviceId = table.Column<int>(nullable: false),
+                    DeviceId = table.Column<int>(nullable: true),
                     DeviceSerialNo = table.Column<string>(nullable: true),
                     DeviceType = table.Column<int>(nullable: false),
                     FavorPositionFirst = table.Column<int>(nullable: false),
@@ -242,7 +242,7 @@ namespace DpControl.Migrations
                         principalSchema: "ControlSystem",
                         principalTable: "Devices",
                         principalColumn: "DeviceId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Location_Project_ProjectId",
                         column: x => x.ProjectId,
@@ -354,9 +354,9 @@ namespace DpControl.Migrations
                 {
                     AlarmId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    AlarmMessageId = table.Column<int>(nullable: false),
-                    DeviceLocationId = table.Column<int>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: false),
+                    AlarmMessageId = table.Column<int>(nullable: true),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    LocationId = table.Column<int>(nullable: true),
                     RowVersion = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>
@@ -368,10 +368,10 @@ namespace DpControl.Migrations
                         principalSchema: "ControlSystem",
                         principalTable: "AlarmMessages",
                         principalColumn: "AlarmMessageId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_Alarm_Location_DeviceLocationId",
-                        column: x => x.DeviceLocationId,
+                        name: "FK_Alarm_Location_LocationId",
+                        column: x => x.LocationId,
                         principalSchema: "ControlSystem",
                         principalTable: "Locations",
                         principalColumn: "LocationId",
@@ -385,36 +385,31 @@ namespace DpControl.Migrations
                     LogId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Comment = table.Column<string>(nullable: true),
-                    DeviceLocationId = table.Column<int>(nullable: true),
-                    LogDescriptionId = table.Column<int>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: false),
+                    LocationId = table.Column<int>(nullable: true),
+                    LogDescriptionId = table.Column<int>(nullable: true),
                     ModifiedDate = table.Column<DateTime>(nullable: false),
-                    RowVersion = table.Column<byte[]>(nullable: true),
-                    UserId = table.Column<string>(nullable: true)
+                    Modifier = table.Column<string>(nullable: true),
+                    RowVersion = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Log", x => x.LogId);
                     table.ForeignKey(
-                        name: "FK_Log_Location_DeviceLocationId",
-                        column: x => x.DeviceLocationId,
+                        name: "FK_Log_Location_LocationId",
+                        column: x => x.LocationId,
                         principalSchema: "ControlSystem",
                         principalTable: "Locations",
                         principalColumn: "LocationId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Log_LogDescription_LogDescriptionId",
                         column: x => x.LogDescriptionId,
                         principalSchema: "ControlSystem",
                         principalTable: "LogDescription",
                         principalColumn: "LogDescriptionId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Log_ApplicationUser_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "ControlSystem",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 });
             migrationBuilder.CreateTable(
                 name: "UserLocations",
