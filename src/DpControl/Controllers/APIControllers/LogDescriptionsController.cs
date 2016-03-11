@@ -11,7 +11,7 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
-    public class LogDescriptionController:BaseAPIController
+    public class LogDescriptionsController:BaseAPIController
     {
         [FromServices]
         public ILogDescriptionRepository _logDescriptionRepository { get; set; }

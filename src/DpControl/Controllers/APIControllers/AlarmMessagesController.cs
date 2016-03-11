@@ -11,7 +11,7 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
-    public class AlarmMessageController:BaseAPIController
+    public class AlarmMessagesController:BaseAPIController
     {
         [FromServices]
         public IAlarmMessageRepository _alarmMessageRepository { get; set; }
