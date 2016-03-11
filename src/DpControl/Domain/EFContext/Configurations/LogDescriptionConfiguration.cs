@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Builders;
 using DpControl.Domain.Entities;
+using Microsoft.Data.Entity.Metadata;
 
 namespace DpControl.Domain.EFContext.Configurations
 {
@@ -14,9 +15,10 @@ namespace DpControl.Domain.EFContext.Configurations
         {
             entityBuilder.HasKey(m => m.LogDescriptionId);
             entityBuilder.ToTable("LogDescription");
-            entityBuilder.Property(m => m.Description).HasMaxLength(100);
+            entityBuilder.Property(m => m.Description).HasMaxLength(500);
 
-            entityBuilder.HasMany(l => l.Logs).WithOne(d => d.Description).HasForeignKey(d => d.LogDescriptionId);
+            entityBuilder.HasMany(l => l.Logs).WithOne(d => d.Description).HasForeignKey(d => d.LogDescriptionId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

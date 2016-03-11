@@ -11,10 +11,10 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
-    public class UserLocationsController:BaseAPIController
+    public class AlarmsController:BaseAPIController
     {
         [FromServices]
-        public IUserLocationRepository _userLocationRepository { get; set; }
+        public IAlarmRepository _alarmRepository { get; set; }
 
         /// <summary>
         /// Add data
@@ -23,32 +23,32 @@ namespace DpControl.Controllers.APIControllers
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] UserLocationAddModel mUserLocation)
+        public async Task<IActionResult> AddAsync([FromBody] AlarmAddModel mAlarm)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
             }
 
-            var userLocationId = await _userLocationRepository.AddAsync(mUserLocation);
-            return CreatedAtRoute("GetByUserLocationIdAsync", new { controller = "UserLocations", userLocationId = userLocationId }, mUserLocation);
+            var alarmId = await _alarmRepository.AddAsync(mAlarm);
+            return CreatedAtRoute("GetByAlarmIdAsync", new { controller = "Alarms", alarmId = alarmId }, mAlarm);
         }
 
         /// <summary>
-        /// Search data by UserLocationId
+        /// Search data by AlarmId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [HttpGet("{userLocationId}", Name = "GetByUserLocationIdAsync")]
-        public async Task<IActionResult> GetByUserLocationIdAsync(int userLocationId)
+        [HttpGet("{alarmId}", Name = "GetByAlarmIdAsync")]
+        public async Task<IActionResult> GetByAlarmIdAsync(int alarmId)
         {
-            var userGroup = await _userLocationRepository.FindByIdAsync(userLocationId);
-            if (userGroup == null)
+            var alarm = await _alarmRepository.FindByIdAsync(alarmId);
+            if (alarm == null)
             {
                 return HttpNotFound();
             }
-            return new ObjectResult(userGroup);
+            return new ObjectResult(alarm);
         }
 
         /// <summary>
@@ -59,24 +59,24 @@ namespace DpControl.Controllers.APIControllers
         [HttpGet]
         [EnableQuery]
         [FormatReturnType]
-        public async Task<IEnumerable<UserLocationSearchModel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync([FromUri] Query query)
         {
 
-            var result = await _userLocationRepository.GetAllAsync(query); ;
+            var result = await _alarmRepository.GetAllAsync(query); ;
 
             return result;
         }
 
 
         /// <summary>
-        /// Delete data by UserLocationId
+        /// Delete data by AlarmId
         /// </summary>
-        /// <param name="userLocationId"></param>
+        /// <param name="alarmId"></param>
         [APIAuthorize(Roles = "Admin")]
-        [HttpDelete("{userLocationId}")]
-        public async Task<IActionResult> DeleteByUserLocationIdAsync(int userLocationId)
+        [HttpDelete("{alarmId}")]
+        public async Task<IActionResult> DeleteByAlarmIdAsync(int alarmId)
         {
-            await _userLocationRepository.RemoveByIdAsync(userLocationId);
+            await _alarmRepository.RemoveByIdAsync(alarmId);
             return Ok();
         }
     }

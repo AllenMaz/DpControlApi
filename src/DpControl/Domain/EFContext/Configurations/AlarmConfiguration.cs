@@ -14,10 +14,10 @@ namespace DpControl.Domain.EFContext.Configurations
         {
             entityBuilder.ToTable("Alarms");
             entityBuilder.HasKey(a => a.AlarmId);
-            entityBuilder.Property(a => a.ModifiedDate).IsRequired();
+            entityBuilder.Property(a => a.CreateDate).IsRequired();
             entityBuilder.Property(a => a.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
-            entityBuilder.HasOne(a=>a.DeviceLocation).WithMany(o => o.Alarms).IsRequired(false);
+            entityBuilder.HasOne(a=>a.Location).WithMany(o => o.Alarms).HasForeignKey(a=>a.LocationId);
         }
     }
 }

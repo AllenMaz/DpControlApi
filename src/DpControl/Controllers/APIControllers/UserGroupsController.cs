@@ -74,7 +74,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="userGroupId"></param>
         [APIAuthorize(Roles = "Admin")]
         [HttpDelete("{userGroupId}")]
-        public async Task<IActionResult> DeleteByProjectIdIdAsync(int userGroupId)
+        public async Task<IActionResult> DeleteByUserGroupIdAsync(int userGroupId)
         {
             await _userGroupRepository.RemoveByIdAsync(userGroupId);
             return Ok();

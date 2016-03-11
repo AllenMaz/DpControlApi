@@ -93,7 +93,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="DeviceId"></param>
         [APIAuthorize(Roles = "Admin")]
         [HttpDelete("{deviceId}")]
-        public async Task<IActionResult> DeleteByProjectIdIdAsync(int deviceId)
+        public async Task<IActionResult> DeleteByDeviceIdAsync(int deviceId)
         {
             await _deviceRepository.RemoveByIdAsync(deviceId);
             return Ok();

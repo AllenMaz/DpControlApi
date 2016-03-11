@@ -93,7 +93,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="customerId"></param>
         [APIAuthorize(Roles = "Admin")]
         [HttpDelete("{sceneSegmentId}")]
-        public async Task<IActionResult> DeleteByProjectIdIdAsync(int sceneSegmentId)
+        public async Task<IActionResult> DeleteBySceneSegmentIdAsync(int sceneSegmentId)
         {
             await _sceneSegmentRepository.RemoveByIdAsync(sceneSegmentId);
             return Ok();

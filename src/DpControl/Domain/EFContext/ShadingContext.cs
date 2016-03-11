@@ -22,7 +22,7 @@ namespace DpControl.Domain.EFContext
         public DbSet<Location> Locations { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Log> Logs { get; set; }
-        public DbSet<LogDescription> LogDescription { get; set; }
+        public DbSet<LogDescription> LogDescriptions { get; set; }
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<Scene> Scenes { get; set; }
         public DbSet<SceneSegment> SceneSegments { get; set; }

@@ -6,9 +6,7 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface IAlarmRepository
+    public interface IAlarmRepository:IBaseRepository<AlarmAddModel,AlarmUpdateModel,AlarmSearchModel>
     {
-        Task Add(string sceneName, string projectNo);
-        Task<IEnumerable<MAlarm>> GetAll(string projectNo);
     }
 }

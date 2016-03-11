@@ -15,12 +15,13 @@ namespace DpControl.Domain.EFContext.Configurations
         {
             entityBuilder.ToTable("Logs");
             entityBuilder.HasKey(p => p.LogId);
-            entityBuilder.Property(l => l.Comment).HasMaxLength(50);
-            entityBuilder.Property(o => o.ModifiedDate).IsRequired();
+            entityBuilder.Property(l => l.Comment).HasMaxLength(500);
+            entityBuilder.Property(l => l.Creator).HasMaxLength(50).IsRequired();
+            entityBuilder.Property(l => l.CreateDate).IsRequired();
             entityBuilder.Property(o => o.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 
-            entityBuilder.HasOne(l => l.DeviceLocation).WithMany(l => l.Logs).IsRequired(false);
-            entityBuilder.HasOne(l => l.User).WithMany(o => o.Logs);
+            entityBuilder.HasOne(l => l.Location).WithMany(l => l.Logs).HasForeignKey(l=>l.LocationId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

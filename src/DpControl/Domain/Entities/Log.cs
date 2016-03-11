@@ -12,15 +12,17 @@ namespace DpControl.Domain.Entities
         public string Comment { get; set; }         // used to express additional information
 
         #region Relationship
-        public int LogDescriptionId { get; set; }
+        public int? LogDescriptionId { get; set; }
         public LogDescription Description { get; set; }
-        public int? DeviceLocationId { get; set; }
-        public Location DeviceLocation { get; set; }
-       
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public int? LocationId { get; set; }
+        public Location Location { get; set; }
+
         #endregion
-        public DateTime ModifiedDate { get; set; }
+        public string Creator { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string Modifier { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+
         public byte[] RowVersion { get; set; }
     }
 }

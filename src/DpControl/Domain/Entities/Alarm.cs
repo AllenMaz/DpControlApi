@@ -11,13 +11,13 @@ namespace DpControl.Domain.Entities
         public int AlarmId { get; set; }
 
         #region relationship
-        public int AlarmMessageId { get; set; }
+        public int? AlarmMessageId { get; set; }
         public AlarmMessage AlarmMessage { get; set; }
-        public int? DeviceLocationId { get; set; }
-        public Location DeviceLocation { get; set; }
+        public int? LocationId { get; set; }
+        public Location Location { get; set; }
         #endregion
 
-        public DateTime ModifiedDate { get; set; }      // alarms generated time
+        public DateTime CreateDate { get; set; }      // alarms generated time
         public byte[] RowVersion { get; set; }
 
     }
