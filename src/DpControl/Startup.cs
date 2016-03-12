@@ -193,7 +193,7 @@ namespace DpControl
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Default}/{id?}");
             });
             
             app.UseSwaggerGen();
