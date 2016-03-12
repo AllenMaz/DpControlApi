@@ -2,48 +2,67 @@
 @using Microsoft.AspNet.Http
 @using Microsoft.AspNet.Http.Authentication
 @model LoginViewModel
-
 @{
-    ViewData["Title"] = "Log in";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login In</title>
+    <link rel="stylesheet" href="~/css/style.default.css" type="text/css" />
+    <link rel='stylesheet' href='~/css/slidetounlock.css'>
 
-<h2>@ViewData["Title"].</h2>
-<div class="row">
-    <div class="col-md-5">
-        <section>
-            <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
-                <h4>Use a Admin account to log in.</h4>
-                <hr />
-                <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="UserName" class="col-md-2 control-label"></label>
-                    <div class="col-md-5">
-                        <input asp-for="UserName" class="form-control" />
-                        <span asp-validation-for="UserName" class="text-danger"></span>
-                    </div>
+    <script type="text/javascript" src="~/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="~/js/jquery-migrate-1.1.1.min.js"></script>
+    <script type="text/javascript" src="~/js/jquery-ui-1.9.2.min.js"></script>
+    <script type="text/javascript" src="~/js/modernizr.min.js"></script>
+    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="~/js/custom.js"></script>
+    <script type="text/javascript" src="~/js/slidetounlock.js"></script>
+    <style>
+        .marginBottom {
+            margin-bottom:10px;
+        }
+    </style>    
+</head>
+
+<body class="loginpage">
+
+    <div class="loginpanel">
+        <div class="loginpanelinner">
+            <div class="logo animate0 bounceIn">
+                @*<img src="~/images/logo.png" alt="" />*@
+                <h1 style="color:white;">Login</h1>
+            </div>
+            <form id="login" asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
+                
+                <div asp-validation-summary="ValidationSummary.All" class="marginBottom" style="font-size:medium;color:white;"></div>
+                
+                <div class="inputwrapper animate1 bounceIn marginBottom">
+                    <input asp-for="UserName"  placeholder="Enter UserName" required 
+                           oninvalid="setCustomValidity('UserName is required')" oninput="setCustomValidity('')" type="text"/>
+
                 </div>
-                <div class="form-group">
-                    <label asp-for="Password" class="col-md-2 control-label"></label>
-                    <div class="col-md-5">
-                        <input asp-for="Password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
+                <div class="inputwrapper animate2 bounceIn marginBottom">
+                    <input asp-for="Password"  placeholder="Enter Password" required 
+                          oninvalid="setCustomValidity('Password is required')" oninput="setCustomValidity('')" type="password"/>
                 </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-5">
-                        <div class="checkbox">
-                            <input asp-for="RememberMe" />
-                            <label asp-for="RememberMe"></label>
-                        </div>
+                <div id="well" class="inputwrapper animate3 bounceIn">
+                    <div id="unlock" >
+                        <span id="slider"></span>
                     </div>
+                    <h5 style="color:white"> Please drag the slider to the right</h5>
                 </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" class="btn btn-default">Log in</button>
-                    </div>
+                <div class="inputwrapper animate4 bounceIn">
+                    <button id="submit" name="submit" class="btn" style="background-color: #e6e6e6;">Sign In</button>
                 </div>
-               
+
             </form>
-        </section>
-    </div>
-</div>
+        </div><!--loginpanelinner-->
+    </div><!--loginpanel-->
+
+</body>
+</html>
+
