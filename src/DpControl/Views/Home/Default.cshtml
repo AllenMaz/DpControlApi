@@ -1,8 +1,36 @@
 ﻿@{
     ViewBag.Title = "DpControl";
 }
+<!DOCTYPE html>
 
-<script>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-table/dist/bootstrap-table.css" />
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/bootstrap-table/dist/bootstrap-table.min.js"></script>
+        <script src="~/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+
+        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/locale/bootstrap-table-zh-CN.min.js"></script>
+    </environment>
+
+    <script src="~/lib/knockout/dist/knockout.js"></script>
+    <script src="~/lib/layer/layer.js"></script>
+    <script>
     $(document).ready(function () {
         $("#aHttpOverrideTitle").click(function () {
             $("#divHttpOverride").toggle();
@@ -15,75 +43,116 @@
     });
 
 
-</script>
-<div id="myCarousel" class="carousel slide">
-    <!-- 轮播（Carousel）指标 -->
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <!-- 轮播（Carousel）项目 -->
-    <div class="carousel-inner">
-        <div class="item active">
-            <img src="~/images/open.jpg" style="height:300px;width:100%" alt="First slide">
-        </div>
-        <div class="item">
-            <img src="~/images/azure.png" style="height:300px; width:100%" alt="Second slide">
-        </div>
-        <div class="item">
-            <img src="~/images/web.jpg" style="height:300px;" alt="Third slide">
-        </div>
-    </div>
-    <!-- 轮播（Carousel）导航 -->
-    <a class="carousel-control left" href="#myCarousel"
-       data-slide="prev">&lsaquo;</a>
-    <a class="carousel-control right" href="#myCarousel"
-       data-slide="next">&rsaquo;</a>
-</div>
-<div class="row">
-    <div class="col-xs-12 col-md-12">
-        <h3>There are some Features:</h3>
-        <ul>
-            <li class="lead">
-                Filter by filter
-                <p class="text-lowercase">
-                    <span class="glyphicon glyphicon-leaf"></span> Return all Customers with CustomerName equal to 'Allen' and CustomerNo equal to '333'<br />
-                    <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
-                </p>
-                <p class="text-lowercase">
-                    <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId >= 15<br />
-                    <a href="/v1/Customers?filter=CustomerId gt 15">/v1/Customers?filter=CustomerId gt 15</a>
-                </p>
-                <p class="text-lowercase">
-                    <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId <= 10<br />
-                    <a href="/v1/Customers?filter=CustomerId lt 10">/v1/Customers?filter=CustomerId lt 10</a>
-                </p>
-            </li>
-            <li class="lead">
-                OrderBy orderby(desc/asc)
-                <p class="text-lowercase">
-                    <a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a>
-                </p>
-            </li>
-            <li class="lead">
-                Paging by skip and top
-                <p class="text-lowercase">
-                    <a href="/v1/Customers?skip=3&top=10">/v1/Customers?skip=3&top=10</a>
-                </p>
-            </li>
-            <li class="lead">
-                Support X-HTTP-Method-Override (Via Post to request Put,Patch,Delete)
+    </script>
+
+</head>
+<body>
+    <div class="navbar navbar-inverse">
+        <!--.container 类用于固定宽度并支持响应式布局的容器-->
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Restful WebApi", "Default", "Home", null, new { @class = "navbar-brand" })
+
+            </div>
+            <div class="navbar-collapse collapse">
+
+                @await Html.PartialAsync("_LoginPartial")
+            </div>
+            <div class="row" style="padding-left:15px;">
+                <label style="color:#EEE">More Detail,Click: </label>
+                <a href="/Swagger/ui" target="_blank" style="color:#60B733">API Document</a>
                 <br />
-                <a id="aHttpOverrideTitle" href="#" style="cursor:help">Example</a>
-                <div id="divHttpOverride" style="display:none">
-                    <img src="~/images/httpOverride.png" style="width:50%" />
-                </div>
-            </li>
-        </ul>
-
+                @*<label>
+                        <a href="http://192.168.20.239:8080/bugnet" target="_blank" style="color:#EEE">DpControl Project Management</a>
+                    </label>*@
+            </div>
+        </div>
     </div>
 
-</div>
+    <div class="container body-content">
+        <div id="myCarousel" class="carousel slide">
+            <!-- 轮播（Carousel）指标 -->
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+            </ol>
+            <!-- 轮播（Carousel）项目 -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    <img src="~/images/open.jpg" style="height:300px;width:100%" alt="First slide">
+                </div>
+                <div class="item">
+                    <img src="~/images/azure.png" style="height:300px; width:100%" alt="Second slide">
+                </div>
+                <div class="item">
+                    <img src="~/images/web.jpg" style="height:300px;" alt="Third slide">
+                </div>
+            </div>
+            <!-- 轮播（Carousel）导航 -->
+            <a class="carousel-control left" href="#myCarousel"
+               data-slide="prev">&lsaquo;</a>
+            <a class="carousel-control right" href="#myCarousel"
+               data-slide="next">&rsaquo;</a>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                <h3>There are some Features:</h3>
+                <ul>
+                    <li class="lead">
+                        Filter by filter
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers with CustomerName equal to 'Allen' and CustomerNo equal to '333'<br />
+                            <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
+                        </p>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId >= 15<br />
+                            <a href="/v1/Customers?filter=CustomerId gt 15">/v1/Customers?filter=CustomerId gt 15</a>
+                        </p>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId <= 10<br />
+                            <a href="/v1/Customers?filter=CustomerId lt 10">/v1/Customers?filter=CustomerId lt 10</a>
+                        </p>
+                    </li>
+                    <li class="lead">
+                        OrderBy orderby(desc/asc)
+                        <p class="text-lowercase">
+                            <a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a>
+                        </p>
+                    </li>
+                    <li class="lead">
+                        Paging by skip and top
+                        <p class="text-lowercase">
+                            <a href="/v1/Customers?skip=3&top=10">/v1/Customers?skip=3&top=10</a>
+                        </p>
+                    </li>
+                    <li class="lead">
+                        Support X-HTTP-Method-Override (Via Post to request Put,Patch,Delete)
+                        <br />
+                        <a id="aHttpOverrideTitle" href="#" style="cursor:help">Example</a>
+                        <div id="divHttpOverride" style="display:none">
+                            <img src="~/images/httpOverride.png" style="width:50%" />
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.ToString("yyyy/MM/dd") - Padmate</p>
+        </footer>
+    </div>
+
+</body>
+</html>
+
 
 

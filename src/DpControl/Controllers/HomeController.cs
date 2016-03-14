@@ -14,9 +14,17 @@ namespace DpControl.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Board()
+        {
+            return View();
+        }
+        
     }
 }

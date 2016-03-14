@@ -2,21 +2,14 @@
 
 @if (User.IsSignedIn())
 {
-    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
-       
-        <ul class="nav navbar-nav navbar-right">
+    <ul class="nav navbar-nav navbar-right">
 
-            <li>
-                <a href="#"><label class="text-danger">Hello @User.GetUserName()!</label></a>
-            </li>
-            <li><a asp-controller="Manage" asp-action="IndexForRole" >Add Role</a></li>
-            <li><a asp-controller="Manage" asp-action="IndexForUser" >Add User</a></li>
-            <li>
-                <a href="javascript:document.getElementById('logoutForm').submit()" >注销</a>
-            </li>
-        </ul>
-           
-    </form>
+        <li>
+            <a href="#"><label class="text-danger">Hello @User.GetUserName()!</label></a>
+        </li>
+        <li><a asp-controller="Home" asp-action="Index">Go to</a></li>
+
+    </ul>
     
 }
 else
