@@ -36,22 +36,6 @@ namespace DpControl.Models
         }
         #endregion
     }
-
-    public class DataTableReturnObject
-    {
-        private long iTotalRecords;
-        private long iTotalDisplayRecords;
-        private int sEcho;
-        private String[][] aaData;
-
-        public DataTableReturnObject(long totalRecords, long totalDisplayRecords, int echo, String[][] d)
-        {
-            iTotalRecords = totalRecords;
-            iTotalDisplayRecords = totalDisplayRecords;
-            sEcho = echo;
-            aaData = d;
-        }
-        
-    }
+    
 
 }

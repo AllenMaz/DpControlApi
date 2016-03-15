@@ -13,24 +13,8 @@ namespace DpControl.Models
         //public int offset { get; set; }
         #endregion
     }
-
-    public class TableParams
-    {
-        #region Jquery Tables
-        public int sEcho { get; set; }
-        public int iDisplayStart { get; set; }
-        public int iDisplayLength { get; set; }
-        #endregion
-    }
-
-    public class JQueryTableParam
-    {
-        public string name { get; set; }
-
-        public object value { get; set; }
-    }
-
-    public class jQueryDataTableParams
+    
+    public class JQueryDataTableParams
     {
         /// <summary>  
         /// Request sequence number sent by DataTable,  
@@ -62,5 +46,29 @@ namespace DpControl.Models
         /// </summary>  
         public string sColumns { get; set; }
 
+    }
+
+    public class Menu
+    {
+        public string MenuId { get; set; }
+
+        public string MenuName { get; set; }
+
+        public int Order { get; set; }
+
+        /// <summary>
+        /// fullname eg:logo.png
+        /// </summary>
+        public string MenuIcon { get; set; }
+
+        public string MenuUrl { get; set; }
+
+        public List<Menu> SecondaryMenus { get; set; }
+
+
+        public Menu()
+        {
+            SecondaryMenus = new List<Menu>();
+        }
     }
 }

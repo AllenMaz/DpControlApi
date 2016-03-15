@@ -1,5 +1,7 @@
 ﻿@using System.Security.Claims
+@Model
 @{
+    List<Menu> menus = (List<Menu>)ViewData["Menus"];
     Layout = null;
 }
 <!DOCTYPE html>
@@ -37,28 +39,71 @@
     <script type="text/javascript" src="~/js/chosen.jquery.min.js"></script>
     <script type="text/javascript" src="~/js/forms.js"></script>
     
-    <script src="~/lib/knockout/dist/knockout.js"></script>
     <script src="~/lib/layer/layer.js"></script>
     <style>
        
 
     </style>
     <script type="text/javascript">
-			jQuery(document).ready(function() {
-			    OpenBoard();
-			});
+        var allMenus =  @Html.Raw(Json.Serialize(ViewData["Menus"]));
+       
+
+        jQuery(document).ready(function() {
+            //GenerateTree();
+			OpenBoard();
+		});
             
-			function OpenBoard() {
+        function GenerateTree()
+        {
+            var menuHtml =  GenerateMenuTree(allMenus);
+            jQuery("#menuNavigation").append(menuHtml);
 
-			    var boardUrl = "/Home/Board";
-			    OpenTab(boardUrl);
+        }
 
-			}
+        function GenerateMenuTree(menus)
+        {
+            var menuHtml;
+            for(var i=0;i<menus.length;i++)
+            {
+                menuHtml +='<li class="dropdown">';
+                if(i==0) menuHtml +='<li class="dropdown active">';
+               
+                var tabIndexTitle = menus[i].MenuName;
 
-			function OpenTab(tabUrl) {
+                if(menus[i].MenuName == "" || menus[i].MenuName ==null)
+                {
+                    //if no url ,then set to be a menu
+                    menuHtml += '<a href=""><span class="iconfa-pencil"></span>'+menus[i].MenuName+'</a>';
+                    menuHtml += '<ul>';
+                    menuHtml += GenerateMenuTree(menus[i].SecondaryMenus);
+                    menuHtml += "</ul>";
 
-			    jQuery("#divMainContent").load(tabUrl);
-			}
+                }else{
+                    //if has url ,then set to be a link
+                    menuHtml += '<a href="#" onclick="OpenTab("'+tabIndexTitle+'","'+menus[i].MenuUrl+'")>'+menus[i].MenuName+'</a>';
+                }
+
+                
+                menuHtml +="</li>";
+            }
+            
+            return menuHtml;
+
+		}
+
+		function OpenBoard() {
+
+			var boardUrl = "/Home/Board";
+			var tabIndexTitle = "Home > Board";
+			OpenTab(tabIndexTitle,boardUrl);
+
+		}
+
+		function OpenTab(tabIndexTitle,tabUrl) {
+			//Dynamic Write Title
+			jQuery("#TabIndexTitle").html(tabIndexTitle)
+			jQuery("#divMainContent").load(tabUrl);
+		}
             
 			
 			
@@ -131,38 +176,56 @@
 
             <div class="leftmenu">
                 <ul class="nav nav-tabs nav-stacked">
-                    <li class="nav-header">Navigation</li>
+                    <li class="nav-header" id="menuNavigation">Navigation</li>
+                    @foreach (Menu menu in menus)
+                    {
+                        var tabIndexTitle = "";
+                        <li class="dropdown">
+                        @if (string.IsNullOrEmpty(menu.MenuUrl))
+                        {
+                            tabIndexTitle = menu.MenuName;
+                            //一级菜单
+                            //if no url ,then set to be a menu
+                            <a href=""><span class="iconfa-pencil"></span>@menu.MenuName</a>
+                            <ul>
+                                @foreach (Menu leveal2Menu in menu.SecondaryMenus)
+                                {
+                                    tabIndexTitle = menu .MenuName+ " > "+leveal2Menu.MenuName;
+                                    //二级菜单
+                                    if (string.IsNullOrEmpty(leveal2Menu.MenuUrl))
+                                    {
+                                        <li class="dropdown">
+                                            <a href="">@leveal2Menu.MenuName</a>
+                                            <ul>
+                                                
+                                                @foreach (Menu leveal3Menu in leveal2Menu.SecondaryMenus)
+                                                {
+                                                    tabIndexTitle = menu.MenuName + " > " + leveal2Menu.MenuName+" > "+leveal3Menu.MenuName;
+                                                    //三级菜单
+                                                    <li><a href="#" onclick="OpenTab('@tabIndexTitle','@leveal3Menu.MenuUrl')">@leveal3Menu.MenuName</a></li>
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        //if has url ,then set to be a link
+                                        <li><a href="#" onclick="OpenTab('@tabIndexTitle','@leveal2Menu.MenuUrl')">@leveal2Menu.MenuName</a></li>
+                                    }
 
-                    <li class="dropdown active">
-                        <a href=""><span class="iconfa-pencil"></span>客户信息</a>
-                        <ul>
-                            <li class="dropdown">
-                                <a href="">客户信息</a>
-                                <ul>
-                                    <li><a href="Customer.html">查看客户</a></li>
-                                    <li><a href="MotorInfo.html">查看电机</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="">供应商信息</a></li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            //if has url ,then set to be a link
+                            <a href="#" onclick="OpenTab('@tabIndexTitle','@menu.MenuUrl')">@menu.MenuName</a>
+                        }
+                            
+                        </li>
+                    }
 
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href=""><span class="iconfa-pencil"></span>账号信息</a>
-                        <ul>
-                            <li><a href="Operator.html">分配账号</a></li>
-                            <li><a href="#" onclick="OpenTab('/Manage/IndexForRole')">Role Management</a></li>
-                            <li><a asp-controller="Manage" asp-action="IndexForUser">User Management</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href=""><span class="iconfa-pencil"></span>维护信息</a>
-                        <ul>
-                            <li><a href="WarnDictionarie1201.html">报警字典</a></li>
-                            <li><a href="OperationLog.html">报警日志</a></li>
-                            <li><a href="RepairMotorLog.html">操作日志</a></li>
-                        </ul>
-                    </li>
+                    
                 </ul>
             </div>
             <!--leftmenu-->
@@ -173,10 +236,9 @@
         <div class="rightpanel">
 
             <ul class="breadcrumbs">
-                <li><a href="dashboard.html"><i class="iconfa-home"></i></a> <span class="separator"></span></li>
-                <li><a href="table-static.html">Tables</a> <span class="separator"></span></li>
-                <li>Table Dynamic</li>
-
+                <li><i class="iconfa-home"></i> <span class="separator"></span></li>
+                <li><label id="TabIndexTitle"> </label></li>
+                
 
             </ul>
 

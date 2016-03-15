@@ -31,17 +31,6 @@
     </div>
 </div>
 <div id="toolbar">
-    
-    @*<button id="btnAdd" class="btn btn-primary">
-        <i class="glyphicon glyphicon-plus"></i>Add
-    </button>
-    <button id="btnEdit" class="btn btn-success">
-        <i class="glyphicon glyphicon-plus"></i>Edit
-    </button>
-    <button id="btnDelete" class="btn btn-danger">
-        <i class="glyphicon glyphicon-remove"></i> Delete
-    </button>*@
-
     <a class="btn btn-primary" href='#RoleAddModel' data-toggle='modal'>
         <span class="iconfa-book">Add</span>
     </a>
@@ -160,17 +149,6 @@
                     "mDataProp": "NormalizedName"
                 }
             ],
-           // "aoColumnDefs": [
-           //   {
-           //       "aTargets": [1],
-           //       "mRender": function (data, display, row) {
-                    
-           //           return "asdf";
-
-           //       }
-           //   },
-
-           //],
             "oLanguage": {
                 "sLengthMenu": "Show _MENU_ entries",
                 "sZeroRecords": "没有检索到数据",
@@ -194,7 +172,7 @@
         aoData.push({ "name": "customerName", "value": "asdas" });//添加自己的额外参数  
 
         jQuery.ajax({
-            "type": "GET",
+            "type": "post",
             //"contentType": "application/json",
             "url": sSource,
             "dataType": "json",

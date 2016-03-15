@@ -48,14 +48,16 @@ namespace DpControl.Controllers
         /// Get User Paging Data
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetUserPageData()
+        public IActionResult GetUserPageData(JQueryDataTableParams jqueryTableParams)
         {
-            //get paging or searching params
-            TableParams tableParams = GetJqueryTableParams();
-
-
+            
             var allUsers = _userManager.Users.ToList();
-            var pageUserData = _userManager.Users.Skip(tableParams.iDisplayStart).Take(tableParams.iDisplayLength).ToList();
+            //GET ALL
+            if (jqueryTableParams.iDisplayLength == -1)
+            {
+                jqueryTableParams.iDisplayLength = allUsers.Count;
+            }
+            var pageUserData = _userManager.Users.Skip(jqueryTableParams.iDisplayStart).Take(jqueryTableParams.iDisplayLength).ToList();
             PageResult<ApplicationUser> pageResult = new PageResult<ApplicationUser>(allUsers.Count, pageUserData);
 
             return Json(pageResult);
@@ -154,12 +156,20 @@ namespace DpControl.Controllers
         /// Get Role Paging Data
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetRolePageData(jQueryDataTableParams jqueryTableParams)
+        public IActionResult GetRolePageData(JQueryDataTableParams jqueryTableParams)
         {
-            //get paging or searching params
-            //TableParams tableParams = GetJqueryTableParams();
-            
+            //HttpRequest rq = Request;
+            //StreamReader srRequest = new StreamReader(rq.Body);
+            //String strReqStream = srRequest.ReadToEnd();
+            //JQueryDataTableParams jqueryTableParam = JsonHandler.UnJson<JQueryDataTableParams>(strReqStream);
+
             var allRoles = _roleManager.Roles.ToList();
+            //GET ALL
+            if (jqueryTableParams.iDisplayLength == -1)
+            {
+                jqueryTableParams.iDisplayLength = allRoles.Count;
+            }
+
             var pageRoleData = _roleManager.Roles.Skip(jqueryTableParams.iDisplayStart).Take(jqueryTableParams.iDisplayLength).ToList();
             PageResult<IdentityRole> pageResult = new PageResult<IdentityRole>(jqueryTableParams.sEcho,allRoles.Count, pageRoleData);
             
@@ -177,7 +187,6 @@ namespace DpControl.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRole(string RoleName)
         {
             HttpRequest rq = Request;
