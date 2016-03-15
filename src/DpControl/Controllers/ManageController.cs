@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace DpControl.Controllers
 {
     [Authorize(Roles ="Admin")]
-    public class ManageController:Controller
+    public class ManageController:BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -50,14 +50,12 @@ namespace DpControl.Controllers
         /// <returns></returns>
         public IActionResult GetUserPageData()
         {
-            //get params
-            HttpRequest rq = Request;
-            StreamReader srRequest = new StreamReader(rq.Body);
-            String strReqStream = srRequest.ReadToEnd();
-            BaseModel baseModel = JsonHandler.UnJson<BaseModel>(strReqStream);
+            //get paging or searching params
+            TableParams tableParams = GetJqueryTableParams();
+
 
             var allUsers = _userManager.Users.ToList();
-            var pageUserData = _userManager.Users.Skip(baseModel.offset).Take(baseModel.limit).ToList();
+            var pageUserData = _userManager.Users.Skip(tableParams.iDisplayStart).Take(tableParams.iDisplayLength).ToList();
             PageResult<ApplicationUser> pageResult = new PageResult<ApplicationUser>(allUsers.Count, pageUserData);
 
             return Json(pageResult);
@@ -156,17 +154,15 @@ namespace DpControl.Controllers
         /// Get Role Paging Data
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetRolePageData()
+        public IActionResult GetRolePageData(jQueryDataTableParams jqueryTableParams)
         {
-            //get params
-            HttpRequest rq = Request;
-            StreamReader srRequest = new StreamReader(rq.Body);
-            String strReqStream = srRequest.ReadToEnd();
-            BaseModel baseModel = JsonHandler.UnJson<BaseModel>(strReqStream);
-
+            //get paging or searching params
+            //TableParams tableParams = GetJqueryTableParams();
+            
             var allRoles = _roleManager.Roles.ToList();
-            var pageRoleData = _roleManager.Roles.Skip(baseModel.offset).Take(baseModel.limit).ToList();
-            PageResult<IdentityRole> pageResult = new PageResult<IdentityRole>(allRoles.Count, pageRoleData);
+            var pageRoleData = _roleManager.Roles.Skip(jqueryTableParams.iDisplayStart).Take(jqueryTableParams.iDisplayLength).ToList();
+            PageResult<IdentityRole> pageResult = new PageResult<IdentityRole>(jqueryTableParams.sEcho,allRoles.Count, pageRoleData);
+            
 
             return Json(pageResult);
         }
@@ -181,25 +177,34 @@ namespace DpControl.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateRole(string RoleName)
         {
-            if (ModelState.IsValid)
+            HttpRequest rq = Request;
+            StreamReader srRequest = new StreamReader(rq.Body);
+            String strReqStream = srRequest.ReadToEnd();
+
+            Message message = new Message();
+            message.Success = true;
+            if (string.IsNullOrEmpty(RoleName))
             {
-                //新增角色
-                IdentityRole adminRole = new IdentityRole { Name = model.RoleName, NormalizedName = model.RoleName.ToUpper() };
-                var result = await _roleManager.CreateAsync(adminRole);
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation(3, "Role created");
-                    return RedirectToAction(nameof(ManageController.IndexForRole), "Manage");
-                    
-                }
-                AddErrors(result);
+                message.Success = false;
+                message.Content = "Role Name is required";
+                return Json(message);
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            //新增角色
+            IdentityRole adminRole = new IdentityRole { Name = RoleName, NormalizedName = RoleName.ToUpper() };
+            var result = await _roleManager.CreateAsync(adminRole);
+            if (!result.Succeeded)
+            {
+                message.Success = false;
+                message.Content = result.Errors.First().Description;
+                return Json(message);
+
+            }
+            return Json(message);
+            
         }
 
         public async Task<IActionResult> BachDeleteByRoleId(string RoleIds)
