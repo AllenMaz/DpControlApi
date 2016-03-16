@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using System.Net;
 using DpControl.Utility.Authorization;
 using DpControl.Utility;
+using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Cors;
 
 namespace DpControl
 {
@@ -62,7 +64,26 @@ namespace DpControl
             services.AddEntityFramework()
                 .AddSqlServer();
 
+            //Corss Origin Resource Sharing
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigin",
+                    builder => builder.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowCredentials()
+                );
+                options.AddPolicy("RefuseAllOrigin",
+                    builder => builder.WithOrigins()
+                              .DisallowCredentials()
+                );
+            });
+
             services.AddMvc();
+            //services.Configure<MvcOptions>(options =>
+            //{
+            //    options.Filters.Add(new CorsAuthorizationFilterFactory("AllowOrigin"));
+            //});
 
             #region Cache
             //Add MemoryCache
@@ -186,6 +207,8 @@ namespace DpControl
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
 
+            
+
             //Identity
             app.UseIdentity();
             
@@ -194,6 +217,9 @@ namespace DpControl
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
 
             app.UseStaticFiles();
+
+            //before UseMvc
+            app.UseCors("AllowAllOrigin");
 
             //app.UseMvc();
             app.UseMvc(routes =>

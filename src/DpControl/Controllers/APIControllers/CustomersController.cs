@@ -16,6 +16,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using DpControl.Utility.Authorization;
 using Microsoft.AspNet.Authorization;
 using DpControl.Utility.Authentication;
+using Microsoft.AspNet.Cors;
 
 namespace DpControl.APIControllers
 {

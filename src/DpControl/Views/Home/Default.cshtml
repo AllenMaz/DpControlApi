@@ -40,6 +40,12 @@
             interval: 8000,
             pause:'cycle'
         });
+
+        $("#aHttpCORSTitle").click(function () {
+            $("#divCORS").toggle();
+        });
+
+        
     });
 
 
@@ -104,6 +110,14 @@
             <div class="col-xs-12 col-md-12">
                 <h3>There are some Features:</h3>
                 <ul>
+                    <li class="lead">
+                        Support Corss Origin Resource Sharing
+                        <br />
+                        <a id="aHttpCORSTitle" href="#" style="cursor:help">Example</a>
+                        <div id="divCORS" style="display:none">
+                            <img src="~/images/cors.png" style="width:50%" />
+                        </div>
+                    </li>
                     <li class="lead">
                         Filter by filter
                         <p class="text-lowercase">
