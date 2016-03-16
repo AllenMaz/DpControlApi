@@ -486,11 +486,11 @@ h5 {
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
 	display: block;
 	font-size: 13px;
-	padding: 7px 10px 7px 50px;
+	padding: 7px 10px 7px 40px;
 	color: #333;
-	background-position: 25px 12px;
+	/*background-position: 25px 12px;
 	background-image: url(../images/menuarrow.png);
-	background-repeat: no-repeat;
+	background-repeat: no-repeat;*/
 }
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
 	background-color: #fff;

@@ -42,7 +42,28 @@
     <script src="~/lib/layer/layer.js"></script>
     <style>
        
+        .Level2ListMenuStyle {
+            display: block;
+	        font-size: 13px;
+	        padding: 7px 10px 7px 40px;
+	        color: #333;
+	        background-position: 25px 12px;
+	        background-image: url(../images/menuarrow.png);
+	        background-repeat: no-repeat;
+            background-color:#C3C3B3;
+        }
 
+
+        .lastMenuStyle {
+            display: block;
+	        font-size: 13px;
+	        padding: 7px 10px 7px 40px;
+	        color: #333;
+	        background-position: 25px 12px;
+	        background-image: url(../images/check.png);
+	        background-repeat: no-repeat;
+        }
+        
     </style>
     <script type="text/javascript">
         var allMenus =  @Html.Raw(Json.Serialize(ViewData["Menus"]));
@@ -56,21 +77,22 @@
         function GenerateTree()
         {
             var menuHtml =  GenerateMenuTree(allMenus);
-            jQuery("#menuNavigation").append(menuHtml);
+            jQuery("#menuNavigation").after(menuHtml);
 
         }
 
+        //Generate Level 1 Menu
         function GenerateMenuTree(menus)
         {
-            var menuHtml;
+            var menuHtml="";
             for(var i=0;i<menus.length;i++)
             {
+                
                 menuHtml +='<li class="dropdown">';
-                if(i==0) menuHtml +='<li class="dropdown active">';
-               
+                
                 var tabIndexTitle = menus[i].MenuName;
 
-                if(menus[i].MenuName == "" || menus[i].MenuName ==null)
+                if(menus[i].MenuUrl == "" || menus[i].MenuUrl ==null)
                 {
                     //if no url ,then set to be a menu
                     menuHtml += '<a href=""><span class="iconfa-pencil"></span>'+menus[i].MenuName+'</a>';
@@ -115,8 +137,6 @@
     <div class="mainwrapper">
 
         <div class="header">
-
-
 
             <div class="logo">
                 <a href="/"><img src="~/images/logo.png" alt="" /></a>
@@ -177,6 +197,7 @@
             <div class="leftmenu">
                 <ul class="nav nav-tabs nav-stacked">
                     <li class="nav-header" id="menuNavigation">Navigation</li>
+                    
                     @foreach (Menu menu in menus)
                     {
                         var tabIndexTitle = "";
@@ -195,14 +216,14 @@
                                     if (string.IsNullOrEmpty(leveal2Menu.MenuUrl))
                                     {
                                         <li class="dropdown">
-                                            <a href="">@leveal2Menu.MenuName</a>
+                                            <a class="Level2ListMenuStyle" href="">@leveal2Menu.MenuName</a>
                                             <ul>
                                                 
                                                 @foreach (Menu leveal3Menu in leveal2Menu.SecondaryMenus)
                                                 {
                                                     tabIndexTitle = menu.MenuName + " > " + leveal2Menu.MenuName+" > "+leveal3Menu.MenuName;
                                                     //三级菜单
-                                                    <li><a href="#" onclick="OpenTab('@tabIndexTitle','@leveal3Menu.MenuUrl')">@leveal3Menu.MenuName</a></li>
+                                                    <li><a class="lastMenuStyle" href="#" onclick="OpenTab('@tabIndexTitle','@leveal3Menu.MenuUrl')">@leveal3Menu.MenuName</a></li>
                                                 }
                                             </ul>
                                         </li>
@@ -210,7 +231,9 @@
                                     else
                                     {
                                         //if has url ,then set to be a link
-                                        <li><a href="#" onclick="OpenTab('@tabIndexTitle','@leveal2Menu.MenuUrl')">@leveal2Menu.MenuName</a></li>
+                                        <li>
+                                          <a class="lastMenuStyle" href="#" onclick="OpenTab('@tabIndexTitle','@leveal2Menu.MenuUrl')">@leveal2Menu.MenuName</a>
+                                        </li>
                                     }
 
                                 }

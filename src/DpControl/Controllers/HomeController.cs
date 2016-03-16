@@ -34,18 +34,18 @@ namespace DpControl.Controllers
 
             Menu admin_CustomerInfoSupply = new Menu();
             admin_CustomerInfoSupply.MenuName = "供应商信息";
-            admin_CustomerInfoSupply.MenuUrl = "Home/Index";
+            admin_CustomerInfoSupply.MenuUrl = "/Home/Error";
             admin_CustomerInfoSupply.Order = 2;
 
             #region leveal3
             Menu admin_CustomerInfo_SearchCustomer = new Menu();
             admin_CustomerInfo_SearchCustomer.MenuName = "查看客户";
-            admin_CustomerInfo_SearchCustomer.MenuUrl = "/Home/Index";
+            admin_CustomerInfo_SearchCustomer.MenuUrl = "/Home/Error";
             admin_CustomerInfo_SearchCustomer.Order = 1;
 
             Menu admin_CustomerInfo_SearchControl = new Menu();
             admin_CustomerInfo_SearchControl.MenuName = "查看电机";
-            admin_CustomerInfo_SearchControl.MenuUrl = "/Home/Index";
+            admin_CustomerInfo_SearchControl.MenuUrl = "/Home/Error";
             admin_CustomerInfo_SearchControl.Order = 2;
 
             List<Menu> leveal3Menus = new List<Menu>();
@@ -73,7 +73,7 @@ namespace DpControl.Controllers
             #region leveal2
             Menu admin_AccountInfo_manage = new Menu();
             admin_AccountInfo_manage.MenuName = "分配账号";
-            admin_AccountInfo_manage.MenuUrl = "/Home/Index";
+            admin_AccountInfo_manage.MenuUrl = "/Home/Error";
             admin_AccountInfo_manage.Order = 1;
 
             Menu admin_AccountInfo_role = new Menu();
@@ -105,17 +105,17 @@ namespace DpControl.Controllers
             #region leveal2
             Menu admin_InfoManage_alarmDic = new Menu();
             admin_InfoManage_alarmDic.MenuName = "报警字典";
-            admin_InfoManage_alarmDic.MenuUrl = "/Home/Index";
+            admin_InfoManage_alarmDic.MenuUrl = "/Home/Error";
             admin_CustomerInfo.Order = 1;
 
             Menu admin_InfoManage_alarmLog = new Menu();
             admin_InfoManage_alarmLog.MenuName = "报警日志";
-            admin_InfoManage_alarmLog.MenuUrl = "/Home/Index";
+            admin_InfoManage_alarmLog.MenuUrl = "/Home/Error";
             admin_InfoManage_alarmLog.Order = 2;
 
             Menu admin_InfoManage_operlog = new Menu();
             admin_InfoManage_operlog.MenuName = "操作日志";
-            admin_InfoManage_operlog.MenuUrl = "/Home/Index";
+            admin_InfoManage_operlog.MenuUrl = "/Home/Error";
             admin_InfoManage_operlog.Order = 3;
 
 
@@ -143,7 +143,13 @@ namespace DpControl.Controllers
         {
             return View();
         }
-        
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Error()
+        {
+            return View();
+        }
+
     }
 
    

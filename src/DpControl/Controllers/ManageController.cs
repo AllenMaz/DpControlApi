@@ -58,7 +58,7 @@ namespace DpControl.Controllers
                 jqueryTableParams.iDisplayLength = allUsers.Count;
             }
             var pageUserData = _userManager.Users.Skip(jqueryTableParams.iDisplayStart).Take(jqueryTableParams.iDisplayLength).ToList();
-            PageResult<ApplicationUser> pageResult = new PageResult<ApplicationUser>(allUsers.Count, pageUserData);
+            PageResult<ApplicationUser> pageResult = new PageResult<ApplicationUser>(jqueryTableParams.sEcho,allUsers.Count, pageUserData);
 
             return Json(pageResult);
         }
@@ -80,45 +80,49 @@ namespace DpControl.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUser(CreateUserViewModel model)
         {
-            if (ModelState.IsValid)
+            Message message = new Message();
+            message.Success = true;
+
+            if (!ModelState.IsValid)
             {
-                //用户的角色
-                string[] roles = model.Roles.Split(new char[] { ';' },StringSplitOptions.RemoveEmptyEntries);
-                //判断这些角色是否属于角色表
-                foreach (string role in roles)
+                message.Success = false;
+                //message.Content = ModelState.ErrorCount
+                return Json(message);
+            }
+            
+            //用户的角色
+            string[] roles = model.Roles.Split(new char[] { ';' },StringSplitOptions.RemoveEmptyEntries);
+            //判断这些角色是否属于角色表
+            foreach (string role in roles)
+            {
+                bool isRoleExisted = await _roleManager.RoleExistsAsync(role);
+                if (!isRoleExisted)
                 {
-                    bool isRoleExisted = await _roleManager.RoleExistsAsync(role);
-                    if (!isRoleExisted)
-                    {
-                        ModelState.AddModelError(string.Empty, "Role："+role+"is not exist in system!");
-                        return View(model);
-                    }
-                }
-
-                //新增用户
-                var user = new ApplicationUser { UserName = model.UserName };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    //把用户添加到角色
-                    var curruser = await _userManager.FindByNameAsync(model.UserName);
-                    result = await _userManager.AddToRolesAsync(curruser, roles);
-
-                    {
-                        _logger.LogInformation(3, "User created a new account with password.");
-                        return RedirectToAction(nameof(ManageController.IndexForUser), "Manage");
-                    }
+                    message.Success = false;
+                    message.Content = "Role：" + role + "is not exist in system!";
+                    return Json(message);
                     
                 }
-                
-                AddErrors(result);
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            //新增用户
+            var user = new ApplicationUser { UserName = model.UserName };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                message.Success = false;
+                message.Content = result.Errors.First().Description;
+                    return Json(message);
+
+            }
+            //把用户添加到角色
+            var curruser = await _userManager.FindByNameAsync(model.UserName);
+            result = await _userManager.AddToRolesAsync(curruser, roles);
+
+            
+            return Json(message);
         }
         private void AddErrors(IdentityResult result)
         {
@@ -189,10 +193,7 @@ namespace DpControl.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRole(string RoleName)
         {
-            HttpRequest rq = Request;
-            StreamReader srRequest = new StreamReader(rq.Body);
-            String strReqStream = srRequest.ReadToEnd();
-
+            
             Message message = new Message();
             message.Success = true;
             if (string.IsNullOrEmpty(RoleName))
