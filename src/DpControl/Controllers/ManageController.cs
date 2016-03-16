@@ -88,7 +88,7 @@ namespace DpControl.Controllers
             if (!ModelState.IsValid)
             {
                 message.Success = false;
-                //message.Content = ModelState.ErrorCount
+                message.Content = ModelStateError();
                 return Json(message);
             }
             
