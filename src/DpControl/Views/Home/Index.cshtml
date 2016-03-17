@@ -39,6 +39,9 @@
     <script type="text/javascript" src="~/js/chosen.jquery.min.js"></script>
     <script type="text/javascript" src="~/js/forms.js"></script>
     
+    <script type="text/javascript" src="~/js/prettify/prettify.js"></script>
+    <script type="text/javascript" src="~/js/elements.js"></script>
+
     <script src="~/lib/layer/layer.js"></script>
     <style>
        
@@ -62,6 +65,13 @@
 	        background-position: 25px 12px;
 	        background-image: url(../images/check.png);
 	        background-repeat: no-repeat;
+        }
+
+        .tabClose {
+            position:absolute;
+            top:1px;
+            right:5px;
+            color:dimgray;
         }
         
     </style>
@@ -257,23 +267,40 @@
         <!-- leftpanel -->
 
         <div class="rightpanel">
-
+            
             <ul class="breadcrumbs">
                 <li><i class="iconfa-home"></i> <span class="separator"></span></li>
                 <li><label id="TabIndexTitle"> </label></li>
-                
+
 
             </ul>
+            <div class="tabbedwidget">
+                <ul>
+                    <li><a href="#tabs-1" style="position:relative"> <span class="tabClose">x</span>Tab 1</a></li>
+                    <li><a href="#tabs-2" style="position:relative"><span class="tabClose">x</span>Tab Allen Test 2</a></li>
+                    <li><a href="#tabs-3" style="position:relative"><span class="tabClose">x</span>Tab 3</a></li>
+                </ul>
+                <div id="tabs-1">
+                    Your content goes here for tab 1
+                </div>
+                <div id="tabs-2">
+                    Your content goes here for tab 2
+                </div>
+                <div id="tabs-3">
+                    Your content goes here for tab 3
+                </div>
+            </div>
 
             <div class="maincontent">
                 <div class="maincontentinner">
+                    
                     <div id="divMainContent"></div>
                 </div>
-           </div>
+            </div>
         </div>
-                <!--rightpanel-->
+        <!--rightpanel-->
 
-    </div>
+            </div>
 
 </body>
 

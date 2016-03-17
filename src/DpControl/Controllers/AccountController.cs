@@ -49,7 +49,7 @@ namespace DpControl.Controllers
         public async Task<IActionResult> InitAdmin(RegisterViewModel model)
         {
             string userName = "Admin";
-            string password = "Admin_123";
+            string password = "admin123";
             string roleName = "Admin";
             //判断系统中是否已经存在Admin用户
             var admin = _userManager.FindByNameAsync(userName);
