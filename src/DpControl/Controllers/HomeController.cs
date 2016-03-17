@@ -1,6 +1,8 @@
 ﻿using DpControl.Models;
+using DpControl.Utility;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace DpControl.Controllers
     {
         public IActionResult Default()
         {
+           
             return View();
         }
 
