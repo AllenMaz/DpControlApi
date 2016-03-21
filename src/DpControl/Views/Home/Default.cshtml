@@ -30,6 +30,15 @@
 
     <script src="~/lib/knockout/dist/knockout.js"></script>
     <script src="~/lib/layer/layer.js"></script>
+    <style>
+        .tipFont {
+            color:red;
+            font-style:italic;
+            font-weight:bold
+        }
+        p.text-lowercase{text-transform:none}
+
+    </style>
     <script>
     $(document).ready(function () {
         $("#aHttpOverrideTitle").click(function () {
@@ -111,13 +120,22 @@
                 <h3>There are some Features:</h3>
                 <ul>
                     <li class="lead">
-                        Support Corss Origin Resource Sharing (<label style="color:red;"> Only for test !</label>)
-                        <br />
-                        <a id="aHttpCORSTitle" href="#" style="cursor:help">Example</a>
-                        <div id="divCORS" style="display:none">
-                            <img src="~/images/cors.png" style="width:50%" />
-                        </div>
+                        Expand by expand <sup class="tipFont">New</sup>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> Load related entities<br />
+                            <a href="/v1/Projects?expand=Scenes,Groups,Locations">/v1/Projects?expand=Scenes,Groups,Locations</a>
+                        </p>
                     </li>
+
+                    <li class="lead">
+                        Select by select <sup class="tipFont">New</sup>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> Only select properties which you need<br />
+                            <a href="/v1/Projects?select=ProjectId,ProjectName,ProjectNo">/v1/Projects?select=ProjectId,ProjectName,ProjectNo</a>
+                        </p>
+                    </li>
+
+                    
                     <li class="lead">
                         Filter by filter
                         <p class="text-lowercase">
@@ -134,7 +152,7 @@
                         </p>
                     </li>
                     <li class="lead">
-                        OrderBy orderby(desc/asc)
+                        OrderBy by orderby(desc/asc)
                         <p class="text-lowercase">
                             <a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a>
                         </p>
@@ -144,6 +162,14 @@
                         <p class="text-lowercase">
                             <a href="/v1/Customers?skip=3&top=10">/v1/Customers?skip=3&top=10</a>
                         </p>
+                    </li>
+                    <li class="lead">
+                        Support Corss Origin Resource Sharing (<label style="color:red;"> Only for test !</label>)
+                        <br />
+                        <a id="aHttpCORSTitle" href="#" style="cursor:help">Example</a>
+                        <div id="divCORS" style="display:none">
+                            <img src="~/images/cors.png" style="width:50%" />
+                        </div>
                     </li>
                     <li class="lead">
                         Support X-HTTP-Method-Override (Via Post to request Put,Patch,Delete)
