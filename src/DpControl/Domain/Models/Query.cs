@@ -112,6 +112,30 @@ namespace DpControl.Domain.Models
         };
     }
 
+    public static class ExpandOperator
+    {
+        #region Expand
+
+        /// <summary>
+        /// Judge if need expand
+        /// </summary>
+        /// <param name="relatedEntityName"></param>
+        /// <returns></returns>
+        public static bool NeedExpand(string relatedEntityName, string[] expandParams)
+        {
+            bool needExpand = false;
+            if (expandParams != null && expandParams.Length > 0
+                        && expandParams.Contains(relatedEntityName))
+            {
+                needExpand = true;
+            }
+
+            return needExpand;
+        }
+
+        #endregion
+    }
+
     public static class QueryOperate<T> where T :class //T 必须是引用类型
     {
         public static IQueryable<T> Execute(IQueryable<T> queryData,Query query)
@@ -132,8 +156,6 @@ namespace DpControl.Domain.Models
                 queryData = Paging(queryData, skip, top);
                 //orderby operate
                 queryData = OrderBy(queryData,orderbyParam);
-                //expand
-                queryData = Expand(queryData, expandParams);
             }
             return queryData;
         }
@@ -337,14 +359,6 @@ namespace DpControl.Domain.Models
 
         #endregion
 
-        #region Expand
-        private static IQueryable<T> Expand(IQueryable<T> query, string[] expandParams)
-        {
-           
-            
-            return query;
-        }
         
-        #endregion
     }
 }

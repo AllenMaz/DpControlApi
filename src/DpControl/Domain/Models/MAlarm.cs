@@ -22,12 +22,16 @@ namespace DpControl.Domain.Models
         
     }
 
-    public class AlarmSearchModel
+    public class AlarmSubSearchModel
     {
         public int AlarmId { get; set; }
         public int? AlarmMessageId { get; set; }
         public int? LocationId { get; set; }
         public DateTime CreateDate { get; set; }
+    }
+
+    public class AlarmSearchModel: AlarmSubSearchModel
+    {
     }
 
 }

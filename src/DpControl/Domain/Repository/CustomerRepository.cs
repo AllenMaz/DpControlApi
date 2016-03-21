@@ -101,7 +101,7 @@ namespace DpControl.Domain.Repository
                     CreateDate = c.CreateDate,
                     Modifier = c.Modifier,
                     ModifiedDate = c.ModifiedDate,
-                    Projects = c.Projects.Select(p => new ProjectSearchModel()
+                    Projects = c.Projects.Select(p => new ProjectSubSearchModel()
                     {
                         ProjectId = p.ProjectId,
                         ProjectNo = p.ProjectNo,
@@ -132,7 +132,7 @@ namespace DpControl.Domain.Repository
                     CreateDate = c.CreateDate,
                     Modifier = c.Modifier,
                     ModifiedDate = c.ModifiedDate,
-                    Projects = c.Projects.Select(p => new ProjectSearchModel()
+                    Projects = c.Projects.Select(p => new ProjectSubSearchModel()
                     {
                         ProjectId = p.ProjectId,
                         ProjectNo = p.ProjectNo,
@@ -153,13 +153,16 @@ namespace DpControl.Domain.Repository
 
         public IEnumerable<CustomerSearchModel> GetAll(Query query)
         {
-            var queryData = from P in _context.Customers
-                            select P;
+            var queryData = from C in _context.Customers
+                            select C;
 
             var result = QueryOperate<Customer>.Execute(queryData, query);
+            var needExpandProjects = ExpandOperator.NeedExpand("Projects", query.expand);
+            if (needExpandProjects)
+                result = result.Include( c=> c.Projects);
 
             //以下执行完后才会去数据库中查询
-            var customers = result.Include(c => c.Projects).ToList();
+            var customers = result.ToList();
 
             var customerSearch = customers.Select(c => new CustomerSearchModel
             {
@@ -170,7 +173,7 @@ namespace DpControl.Domain.Repository
                 CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
                 ModifiedDate = c.ModifiedDate,
-                Projects = c.Projects.Select(p => new ProjectSearchModel()
+                Projects = c.Projects.Select(p => new ProjectSubSearchModel()
                 {
                     ProjectId = p.ProjectId,
                     ProjectNo = p.ProjectNo,
@@ -196,10 +199,13 @@ namespace DpControl.Domain.Repository
             
             var result = QueryOperate<Customer>.Execute(queryData, query);
 
+            var needExpandProjects = ExpandOperator.NeedExpand("Projects", query.expand);
+            if (needExpandProjects)
+                result = result.Include(c => c.Projects);
 
             //以下执行完后才会去数据库中查询
             //N+1 Select 
-            var customers = await result.Include(c=>c.Projects).ToListAsync();
+            var customers = await result.ToListAsync();
             
 
             var customerSearch = customers.Select(c => new CustomerSearchModel
@@ -211,7 +217,7 @@ namespace DpControl.Domain.Repository
                 CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
                 ModifiedDate = c.ModifiedDate,
-                Projects = c.Projects.Select(p=> new ProjectSearchModel()
+                Projects = c.Projects.Select(p=> new ProjectSubSearchModel()
                 {
                     ProjectId = p.ProjectId,
                     ProjectNo = p.ProjectNo,

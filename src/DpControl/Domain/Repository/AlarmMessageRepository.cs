@@ -73,7 +73,14 @@ namespace DpControl.Domain.Repository
               {
                   AlarmMessageId = v.AlarmMessageId,
                   ErrorCode = v.ErrorCode,
-                  Message = v.Message
+                  Message = v.Message,
+                  Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
+                  {
+                      AlarmId = a.AlarmId,
+                      AlarmMessageId = a.AlarmMessageId,
+                      LocationId = a.LocationId,
+                      CreateDate = a.CreateDate
+                  })
 
               }).FirstOrDefault();
 
@@ -88,8 +95,15 @@ namespace DpControl.Domain.Repository
                {
                    AlarmMessageId = v.AlarmMessageId,
                    ErrorCode = v.ErrorCode,
-                   Message = v.Message
-                   
+                   Message = v.Message,
+                   Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
+                   {
+                       AlarmId = a.AlarmId,
+                       AlarmMessageId = a.AlarmMessageId,
+                       LocationId = a.LocationId,
+                       CreateDate = a.CreateDate
+                   })
+
                }).FirstOrDefaultAsync();
 
             return alarmMessage;
@@ -102,6 +116,10 @@ namespace DpControl.Domain.Repository
 
             var result = QueryOperate<AlarmMessage>.Execute(queryData, query);
 
+            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", query.expand);
+            if (needExpandAlarms)
+                result = result.Include(a => a.Alarms);
+
             //以下执行完后才会去数据库中查询
             var alarmMessages = result.ToList();
 
@@ -109,7 +127,14 @@ namespace DpControl.Domain.Repository
             {
                 AlarmMessageId = v.AlarmMessageId,
                 ErrorCode = v.ErrorCode,
-                Message = v.Message
+                Message = v.Message,
+                Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
+                {
+                    AlarmId = a.AlarmId,
+                    AlarmMessageId = a.AlarmMessageId,
+                    LocationId = a.LocationId,
+                    CreateDate = a.CreateDate
+                })
             });
 
             return alarmMessagesSearch;
@@ -121,6 +146,9 @@ namespace DpControl.Domain.Repository
                             select A;
 
             var result = QueryOperate<AlarmMessage>.Execute(queryData, query);
+            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", query.expand);
+            if (needExpandAlarms)
+                result = result.Include(a => a.Alarms);
 
             //以下执行完后才会去数据库中查询
             var alarmMessages = await result.ToListAsync();
@@ -129,7 +157,14 @@ namespace DpControl.Domain.Repository
             {
                 AlarmMessageId = v.AlarmMessageId,
                 ErrorCode = v.ErrorCode,
-                Message = v.Message
+                Message = v.Message,
+                Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
+                {
+                    AlarmId = a.AlarmId,
+                    AlarmMessageId = a.AlarmMessageId,
+                    LocationId = a.LocationId,
+                    CreateDate = a.CreateDate
+                })
             });
 
             return alarmMessagesSearch;

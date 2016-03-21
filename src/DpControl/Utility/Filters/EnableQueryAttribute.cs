@@ -360,6 +360,8 @@ namespace DpControl.Utility.Filters
             allowTypeName.Add("Int16");
             allowTypeName.Add("Int32");
             allowTypeName.Add("Int64");
+            allowTypeName.Add("Single");
+            allowTypeName.Add("Double");
             allowTypeName.Add("Boolean");
             allowTypeName.Add("DateTime");
 
@@ -483,6 +485,8 @@ namespace DpControl.Utility.Filters
             }
             return returnResult;
         }
+
+
 
         private IList QueryResult(IList listData)
         {

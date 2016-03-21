@@ -32,7 +32,7 @@ namespace DpControl.Domain.Models
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public IEnumerable<ProjectSearchModel> Projects { get; set; }
+        public IEnumerable<ProjectSubSearchModel> Projects { get; set; }
     }
 
 

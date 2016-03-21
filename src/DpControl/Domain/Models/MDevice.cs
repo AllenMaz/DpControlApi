@@ -10,6 +10,7 @@ namespace DpControl.Domain.Models
         public float Voltage { get; set; }
         public float Diameter { get; set; }
         public float Torque { get; set; }
+        
     }
 
     public class DeviceAddModel: DeviceBaseModel
@@ -22,9 +23,13 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class DeviceSearchModel: DeviceBaseModel
+    public class DeviceSubSearchModel: DeviceBaseModel
     {
         public int DeviceId { get; set; }
-        
+    }
+    public class DeviceSearchModel: DeviceSubSearchModel
+    {
+        public IEnumerable<LocationSubSearchModel> Locations { get; set; }
+
     }
 }

@@ -28,7 +28,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.HasMany(p => p.Groups).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId)
                 .OnDelete(DeleteBehavior.SetNull);
             //when delete project ,SetNull for DeviceLocations
-            entityBuilder.HasMany(p => p.DeviceLocations).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId)
+            entityBuilder.HasMany(p => p.Locations).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId)
                 .OnDelete(DeleteBehavior.SetNull);
             //when delete project ,SetNull for AspNetUsers
             entityBuilder.HasMany(p => p.Users).WithOne(o => o.Project).HasForeignKey(o => o.ProjectId)

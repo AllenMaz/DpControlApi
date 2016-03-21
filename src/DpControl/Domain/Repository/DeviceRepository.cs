@@ -67,7 +67,31 @@ namespace DpControl.Domain.Repository
                   DeviceId = v.DeviceId,
                   Voltage = v.Voltage,
                   Diameter = v.Diameter,
-                  Torque = v.Torque
+                  Torque = v.Torque,
+                  Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                  {
+                      LocationId = p.LocationId,
+                      ProjectId = p.ProjectId,
+                      Building = p.Building,
+                      CommAddress = p.CommAddress,
+                      CommMode = p.CommMode,
+                      CurrentPosition = p.CurrentPosition,
+                      Description = p.Description,
+                      DeviceSerialNo = p.DeviceSerialNo,
+                      DeviceId = p.DeviceId,
+                      DeviceType = p.DeviceType,
+                      FavorPositionFirst = p.FavorPositionFirst,
+                      FavorPositionrSecond = p.FavorPositionrSecond,
+                      FavorPositionThird = p.FavorPositionThird,
+                      Floor = p.Floor,
+                      InstallationNumber = p.InstallationNumber,
+                      Orientation = p.Orientation,
+                      RoomNo = p.RoomNo,
+                      Creator = p.Creator,
+                      CreateDate = p.CreateDate,
+                      Modifier = p.Modifier,
+                      ModifiedDate = p.ModifiedDate
+                  })
               }).FirstOrDefault();
 
             return device;
@@ -81,7 +105,31 @@ namespace DpControl.Domain.Repository
                    DeviceId = v.DeviceId,
                    Voltage = v.Voltage,
                    Diameter = v.Diameter,
-                   Torque = v.Torque
+                   Torque = v.Torque,
+                   Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                   {
+                       LocationId = p.LocationId,
+                       ProjectId = p.ProjectId,
+                       Building = p.Building,
+                       CommAddress = p.CommAddress,
+                       CommMode = p.CommMode,
+                       CurrentPosition = p.CurrentPosition,
+                       Description = p.Description,
+                       DeviceSerialNo = p.DeviceSerialNo,
+                       DeviceId = p.DeviceId,
+                       DeviceType = p.DeviceType,
+                       FavorPositionFirst = p.FavorPositionFirst,
+                       FavorPositionrSecond = p.FavorPositionrSecond,
+                       FavorPositionThird = p.FavorPositionThird,
+                       Floor = p.Floor,
+                       InstallationNumber = p.InstallationNumber,
+                       Orientation = p.Orientation,
+                       RoomNo = p.RoomNo,
+                       Creator = p.Creator,
+                       CreateDate = p.CreateDate,
+                       Modifier = p.Modifier,
+                       ModifiedDate = p.ModifiedDate
+                   })
                }).FirstOrDefaultAsync();
 
             return device;
@@ -93,6 +141,9 @@ namespace DpControl.Domain.Repository
                             select D;
 
             var result = QueryOperate<Device>.Execute(queryData, query);
+            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
+            if (needExpandLocations)
+                result = result.Include(d => d.Locations);
 
             //以下执行完后才会去数据库中查询
             var devices = result.ToList();
@@ -102,7 +153,31 @@ namespace DpControl.Domain.Repository
                 DeviceId = v.DeviceId,
                 Voltage = v.Voltage,
                 Diameter = v.Diameter,
-                Torque = v.Torque
+                Torque = v.Torque,
+                Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                {
+                    LocationId = p.LocationId,
+                    ProjectId = p.ProjectId,
+                    Building = p.Building,
+                    CommAddress = p.CommAddress,
+                    CommMode = p.CommMode,
+                    CurrentPosition = p.CurrentPosition,
+                    Description = p.Description,
+                    DeviceSerialNo = p.DeviceSerialNo,
+                    DeviceId = p.DeviceId,
+                    DeviceType = p.DeviceType,
+                    FavorPositionFirst = p.FavorPositionFirst,
+                    FavorPositionrSecond = p.FavorPositionrSecond,
+                    FavorPositionThird = p.FavorPositionThird,
+                    Floor = p.Floor,
+                    InstallationNumber = p.InstallationNumber,
+                    Orientation = p.Orientation,
+                    RoomNo = p.RoomNo,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                })
             });
 
             return devicesSearch;
@@ -114,6 +189,9 @@ namespace DpControl.Domain.Repository
                             select D;
 
             var result = QueryOperate<Device>.Execute(queryData, query);
+            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
+            if (needExpandLocations)
+                result = result.Include(d => d.Locations);
 
             //以下执行完后才会去数据库中查询
             var devices = await result.ToListAsync();
@@ -123,7 +201,31 @@ namespace DpControl.Domain.Repository
                 DeviceId = v.DeviceId,
                 Voltage = v.Voltage,
                 Diameter = v.Diameter,
-                Torque = v.Torque
+                Torque = v.Torque,
+                Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                {
+                    LocationId = p.LocationId,
+                    ProjectId = p.ProjectId,
+                    Building = p.Building,
+                    CommAddress = p.CommAddress,
+                    CommMode = p.CommMode,
+                    CurrentPosition = p.CurrentPosition,
+                    Description = p.Description,
+                    DeviceSerialNo = p.DeviceSerialNo,
+                    DeviceId = p.DeviceId,
+                    DeviceType = p.DeviceType,
+                    FavorPositionFirst = p.FavorPositionFirst,
+                    FavorPositionrSecond = p.FavorPositionrSecond,
+                    FavorPositionThird = p.FavorPositionThird,
+                    Floor = p.Floor,
+                    InstallationNumber = p.InstallationNumber,
+                    Orientation = p.Orientation,
+                    RoomNo = p.RoomNo,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                })
             });
 
             return devicesSearch;

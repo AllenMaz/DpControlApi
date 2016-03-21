@@ -40,6 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
+        [EnableQuery(true,typeof(GroupLocationSearchModel))]
         [HttpGet("{groupLocationId}", Name = "GetByGroupLocationIdAsync")]
         public async Task<IActionResult> GetByGroupLocationIdAsync(int groupLocationId)
         {
@@ -58,7 +59,6 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
-        [FormatReturnType]
         public async Task<IEnumerable<GroupLocationSearchModel>> GetAllAsync([FromUri] Query query)
         {
 

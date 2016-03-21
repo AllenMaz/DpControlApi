@@ -87,10 +87,10 @@ namespace DpControl.Domain.Repository
             return model.SceneId;
         }
 
-        public SceneSearchMoodel FindById(int sceneId)
+        public SceneSearchModel FindById(int sceneId)
         {
             var scene = _context.Scenes.Where(v => v.SceneId == sceneId)
-                .Select(v => new SceneSearchMoodel()
+                .Select(v => new SceneSearchModel()
                 {
                     SceneId = v.SceneId,
                     SceneName = v.SceneName,
@@ -99,16 +99,39 @@ namespace DpControl.Domain.Repository
                     Creator = v.Creator,
                     CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate
+                    ModifiedDate = v.ModifiedDate,
+                    SceneSegments = v.SceneSegments.Select(s => new SceneSegmentSubSearchModel()
+                    {
+                        SceneSegmentId = s.SceneSegmentId,
+                        SceneId = s.SceneId,
+                        SequenceNo = s.SequenceNo,
+                        StartTime = s.StartTime,
+                        Volumn = s.Volumn,
+                        Creator = s.Creator,
+                        CreateDate = s.CreateDate,
+                        Modifier = s.Modifier,
+                        ModifiedDate = s.ModifiedDate
+                    }),
+                    Groups = v.Groups.Select(g => new GroupSubSearchModel()
+                    {
+                        GroupId = g.GroupId,
+                        GroupName = g.GroupName,
+                        ProjectId = g.ProjectId,
+                        SceneId = g.SceneId,
+                        Creator = g.Creator,
+                        CreateDate = g.CreateDate,
+                        Modifier = g.Modifier,
+                        ModifiedDate = g.ModifiedDate
+                    })
                 }).FirstOrDefault();
 
             return scene;
         }
 
-        public async Task<SceneSearchMoodel> FindByIdAsync(int sceneId)
+        public async Task<SceneSearchModel> FindByIdAsync(int sceneId)
         {
             var scene =await _context.Scenes.Where(v => v.SceneId == sceneId)
-                .Select(v => new SceneSearchMoodel()
+                .Select(v => new SceneSearchModel()
                 {
                     SceneId = v.SceneId,
                     SceneName = v.SceneName,
@@ -117,23 +140,54 @@ namespace DpControl.Domain.Repository
                     Creator = v.Creator,
                     CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate
+                    ModifiedDate = v.ModifiedDate,
+                    SceneSegments = v.SceneSegments.Select(s => new SceneSegmentSubSearchModel()
+                    {
+                        SceneSegmentId = s.SceneSegmentId,
+                        SceneId = s.SceneId,
+                        SequenceNo = s.SequenceNo,
+                        StartTime = s.StartTime,
+                        Volumn = s.Volumn,
+                        Creator = s.Creator,
+                        CreateDate = s.CreateDate,
+                        Modifier = s.Modifier,
+                        ModifiedDate = s.ModifiedDate
+                    }),
+                    Groups = v.Groups.Select(g => new GroupSubSearchModel()
+                    {
+                        GroupId = g.GroupId,
+                        GroupName = g.GroupName,
+                        ProjectId = g.ProjectId,
+                        SceneId = g.SceneId,
+                        Creator = g.Creator,
+                        CreateDate = g.CreateDate,
+                        Modifier = g.Modifier,
+                        ModifiedDate = g.ModifiedDate
+                    })
                 }).FirstOrDefaultAsync();
 
             return scene;
         }
 
-        public IEnumerable<SceneSearchMoodel> GetAll(Query query)
+        public IEnumerable<SceneSearchModel> GetAll(Query query)
         {
             var queryData = from S in _context.Scenes
                             select S;
 
             var result = QueryOperate<Scene>.Execute(queryData, query);
 
+            var needExpandSceneSegments = ExpandOperator.NeedExpand("SceneSegments", query.expand);
+            var needExpandGroups = ExpandOperator.NeedExpand("Groups", query.expand);
+
+            if (needExpandSceneSegments)
+                result = result.Include(s => s.SceneSegments);
+            if (needExpandGroups)
+                result = result.Include(s => s.Groups);
+
             //以下执行完后才会去数据库中查询
             var scenes = result.ToList();
 
-            var scenesSearch = scenes.Select(v => new SceneSearchMoodel
+            var scenesSearch = scenes.Select(v => new SceneSearchModel
             {
                 SceneId = v.SceneId,
                 SceneName = v.SceneName,
@@ -142,23 +196,54 @@ namespace DpControl.Domain.Repository
                 Creator = v.Creator,
                 CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
+                ModifiedDate = v.ModifiedDate,
+                SceneSegments = v.SceneSegments.Select(s => new SceneSegmentSubSearchModel()
+                {
+                    SceneSegmentId = s.SceneSegmentId,
+                    SceneId = s.SceneId,
+                    SequenceNo = s.SequenceNo,
+                    StartTime = s.StartTime,
+                    Volumn = s.Volumn,
+                    Creator = s.Creator,
+                    CreateDate = s.CreateDate,
+                    Modifier = s.Modifier,
+                    ModifiedDate = s.ModifiedDate
+                }),
+                Groups = v.Groups.Select(g => new GroupSubSearchModel()
+                {
+                    GroupId = g.GroupId,
+                    GroupName = g.GroupName,
+                    ProjectId = g.ProjectId,
+                    SceneId = g.SceneId,
+                    Creator = g.Creator,
+                    CreateDate = g.CreateDate,
+                    Modifier = g.Modifier,
+                    ModifiedDate = g.ModifiedDate
+                })
             });
 
             return scenesSearch;
         }
 
-        public async Task<IEnumerable<SceneSearchMoodel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<SceneSearchModel>> GetAllAsync(Query query)
         {
             var queryData = from S in _context.Scenes
                             select S;
 
             var result = QueryOperate<Scene>.Execute(queryData, query);
 
+            var needExpandSceneSegments = ExpandOperator.NeedExpand("SceneSegments", query.expand);
+            var needExpandGroups = ExpandOperator.NeedExpand("Groups", query.expand);
+
+            if (needExpandSceneSegments)
+                result = result.Include(s => s.SceneSegments);
+            if (needExpandGroups)
+                result = result.Include(s => s.Groups);
+
             //以下执行完后才会去数据库中查询
             var scenes = await result.ToListAsync();
 
-            var scenesSearch = scenes.Select(v => new SceneSearchMoodel
+            var scenesSearch = scenes.Select(v => new SceneSearchModel
             {
                 SceneId = v.SceneId,
                 SceneName = v.SceneName,
@@ -167,7 +252,28 @@ namespace DpControl.Domain.Repository
                 Creator = v.Creator,
                 CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
+                ModifiedDate = v.ModifiedDate,
+                SceneSegments = v.SceneSegments.Select(s=>new SceneSegmentSubSearchModel() {
+                    SceneSegmentId = s.SceneSegmentId,
+                    SceneId = s.SceneId,
+                    SequenceNo = s.SequenceNo,
+                    StartTime = s.StartTime,
+                    Volumn = s.Volumn,
+                    Creator = s.Creator,
+                    CreateDate = s.CreateDate,
+                    Modifier = s.Modifier,
+                    ModifiedDate = s.ModifiedDate
+                }),
+                Groups = v.Groups.Select(g=>new GroupSubSearchModel() {
+                    GroupId = g.GroupId,
+                    GroupName = g.GroupName,
+                    ProjectId = g.ProjectId,
+                    SceneId = g.SceneId,
+                    Creator = g.Creator,
+                    CreateDate = g.CreateDate,
+                    Modifier = g.Modifier,
+                    ModifiedDate = g.ModifiedDate
+                })
             });
 
             return scenesSearch;

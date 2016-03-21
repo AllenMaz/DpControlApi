@@ -195,7 +195,36 @@ namespace DpControl.Domain.Repository
                     Creator = v.Creator,
                     CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate
+                    ModifiedDate = v.ModifiedDate,
+                    Groups = v.GroupLocations.Select(gl => new GroupSubSearchModel()
+                    {
+                        GroupId = gl.Group.GroupId,
+                        GroupName = gl.Group.GroupName,
+                        ProjectId = gl.Group.ProjectId,
+                        SceneId = gl.Group.SceneId,
+                        Creator = gl.Group.Creator,
+                        CreateDate = gl.Group.CreateDate,
+                        Modifier = gl.Group.Modifier,
+                        ModifiedDate = gl.Group.ModifiedDate
+                    }),
+                    Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
+                    {
+                        AlarmId = a.AlarmId,
+                        AlarmMessageId = a.AlarmMessageId,
+                        LocationId = a.LocationId,
+                        CreateDate = a.CreateDate
+                    }),
+                    Logs = v.Logs.Select(l => new LogSubSearchModel()
+                    {
+                        LogId = l.LogId,
+                        Comment = l.Comment,
+                        LogDescriptionId = l.LogDescriptionId,
+                        LocationId = l.LocationId,
+                        Creator = l.Creator,
+                        CreateDate = l.CreateDate,
+                        Modifier = l.Modifier,
+                        ModifiedDate = l.ModifiedDate
+                    })
                 }).FirstOrDefault();
 
             return location;
@@ -226,7 +255,36 @@ namespace DpControl.Domain.Repository
                     Creator = v.Creator,
                     CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate
+                    ModifiedDate = v.ModifiedDate,
+                    Groups = v.GroupLocations.Select(gl => new GroupSubSearchModel()
+                    {
+                        GroupId = gl.Group.GroupId,
+                        GroupName = gl.Group.GroupName,
+                        ProjectId = gl.Group.ProjectId,
+                        SceneId = gl.Group.SceneId,
+                        Creator = gl.Group.Creator,
+                        CreateDate = gl.Group.CreateDate,
+                        Modifier = gl.Group.Modifier,
+                        ModifiedDate = gl.Group.ModifiedDate
+                    }),
+                    Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
+                    {
+                        AlarmId = a.AlarmId,
+                        AlarmMessageId = a.AlarmMessageId,
+                        LocationId = a.LocationId,
+                        CreateDate = a.CreateDate
+                    }),
+                    Logs = v.Logs.Select(l => new LogSubSearchModel()
+                    {
+                        LogId = l.LogId,
+                        Comment = l.Comment,
+                        LogDescriptionId = l.LogDescriptionId,
+                        LocationId = l.LocationId,
+                        Creator = l.Creator,
+                        CreateDate = l.CreateDate,
+                        Modifier = l.Modifier,
+                        ModifiedDate = l.ModifiedDate
+                    })
                 }).FirstOrDefaultAsync();
 
             return location;
@@ -238,6 +296,16 @@ namespace DpControl.Domain.Repository
                             select L;
 
             var result = QueryOperate<Location>.Execute(queryData, query);
+            var needExpandGroups = ExpandOperator.NeedExpand("Groups", query.expand);
+            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", query.expand);
+            var needExpandLogs = ExpandOperator.NeedExpand("Logs", query.expand);
+
+            if (needExpandGroups)
+                result = result.Include(l => l.GroupLocations).ThenInclude(gl => gl.Group);
+            if (needExpandAlarms)
+                result = result.Include(l => l.Alarms);
+            if (needExpandLogs)
+                result = result.Include(l => l.Logs);
 
             //以下执行完后才会去数据库中查询
             var locations =  result.ToList();
@@ -264,7 +332,36 @@ namespace DpControl.Domain.Repository
                 Creator = v.Creator,
                 CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
+                ModifiedDate = v.ModifiedDate,
+                Groups = v.GroupLocations.Select(gl => new GroupSubSearchModel()
+                {
+                    GroupId = gl.Group.GroupId,
+                    GroupName = gl.Group.GroupName,
+                    ProjectId = gl.Group.ProjectId,
+                    SceneId = gl.Group.SceneId,
+                    Creator = gl.Group.Creator,
+                    CreateDate = gl.Group.CreateDate,
+                    Modifier = gl.Group.Modifier,
+                    ModifiedDate = gl.Group.ModifiedDate
+                }),
+                Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
+                {
+                    AlarmId = a.AlarmId,
+                    AlarmMessageId = a.AlarmMessageId,
+                    LocationId = a.LocationId,
+                    CreateDate = a.CreateDate
+                }),
+                Logs = v.Logs.Select(l => new LogSubSearchModel()
+                {
+                    LogId = l.LogId,
+                    Comment = l.Comment,
+                    LogDescriptionId = l.LogDescriptionId,
+                    LocationId = l.LocationId,
+                    Creator = l.Creator,
+                    CreateDate = l.CreateDate,
+                    Modifier = l.Modifier,
+                    ModifiedDate = l.ModifiedDate
+                })
             });
 
             return locationsSearch;
@@ -276,6 +373,17 @@ namespace DpControl.Domain.Repository
                             select L;
 
             var result = QueryOperate<Location>.Execute(queryData, query);
+
+            var needExpandGroups = ExpandOperator.NeedExpand("Groups", query.expand);
+            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", query.expand);
+            var needExpandLogs = ExpandOperator.NeedExpand("Logs", query.expand);
+
+            if (needExpandGroups)
+                result = result.Include(l => l.GroupLocations).ThenInclude(gl=>gl.Group);
+            if (needExpandAlarms)
+                result = result.Include(l => l.Alarms);
+            if (needExpandLogs)
+                result = result.Include(l=>l.Logs);
 
             //以下执行完后才会去数据库中查询
             var locations = await result.ToListAsync();
@@ -302,7 +410,34 @@ namespace DpControl.Domain.Repository
                 Creator = v.Creator,
                 CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
+                ModifiedDate = v.ModifiedDate,
+                Groups = v.GroupLocations.Select(gl=>new GroupSubSearchModel() {
+                    GroupId = gl.Group.GroupId,
+                    GroupName = gl.Group.GroupName,
+                    ProjectId = gl.Group.ProjectId,
+                    SceneId = gl.Group.SceneId,
+                    Creator = gl.Group.Creator,
+                    CreateDate = gl.Group.CreateDate,
+                    Modifier = gl.Group.Modifier,
+                    ModifiedDate = gl.Group.ModifiedDate
+                }),
+                Alarms = v.Alarms.Select(a=>new AlarmSubSearchModel() {
+                    AlarmId = a.AlarmId,
+                    AlarmMessageId = a.AlarmMessageId,
+                    LocationId = a.LocationId,
+                    CreateDate = a.CreateDate
+                }),
+                Logs = v.Logs.Select(l => new LogSubSearchModel()
+                {
+                    LogId = l.LogId,
+                    Comment = l.Comment,
+                    LogDescriptionId = l.LogDescriptionId,
+                    LocationId = l.LocationId,
+                    Creator = l.Creator,
+                    CreateDate = l.CreateDate,
+                    Modifier = l.Modifier,
+                    ModifiedDate = l.ModifiedDate
+                })
             });
 
             return locationsSearch;

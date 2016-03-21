@@ -6,7 +6,7 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface ISceneRepository:IBaseRepository<SceneAddModel,SceneUpdateModel,SceneSearchMoodel>
+    public interface ISceneRepository:IBaseRepository<SceneAddModel,SceneUpdateModel,SceneSearchModel>
     {
     }
 }

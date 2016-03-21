@@ -21,11 +21,10 @@ namespace DpControl.Domain.Models
     {
 
     }
-    public class LogSearchModel
+    public class LogSubSearchModel
     {
         public int LogId { get; set; }
-
-        [MaxLength(50, ErrorMessage = "Comment must be less than 500 characters!")]
+        
         public string Comment { get; set; }        
         
         public int? LogDescriptionId { get; set; }
@@ -34,5 +33,10 @@ namespace DpControl.Domain.Models
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
+    }
+
+    public class LogSearchModel: LogSubSearchModel
+    {
+
     }
 }

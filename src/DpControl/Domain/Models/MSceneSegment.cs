@@ -33,7 +33,8 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class SceneSegmentSearchModel: SceneSegmentBaseModel
+
+    public class SceneSegmentSubSearchModel: SceneSegmentBaseModel
     {
         public int SceneSegmentId { get; set; }
         public int SceneId { get; set; }
@@ -42,4 +43,9 @@ namespace DpControl.Domain.Models
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }
+
+    public class SceneSegmentSearchModel : SceneSegmentSubSearchModel
+    {
+    }
+
 }

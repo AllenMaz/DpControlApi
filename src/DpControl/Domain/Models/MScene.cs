@@ -27,7 +27,7 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class SceneSearchMoodel: SceneBaseModel
+    public class SceneSubSearchModel : SceneBaseModel
     {
         public int SceneId { get; set; }
 
@@ -38,4 +38,12 @@ namespace DpControl.Domain.Models
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }
+
+    public class SceneSearchModel: SceneSubSearchModel
+    {
+        public IEnumerable<GroupSubSearchModel> Groups { get; set; }          
+        public IEnumerable<SceneSegmentSubSearchModel> SceneSegments { get; set; }
+    }
+
+    
 }

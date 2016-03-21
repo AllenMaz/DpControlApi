@@ -25,8 +25,13 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class LogDescriptionSearchModel: LogDescriptionBaseModel
+    public class LogDescriptionSubSearchModel: LogDescriptionBaseModel
     {
         public int LogDescriptionId { get; set; }
+    }
+
+    public class LogDescriptionSearchModel: LogDescriptionSubSearchModel
+    {
+        public IEnumerable<LogSubSearchModel> Logs { get; set; }
     }
 }

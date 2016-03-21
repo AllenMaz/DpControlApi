@@ -77,7 +77,7 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class LocationSearchModel: LocationBaseModel
+    public class LocationSubSearchModel : LocationBaseModel
     {
         public int LocationId { get; set; }
         public int? ProjectId { get; set; }
@@ -85,5 +85,13 @@ namespace DpControl.Domain.Models
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
+    }
+
+    public class LocationSearchModel: LocationSubSearchModel
+    {
+        public IEnumerable<AlarmSubSearchModel> Alarms { get; set; }
+        public IEnumerable<LogSubSearchModel> Logs { get; set; }
+
+        public IEnumerable<GroupSubSearchModel> Groups { get; set; }
     }
 }

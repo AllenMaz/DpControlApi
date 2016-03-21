@@ -40,6 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
+        [EnableQuery(true,typeof(HolidaySearchModel))]
         [HttpGet("{holidayId}", Name = "GetByHolidayIdAsync")]
         public async Task<IActionResult> GetByHolidayIdAsync(int holidayId)
         {
@@ -58,7 +59,6 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
-        [FormatReturnType]
         public async Task<IEnumerable<HolidaySearchModel>> GetAllAsync([FromUri] Query query)
         {
 

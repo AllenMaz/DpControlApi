@@ -75,7 +75,18 @@ namespace DpControl.Domain.Repository
               {
                   LogDescriptionId = v.LogDescriptionId,
                   DescriptionCode = v.DescriptionCode,
-                  Description = v.Description
+                  Description = v.Description,
+                  Logs = v.Logs.Select(l => new LogSubSearchModel()
+                  {
+                      LogId = l.LogId,
+                      Comment = l.Comment,
+                      LogDescriptionId = l.LogDescriptionId,
+                      LocationId = l.LocationId,
+                      Creator = l.Creator,
+                      CreateDate = l.CreateDate,
+                      Modifier = l.Modifier,
+                      ModifiedDate = l.ModifiedDate
+                  })
 
               }).FirstOrDefault();
 
@@ -90,7 +101,18 @@ namespace DpControl.Domain.Repository
                {
                    LogDescriptionId = v.LogDescriptionId,
                    DescriptionCode = v.DescriptionCode,
-                   Description = v.Description
+                   Description = v.Description,
+                   Logs = v.Logs.Select(l => new LogSubSearchModel()
+                   {
+                       LogId = l.LogId,
+                       Comment = l.Comment,
+                       LogDescriptionId = l.LogDescriptionId,
+                       LocationId = l.LocationId,
+                       Creator = l.Creator,
+                       CreateDate = l.CreateDate,
+                       Modifier = l.Modifier,
+                       ModifiedDate = l.ModifiedDate
+                   })
 
                }).FirstOrDefaultAsync();
 
@@ -104,6 +126,10 @@ namespace DpControl.Domain.Repository
 
             var result = QueryOperate<LogDescription>.Execute(queryData, query);
 
+            var needExpandLogs = ExpandOperator.NeedExpand("Logs", query.expand);
+            if (needExpandLogs)
+                result = result.Include(l => l.Logs);
+
             //以下执行完后才会去数据库中查询
             var logDescriptions = result.ToList();
 
@@ -111,7 +137,18 @@ namespace DpControl.Domain.Repository
             {
                 LogDescriptionId = v.LogDescriptionId,
                 DescriptionCode = v.DescriptionCode,
-                Description = v.Description
+                Description = v.Description,
+                Logs = v.Logs.Select(l => new LogSubSearchModel()
+                {
+                    LogId = l.LogId,
+                    Comment = l.Comment,
+                    LogDescriptionId = l.LogDescriptionId,
+                    LocationId = l.LocationId,
+                    Creator = l.Creator,
+                    CreateDate = l.CreateDate,
+                    Modifier = l.Modifier,
+                    ModifiedDate = l.ModifiedDate
+                })
             });
 
             return logDescriptionsSearch;
@@ -124,6 +161,10 @@ namespace DpControl.Domain.Repository
 
             var result = QueryOperate<LogDescription>.Execute(queryData, query);
 
+            var needExpandLogs = ExpandOperator.NeedExpand("Logs", query.expand);
+            if (needExpandLogs)
+                result = result.Include(l => l.Logs);
+
             //以下执行完后才会去数据库中查询
             var logDescriptions = await result.ToListAsync();
 
@@ -131,7 +172,18 @@ namespace DpControl.Domain.Repository
             {
                 LogDescriptionId = v.LogDescriptionId,
                 DescriptionCode = v.DescriptionCode,
-                Description = v.Description
+                Description = v.Description,
+                Logs = v.Logs.Select(l => new LogSubSearchModel()
+                {
+                    LogId = l.LogId,
+                    Comment = l.Comment,
+                    LogDescriptionId = l.LogDescriptionId,
+                    LocationId = l.LocationId,
+                    Creator = l.Creator,
+                    CreateDate = l.CreateDate,
+                    Modifier = l.Modifier,
+                    ModifiedDate = l.ModifiedDate
+                })
             });
 
             return logDescriptionsSearch;

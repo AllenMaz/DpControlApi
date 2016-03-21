@@ -41,6 +41,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
+        [EnableQuery(true,typeof(SceneSearchModel))]
         [HttpGet("{sceneId}", Name = "GetBySceneIdAsync")]
         public async Task<IActionResult> GetBySceneIdAsync(int sceneId)
         {
@@ -59,8 +60,7 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
-        [FormatReturnType]
-        public async Task<IEnumerable<SceneSearchMoodel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<SceneSearchModel>> GetAllAsync([FromUri] Query query)
         {
 
             var result = await _sceneRepository.GetAllAsync(query); ;

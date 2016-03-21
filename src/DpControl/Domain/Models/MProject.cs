@@ -30,7 +30,15 @@ namespace DpControl.Domain.Models
         public bool Completed { get; set; }
     }
 
-    public class ProjectSearchModel : ProjectBaseModel
+    public class ProjectSearchModel : ProjectSubSearchModel
+    {
+        public IEnumerable<LocationSubSearchModel> Locations { get; set; }          
+        public IEnumerable<GroupSubSearchModel> Groups { get; set; }
+        public IEnumerable<SceneSubSearchModel> Scenes { get; set; }
+        public IEnumerable<HolidaySubSearchModel> Holidays { get; set; }
+    }
+
+    public class ProjectSubSearchModel:ProjectBaseModel
     {
         public int? CustomerId { get; set; }
         public int ProjectId { get; set; }

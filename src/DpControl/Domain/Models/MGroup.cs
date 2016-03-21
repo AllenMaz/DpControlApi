@@ -28,14 +28,19 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class GroupSearchModel:GroupBaseModel
+    public class GroupSubSearchModel : GroupBaseModel
     {
         public int GroupId { get; set; }
         public int? ProjectId { get; set; }
-        
+
         public string Creator { get; set; }
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
+    }
+
+    public class GroupSearchModel: GroupSubSearchModel
+    {
+        public IEnumerable<LocationSubSearchModel> Locations { get; set; }
     }
 }

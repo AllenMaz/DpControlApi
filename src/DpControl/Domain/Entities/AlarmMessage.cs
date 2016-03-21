@@ -11,5 +11,10 @@ namespace DpControl.Domain.Entities
         public int ErrorCode { get; set; }
         public string Message { get; set; }
         public List<Alarm> Alarms { get; set; }
+
+        public AlarmMessage()
+        {
+            this.Alarms = new List<Alarm>();
+        }
     }
 }

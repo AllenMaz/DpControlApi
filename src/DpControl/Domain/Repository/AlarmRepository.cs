@@ -80,7 +80,7 @@ namespace DpControl.Domain.Repository
                   AlarmId = v.AlarmId,
                   AlarmMessageId = v.AlarmMessageId,
                   LocationId = v.LocationId,
-                  CreateDate = v.CreateDate
+                  CreateDate = v.CreateDate 
               }).FirstOrDefault();
 
             return alarm;

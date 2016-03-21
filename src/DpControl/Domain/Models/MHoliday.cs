@@ -22,7 +22,7 @@ namespace DpControl.Domain.Models
     {
     }
 
-    public class HolidaySearchModel: HoliadyBaseModel
+    public class HolidaySubSearchModel: HoliadyBaseModel
     {
         public int HolidayId { get; set; }
 
@@ -32,5 +32,10 @@ namespace DpControl.Domain.Models
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
+    }
+
+    public class HolidaySearchModel: HolidaySubSearchModel
+    {
+        
     }
 }

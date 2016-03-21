@@ -104,7 +104,63 @@ namespace DpControl.Domain.Repository
                     Creator = v.Creator,
                     CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate
+                    ModifiedDate = v.ModifiedDate,
+                    Scenes = v.Scenes.Select(p => new SceneSubSearchModel()
+                    {
+                        SceneId = p.SceneId,
+                        SceneName = p.SceneName,
+                        ProjectId = p.ProjectId,
+                        Enable = p.Enable,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    }),
+                    Groups = v.Groups.Select(p => new GroupSubSearchModel()
+                    {
+                        GroupId = p.GroupId,
+                        GroupName = p.GroupName,
+                        ProjectId = p.ProjectId,
+                        SceneId = p.SceneId,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    }),
+                    Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                    {
+                        LocationId = p.LocationId,
+                        ProjectId = p.ProjectId,
+                        Building = p.Building,
+                        CommAddress = p.CommAddress,
+                        CommMode = p.CommMode,
+                        CurrentPosition = p.CurrentPosition,
+                        Description = p.Description,
+                        DeviceSerialNo = p.DeviceSerialNo,
+                        DeviceId = p.DeviceId,
+                        DeviceType = p.DeviceType,
+                        FavorPositionFirst = p.FavorPositionFirst,
+                        FavorPositionrSecond = p.FavorPositionrSecond,
+                        FavorPositionThird = p.FavorPositionThird,
+                        Floor = p.Floor,
+                        InstallationNumber = p.InstallationNumber,
+                        Orientation = p.Orientation,
+                        RoomNo = p.RoomNo,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    }),
+                    Holidays = v.Holidays.Select(p => new HolidaySubSearchModel()
+                    {
+                        HolidayId = p.HolidayId,
+                        ProjectId = p.ProjectId,
+                        Day = p.Day,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    })
                 }).FirstOrDefault();
 
             return projects;
@@ -123,7 +179,63 @@ namespace DpControl.Domain.Repository
                     Creator = v.Creator,
                     CreateDate = v.CreateDate,
                     Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate
+                    ModifiedDate = v.ModifiedDate,
+                    Scenes = v.Scenes.Select(p => new SceneSubSearchModel()
+                    {
+                        SceneId = p.SceneId,
+                        SceneName = p.SceneName,
+                        ProjectId = p.ProjectId,
+                        Enable = p.Enable,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    }),
+                    Groups = v.Groups.Select(p => new GroupSubSearchModel()
+                    {
+                        GroupId = p.GroupId,
+                        GroupName = p.GroupName,
+                        ProjectId = p.ProjectId,
+                        SceneId = p.SceneId,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    }),
+                    Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                    {
+                        LocationId = p.LocationId,
+                        ProjectId = p.ProjectId,
+                        Building = p.Building,
+                        CommAddress = p.CommAddress,
+                        CommMode = p.CommMode,
+                        CurrentPosition = p.CurrentPosition,
+                        Description = p.Description,
+                        DeviceSerialNo = p.DeviceSerialNo,
+                        DeviceId = p.DeviceId,
+                        DeviceType = p.DeviceType,
+                        FavorPositionFirst = p.FavorPositionFirst,
+                        FavorPositionrSecond = p.FavorPositionrSecond,
+                        FavorPositionThird = p.FavorPositionThird,
+                        Floor = p.Floor,
+                        InstallationNumber = p.InstallationNumber,
+                        Orientation = p.Orientation,
+                        RoomNo = p.RoomNo,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    }),
+                    Holidays = v.Holidays.Select(p => new HolidaySubSearchModel()
+                    {
+                        HolidayId = p.HolidayId,
+                        ProjectId = p.ProjectId,
+                        Day = p.Day,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+                    })
                 }).FirstOrDefaultAsync();
 
             return projects;
@@ -135,6 +247,20 @@ namespace DpControl.Domain.Repository
                             select P;
 
             var result = QueryOperate<Project>.Execute(queryData, query);
+
+            var needExpandScenes = ExpandOperator.NeedExpand("Scenes", query.expand);
+            var needExpandGroups = ExpandOperator.NeedExpand("Groups", query.expand);
+            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
+            var needExpandHolidays = ExpandOperator.NeedExpand("Holidays", query.expand);
+
+            if (needExpandScenes)
+                result = result.Include(p => p.Scenes);
+            if (needExpandGroups)
+                result = result.Include(p => p.Groups);
+            if (needExpandLocations)
+                result = result.Include(p => p.Locations);
+            if (needExpandHolidays)
+                result = result.Include(p => p.Holidays);
 
             //以下执行完后才会去数据库中查询
             var projects = result.ToList();
@@ -149,7 +275,63 @@ namespace DpControl.Domain.Repository
                 Creator = v.Creator,
                 CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
+                ModifiedDate = v.ModifiedDate,
+                Scenes = v.Scenes.Select(p => new SceneSubSearchModel()
+                {
+                    SceneId = p.SceneId,
+                    SceneName = p.SceneName,
+                    ProjectId = p.ProjectId,
+                    Enable = p.Enable,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                }),
+                Groups = v.Groups.Select(p => new GroupSubSearchModel()
+                {
+                    GroupId = p.GroupId,
+                    GroupName = p.GroupName,
+                    ProjectId = p.ProjectId,
+                    SceneId = p.SceneId,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                }),
+                Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                {
+                    LocationId = p.LocationId,
+                    ProjectId = p.ProjectId,
+                    Building = p.Building,
+                    CommAddress = p.CommAddress,
+                    CommMode = p.CommMode,
+                    CurrentPosition = p.CurrentPosition,
+                    Description = p.Description,
+                    DeviceSerialNo = p.DeviceSerialNo,
+                    DeviceId = p.DeviceId,
+                    DeviceType = p.DeviceType,
+                    FavorPositionFirst = p.FavorPositionFirst,
+                    FavorPositionrSecond = p.FavorPositionrSecond,
+                    FavorPositionThird = p.FavorPositionThird,
+                    Floor = p.Floor,
+                    InstallationNumber = p.InstallationNumber,
+                    Orientation = p.Orientation,
+                    RoomNo = p.RoomNo,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                }),
+                Holidays = v.Holidays.Select(p => new HolidaySubSearchModel()
+                {
+                    HolidayId = p.HolidayId,
+                    ProjectId = p.ProjectId,
+                    Day = p.Day,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                })
             });
 
             return projectSearch;
@@ -161,6 +343,20 @@ namespace DpControl.Domain.Repository
                             select P;
 
             var result = QueryOperate<Project>.Execute(queryData, query);
+
+            var needExpandScenes = ExpandOperator.NeedExpand("Scenes", query.expand);
+            var needExpandGroups = ExpandOperator.NeedExpand("Groups", query.expand);
+            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
+            var needExpandHolidays = ExpandOperator.NeedExpand("Holidays", query.expand);
+
+            if (needExpandScenes)
+                result = result.Include(p => p.Scenes);
+            if (needExpandGroups)
+                result = result.Include(p => p.Groups);
+            if (needExpandLocations)
+                result = result.Include(p => p.Locations);
+            if (needExpandHolidays)
+                result = result.Include(p => p.Holidays);
 
             //以下执行完后才会去数据库中查询
             var projects = await result.ToListAsync();
@@ -175,7 +371,62 @@ namespace DpControl.Domain.Repository
                 Creator = v.Creator,
                 CreateDate = v.CreateDate,
                 Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
+                ModifiedDate = v.ModifiedDate,
+                Scenes = v.Scenes.Select(p=>new SceneSubSearchModel() {
+                    SceneId = p.SceneId,
+                    SceneName = p.SceneName,
+                    ProjectId = p.ProjectId,
+                    Enable = p.Enable,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                }),
+                Groups = v.Groups.Select(p => new GroupSubSearchModel()
+                {
+                    GroupId = p.GroupId,
+                    GroupName = p.GroupName,
+                    ProjectId = p.ProjectId,
+                    SceneId = p.SceneId,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                }),
+                Locations = v.Locations.Select(p => new LocationSubSearchModel()
+                {
+                    LocationId = p.LocationId,
+                    ProjectId = p.ProjectId,
+                    Building = p.Building,
+                    CommAddress = p.CommAddress,
+                    CommMode = p.CommMode,
+                    CurrentPosition = p.CurrentPosition,
+                    Description = p.Description,
+                    DeviceSerialNo = p.DeviceSerialNo,
+                    DeviceId = p.DeviceId,
+                    DeviceType = p.DeviceType,
+                    FavorPositionFirst = p.FavorPositionFirst,
+                    FavorPositionrSecond = p.FavorPositionrSecond,
+                    FavorPositionThird = p.FavorPositionThird,
+                    Floor = p.Floor,
+                    InstallationNumber = p.InstallationNumber,
+                    Orientation = p.Orientation,
+                    RoomNo = p.RoomNo,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                }),
+                Holidays = v.Holidays.Select(p => new HolidaySubSearchModel()
+                {
+                    HolidayId = p.HolidayId,
+                    ProjectId = p.ProjectId,
+                    Day = p.Day,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+                })
             });
 
             return projectSearch;

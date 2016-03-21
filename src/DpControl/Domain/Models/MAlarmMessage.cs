@@ -23,9 +23,15 @@ namespace DpControl.Domain.Models
     {
 
     }
-    public class AlarmMessageSearchModel: AlarmMessageBaseModel
+
+    public class AlarmMessageSubSearchModel : AlarmMessageBaseModel
     {
         public int AlarmMessageId { get; set; }
-        
+
+    }
+    public class AlarmMessageSearchModel: AlarmMessageSubSearchModel
+    {
+        public IEnumerable<AlarmSubSearchModel> Alarms { get; set; }
+
     }
 }
