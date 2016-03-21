@@ -7,6 +7,7 @@ using DpControl.Domain.Execptions;
 using Microsoft.AspNet.Mvc.ViewFeatures;
 using System.Linq.Expressions;
 using DpControl.Domain.Entities;
+using Microsoft.Data.Entity;
 
 namespace DpControl.Domain.Models
 {
@@ -41,9 +42,9 @@ namespace DpControl.Domain.Models
         public string[] select { get; set; }
 
         /// <summary>
-        /// 
+        /// Expand
         /// </summary>
-        //private string expand { get; set; }
+        public string[] expand { get; set; }
 
         /// <summary>
         /// Filter
@@ -61,6 +62,7 @@ namespace DpControl.Domain.Models
             this.skip = null;
             this.top = null;
             this.select = null;
+            this.expand = null;
             this.filter = null;
         }
 
@@ -110,7 +112,7 @@ namespace DpControl.Domain.Models
         };
     }
 
-    public static class QueryOperate<T>
+    public static class QueryOperate<T> where T :class //T 必须是引用类型
     {
         public static IQueryable<T> Execute(IQueryable<T> queryData,Query query)
         {
@@ -121,6 +123,8 @@ namespace DpControl.Domain.Models
                 int? top = query.top;
                 OrderBy orderbyParam = query.orderby;
                 Filter[] filterParams = query.filter;
+                string[] expandParams = query.expand;
+                string[] selectParams = query.select;
 
                 //Filter operate
                 queryData = Filter(queryData,filterParams);
@@ -128,6 +132,8 @@ namespace DpControl.Domain.Models
                 queryData = Paging(queryData, skip, top);
                 //orderby operate
                 queryData = OrderBy(queryData,orderbyParam);
+                //expand
+                queryData = Expand(queryData, expandParams);
             }
             return queryData;
         }
@@ -329,6 +335,16 @@ namespace DpControl.Domain.Models
             return query;
         }
 
+        #endregion
+
+        #region Expand
+        private static IQueryable<T> Expand(IQueryable<T> query, string[] expandParams)
+        {
+           
+            
+            return query;
+        }
+        
         #endregion
     }
 }

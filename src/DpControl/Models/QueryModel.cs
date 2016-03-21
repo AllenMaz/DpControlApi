@@ -10,6 +10,7 @@ using Microsoft.AspNet.Mvc;
 
 namespace DpControl.Models
 {
+    
     //public class QueryModel
     //{
     //    /// <summary>
@@ -88,6 +89,6 @@ namespace DpControl.Models
     //    /// </summary>
     //    public string OrderbyBehavior { get; set; }
     //}
-    
-    
+
+
 }

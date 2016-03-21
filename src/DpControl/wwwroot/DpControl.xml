@@ -4,45 +4,45 @@
         <name>DpControl</name>
     </assembly>
     <members>
-        <member name="M:DpControl.Controllers.ManageController.GetUserPageData">
+        <member name="M:DpControl.Controllers.ManageController.GetUserPageData(DpControl.Models.JQueryDataTableParams)">
             <summary>
             Get User Paging Data
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.ManageController.GetRolePageData">
+        <member name="M:DpControl.Controllers.ManageController.GetRolePageData(DpControl.Models.JQueryDataTableParams)">
             <summary>
             Get Role Paging Data
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.AddAsync(DpControl.Domain.Models.AlarmMessageAddModel)">
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.AddAsync(DpControl.Domain.Models.AlarmMessageAddModel)">
             <summary>
             Add data
             </summary>
             <param name="item"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.GetByAlarmMessageIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.GetByAlarmMessageIdAsync(System.Int32)">
             <summary>
             Search data by AlarmMessageId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.GetAllAsync(DpControl.Domain.Models.Query)">
             <summary>
             Search all data
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.DeleteByAlarmMessageIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.DeleteByAlarmMessageIdAsync(System.Int32)">
             <summary>
             Delete data by AlarmMessageId
             </summary>
             <param name="alarmMessageId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessageController.UpdateAsync(System.Int32,DpControl.Domain.Models.AlarmMessageUpdateModel)">
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.UpdateAsync(System.Int32,DpControl.Domain.Models.AlarmMessageUpdateModel)">
             <summary>
             Edit data by AlarmMessageId
             </summary>
@@ -238,65 +238,65 @@
             </summary>
             <param name="LocationId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogController.AddAsync(DpControl.Domain.Models.LogAddModel)">
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.AddAsync(DpControl.Domain.Models.LogDescriptionAddModel)">
             <summary>
             Add data
             </summary>
             <param name="item"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogController.GetByLogIdAsync(System.Int32)">
-            <summary>
-            Search data by LogId
-            </summary>
-            <param name="id">ID</param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogController.GetAllAsync(DpControl.Domain.Models.Query)">
-            <summary>
-            Search all data
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogController.DeleteByLogIdAsync(System.Int32)">
-            <summary>
-            Delete data by LogId
-            </summary>
-            <param name="logId"></param>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.AddAsync(DpControl.Domain.Models.LogDescriptionAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.GetByLogDescriptionIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.GetByLogDescriptionIdAsync(System.Int32)">
             <summary>
             Search data by LogDescriptionId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.GetAllAsync(DpControl.Domain.Models.Query)">
             <summary>
             Search all data
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.DeleteByLogDescriptionIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.DeleteByLogDescriptionIdAsync(System.Int32)">
             <summary>
             Delete data by LogDescriptionId
             </summary>
             <param name="logDescriptionId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionController.UpdateAsync(System.Int32,DpControl.Domain.Models.LogDescriptionUpdateModel)">
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.UpdateAsync(System.Int32,DpControl.Domain.Models.LogDescriptionUpdateModel)">
             <summary>
             Edit data by LogDescriptionId
             </summary>
             <param name="LogDescriptionId"></param>
             <param name="LogDescription"></param>
             <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.AddAsync(DpControl.Domain.Models.LogAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.GetByLogIdAsync(System.Int32)">
+            <summary>
+            Search data by LogId
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.GetAllAsync(DpControl.Domain.Models.Query)">
+            <summary>
+            Search all data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.DeleteByLogIdAsync(System.Int32)">
+            <summary>
+            Delete data by LogId
+            </summary>
+            <param name="logId"></param>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.AddAsync(DpControl.Domain.Models.ProjectAddModel)">
             <summary>
@@ -518,6 +518,11 @@
             格式：select = name,price
             </summary>
         </member>
+        <member name="P:DpControl.Domain.Models.Query.expand">
+            <summary>
+            Expand
+            </summary>
+        </member>
         <member name="P:DpControl.Domain.Models.Query.filter">
             <summary>
             Filter
@@ -542,6 +547,47 @@
             <summary>
             key:PropertyName
             value:PropertyValue
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.JQueryDataTableParams.sEcho">
+            <summary>  
+            Request sequence number sent by DataTable,  
+            same value must be returned in response  
+            </summary>      
+        </member>
+        <member name="P:DpControl.Models.JQueryDataTableParams.sSearch">
+            <summary>  
+            Text used for filtering  
+            </summary>  
+        </member>
+        <member name="P:DpControl.Models.JQueryDataTableParams.iDisplayLength">
+            <summary>  
+            Number of records that should be shown in table  
+            </summary>  
+        </member>
+        <member name="P:DpControl.Models.JQueryDataTableParams.iDisplayStart">
+            <summary>  
+            First record that should be shown(used for paging)  
+            </summary>  
+        </member>
+        <member name="P:DpControl.Models.JQueryDataTableParams.iColumns">
+            <summary>  
+            Number of columns in table  
+            </summary>  
+        </member>
+        <member name="P:DpControl.Models.JQueryDataTableParams.iSortingCols">
+            <summary>  
+            Number of columns that are used in sorting  
+            </summary>  
+        </member>
+        <member name="P:DpControl.Models.JQueryDataTableParams.sColumns">
+            <summary>  
+            Comma separated list of column names  
+            </summary>  
+        </member>
+        <member name="P:DpControl.Models.Menu.MenuIcon">
+            <summary>
+            fullname eg:logo.png
             </summary>
         </member>
         <member name="T:DpControl.Models.ListResponseModel`1">
@@ -760,6 +806,14 @@
             获取select参数
             </summary>
             <param name="orderbyString"></param>
+            <param name="actionReturnType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetExpandParam(System.String,System.Type)">
+            <summary>
+            获取expand参数
+            </summary>
+            <param name="expandString"></param>
             <param name="actionReturnType"></param>
             <returns></returns>
         </member>

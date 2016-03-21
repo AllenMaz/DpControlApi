@@ -55,6 +55,7 @@ namespace DpControl.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
+        [EnableQuery(true,typeof(CustomerSearchModel))]
         [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
         public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
         {
@@ -73,7 +74,6 @@ namespace DpControl.APIControllers
         [APIAuthorize(Roles ="Admin")]
         [HttpGet]
         [EnableQuery]
-        [FormatReturnType]
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync([FromUri] Query query)
         {
             //string cacheKey = "CustomerGetAllCache";

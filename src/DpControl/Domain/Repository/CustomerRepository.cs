@@ -10,6 +10,7 @@ using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
 using DpControl.Domain.Execptions;
 using DpControl.Utility.Authentication;
+using System.Dynamic;
 
 namespace DpControl.Domain.Repository
 {
@@ -90,17 +91,30 @@ namespace DpControl.Domain.Repository
         public CustomerSearchModel FindById(int customerId)
         {
             var customer = _context.Customers
-                        .Where(c => c.CustomerId == customerId)
-                        .Select(c => new CustomerSearchModel
-                        {
-                            CustomerId = c.CustomerId,
-                            CustomerName = c.CustomerName,
-                            CustomerNo = c.CustomerNo,
-                            Creator = c.Creator ,
-                            CreateDate = c.CreateDate,
-                            Modifier = c.Modifier,
-                            ModifiedDate = c.ModifiedDate
-                        }).FirstOrDefault();
+                .Where(c => c.CustomerId == customerId)
+                .Select(c => new CustomerSearchModel
+                {
+                    CustomerId = c.CustomerId,
+                    CustomerName = c.CustomerName,
+                    CustomerNo = c.CustomerNo,
+                    Creator = c.Creator ,
+                    CreateDate = c.CreateDate,
+                    Modifier = c.Modifier,
+                    ModifiedDate = c.ModifiedDate,
+                    Projects = c.Projects.Select(p => new ProjectSearchModel()
+                    {
+                        ProjectId = p.ProjectId,
+                        ProjectNo = p.ProjectNo,
+                        ProjectName = p.ProjectName,
+                        CustomerId = p.CustomerId,
+                        Completed = p.Completed,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+
+                    })
+                }).FirstOrDefault();
 
             return customer;
         }
@@ -108,17 +122,30 @@ namespace DpControl.Domain.Repository
         public async Task<CustomerSearchModel> FindByIdAsync(int customerId)
         {
             var customer =await _context.Customers
-                        .Where(c => c.CustomerId == customerId)
-                        .Select(c => new CustomerSearchModel
-                        {
-                            CustomerId = c.CustomerId,
-                            CustomerName = c.CustomerName,
-                            CustomerNo = c.CustomerNo,
-                            Creator = c.Creator,
-                            CreateDate = c.CreateDate,
-                            Modifier = c.Modifier,
-                            ModifiedDate = c.ModifiedDate
-                        }).FirstOrDefaultAsync();
+                .Where(c => c.CustomerId == customerId)
+                .Select(c => new CustomerSearchModel
+                {
+                    CustomerId = c.CustomerId,
+                    CustomerName = c.CustomerName,
+                    CustomerNo = c.CustomerNo,
+                    Creator = c.Creator,
+                    CreateDate = c.CreateDate,
+                    Modifier = c.Modifier,
+                    ModifiedDate = c.ModifiedDate,
+                    Projects = c.Projects.Select(p => new ProjectSearchModel()
+                    {
+                        ProjectId = p.ProjectId,
+                        ProjectNo = p.ProjectNo,
+                        ProjectName = p.ProjectName,
+                        CustomerId = p.CustomerId,
+                        Completed = p.Completed,
+                        Creator = p.Creator,
+                        CreateDate = p.CreateDate,
+                        Modifier = p.Modifier,
+                        ModifiedDate = p.ModifiedDate
+
+                    })
+                }).FirstOrDefaultAsync();
 
             return customer;
         }
@@ -142,7 +169,20 @@ namespace DpControl.Domain.Repository
                 Creator = c.Creator,
                 CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate
+                ModifiedDate = c.ModifiedDate,
+                Projects = c.Projects.Select(p => new ProjectSearchModel()
+                {
+                    ProjectId = p.ProjectId,
+                    ProjectNo = p.ProjectNo,
+                    ProjectName = p.ProjectName,
+                    CustomerId = p.CustomerId,
+                    Completed = p.Completed,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+
+                })
             });
 
             return customerSearch;
@@ -151,13 +191,16 @@ namespace DpControl.Domain.Repository
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync(Query query)
         {
             
-            var queryData = from P in _context.Customers
-                        select P;
-
-            var result = QueryOperate<Customer>.Execute(queryData, query);
+            var queryData = from C in _context.Customers
+                        select C;
             
+            var result = QueryOperate<Customer>.Execute(queryData, query);
+
+
             //以下执行完后才会去数据库中查询
-            var customers = await result.Include(c => c.Projects).ToListAsync();
+            //N+1 Select 
+            var customers = await result.Include(c=>c.Projects).ToListAsync();
+            
 
             var customerSearch = customers.Select(c => new CustomerSearchModel
             {
@@ -167,13 +210,26 @@ namespace DpControl.Domain.Repository
                 Creator = c.Creator,
                 CreateDate = c.CreateDate,
                 Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate
+                ModifiedDate = c.ModifiedDate,
+                Projects = c.Projects.Select(p=> new ProjectSearchModel()
+                {
+                    ProjectId = p.ProjectId,
+                    ProjectNo = p.ProjectNo,
+                    ProjectName = p.ProjectName,
+                    CustomerId = p.CustomerId,
+                    Completed = p.Completed,
+                    Creator = p.Creator,
+                    CreateDate = p.CreateDate,
+                    Modifier = p.Modifier,
+                    ModifiedDate = p.ModifiedDate
+
+                })
             });
 
             return customerSearch;
         }
 
-        
+       
 
         public int UpdateById(int customerId,CustomerUpdateModel mcustomer)
         {

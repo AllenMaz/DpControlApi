@@ -8,6 +8,5 @@ namespace DpControl.Domain.IRepository
 {
     public interface ICustomerRepository:IBaseRepository<CustomerAddModel,CustomerUpdateModel,CustomerSearchModel>
     {
-        
     }
 }

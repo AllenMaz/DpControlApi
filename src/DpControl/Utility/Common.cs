@@ -73,5 +73,7 @@ namespace DpControl.Utility
             return typeof(T).GetProperty(propertyName, BindingFlags.IgnoreCase |
                 BindingFlags.Public | BindingFlags.Instance) != null;
         }
+
+        
     }
 }
