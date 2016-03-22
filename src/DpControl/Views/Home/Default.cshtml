@@ -120,39 +120,37 @@
                 <h3>There are some Features:</h3>
                 <ul>
                     <li class="lead">
-                        Expand by expand <sup class="tipFont">New</sup>
+                        <strong>expand:</strong>  Expands related entities inline <sup class="tipFont">New</sup>
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Load related entities<br />
                             <a href="/v1/Projects?expand=Scenes,Groups,Locations">/v1/Projects?expand=Scenes,Groups,Locations</a>
                         </p>
                     </li>
 
                     <li class="lead">
-                        Select by select <sup class="tipFont">New</sup>
+                        <strong>select:</strong> Selects which properties to include in the response<sup class="tipFont">New</sup>
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Only select properties which you need<br />
                             <a href="/v1/Projects?select=ProjectId,ProjectName,ProjectNo">/v1/Projects?select=ProjectId,ProjectName,ProjectNo</a>
                         </p>
                     </li>
 
                     
                     <li class="lead">
-                        Filter by filter
+                        <strong>filter:</strong> Filters the results, based on a Boolean condition
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers with CustomerName equal to 'Allen' and CustomerNo equal to '333'<br />
+                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers which CustomerName equal to 'Allen' and CustomerNo equal to '333'<br />
                             <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
                         </p>
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId >= 15<br />
+                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers which CustomerId >= 15<br />
                             <a href="/v1/Customers?filter=CustomerId gt 15">/v1/Customers?filter=CustomerId gt 15</a>
                         </p>
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers where CustomerId <= 10<br />
+                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers which CustomerId <= 10<br />
                             <a href="/v1/Customers?filter=CustomerId lt 10">/v1/Customers?filter=CustomerId lt 10</a>
                         </p>
                     </li>
                     <li class="lead">
-                        OrderBy by orderby(desc/asc)
+                        <strong>orderby(desc/asc):</strong> Sorts the results.
                         <p class="text-lowercase">
                             <a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a>
                         </p>
