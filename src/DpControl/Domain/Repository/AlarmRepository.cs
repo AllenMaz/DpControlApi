@@ -73,32 +73,18 @@ namespace DpControl.Domain.Repository
 
         public AlarmSearchModel FindById(int alarmId)
         {
-            var alarm = _context.Alarms
-              .Where(v => v.AlarmId == alarmId)
-              .Select(v => new AlarmSearchModel()
-              {
-                  AlarmId = v.AlarmId,
-                  AlarmMessageId = v.AlarmMessageId,
-                  LocationId = v.LocationId,
-                  CreateDate = v.CreateDate 
-              }).FirstOrDefault();
-
-            return alarm;
+            var result = _context.Alarms.Where(v => v.AlarmId == alarmId);
+            var alarm = result.FirstOrDefault();
+            var alarmSearch = AlarmOperator.SetAlarmSearchModelCascade(alarm);
+            return alarmSearch;
         }
 
         public async Task<AlarmSearchModel> FindByIdAsync(int alarmId)
         {
-            var alarm = await _context.Alarms
-               .Where(v => v.AlarmId == alarmId)
-               .Select(v => new AlarmSearchModel()
-               {
-                   AlarmId = v.AlarmId,
-                   AlarmMessageId = v.AlarmMessageId,
-                   LocationId = v.LocationId,
-                   CreateDate = v.CreateDate
-               }).FirstOrDefaultAsync();
-
-            return alarm;
+            var result = _context.Alarms.Where(v => v.AlarmId == alarmId);
+            var alarm = await result.FirstOrDefaultAsync();
+            var alarmSearch = AlarmOperator.SetAlarmSearchModelCascade(alarm);
+            return alarmSearch;
         }
 
         public IEnumerable<AlarmSearchModel> GetAll(Query query)
@@ -110,14 +96,7 @@ namespace DpControl.Domain.Repository
 
             //以下执行完后才会去数据库中查询
             var alarms = result.ToList();
-
-            var alarmsSearch = alarms.Select(v => new AlarmSearchModel
-            {
-                AlarmId = v.AlarmId,
-                AlarmMessageId = v.AlarmMessageId,
-                LocationId = v.LocationId,
-                CreateDate = v.CreateDate
-            });
+            var alarmsSearch = AlarmOperator.SetAlarmSearchModelCascade(alarms);
 
             return alarmsSearch;
         }
@@ -131,14 +110,7 @@ namespace DpControl.Domain.Repository
 
             //以下执行完后才会去数据库中查询
             var alarms = await result.ToListAsync();
-
-            var alarmsSearch = alarms.Select(v => new AlarmSearchModel
-            {
-                AlarmId = v.AlarmId,
-                AlarmMessageId = v.AlarmMessageId,
-                LocationId = v.LocationId,
-                CreateDate = v.CreateDate
-            });
+            var alarmsSearch = AlarmOperator.SetAlarmSearchModelCascade(alarms);
 
             return alarmsSearch;
         }

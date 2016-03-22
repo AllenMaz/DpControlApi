@@ -85,42 +85,18 @@ namespace DpControl.Domain.Repository
 
         public LogSearchModel FindById(int logId)
         {
-            var log = _context.Logs
-              .Where(v => v.LogId == logId)
-              .Select(v => new LogSearchModel()
-              {
-                  LogId = v.LogId,
-                  Comment = v.Comment,
-                  LogDescriptionId = v.LogDescriptionId,
-                  LocationId = v.LocationId,
-                  Creator = v.Creator,
-                  CreateDate = v.CreateDate,
-                  Modifier = v.Modifier,
-                  ModifiedDate = v.ModifiedDate
-
-              }).FirstOrDefault();
-
-            return log;
+            var result = _context.Logs.Where(v => v.LogId == logId);
+            var log = result.FirstOrDefault();
+            var logSearch = LogOperator.SetLogSearchModelCascade(log);
+            return logSearch;
         }
 
         public async Task<LogSearchModel> FindByIdAsync(int logId)
         {
-            var log = await _context.Logs
-              .Where(v => v.LogId == logId)
-              .Select(v => new LogSearchModel()
-              {
-                  LogId = v.LogId,
-                  Comment = v.Comment,
-                  LogDescriptionId = v.LogDescriptionId,
-                  LocationId = v.LocationId,
-                  Creator = v.Creator,
-                  CreateDate = v.CreateDate,
-                  Modifier = v.Modifier,
-                  ModifiedDate = v.ModifiedDate
-
-              }).FirstOrDefaultAsync();
-
-            return log;
+            var result = _context.Logs.Where(v => v.LogId == logId);
+            var log = await result.FirstOrDefaultAsync();
+            var logSearch = LogOperator.SetLogSearchModelCascade(log);
+            return logSearch;
         }
 
         public IEnumerable<LogSearchModel> GetAll(Query query)
@@ -132,18 +108,7 @@ namespace DpControl.Domain.Repository
 
             //以下执行完后才会去数据库中查询
             var logs = result.ToList();
-
-            var logsSearch = logs.Select(v => new LogSearchModel
-            {
-                LogId = v.LogId,
-                Comment = v.Comment,
-                LogDescriptionId = v.LogDescriptionId,
-                LocationId = v.LocationId,
-                Creator = v.Creator,
-                CreateDate = v.CreateDate,
-                Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
-            });
+            var logsSearch = LogOperator.SetLogSearchModelCascade(logs);
 
             return logsSearch;
         }
@@ -157,18 +122,7 @@ namespace DpControl.Domain.Repository
 
             //以下执行完后才会去数据库中查询
             var logs = await result.ToListAsync();
-
-            var logsSearch = logs.Select(v => new LogSearchModel
-            {
-                LogId = v.LogId,
-                Comment = v.Comment,
-                LogDescriptionId = v.LogDescriptionId,
-                LocationId = v.LocationId,
-                Creator = v.Creator,
-                CreateDate = v.CreateDate,
-                Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
-            });
+            var logsSearch = LogOperator.SetLogSearchModelCascade(logs);
 
             return logsSearch;
         }

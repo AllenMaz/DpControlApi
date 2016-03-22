@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DpControl.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -28,7 +29,7 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class GroupSubSearchModel : GroupBaseModel
+    public class GroupSearchModel : GroupBaseModel
     {
         public int GroupId { get; set; }
         public int? ProjectId { get; set; }
@@ -37,10 +38,45 @@ namespace DpControl.Domain.Models
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
+        public IEnumerable<LocationSearchModel> Locations { get; set; }
     }
 
-    public class GroupSearchModel: GroupSubSearchModel
+    public static class GroupOperator
     {
-        public IEnumerable<LocationSubSearchModel> Locations { get; set; }
+        /// <summary>
+        /// Cascade set GroupSearchModel Results
+        /// </summary>
+        /// <param name="groups"></param>
+        /// <returns></returns>
+        public static IEnumerable<GroupSearchModel> SetGroupSearchModelCascade(List<Group> groups)
+        {
+            var groupSearchModels = groups.Select(s => SetGroupSearchModelCascade(s));
+            return groupSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set GroupSearchModel Result
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public static GroupSearchModel SetGroupSearchModelCascade(Group group)
+        {
+            if (group == null) return null;
+            var groupSearchModel = new GroupSearchModel()
+            {
+                GroupId = group.GroupId,
+                GroupName = group.GroupName,
+                ProjectId = group.ProjectId,
+                SceneId = group.SceneId,
+                Creator = group.Creator,
+                CreateDate = group.CreateDate,
+                Modifier = group.Modifier,
+                ModifiedDate = group.ModifiedDate,
+                Locations = group.GroupLocations.Select(v=>LocationOperator.SetLocationSearchModelCascade(v.Location)) 
+
+            };
+            return groupSearchModel;
+        }
+
     }
 }

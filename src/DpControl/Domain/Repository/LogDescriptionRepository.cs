@@ -69,54 +69,26 @@ namespace DpControl.Domain.Repository
 
         public LogDescriptionSearchModel FindById(int logDescriptionId)
         {
-            var logDescription = _context.LogDescriptions
-              .Where(v => v.LogDescriptionId == logDescriptionId)
-              .Select(v => new LogDescriptionSearchModel()
-              {
-                  LogDescriptionId = v.LogDescriptionId,
-                  DescriptionCode = v.DescriptionCode,
-                  Description = v.Description,
-                  Logs = v.Logs.Select(l => new LogSubSearchModel()
-                  {
-                      LogId = l.LogId,
-                      Comment = l.Comment,
-                      LogDescriptionId = l.LogDescriptionId,
-                      LocationId = l.LocationId,
-                      Creator = l.Creator,
-                      CreateDate = l.CreateDate,
-                      Modifier = l.Modifier,
-                      ModifiedDate = l.ModifiedDate
-                  })
+            var result = _context.LogDescriptions
+               .Where(v => v.LogDescriptionId == logDescriptionId);
 
-              }).FirstOrDefault();
+            result = result.Include(l => l.Logs);
+            var logDescription = result.FirstOrDefault();
+            var logDescriptionSearch = LogDescriptionOperator.SetLogDescriptionSearchModelCascade(logDescription);
 
-            return logDescription;
+            return logDescriptionSearch;
         }
 
         public async Task<LogDescriptionSearchModel> FindByIdAsync(int logDescriptionId)
         {
-            var logDescription = await _context.LogDescriptions
-               .Where(v => v.LogDescriptionId == logDescriptionId)
-               .Select(v => new LogDescriptionSearchModel()
-               {
-                   LogDescriptionId = v.LogDescriptionId,
-                   DescriptionCode = v.DescriptionCode,
-                   Description = v.Description,
-                   Logs = v.Logs.Select(l => new LogSubSearchModel()
-                   {
-                       LogId = l.LogId,
-                       Comment = l.Comment,
-                       LogDescriptionId = l.LogDescriptionId,
-                       LocationId = l.LocationId,
-                       Creator = l.Creator,
-                       CreateDate = l.CreateDate,
-                       Modifier = l.Modifier,
-                       ModifiedDate = l.ModifiedDate
-                   })
+            var result = _context.LogDescriptions
+               .Where(v => v.LogDescriptionId == logDescriptionId);
 
-               }).FirstOrDefaultAsync();
+            result = result.Include(l => l.Logs);
+            var logDescription = await result.FirstOrDefaultAsync();
+            var logDescriptionSearch = LogDescriptionOperator.SetLogDescriptionSearchModelCascade(logDescription);
 
-            return logDescription;
+            return logDescriptionSearch;
         }
 
         public IEnumerable<LogDescriptionSearchModel> GetAll(Query query)
@@ -125,31 +97,11 @@ namespace DpControl.Domain.Repository
                             select L;
 
             var result = QueryOperate<LogDescription>.Execute(queryData, query);
-
-            var needExpandLogs = ExpandOperator.NeedExpand("Logs", query.expand);
-            if (needExpandLogs)
-                result = result.Include(l => l.Logs);
+            result = ExpandRelatedEntities(result, query.expand);
 
             //以下执行完后才会去数据库中查询
             var logDescriptions = result.ToList();
-
-            var logDescriptionsSearch = logDescriptions.Select(v => new LogDescriptionSearchModel
-            {
-                LogDescriptionId = v.LogDescriptionId,
-                DescriptionCode = v.DescriptionCode,
-                Description = v.Description,
-                Logs = v.Logs.Select(l => new LogSubSearchModel()
-                {
-                    LogId = l.LogId,
-                    Comment = l.Comment,
-                    LogDescriptionId = l.LogDescriptionId,
-                    LocationId = l.LocationId,
-                    Creator = l.Creator,
-                    CreateDate = l.CreateDate,
-                    Modifier = l.Modifier,
-                    ModifiedDate = l.ModifiedDate
-                })
-            });
+            var logDescriptionsSearch = LogDescriptionOperator.SetLogDescriptionSearchModelCascade(logDescriptions);
 
             return logDescriptionsSearch;
         }
@@ -160,35 +112,15 @@ namespace DpControl.Domain.Repository
                             select L;
 
             var result = QueryOperate<LogDescription>.Execute(queryData, query);
-
-            var needExpandLogs = ExpandOperator.NeedExpand("Logs", query.expand);
-            if (needExpandLogs)
-                result = result.Include(l => l.Logs);
+            result = ExpandRelatedEntities(result,query.expand);
 
             //以下执行完后才会去数据库中查询
             var logDescriptions = await result.ToListAsync();
-
-            var logDescriptionsSearch = logDescriptions.Select(v => new LogDescriptionSearchModel
-            {
-                LogDescriptionId = v.LogDescriptionId,
-                DescriptionCode = v.DescriptionCode,
-                Description = v.Description,
-                Logs = v.Logs.Select(l => new LogSubSearchModel()
-                {
-                    LogId = l.LogId,
-                    Comment = l.Comment,
-                    LogDescriptionId = l.LogDescriptionId,
-                    LocationId = l.LocationId,
-                    Creator = l.Creator,
-                    CreateDate = l.CreateDate,
-                    Modifier = l.Modifier,
-                    ModifiedDate = l.ModifiedDate
-                })
-            });
+            var logDescriptionsSearch = LogDescriptionOperator.SetLogDescriptionSearchModelCascade(logDescriptions);
 
             return logDescriptionsSearch;
         }
-
+        
         public void RemoveById(int logDescriptionId)
         {
             var logDescription = _context.LogDescriptions.FirstOrDefault(c => c.LogDescriptionId == logDescriptionId);
@@ -251,6 +183,21 @@ namespace DpControl.Domain.Repository
 
             await _context.SaveChangesAsync();
             return logDescription.LogDescriptionId;
+        }
+
+        /// <summary>
+        /// Expand Related Entities
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="expandParams"></param>
+        /// <returns></returns>
+        private IQueryable<LogDescription> ExpandRelatedEntities(IQueryable<LogDescription> result, string[] expandParams)
+        {
+            var needExpandLogs = ExpandOperator.NeedExpand("Logs", expandParams);
+            if (needExpandLogs)
+                result = result.Include(l => l.Logs);
+
+            return result;
         }
     }
 }

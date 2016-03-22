@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DpControl.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -30,15 +31,7 @@ namespace DpControl.Domain.Models
         public bool Completed { get; set; }
     }
 
-    public class ProjectSearchModel : ProjectSubSearchModel
-    {
-        public IEnumerable<LocationSubSearchModel> Locations { get; set; }          
-        public IEnumerable<GroupSubSearchModel> Groups { get; set; }
-        public IEnumerable<SceneSubSearchModel> Scenes { get; set; }
-        public IEnumerable<HolidaySubSearchModel> Holidays { get; set; }
-    }
-
-    public class ProjectSubSearchModel:ProjectBaseModel
+    public class ProjectSearchModel : ProjectBaseModel
     {
         public int? CustomerId { get; set; }
         public int ProjectId { get; set; }
@@ -47,5 +40,51 @@ namespace DpControl.Domain.Models
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public bool Completed { get; set; }
+        public IEnumerable<LocationSearchModel> Locations { get; set; }          
+        public IEnumerable<GroupSearchModel> Groups { get; set; }
+        public IEnumerable<SceneSearchModel> Scenes { get; set; }
+        public IEnumerable<HolidaySearchModel> Holidays { get; set; }
+    }
+
+    public static class ProjectOperator
+    {
+        /// <summary>
+        /// Cascade set ProjectSearchModel Results
+        /// </summary>
+        /// <param name="projects"></param>
+        /// <returns></returns>
+        public static IEnumerable<ProjectSearchModel> SetProjectSearchModelCascade(List<Project> projects)
+        {
+            var projectSearchModels = projects.Select(p => SetProjectSearchModelCascade(p));
+            return projectSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set ProjectSearchModel Result
+        /// </summary>
+        /// <param name="project"></param>
+        /// <returns></returns>
+        public static ProjectSearchModel SetProjectSearchModelCascade(Project project)
+        {
+            if (project == null) return null;
+            var projectSearchModel = new ProjectSearchModel()
+            {
+                ProjectId = project.ProjectId,
+                ProjectNo = project.ProjectNo,
+                ProjectName = project.ProjectName,
+                CustomerId = project.CustomerId,
+                Completed = project.Completed,
+                Creator = project.Creator,
+                CreateDate = project.CreateDate,
+                Modifier = project.Modifier,
+                ModifiedDate = project.ModifiedDate,
+                Scenes = SceneOperator.SetSceneSearchModelCascade(project.Scenes),
+                Groups = GroupOperator.SetGroupSearchModelCascade(project.Groups),
+                Locations = LocationOperator.SetLocationSearchModelCascade(project.Locations),
+                Holidays = HolidayOperator.SetHolidaySearchModelCascade(project.Holidays)
+            };
+            return projectSearchModel;
+        }
+        
     }
 }

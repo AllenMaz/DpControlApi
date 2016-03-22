@@ -76,36 +76,20 @@ namespace DpControl.Domain.Repository
 
         public HolidaySearchModel FindById(int holidayId)
         {
-            var holiday = _context.Holidays.Where(v => v.HolidayId == holidayId)
-               .Select(v => new HolidaySearchModel()
-               {
-                   HolidayId = v.HolidayId,
-                   ProjectId = v.ProjectId,
-                   Day = v.Day,
-                   Creator = v.Creator,
-                   CreateDate = v.CreateDate,
-                   Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate
-               }).FirstOrDefault();
+            var result = _context.Holidays.Where(v => v.HolidayId == holidayId);
+            var holiday = result.FirstOrDefault();
+            var holidaySearch = HolidayOperator.SetHolidaySearchModelCascade(holiday);
 
-            return holiday;
+            return holidaySearch;
         }
 
         public async Task<HolidaySearchModel> FindByIdAsync(int holidayId)
         {
-            var holiday = await _context.Holidays.Where(v => v.HolidayId == holidayId)
-               .Select(v => new HolidaySearchModel()
-               {
-                   HolidayId = v.HolidayId,
-                   ProjectId = v.ProjectId,
-                   Day =v.Day,
-                   Creator = v.Creator,
-                   CreateDate = v.CreateDate,
-                   Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate
-               }).FirstOrDefaultAsync();
+            var result = _context.Holidays.Where(v => v.HolidayId == holidayId);
+            var holiday = await result.FirstOrDefaultAsync();
+            var holidaySearch = HolidayOperator.SetHolidaySearchModelCascade(holiday); 
 
-            return holiday;
+            return holidaySearch;
         }
 
         public IEnumerable<HolidaySearchModel> GetAll(Query query)
@@ -117,18 +101,8 @@ namespace DpControl.Domain.Repository
 
             //以下执行完后才会去数据库中查询
             var holidays = result.ToList();
-
-            var holidaysSearch = holidays.Select(v => new HolidaySearchModel
-            {
-                HolidayId = v.HolidayId,
-                ProjectId = v.ProjectId,
-                Day = v.Day,
-                Creator = v.Creator,
-                CreateDate = v.CreateDate,
-                Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
-            });
-
+            var holidaysSearch = HolidayOperator.SetHolidaySearchModelCascade(holidays);
+            
             return holidaysSearch;
         }
 
@@ -141,17 +115,7 @@ namespace DpControl.Domain.Repository
 
             //以下执行完后才会去数据库中查询
             var holidays = await result.ToListAsync();
-
-            var holidaysSearch = holidays.Select(v => new HolidaySearchModel
-            {
-                HolidayId = v.HolidayId,
-                ProjectId = v.ProjectId,
-                Day = v.Day,
-                Creator = v.Creator,
-                CreateDate = v.CreateDate,
-                Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
-            });
+            var holidaysSearch = HolidayOperator.SetHolidaySearchModelCascade(holidays);
 
             return holidaysSearch;
         }

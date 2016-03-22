@@ -40,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [EnableQuery(true, typeof(UserGroupSearchModel))]
+        [EnableQuery(typeof(UserGroupSearchModel))]
         [HttpGet("{userGroupId}", Name = "GetByUserGroupIdAsync")]
         public async Task<IActionResult> GetByUserGroupIdAsync(int userGroupId)
         {

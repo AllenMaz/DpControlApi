@@ -40,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [EnableQuery(true, typeof(UserLocationSearchModel))]
+        [EnableQuery(typeof(UserLocationSearchModel))]
         [HttpGet("{userLocationId}", Name = "GetByUserLocationIdAsync")]
         public async Task<IActionResult> GetByUserLocationIdAsync(int userLocationId)
         {

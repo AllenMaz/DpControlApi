@@ -55,9 +55,9 @@ namespace DpControl.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [EnableQuery(true,typeof(CustomerSearchModel))]
+        [EnableQuery(typeof(CustomerSearchModel))]
         [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
-        public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
+        public async Task<IActionResult> GetByCustomerIdAsync(int customerId, [FromUri] Query query)
         {
             var customer = await _customerRepository.FindByIdAsync(customerId);
             if (customer == null)

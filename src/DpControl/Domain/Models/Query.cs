@@ -11,6 +11,7 @@ using Microsoft.Data.Entity;
 
 namespace DpControl.Domain.Models
 {
+    
     public class Query
     {
         /// <summary>

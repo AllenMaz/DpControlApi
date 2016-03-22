@@ -91,40 +91,23 @@ namespace DpControl.Domain.Repository
 
         public SceneSegmentSearchModel FindById(int sceneSegmentId)
         {
-            var sceneSegment = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId)
-               .Select(v => new SceneSegmentSearchModel()
-               {
-                   SceneSegmentId = v.SceneSegmentId,
-                   SceneId = v.SceneId,
-                   SequenceNo = v.SequenceNo,
-                   StartTime = v.StartTime,
-                   Volumn = v.Volumn,
-                   Creator = v.Creator,
-                   CreateDate = v.CreateDate,
-                   Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate
-               }).FirstOrDefault();
+            var result = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId);
 
-            return sceneSegment;
+            var sceneSegment = result.FirstOrDefault();
+            var sceneSegmentSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegment);
+
+            return sceneSegmentSearch;
         }
 
         public async Task<SceneSegmentSearchModel> FindByIdAsync(int sceneSegmentId)
         {
-            var sceneSegment = await _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId)
-               .Select(v => new SceneSegmentSearchModel()
-               {
-                   SceneSegmentId = v.SceneSegmentId,
-                   SceneId = v.SceneId,
-                   SequenceNo = v.SequenceNo,
-                   StartTime = v.StartTime,
-                   Volumn = v.Volumn,
-                   Creator = v.Creator,
-                   CreateDate = v.CreateDate,
-                   Modifier = v.Modifier,
-                   ModifiedDate = v.ModifiedDate
-               }).FirstOrDefaultAsync();
+            var result = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId);
+            
+            var sceneSegment = await result.FirstOrDefaultAsync();
+            var sceneSegmentSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegment);
 
-            return sceneSegment;
+            return sceneSegmentSearch;
+            
         }
 
         public IEnumerable<SceneSegmentSearchModel> GetAll(Query query)
@@ -136,19 +119,7 @@ namespace DpControl.Domain.Repository
 
             //以下执行完后才会去数据库中查询
             var sceneSegments = result.ToList();
-
-            var sceneSegmentsSearch = sceneSegments.Select(v => new SceneSegmentSearchModel
-            {
-                SceneSegmentId = v.SceneSegmentId,
-                SceneId = v.SceneId,
-                SequenceNo = v.SequenceNo,
-                StartTime = v.StartTime,
-                Volumn = v.Volumn,
-                Creator = v.Creator,
-                CreateDate = v.CreateDate,
-                Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
-            });
+            var sceneSegmentsSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegments);
 
             return sceneSegmentsSearch;
         }
@@ -163,18 +134,7 @@ namespace DpControl.Domain.Repository
             //以下执行完后才会去数据库中查询
             var sceneSegments = await result.ToListAsync();
 
-            var sceneSegmentsSearch = sceneSegments.Select(v => new SceneSegmentSearchModel
-            {
-                SceneSegmentId = v.SceneSegmentId,
-                SceneId = v.SceneId,
-                SequenceNo = v.SequenceNo,
-                StartTime = v.StartTime,
-                Volumn = v.Volumn,
-                Creator = v.Creator,
-                CreateDate = v.CreateDate,
-                Modifier = v.Modifier,
-                ModifiedDate = v.ModifiedDate
-            });
+            var sceneSegmentsSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegments);
 
             return sceneSegmentsSearch;
         }

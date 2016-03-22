@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DpControl.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace DpControl.Domain.Models
     {
 
     }
-    public class LogSubSearchModel
+    public class LogSearchModel
     {
         public int LogId { get; set; }
         
@@ -35,8 +36,39 @@ namespace DpControl.Domain.Models
         public DateTime? ModifiedDate { get; set; }
     }
 
-    public class LogSearchModel: LogSubSearchModel
+    public static class LogOperator
     {
+        /// <summary>
+        /// Cascade set LogSearchModel Results
+        /// </summary>
+        public static IEnumerable<LogSearchModel> SetLogSearchModelCascade(List<Log> logs)
+        {
+            var logSearchModels = logs.Select(c => SetLogSearchModelCascade(c));
 
+            return logSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set LogSearchModel Result
+        /// </summary>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        public static LogSearchModel SetLogSearchModelCascade(Log log)
+        {
+            if (log == null) return null;
+            var logSearchModel = new LogSearchModel
+            {
+                LogId = log.LogId,
+                Comment = log.Comment,
+                LogDescriptionId = log.LogDescriptionId,
+                LocationId = log.LocationId,
+                Creator = log.Creator,
+                CreateDate = log.CreateDate,
+                Modifier = log.Modifier,
+                ModifiedDate = log.ModifiedDate
+            };
+
+            return logSearchModel;
+        }
     }
 }

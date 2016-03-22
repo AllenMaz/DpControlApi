@@ -40,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [EnableQuery(true,typeof(DeviceSearchModel))]
+        [EnableQuery(typeof(DeviceSearchModel))]
         [HttpGet("{deviceId}", Name = "GetByDeviceIdAsync")]
         public async Task<IActionResult> GetBySceneIdAsync(int deviceId)
         {

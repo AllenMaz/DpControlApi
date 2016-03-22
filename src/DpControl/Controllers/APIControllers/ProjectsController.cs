@@ -41,7 +41,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [EnableQuery(true,typeof(ProjectSearchModel))]
+        [EnableQuery(typeof(ProjectSearchModel))]
         [HttpGet("{projectId}", Name = "GetByProjectIdAsync")]
         public async Task<IActionResult> GetByProjectIdAsync(int projectId)
         {

@@ -90,64 +90,22 @@ namespace DpControl.Domain.Repository
 
         public CustomerSearchModel FindById(int customerId)
         {
-            var customer = _context.Customers
-                .Where(c => c.CustomerId == customerId)
-                .Select(c => new CustomerSearchModel
-                {
-                    CustomerId = c.CustomerId,
-                    CustomerName = c.CustomerName,
-                    CustomerNo = c.CustomerNo,
-                    Creator = c.Creator ,
-                    CreateDate = c.CreateDate,
-                    Modifier = c.Modifier,
-                    ModifiedDate = c.ModifiedDate,
-                    Projects = c.Projects.Select(p => new ProjectSubSearchModel()
-                    {
-                        ProjectId = p.ProjectId,
-                        ProjectNo = p.ProjectNo,
-                        ProjectName = p.ProjectName,
-                        CustomerId = p.CustomerId,
-                        Completed = p.Completed,
-                        Creator = p.Creator,
-                        CreateDate = p.CreateDate,
-                        Modifier = p.Modifier,
-                        ModifiedDate = p.ModifiedDate
+            var result = _context.Customers.Where(c => c.CustomerId == customerId);
+            result = result.Include(c => c.Projects);
+            var customer = result.FirstOrDefault();
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customer);
 
-                    })
-                }).FirstOrDefault();
-
-            return customer;
+            return customerSearch;
         }
 
         public async Task<CustomerSearchModel> FindByIdAsync(int customerId)
         {
-            var customer =await _context.Customers
-                .Where(c => c.CustomerId == customerId)
-                .Select(c => new CustomerSearchModel
-                {
-                    CustomerId = c.CustomerId,
-                    CustomerName = c.CustomerName,
-                    CustomerNo = c.CustomerNo,
-                    Creator = c.Creator,
-                    CreateDate = c.CreateDate,
-                    Modifier = c.Modifier,
-                    ModifiedDate = c.ModifiedDate,
-                    Projects = c.Projects.Select(p => new ProjectSubSearchModel()
-                    {
-                        ProjectId = p.ProjectId,
-                        ProjectNo = p.ProjectNo,
-                        ProjectName = p.ProjectName,
-                        CustomerId = p.CustomerId,
-                        Completed = p.Completed,
-                        Creator = p.Creator,
-                        CreateDate = p.CreateDate,
-                        Modifier = p.Modifier,
-                        ModifiedDate = p.ModifiedDate
-
-                    })
-                }).FirstOrDefaultAsync();
-
-            return customer;
+            var result = _context.Customers.Where(c => c.CustomerId == customerId);
+            result = result.Include(c => c.Projects);
+            var customer = await result.FirstOrDefaultAsync();
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customer);
+            
+            return customerSearch;
         }
 
 
@@ -157,85 +115,31 @@ namespace DpControl.Domain.Repository
                             select C;
 
             var result = QueryOperate<Customer>.Execute(queryData, query);
-            var needExpandProjects = ExpandOperator.NeedExpand("Projects", query.expand);
-            if (needExpandProjects)
-                result = result.Include( c=> c.Projects);
+            result = ExpandRelatedEntities(result,query.expand);
 
             //以下执行完后才会去数据库中查询
             var customers = result.ToList();
-
-            var customerSearch = customers.Select(c => new CustomerSearchModel
-            {
-                CustomerId = c.CustomerId,
-                CustomerName = c.CustomerName,
-                CustomerNo = c.CustomerNo,
-                Creator = c.Creator,
-                CreateDate = c.CreateDate,
-                Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate,
-                Projects = c.Projects.Select(p => new ProjectSubSearchModel()
-                {
-                    ProjectId = p.ProjectId,
-                    ProjectNo = p.ProjectNo,
-                    ProjectName = p.ProjectName,
-                    CustomerId = p.CustomerId,
-                    Completed = p.Completed,
-                    Creator = p.Creator,
-                    CreateDate = p.CreateDate,
-                    Modifier = p.Modifier,
-                    ModifiedDate = p.ModifiedDate
-
-                })
-            });
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customers);
 
             return customerSearch;
         }
-
+        
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync(Query query)
         {
-            
             var queryData = from C in _context.Customers
                         select C;
             
             var result = QueryOperate<Customer>.Execute(queryData, query);
-
-            var needExpandProjects = ExpandOperator.NeedExpand("Projects", query.expand);
-            if (needExpandProjects)
-                result = result.Include(c => c.Projects);
+            result = ExpandRelatedEntities(result, query.expand);
 
             //以下执行完后才会去数据库中查询
             //N+1 Select 
             var customers = await result.ToListAsync();
-            
-
-            var customerSearch = customers.Select(c => new CustomerSearchModel
-            {
-                CustomerId = c.CustomerId,
-                CustomerName = c.CustomerName,
-                CustomerNo = c.CustomerNo,
-                Creator = c.Creator,
-                CreateDate = c.CreateDate,
-                Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate,
-                Projects = c.Projects.Select(p=> new ProjectSubSearchModel()
-                {
-                    ProjectId = p.ProjectId,
-                    ProjectNo = p.ProjectNo,
-                    ProjectName = p.ProjectName,
-                    CustomerId = p.CustomerId,
-                    Completed = p.Completed,
-                    Creator = p.Creator,
-                    CreateDate = p.CreateDate,
-                    Modifier = p.Modifier,
-                    ModifiedDate = p.ModifiedDate
-
-                })
-            });
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customers);
 
             return customerSearch;
         }
-
-       
+        
 
         public int UpdateById(int customerId,CustomerUpdateModel mcustomer)
         {
@@ -322,7 +226,21 @@ namespace DpControl.Domain.Repository
 
             await _context.SaveChangesAsync();
         }
-        
+
+        /// <summary>
+        /// Expand Related Entities
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="expandParams"></param>
+        /// <returns></returns>
+        private IQueryable<Customer> ExpandRelatedEntities(IQueryable<Customer> result, string[] expandParams)
+        {
+            var needExpandProjects = ExpandOperator.NeedExpand("Projects", expandParams);
+            if (needExpandProjects)
+                result = result.Include(c => c.Projects);
+
+            return result;
+        }
     }
 
 }

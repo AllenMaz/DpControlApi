@@ -40,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [EnableQuery(true,typeof(AlarmMessageSearchModel))]
+        [EnableQuery(typeof(AlarmMessageSearchModel))]
         [HttpGet("{alarmMessageId}", Name = "GetByAlarmMessageIdAsync")]
         public async Task<IActionResult> GetByAlarmMessageIdAsync(int alarmMessageId)
         {

@@ -25,11 +25,7 @@ namespace DpControl.Utility.Filters
     {
         //查询参数对象
         private Query query ;
-
-        /// <summary>
-        /// true/false
-        /// </summary>
-        private bool _isSingleResult { get; set; }
+        
         private Type _actionReturnType { get; set; }
 
         public EnableQueryAttribute()
@@ -37,9 +33,8 @@ namespace DpControl.Utility.Filters
             query = new Query();
         }
 
-        public EnableQueryAttribute(bool isSingleResult,Type actionReturnType)
+        public EnableQueryAttribute(Type actionReturnType)
         {
-            _isSingleResult = isSingleResult;
             _actionReturnType = actionReturnType;
             query = new Query();
 
@@ -78,6 +73,7 @@ namespace DpControl.Utility.Filters
             query.filter = GetFilterParam(filterString);
             query.select = GetSelectParam(selectString);
             query.expand = GetExpandParam(expandString);
+            
 
             _expandParams = query.expand;
             _selectParams = query.select;
@@ -147,7 +143,6 @@ namespace DpControl.Utility.Filters
         /// 获取orderby参数
         /// </summary>
         /// <param name="orderbyString"></param>
-        /// 
         /// <returns></returns>
         private OrderBy GetOrderbyParam(string orderbyString)
         {
@@ -372,6 +367,9 @@ namespace DpControl.Utility.Filters
             return isFilter_Select_OrderByType;
         }
 
+        private string[] _expandParams;
+        private string[] _selectParams;
+
         /// <summary>
         /// 在controller action result执行之前调用 
         /// 获取返回结果后，重新组织查询结果格式
@@ -382,23 +380,19 @@ namespace DpControl.Utility.Filters
         {
            
             var result = context.Result as ObjectResult;
-            
-            if (_isSingleResult)
-            {
-                var actionResults = result.Value;
-                var returnValue = ReturnExpandAndSelectResult(actionResults);
-                result.Value = returnValue;
-            }
-            else
-            {
-                //if return result is not singleResult ,conver result to IEnumerable
-                var actionResults = result.Value as IEnumerable<object>;
-                var returnValue = ReturnExpandAndSelectResult(actionResults);
-                ListResponseModel<object> responseData = ResponseHandler.ListResponse<object>(returnValue);
-                result.Value = responseData;
-            }
-            
 
+            if (result != null)
+            {
+                var returnValue = ReturnExpandAndSelectResult(_actionReturnType, result.Value, _selectParams, _expandParams);
+
+                var responseData = returnValue;
+                if (!IsSingleResult(result.Value))
+                    responseData = ResponseHandler.ListResponse<object>(returnValue);
+
+                result.Value = responseData;
+            } 
+            
+            
             #region 
             /*
             try
@@ -432,29 +426,56 @@ namespace DpControl.Utility.Filters
             #endregion
         }
 
-        private string[] _expandParams;
-        private string[] _selectParams;
-        public dynamic ReturnExpandAndSelectResult(IEnumerable<object> actionResults)
+        private bool IsSingleResult(object result)
+        {
+            bool isSingleResult = false;
+            var isConstructedGenericType = result.GetType().IsConstructedGenericType;
+            if (!isConstructedGenericType)
+            {
+                isSingleResult = true;
+            }
+            return isSingleResult;
+        }
+
+        private dynamic ReturnExpandAndSelectResult(Type resultType,object result, string[] selectParams, string[] expandParams)
+        {
+            var isConstructedGenericType = result.GetType().IsConstructedGenericType;
+            dynamic returnResult ;
+            if (IsSingleResult(result))
+            {
+                //
+                returnResult = DynamicExpandAndSelectResult(resultType, result, selectParams, expandParams);
+            }
+            else
+            {
+                //if return result is not singleResult ,conver result to IEnumerable
+                var results = result as IEnumerable<object>;
+                returnResult = DynamicExpandAndSelectResult(resultType, results, selectParams, expandParams);
+            }
+            return returnResult;
+        }
+
+        private dynamic DynamicExpandAndSelectResult(Type resultType,IEnumerable<object> results, string[] selectParams, string[] expandParams)
         {
             List<object> returnResults = new List<object>();
             //循环Action返回的结果集
-            foreach (var aresult in actionResults)
+            foreach (var result in results)
             {
-                var returnResult = this.ReturnExpandAndSelectResult(aresult);
+                var returnResult = this.DynamicExpandAndSelectResult(resultType, result,selectParams,expandParams);
                 returnResults.Add(returnResult);
             }
             return returnResults;
         }
 
-        public dynamic ReturnExpandAndSelectResult(object actionResult)
+        private dynamic DynamicExpandAndSelectResult(Type resultType,object result,string[] selectParams,string[] expandParams)
         {
 
             //新建一个动态词典，用于存放返回的结果
             var returnResult = new ExpandoObject() as IDictionary<string, object>;
             //循环Action返回类型的所有属性
-            foreach (var property in _actionReturnType.GetProperties())
+            foreach (var property in resultType.GetProperties())
             {
-                var val = property.GetValue(actionResult);
+                var val = property.GetValue(result);
 
                 bool isSelectType = IsFilter_Select_OrderbyType(property);
                 if (isSelectType)
@@ -462,7 +483,7 @@ namespace DpControl.Utility.Filters
                     #region select
                     //if selectParams is null or empey ,add all propertys
                     //if selectParams not null , add propertys which in selectParams
-                    if (_selectParams ==null || _selectParams.Length ==0 || _selectParams.Contains(property.Name))
+                    if (selectParams == null || selectParams.Length ==0 || selectParams.Contains(property.Name))
                     {
                        returnResult.Add(property.Name, val);
                     }
@@ -472,10 +493,12 @@ namespace DpControl.Utility.Filters
                 {
                     #region expand逻辑处理
                     //if have expand confition
-                    if (_expandParams != null && _expandParams.Length > 0
-                        && _expandParams.Contains(property.Name))
+                    if (expandParams != null && expandParams.Length > 0
+                        && expandParams.Contains(property.Name))
                     {
-                        returnResult.Add(property.Name, val);
+                        var expandResultType = GetClassType(property.PropertyType);
+                        var expandResult = ReturnExpandAndSelectResult(expandResultType,val,null,null);
+                        returnResult.Add(property.Name, expandResult);
                         
                     }
                     #endregion
@@ -485,7 +508,7 @@ namespace DpControl.Utility.Filters
             }
             return returnResult;
         }
-
+        
 
 
         private IList QueryResult(IList listData)
@@ -620,6 +643,7 @@ namespace DpControl.Utility.Filters
         /// <returns></returns>
         private Type GetClassType(Type converType)
         {
+            
             Type returnType = converType ;
             //此对象是否表示构造的泛型类型的值
             var isConstructedGenericType = converType.IsConstructedGenericType;

@@ -61,78 +61,20 @@ namespace DpControl.Domain.Repository
 
         public DeviceSearchModel FindById(int deviceId)
         {
-            var device = _context.Devices.Where(v => v.DeviceId == deviceId)
-              .Select(v => new DeviceSearchModel()
-              {
-                  DeviceId = v.DeviceId,
-                  Voltage = v.Voltage,
-                  Diameter = v.Diameter,
-                  Torque = v.Torque,
-                  Locations = v.Locations.Select(p => new LocationSubSearchModel()
-                  {
-                      LocationId = p.LocationId,
-                      ProjectId = p.ProjectId,
-                      Building = p.Building,
-                      CommAddress = p.CommAddress,
-                      CommMode = p.CommMode,
-                      CurrentPosition = p.CurrentPosition,
-                      Description = p.Description,
-                      DeviceSerialNo = p.DeviceSerialNo,
-                      DeviceId = p.DeviceId,
-                      DeviceType = p.DeviceType,
-                      FavorPositionFirst = p.FavorPositionFirst,
-                      FavorPositionrSecond = p.FavorPositionrSecond,
-                      FavorPositionThird = p.FavorPositionThird,
-                      Floor = p.Floor,
-                      InstallationNumber = p.InstallationNumber,
-                      Orientation = p.Orientation,
-                      RoomNo = p.RoomNo,
-                      Creator = p.Creator,
-                      CreateDate = p.CreateDate,
-                      Modifier = p.Modifier,
-                      ModifiedDate = p.ModifiedDate
-                  })
-              }).FirstOrDefault();
-
-            return device;
+            var result = _context.Devices.Where(v => v.DeviceId == deviceId);
+            result = result.Include(d => d.Locations);
+            var device = result.FirstOrDefault();
+            var deviceSearch = DeviceOperator.SetDeviceSearchModelCascade(device);
+            return deviceSearch;
         }
 
         public async Task<DeviceSearchModel> FindByIdAsync(int deviceId)
         {
-            var device = await _context.Devices.Where(v => v.DeviceId == deviceId)
-               .Select(v => new DeviceSearchModel()
-               {
-                   DeviceId = v.DeviceId,
-                   Voltage = v.Voltage,
-                   Diameter = v.Diameter,
-                   Torque = v.Torque,
-                   Locations = v.Locations.Select(p => new LocationSubSearchModel()
-                   {
-                       LocationId = p.LocationId,
-                       ProjectId = p.ProjectId,
-                       Building = p.Building,
-                       CommAddress = p.CommAddress,
-                       CommMode = p.CommMode,
-                       CurrentPosition = p.CurrentPosition,
-                       Description = p.Description,
-                       DeviceSerialNo = p.DeviceSerialNo,
-                       DeviceId = p.DeviceId,
-                       DeviceType = p.DeviceType,
-                       FavorPositionFirst = p.FavorPositionFirst,
-                       FavorPositionrSecond = p.FavorPositionrSecond,
-                       FavorPositionThird = p.FavorPositionThird,
-                       Floor = p.Floor,
-                       InstallationNumber = p.InstallationNumber,
-                       Orientation = p.Orientation,
-                       RoomNo = p.RoomNo,
-                       Creator = p.Creator,
-                       CreateDate = p.CreateDate,
-                       Modifier = p.Modifier,
-                       ModifiedDate = p.ModifiedDate
-                   })
-               }).FirstOrDefaultAsync();
-
-            return device;
+            var result = _context.Devices.Where(v => v.DeviceId == deviceId);
+            result = result.Include(d=>d.Locations);
+            var device = await result.FirstOrDefaultAsync();
+            var deviceSearch = DeviceOperator.SetDeviceSearchModelCascade(device);
+            return deviceSearch;
         }
 
         public IEnumerable<DeviceSearchModel> GetAll(Query query)
@@ -141,44 +83,11 @@ namespace DpControl.Domain.Repository
                             select D;
 
             var result = QueryOperate<Device>.Execute(queryData, query);
-            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
-            if (needExpandLocations)
-                result = result.Include(d => d.Locations);
+            result = ExpandRelatedEntities(result, query.expand);
 
             //以下执行完后才会去数据库中查询
             var devices = result.ToList();
-
-            var devicesSearch = devices.Select(v => new DeviceSearchModel
-            {
-                DeviceId = v.DeviceId,
-                Voltage = v.Voltage,
-                Diameter = v.Diameter,
-                Torque = v.Torque,
-                Locations = v.Locations.Select(p => new LocationSubSearchModel()
-                {
-                    LocationId = p.LocationId,
-                    ProjectId = p.ProjectId,
-                    Building = p.Building,
-                    CommAddress = p.CommAddress,
-                    CommMode = p.CommMode,
-                    CurrentPosition = p.CurrentPosition,
-                    Description = p.Description,
-                    DeviceSerialNo = p.DeviceSerialNo,
-                    DeviceId = p.DeviceId,
-                    DeviceType = p.DeviceType,
-                    FavorPositionFirst = p.FavorPositionFirst,
-                    FavorPositionrSecond = p.FavorPositionrSecond,
-                    FavorPositionThird = p.FavorPositionThird,
-                    Floor = p.Floor,
-                    InstallationNumber = p.InstallationNumber,
-                    Orientation = p.Orientation,
-                    RoomNo = p.RoomNo,
-                    Creator = p.Creator,
-                    CreateDate = p.CreateDate,
-                    Modifier = p.Modifier,
-                    ModifiedDate = p.ModifiedDate
-                })
-            });
+            var devicesSearch = DeviceOperator.SetDeviceSearchModelCascade(devices);
 
             return devicesSearch;
         }
@@ -189,47 +98,14 @@ namespace DpControl.Domain.Repository
                             select D;
 
             var result = QueryOperate<Device>.Execute(queryData, query);
-            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
-            if (needExpandLocations)
-                result = result.Include(d => d.Locations);
+            result = ExpandRelatedEntities(result,query.expand);
 
             //以下执行完后才会去数据库中查询
             var devices = await result.ToListAsync();
-
-            var devicesSearch = devices.Select(v => new DeviceSearchModel
-            {
-                DeviceId = v.DeviceId,
-                Voltage = v.Voltage,
-                Diameter = v.Diameter,
-                Torque = v.Torque,
-                Locations = v.Locations.Select(p => new LocationSubSearchModel()
-                {
-                    LocationId = p.LocationId,
-                    ProjectId = p.ProjectId,
-                    Building = p.Building,
-                    CommAddress = p.CommAddress,
-                    CommMode = p.CommMode,
-                    CurrentPosition = p.CurrentPosition,
-                    Description = p.Description,
-                    DeviceSerialNo = p.DeviceSerialNo,
-                    DeviceId = p.DeviceId,
-                    DeviceType = p.DeviceType,
-                    FavorPositionFirst = p.FavorPositionFirst,
-                    FavorPositionrSecond = p.FavorPositionrSecond,
-                    FavorPositionThird = p.FavorPositionThird,
-                    Floor = p.Floor,
-                    InstallationNumber = p.InstallationNumber,
-                    Orientation = p.Orientation,
-                    RoomNo = p.RoomNo,
-                    Creator = p.Creator,
-                    CreateDate = p.CreateDate,
-                    Modifier = p.Modifier,
-                    ModifiedDate = p.ModifiedDate
-                })
-            });
-
+            var devicesSearch = DeviceOperator.SetDeviceSearchModelCascade(devices);
             return devicesSearch;
         }
+        
 
         public void RemoveById(int deviceId)
         {
@@ -277,6 +153,21 @@ namespace DpControl.Domain.Repository
 
             await _context.SaveChangesAsync();
             return device.DeviceId;
+        }
+
+        /// <summary>
+        /// Expand Related Entities
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="expandParams"></param>
+        /// <returns></returns>
+        private IQueryable<Device> ExpandRelatedEntities(IQueryable<Device> result, string[] expandParams)
+        {
+            var needExpandLocations = ExpandOperator.NeedExpand("Locations", expandParams);
+            if (needExpandLocations)
+                result = result.Include(d => d.Locations);
+
+            return result;
         }
     }
 }

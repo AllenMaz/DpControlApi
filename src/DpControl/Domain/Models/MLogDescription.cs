@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DpControl.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,13 +26,41 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class LogDescriptionSubSearchModel: LogDescriptionBaseModel
+    public class LogDescriptionSearchModel: LogDescriptionBaseModel
     {
         public int LogDescriptionId { get; set; }
+        public IEnumerable<LogSearchModel> Logs { get; set; }
     }
 
-    public class LogDescriptionSearchModel: LogDescriptionSubSearchModel
+    public static class LogDescriptionOperator
     {
-        public IEnumerable<LogSubSearchModel> Logs { get; set; }
+        /// <summary>
+        /// Cascade set LogDescriptionSearchModel Results
+        /// </summary>
+        public static IEnumerable<LogDescriptionSearchModel> SetLogDescriptionSearchModelCascade(List<LogDescription> logDescriptions)
+        {
+            var logDescriptionSearchModels = logDescriptions.Select(c => SetLogDescriptionSearchModelCascade(c));
+
+            return logDescriptionSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set LogDescriptionSearchModel Result
+        /// </summary>
+        /// <param name="logDescription"></param>
+        /// <returns></returns>
+        public static LogDescriptionSearchModel SetLogDescriptionSearchModelCascade(LogDescription logDescription)
+        {
+            if (logDescription == null) return null;
+            var logDescriptionSearchModel = new LogDescriptionSearchModel
+            {
+                LogDescriptionId = logDescription.LogDescriptionId,
+                DescriptionCode = logDescription.DescriptionCode,
+                Description = logDescription.Description,
+                Logs = LogOperator.SetLogSearchModelCascade(logDescription.Logs)
+            };
+
+            return logDescriptionSearchModel;
+        }
     }
 }

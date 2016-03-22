@@ -67,46 +67,24 @@ namespace DpControl.Domain.Repository
 
         public AlarmMessageSearchModel FindById(int alarmMessageId)
         {
-            var alarmMessage = _context.AlarmMessages
-              .Where(v => v.AlarmMessageId == alarmMessageId)
-              .Select(v => new AlarmMessageSearchModel()
-              {
-                  AlarmMessageId = v.AlarmMessageId,
-                  ErrorCode = v.ErrorCode,
-                  Message = v.Message,
-                  Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
-                  {
-                      AlarmId = a.AlarmId,
-                      AlarmMessageId = a.AlarmMessageId,
-                      LocationId = a.LocationId,
-                      CreateDate = a.CreateDate
-                  })
+            var result = _context.AlarmMessages
+               .Where(v => v.AlarmMessageId == alarmMessageId);
+            result = result.Include(am => am.Alarms);
 
-              }).FirstOrDefault();
-
-            return alarmMessage;
+            var alarmMessage = result.FirstOrDefault();
+            var alarmMessageSearch = AlarmMessageOperator.SetAlarmMessageSearchModelCascade(alarmMessage);
+            return alarmMessageSearch;
         }
 
         public async Task<AlarmMessageSearchModel> FindByIdAsync(int alarmMessageId)
         {
-            var alarmMessage = await _context.AlarmMessages
-               .Where(v => v.AlarmMessageId == alarmMessageId)
-               .Select(v => new AlarmMessageSearchModel()
-               {
-                   AlarmMessageId = v.AlarmMessageId,
-                   ErrorCode = v.ErrorCode,
-                   Message = v.Message,
-                   Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
-                   {
-                       AlarmId = a.AlarmId,
-                       AlarmMessageId = a.AlarmMessageId,
-                       LocationId = a.LocationId,
-                       CreateDate = a.CreateDate
-                   })
+            var result = _context.AlarmMessages
+               .Where(v => v.AlarmMessageId == alarmMessageId);
+            result = result.Include(am=>am.Alarms);
 
-               }).FirstOrDefaultAsync();
-
-            return alarmMessage;
+            var alarmMessage = await result.FirstOrDefaultAsync();
+            var alarmMessageSearch = AlarmMessageOperator.SetAlarmMessageSearchModelCascade(alarmMessage);
+            return alarmMessageSearch;
         }
 
         public IEnumerable<AlarmMessageSearchModel> GetAll(Query query)
@@ -115,27 +93,11 @@ namespace DpControl.Domain.Repository
                             select A;
 
             var result = QueryOperate<AlarmMessage>.Execute(queryData, query);
-
-            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", query.expand);
-            if (needExpandAlarms)
-                result = result.Include(a => a.Alarms);
+            result = ExpandRelatedEntities(result, query.expand);
 
             //以下执行完后才会去数据库中查询
             var alarmMessages = result.ToList();
-
-            var alarmMessagesSearch = alarmMessages.Select(v => new AlarmMessageSearchModel
-            {
-                AlarmMessageId = v.AlarmMessageId,
-                ErrorCode = v.ErrorCode,
-                Message = v.Message,
-                Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
-                {
-                    AlarmId = a.AlarmId,
-                    AlarmMessageId = a.AlarmMessageId,
-                    LocationId = a.LocationId,
-                    CreateDate = a.CreateDate
-                })
-            });
+            var alarmMessagesSearch = AlarmMessageOperator.SetAlarmMessageSearchModelCascade(alarmMessages);
 
             return alarmMessagesSearch;
         }
@@ -146,30 +108,15 @@ namespace DpControl.Domain.Repository
                             select A;
 
             var result = QueryOperate<AlarmMessage>.Execute(queryData, query);
-            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", query.expand);
-            if (needExpandAlarms)
-                result = result.Include(a => a.Alarms);
+            result = ExpandRelatedEntities(result,query.expand);
 
             //以下执行完后才会去数据库中查询
             var alarmMessages = await result.ToListAsync();
-
-            var alarmMessagesSearch = alarmMessages.Select(v => new AlarmMessageSearchModel
-            {
-                AlarmMessageId = v.AlarmMessageId,
-                ErrorCode = v.ErrorCode,
-                Message = v.Message,
-                Alarms = v.Alarms.Select(a => new AlarmSubSearchModel()
-                {
-                    AlarmId = a.AlarmId,
-                    AlarmMessageId = a.AlarmMessageId,
-                    LocationId = a.LocationId,
-                    CreateDate = a.CreateDate
-                })
-            });
+            var alarmMessagesSearch = AlarmMessageOperator.SetAlarmMessageSearchModelCascade(alarmMessages);
 
             return alarmMessagesSearch;
         }
-
+       
         public void RemoveById(int alarmMessageId)
         {
             var alarmMessage = _context.AlarmMessages.FirstOrDefault(c => c.AlarmMessageId == alarmMessageId);
@@ -231,6 +178,21 @@ namespace DpControl.Domain.Repository
 
             await _context.SaveChangesAsync();
             return alarmMessage.AlarmMessageId;
+        }
+
+        /// <summary>
+        /// Expand Related Entities
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="expandParams"></param>
+        /// <returns></returns>
+        private IQueryable<AlarmMessage> ExpandRelatedEntities(IQueryable<AlarmMessage> result, string[] expandParams)
+        {
+            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", expandParams);
+            if (needExpandAlarms)
+                result = result.Include(a => a.Alarms);
+
+            return result;
         }
     }
 }

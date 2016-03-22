@@ -105,86 +105,22 @@ namespace DpControl.Domain.Repository
 
         public GroupSearchModel FindById(int groupId)
         {
-            var group = _context.Groups.Where(v => v.GroupId == groupId)
-                .Select(v => new GroupSearchModel()
-                {
-                    GroupId = v.GroupId,
-                    GroupName = v.GroupName,
-                    ProjectId = v.ProjectId,
-                    SceneId = v.SceneId,
-                    Creator = v.Creator,
-                    CreateDate = v.CreateDate,
-                    Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate,
-                    Locations = v.GroupLocations.Select(gl => new LocationSubSearchModel()
-                    {
-                        LocationId = gl.Location.LocationId,
-                        ProjectId = gl.Location.ProjectId,
-                        Building = gl.Location.Building,
-                        CommAddress = gl.Location.CommAddress,
-                        CommMode = gl.Location.CommMode,
-                        CurrentPosition = gl.Location.CurrentPosition,
-                        Description = gl.Location.Description,
-                        DeviceSerialNo = gl.Location.DeviceSerialNo,
-                        DeviceId = gl.Location.DeviceId,
-                        DeviceType = gl.Location.DeviceType,
-                        FavorPositionFirst = gl.Location.FavorPositionFirst,
-                        FavorPositionrSecond = gl.Location.FavorPositionrSecond,
-                        FavorPositionThird = gl.Location.FavorPositionThird,
-                        Floor = gl.Location.Floor,
-                        InstallationNumber = gl.Location.InstallationNumber,
-                        Orientation = gl.Location.Orientation,
-                        RoomNo = gl.Location.RoomNo,
-                        Creator = gl.Location.Creator,
-                        CreateDate = gl.Location.CreateDate,
-                        Modifier = gl.Location.Modifier,
-                        ModifiedDate = gl.Location.ModifiedDate
-                    })
-                }).FirstOrDefault();
+            var result = _context.Groups.Where(v => v.GroupId == groupId);
+            result = result.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
+            var group = result.FirstOrDefault();
+            var groupSearch = GroupOperator.SetGroupSearchModelCascade(group);
 
-            return group;
+            return groupSearch;
         }
 
         public async Task<GroupSearchModel> FindByIdAsync(int groupId)
         {
-            var group = await _context.Groups.Where(v => v.GroupId == groupId)
-                .Select(v => new GroupSearchModel()
-                {
-                    GroupId = v.GroupId,
-                    GroupName = v.GroupName,
-                    ProjectId = v.ProjectId,
-                    SceneId = v.SceneId,
-                    Creator = v.Creator,
-                    CreateDate = v.CreateDate,
-                    Modifier = v.Modifier,
-                    ModifiedDate = v.ModifiedDate,
-                    Locations = v.GroupLocations.Select(gl => new LocationSubSearchModel()
-                    {
-                        LocationId = gl.Location.LocationId,
-                        ProjectId = gl.Location.ProjectId,
-                        Building = gl.Location.Building,
-                        CommAddress = gl.Location.CommAddress,
-                        CommMode = gl.Location.CommMode,
-                        CurrentPosition = gl.Location.CurrentPosition,
-                        Description = gl.Location.Description,
-                        DeviceSerialNo = gl.Location.DeviceSerialNo,
-                        DeviceId = gl.Location.DeviceId,
-                        DeviceType = gl.Location.DeviceType,
-                        FavorPositionFirst = gl.Location.FavorPositionFirst,
-                        FavorPositionrSecond = gl.Location.FavorPositionrSecond,
-                        FavorPositionThird = gl.Location.FavorPositionThird,
-                        Floor = gl.Location.Floor,
-                        InstallationNumber = gl.Location.InstallationNumber,
-                        Orientation = gl.Location.Orientation,
-                        RoomNo = gl.Location.RoomNo,
-                        Creator = gl.Location.Creator,
-                        CreateDate = gl.Location.CreateDate,
-                        Modifier = gl.Location.Modifier,
-                        ModifiedDate = gl.Location.ModifiedDate
-                    })
-                }).FirstOrDefaultAsync();
+            var result = _context.Groups.Where(v => v.GroupId == groupId);
+            result = result.Include(g=>g.GroupLocations).ThenInclude(gl=>gl.Location);
+            var group = await result.FirstOrDefaultAsync();
+            var groupSearch = GroupOperator.SetGroupSearchModelCascade(group);
 
-            return group;
+            return groupSearch;
         }
 
         public IEnumerable<GroupSearchModel> GetAll(Query query)
@@ -193,47 +129,10 @@ namespace DpControl.Domain.Repository
                             select G;
 
             var result = QueryOperate<Group>.Execute(queryData, query);
-
-            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
-            if (needExpandLocations)
-                result = result.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
+            result = ExpandRelatedEntities(result, query.expand);
             //以下执行完后才会去数据库中查询
             var groups =  result.ToList();
-
-            var groupsSearch = groups.Select(c => new GroupSearchModel
-            {
-                GroupId = c.GroupId,
-                GroupName = c.GroupName,
-                ProjectId = c.ProjectId,
-                SceneId = c.SceneId,
-                Creator = c.Creator,
-                CreateDate = c.CreateDate,
-                Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate,
-                Locations = c.GroupLocations.Select(gl=>new LocationSubSearchModel() {
-                    LocationId = gl.Location.LocationId,
-                    ProjectId = gl.Location.ProjectId,
-                    Building = gl.Location.Building,
-                    CommAddress = gl.Location.CommAddress,
-                    CommMode = gl.Location.CommMode,
-                    CurrentPosition = gl.Location.CurrentPosition,
-                    Description = gl.Location.Description,
-                    DeviceSerialNo = gl.Location.DeviceSerialNo,
-                    DeviceId = gl.Location.DeviceId,
-                    DeviceType = gl.Location.DeviceType,
-                    FavorPositionFirst = gl.Location.FavorPositionFirst,
-                    FavorPositionrSecond = gl.Location.FavorPositionrSecond,
-                    FavorPositionThird = gl.Location.FavorPositionThird,
-                    Floor = gl.Location.Floor,
-                    InstallationNumber = gl.Location.InstallationNumber,
-                    Orientation = gl.Location.Orientation,
-                    RoomNo = gl.Location.RoomNo,
-                    Creator = gl.Location.Creator,
-                    CreateDate = gl.Location.CreateDate,
-                    Modifier = gl.Location.Modifier,
-                    ModifiedDate = gl.Location.ModifiedDate
-                })
-            });
+            var groupsSearch = GroupOperator.SetGroupSearchModelCascade(groups);
 
             return groupsSearch;
         }
@@ -244,51 +143,16 @@ namespace DpControl.Domain.Repository
                             select G;
 
             var result = QueryOperate<Group>.Execute(queryData, query);
-            var needExpandLocations = ExpandOperator.NeedExpand("Locations", query.expand);
-            if (needExpandLocations)
-                result = result.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
+            result = ExpandRelatedEntities(result,query.expand);
 
             //以下执行完后才会去数据库中查询
             var groups = await result.ToListAsync();
-
-            var groupsSearch = groups.Select(c => new GroupSearchModel
-            {
-                GroupId = c.GroupId,
-                GroupName = c.GroupName,
-                ProjectId = c.ProjectId,
-                SceneId = c.SceneId,
-                Creator = c.Creator,
-                CreateDate = c.CreateDate,
-                Modifier = c.Modifier,
-                ModifiedDate = c.ModifiedDate,
-                Locations = c.GroupLocations.Select(gl => new LocationSubSearchModel()
-                {
-                    LocationId = gl.Location.LocationId,
-                    ProjectId = gl.Location.ProjectId,
-                    Building = gl.Location.Building,
-                    CommAddress = gl.Location.CommAddress,
-                    CommMode = gl.Location.CommMode,
-                    CurrentPosition = gl.Location.CurrentPosition,
-                    Description = gl.Location.Description,
-                    DeviceSerialNo = gl.Location.DeviceSerialNo,
-                    DeviceId = gl.Location.DeviceId,
-                    DeviceType = gl.Location.DeviceType,
-                    FavorPositionFirst = gl.Location.FavorPositionFirst,
-                    FavorPositionrSecond = gl.Location.FavorPositionrSecond,
-                    FavorPositionThird = gl.Location.FavorPositionThird,
-                    Floor = gl.Location.Floor,
-                    InstallationNumber = gl.Location.InstallationNumber,
-                    Orientation = gl.Location.Orientation,
-                    RoomNo = gl.Location.RoomNo,
-                    Creator = gl.Location.Creator,
-                    CreateDate = gl.Location.CreateDate,
-                    Modifier = gl.Location.Modifier,
-                    ModifiedDate = gl.Location.ModifiedDate
-                })
-            });
+            var groupsSearch = GroupOperator.SetGroupSearchModelCascade(groups);
 
             return groupsSearch;
         }
+
+        
 
         public void RemoveById(int groupId)
         {
@@ -371,7 +235,20 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return group.GroupId;
         }
-        
 
+        /// <summary>
+        /// Expand Related Entities
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="expandParams"></param>
+        /// <returns></returns>
+        private IQueryable<Group> ExpandRelatedEntities(IQueryable<Group> result, string[] expandParams)
+        {
+            var needExpandLocations = ExpandOperator.NeedExpand("Locations", expandParams);
+            if (needExpandLocations)
+                result = result.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
+
+            return result;
+        }
     }
 }

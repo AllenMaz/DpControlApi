@@ -40,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="id">ID</param>
         /// <returns></returns>
         [APIAuthorize(Roles = "Admin")]
-        [EnableQuery(true,typeof(LogSearchModel))]
+        [EnableQuery(typeof(LogSearchModel))]
         [HttpGet("{logId}", Name = "GetByLogIdAsync")]
         public async Task<IActionResult> GetByLogIdAsync(int logId)
         {

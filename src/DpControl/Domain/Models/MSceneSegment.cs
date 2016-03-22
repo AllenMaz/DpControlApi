@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DpControl.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace DpControl.Domain.Models
     }
 
 
-    public class SceneSegmentSubSearchModel: SceneSegmentBaseModel
+    public class SceneSegmentSearchModel: SceneSegmentBaseModel
     {
         public int SceneSegmentId { get; set; }
         public int SceneId { get; set; }
@@ -44,8 +45,40 @@ namespace DpControl.Domain.Models
         public DateTime? ModifiedDate { get; set; }
     }
 
-    public class SceneSegmentSearchModel : SceneSegmentSubSearchModel
+    public static class SceneSegmentOperator
     {
-    }
+        /// <summary>
+        /// Cascade set SceneSegmentSearchModel Results
+        /// </summary>
+        public static IEnumerable<SceneSegmentSearchModel> SetSceneSegmentSearchModelCascade(List<SceneSegment> sceneSegments)
+        {
+            var sceneSegmentSearchModels = sceneSegments.Select(c => SetSceneSegmentSearchModelCascade(c));
 
+            return sceneSegmentSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set SceneSegmentSearchModel Result
+        /// </summary>
+        /// <param name="sceneSegment"></param>
+        /// <returns></returns>
+        public static SceneSegmentSearchModel SetSceneSegmentSearchModelCascade(SceneSegment sceneSegment)
+        {
+            if (sceneSegment == null) return null;
+            var sceneSegmentSearchModel = new SceneSegmentSearchModel
+            {
+                SceneSegmentId = sceneSegment.SceneSegmentId,
+                SceneId = sceneSegment.SceneId,
+                SequenceNo = sceneSegment.SequenceNo,
+                StartTime = sceneSegment.StartTime,
+                Volumn = sceneSegment.Volumn,
+                Creator = sceneSegment.Creator,
+                CreateDate = sceneSegment.CreateDate,
+                Modifier = sceneSegment.Modifier,
+                ModifiedDate = sceneSegment.ModifiedDate
+            };
+
+            return sceneSegmentSearchModel;
+        }
+    }
 }

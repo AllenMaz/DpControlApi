@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DpControl.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace DpControl.Domain.Models
     {
     }
 
-    public class HolidaySubSearchModel: HoliadyBaseModel
+    public class HolidaySearchModel: HoliadyBaseModel
     {
         public int HolidayId { get; set; }
 
@@ -34,8 +35,40 @@ namespace DpControl.Domain.Models
         public DateTime? ModifiedDate { get; set; }
     }
 
-    public class HolidaySearchModel: HolidaySubSearchModel
+    public static class HolidayOperator
     {
-        
+        /// <summary>
+        /// Cascade set HolidaySearchModel Results
+        /// </summary>
+        /// <param name="holidays"></param>
+        /// <returns></returns>
+        public static IEnumerable<HolidaySearchModel> SetHolidaySearchModelCascade(List<Holiday> holidays)
+        {
+            var holidaySearchModels = holidays.Select(s => SetHolidaySearchModelCascade(s));
+            return holidaySearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set HolidaySearchModel Result
+        /// </summary>
+        /// <param name="holiday"></param>
+        /// <returns></returns>
+        public static HolidaySearchModel SetHolidaySearchModelCascade(Holiday holiday)
+        {
+            if (holiday == null) return null;
+            var holidaySearchModel = new HolidaySearchModel()
+            {
+                HolidayId = holiday.HolidayId,
+                ProjectId = holiday.ProjectId,
+                Day = holiday.Day,
+                Creator = holiday.Creator,
+                CreateDate = holiday.CreateDate,
+                Modifier = holiday.Modifier,
+                ModifiedDate = holiday.ModifiedDate
+
+            };
+            return holidaySearchModel;
+        }
+
     }
 }
