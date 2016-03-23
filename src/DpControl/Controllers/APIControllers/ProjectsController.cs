@@ -23,7 +23,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] ProjectAddModel mProject)
         {
@@ -40,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(ProjectSearchModel))]
         [HttpGet("{projectId}", Name = "GetByProjectIdAsync")]
         public async Task<IActionResult> GetByProjectIdAsync(int projectId)
@@ -57,7 +57,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync()
@@ -74,7 +74,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="project"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ProjectUpdateModel mProject)
         {
@@ -92,7 +92,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by CustomerNo
         /// </summary>
         /// <param name="customerId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{projectId}")]
         public async Task<IActionResult> DeleteByProjectIdIdAsync(int projectId)
         {

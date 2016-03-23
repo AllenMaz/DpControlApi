@@ -23,7 +23,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] GroupAddModel mGroup)
         {
@@ -41,7 +41,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(GroupSearchModel))]
         [HttpGet("{groupId}", Name = "GetByGroupIdAsync")]
         public async Task<IActionResult> GetByProjectIdAsync(int groupId)
@@ -58,7 +58,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<GroupSearchModel>> GetAllAsync()
@@ -75,7 +75,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="GroupId"></param>
         /// <param name="Group"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPut("{groupId}")]
         public async Task<IActionResult> UpdateAsync(int groupId, [FromBody] GroupUpdateModel mGroup)
         {
@@ -93,7 +93,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by GroupId
         /// </summary>
         /// <param name="groupId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{groupId}")]
         public async Task<IActionResult> DeleteByGroupIdIdAsync(int groupId)
         {

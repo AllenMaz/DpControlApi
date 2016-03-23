@@ -21,7 +21,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] LogAddModel mLog)
         {
@@ -39,7 +39,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(LogSearchModel))]
         [HttpGet("{logId}", Name = "GetByLogIdAsync")]
         public async Task<IActionResult> GetByLogIdAsync(int logId)
@@ -56,7 +56,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<LogSearchModel>> GetAllAsync()
@@ -72,7 +72,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by LogId
         /// </summary>
         /// <param name="logId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{logId}")]
         public async Task<IActionResult> DeleteByLogIdAsync(int logId)
         {

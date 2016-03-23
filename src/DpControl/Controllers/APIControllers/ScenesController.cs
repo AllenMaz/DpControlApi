@@ -22,7 +22,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] SceneAddModel mScene)
         {
@@ -40,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(SceneSearchModel))]
         [HttpGet("{sceneId}", Name = "GetBySceneIdAsync")]
         public async Task<IActionResult> GetBySceneIdAsync(int sceneId)
@@ -57,7 +57,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<SceneSearchModel>> GetAllAsync()
@@ -74,7 +74,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="SceneId"></param>
         /// <param name="project"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] SceneUpdateModel mScene)
         {
@@ -92,7 +92,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by SceneId
         /// </summary>
         /// <param name="SceneId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{sceneId}")]
         public async Task<IActionResult> DeleteBySceneIdAsync(int sceneId)
         {

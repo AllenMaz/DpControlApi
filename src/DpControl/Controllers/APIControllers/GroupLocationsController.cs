@@ -21,7 +21,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] GroupLocationAddModel mGroupLocation)
         {
@@ -39,7 +39,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(GroupLocationSearchModel))]
         [HttpGet("{groupLocationId}", Name = "GetByGroupLocationIdAsync")]
         public async Task<IActionResult> GetByGroupLocationIdAsync(int groupLocationId)
@@ -56,7 +56,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<GroupLocationSearchModel>> GetAllAsync()
@@ -72,7 +72,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by GroupLocationId
         /// </summary>
         /// <param name="groupLocationId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{groupLocationId}")]
         public async Task<IActionResult> DeleteByGroupLocationIdAsync(int groupLocationId)
         {

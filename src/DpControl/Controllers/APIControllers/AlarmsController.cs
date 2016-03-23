@@ -15,13 +15,13 @@ namespace DpControl.Controllers.APIControllers
     {
         [FromServices]
         public IAlarmRepository _alarmRepository { get; set; }
-
+        
         /// <summary>
         /// Add data
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] AlarmAddModel mAlarm)
         {
@@ -39,7 +39,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(AlarmSearchModel))]
         [HttpGet("{alarmId}", Name = "GetByAlarmIdAsync")]
         public async Task<IActionResult> GetByAlarmIdAsync(int alarmId)
@@ -56,7 +56,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync()
@@ -72,7 +72,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by AlarmId
         /// </summary>
         /// <param name="alarmId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{alarmId}")]
         public async Task<IActionResult> DeleteByAlarmIdAsync(int alarmId)
         {

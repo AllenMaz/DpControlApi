@@ -35,7 +35,7 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
         {
@@ -54,7 +54,7 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(CustomerSearchModel))]
         [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
         public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
@@ -71,7 +71,7 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles ="Admin")]
+        [APIAuthorize(Roles ="Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
@@ -112,7 +112,7 @@ namespace DpControl.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="customer"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] CustomerUpdateModel mCustomer)
         {
@@ -130,7 +130,7 @@ namespace DpControl.APIControllers
         /// Delete data by CustomerNo
         /// </summary>
         /// <param name="customerId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{customerId}")]
         public async Task<IActionResult> DeleteByCustomerIdAsync(int customerId)
         {

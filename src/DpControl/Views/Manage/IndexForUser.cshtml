@@ -60,38 +60,36 @@
         <h3 id="myModalLabel">Add Users</h3>
     </div>
     <div class="modal-body" style="height:400px;">
-        <form action="forms.html" method="post">
-            <div>
-                <div class="span4">
-                    <label class="modallabel">Name</label>
-                    <span class="field">
-                        <input type="text" id="tbAddName" class="input-large">
-                    </span>
-                    <br />
-                    <label class="modallabel">Password</label>
-                    <span class="field">
-                        <input type="text" id="tbAddPassword" class="input-large">
-                    </span>
-                    <br />
-                    <label class="modallabel">Roles</label>
-                    <span class="field">
-                        <input type="text" id="tbAddRoles" class="input-large" placeholder="Select Roles below">
-                    </span>
-                    <br />
-                    <div style="padding:10px 130px;">
-                        @{
-                            var allRoles = roleManager.Roles.ToList();
-                            foreach (var role in allRoles)
-                            {
-                                <input name="ckRole" id="tb'@role'" class="rolecheck" value=@role.Name type="checkbox" style="margin:0 5px;" />
-                                <label for="tb'@role'" style="width:100px;">@role.Name</label>
+        <div>
+            <div class="span4">
+                <label class="modallabel">Name</label>
+                <span class="field">
+                    <input type="text" id="tbAddName" class="input-large">
+                </span>
+                <br />
+                <label class="modallabel">Password</label>
+                <span class="field">
+                    <input type="text" id="tbAddPassword" class="input-large">
+                </span>
+                <br />
+                <label class="modallabel">Roles</label>
+                <span class="field">
+                    <input type="text" id="tbAddRoles" class="input-large" placeholder="Select Roles below">
+                </span>
+                <br />
+                <div style="padding:10px 130px;">
+                    @{
+                        var allRoles = roleManager.Roles.ToList();
+                        foreach (var role in allRoles)
+                        {
+                            <input name="ckRole" id="tb'@role'" class="rolecheck" value=@role.Name type="checkbox" style="margin:0 5px;" />
+                            <label for="tb'@role'" style="width:100px;">@role.Name</label>
 
-                            }
                         }
-                    </div>
-                 </div>
-            </div>
-        </form>
+                    }
+                </div>
+                </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button data-dismiss="modal" class="btn">取消</button>

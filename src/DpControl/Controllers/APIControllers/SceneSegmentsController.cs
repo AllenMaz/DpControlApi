@@ -22,7 +22,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] SceneSegmentAddModel mSceneSegment)
         {
@@ -39,7 +39,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(SceneSegmentSearchModel))]
         [HttpGet("{sceneSegmentId}", Name = "GetBySceneSegmentIdAsync")]
         public async Task<IActionResult> GetBySceneSegmentIdAsync(int sceneSegmentId)
@@ -56,7 +56,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync()
@@ -73,7 +73,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="project"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPut("{sceneSegmentId}")]
         public async Task<IActionResult> UpdateAsync(int sceneSegmentId, [FromBody] SceneSegmentUpdateModel mSceneSegment)
         {
@@ -91,7 +91,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by SceneSegmentId
         /// </summary>
         /// <param name="customerId"></param>
-        [APIAuthorize(Roles = "Admin")]
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{sceneSegmentId}")]
         public async Task<IActionResult> DeleteBySceneSegmentIdAsync(int sceneSegmentId)
         {
