@@ -69,7 +69,7 @@ namespace DpControl.Domain.Repository
         {
             var result = _context.AlarmMessages
                .Where(v => v.AlarmMessageId == alarmMessageId);
-            result = result.Include(am => am.Alarms);
+            result = (IQueryable<AlarmMessage>)ExpandOperator.ExpandRelatedEntities<AlarmMessage>(result);
 
             var alarmMessage = result.FirstOrDefault();
             var alarmMessageSearch = AlarmMessageOperator.SetAlarmMessageSearchModelCascade(alarmMessage);
@@ -80,20 +80,20 @@ namespace DpControl.Domain.Repository
         {
             var result = _context.AlarmMessages
                .Where(v => v.AlarmMessageId == alarmMessageId);
-            result = result.Include(am=>am.Alarms);
+            result = (IQueryable<AlarmMessage>)ExpandOperator.ExpandRelatedEntities<AlarmMessage>(result);
 
             var alarmMessage = await result.FirstOrDefaultAsync();
             var alarmMessageSearch = AlarmMessageOperator.SetAlarmMessageSearchModelCascade(alarmMessage);
             return alarmMessageSearch;
         }
 
-        public IEnumerable<AlarmMessageSearchModel> GetAll(Query query)
+        public IEnumerable<AlarmMessageSearchModel> GetAll()
         {
             var queryData = from A in _context.AlarmMessages
                             select A;
 
-            var result = QueryOperate<AlarmMessage>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<AlarmMessage>.Execute(queryData);
+            result = (IQueryable<AlarmMessage>)ExpandOperator.ExpandRelatedEntities<AlarmMessage>(result);
 
             //以下执行完后才会去数据库中查询
             var alarmMessages = result.ToList();
@@ -102,13 +102,13 @@ namespace DpControl.Domain.Repository
             return alarmMessagesSearch;
         }
 
-        public async Task<IEnumerable<AlarmMessageSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<AlarmMessageSearchModel>> GetAllAsync()
         {
             var queryData = from A in _context.AlarmMessages
                             select A;
 
-            var result = QueryOperate<AlarmMessage>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<AlarmMessage>.Execute(queryData);
+            result = (IQueryable<AlarmMessage>)ExpandOperator.ExpandRelatedEntities<AlarmMessage>(result);
 
             //以下执行完后才会去数据库中查询
             var alarmMessages = await result.ToListAsync();
@@ -180,19 +180,6 @@ namespace DpControl.Domain.Repository
             return alarmMessage.AlarmMessageId;
         }
 
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<AlarmMessage> ExpandRelatedEntities(IQueryable<AlarmMessage> result, string[] expandParams)
-        {
-            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", expandParams);
-            if (needExpandAlarms)
-                result = result.Include(a => a.Alarms);
-
-            return result;
-        }
+        
     }
 }

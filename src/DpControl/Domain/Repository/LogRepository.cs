@@ -86,6 +86,8 @@ namespace DpControl.Domain.Repository
         public LogSearchModel FindById(int logId)
         {
             var result = _context.Logs.Where(v => v.LogId == logId);
+            result = (IQueryable<Log>)ExpandOperator.ExpandRelatedEntities<Log>(result);
+
             var log = result.FirstOrDefault();
             var logSearch = LogOperator.SetLogSearchModelCascade(log);
             return logSearch;
@@ -94,17 +96,20 @@ namespace DpControl.Domain.Repository
         public async Task<LogSearchModel> FindByIdAsync(int logId)
         {
             var result = _context.Logs.Where(v => v.LogId == logId);
+            result = (IQueryable<Log>)ExpandOperator.ExpandRelatedEntities<Log>(result);
+
             var log = await result.FirstOrDefaultAsync();
             var logSearch = LogOperator.SetLogSearchModelCascade(log);
             return logSearch;
         }
 
-        public IEnumerable<LogSearchModel> GetAll(Query query)
+        public IEnumerable<LogSearchModel> GetAll()
         {
             var queryData = from L in _context.Logs
                             select L;
 
-            var result = QueryOperate<Log>.Execute(queryData, query);
+            var result = QueryOperate<Log>.Execute(queryData);
+            result = (IQueryable<Log>)ExpandOperator.ExpandRelatedEntities<Log>(result);
 
             //以下执行完后才会去数据库中查询
             var logs = result.ToList();
@@ -113,12 +118,13 @@ namespace DpControl.Domain.Repository
             return logsSearch;
         }
 
-        public async Task<IEnumerable<LogSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<LogSearchModel>> GetAllAsync()
         {
             var queryData = from L in _context.Logs
                             select L;
 
-            var result = QueryOperate<Log>.Execute(queryData, query);
+            var result = QueryOperate<Log>.Execute(queryData);
+            result = (IQueryable<Log>)ExpandOperator.ExpandRelatedEntities<Log>(result);
 
             //以下执行完后才会去数据库中查询
             var logs = await result.ToListAsync();

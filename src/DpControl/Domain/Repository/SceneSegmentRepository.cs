@@ -92,6 +92,7 @@ namespace DpControl.Domain.Repository
         public SceneSegmentSearchModel FindById(int sceneSegmentId)
         {
             var result = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId);
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
 
             var sceneSegment = result.FirstOrDefault();
             var sceneSegmentSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegment);
@@ -102,7 +103,8 @@ namespace DpControl.Domain.Repository
         public async Task<SceneSegmentSearchModel> FindByIdAsync(int sceneSegmentId)
         {
             var result = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId);
-            
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
+
             var sceneSegment = await result.FirstOrDefaultAsync();
             var sceneSegmentSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegment);
 
@@ -110,12 +112,13 @@ namespace DpControl.Domain.Repository
             
         }
 
-        public IEnumerable<SceneSegmentSearchModel> GetAll(Query query)
+        public IEnumerable<SceneSegmentSearchModel> GetAll()
         {
             var queryData = from S in _context.SceneSegments
                             select S;
 
-            var result = QueryOperate<SceneSegment>.Execute(queryData, query);
+            var result = QueryOperate<SceneSegment>.Execute(queryData);
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
 
             //以下执行完后才会去数据库中查询
             var sceneSegments = result.ToList();
@@ -124,12 +127,13 @@ namespace DpControl.Domain.Repository
             return sceneSegmentsSearch;
         }
 
-        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync()
         {
             var queryData = from S in _context.SceneSegments
                             select S;
 
-            var result = QueryOperate<SceneSegment>.Execute(queryData, query);
+            var result = QueryOperate<SceneSegment>.Execute(queryData);
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
 
             //以下执行完后才会去数据库中查询
             var sceneSegments = await result.ToListAsync();

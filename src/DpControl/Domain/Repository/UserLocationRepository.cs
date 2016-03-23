@@ -113,12 +113,12 @@ namespace DpControl.Domain.Repository
             return userLocation;
         }
 
-        public IEnumerable<UserLocationSearchModel> GetAll(Query query)
+        public IEnumerable<UserLocationSearchModel> GetAll()
         {
             var queryData = from U in _context.UserLocations
                             select U;
 
-            var result = QueryOperate<UserLocation>.Execute(queryData, query);
+            var result = QueryOperate<UserLocation>.Execute(queryData);
 
             //以下执行完后才会去数据库中查询
             var userLocations = result.ToList();
@@ -133,12 +133,12 @@ namespace DpControl.Domain.Repository
             return userLocationsSearch;
         }
 
-        public async Task<IEnumerable<UserLocationSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<UserLocationSearchModel>> GetAllAsync()
         {
             var queryData = from U in _context.UserLocations
                             select U;
 
-            var result = QueryOperate<UserLocation>.Execute(queryData, query);
+            var result = QueryOperate<UserLocation>.Execute(queryData);
 
             //以下执行完后才会去数据库中查询
             var userLocations = await result.ToListAsync();

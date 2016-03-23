@@ -57,7 +57,7 @@ namespace DpControl.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [EnableQuery(typeof(CustomerSearchModel))]
         [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
-        public async Task<IActionResult> GetByCustomerIdAsync(int customerId, [FromUri] Query query)
+        public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
         {
             var customer = await _customerRepository.FindByIdAsync(customerId);
             if (customer == null)
@@ -74,7 +74,7 @@ namespace DpControl.APIControllers
         [APIAuthorize(Roles ="Admin")]
         [HttpGet]
         [EnableQuery]
-        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
         {
             //string cacheKey = "CustomerGetAllCache";
             //IEnumerable<CustomerSearchModel> result;
@@ -101,7 +101,7 @@ namespace DpControl.APIControllers
 
             //}
 
-            var result = await _customerRepository.GetAllAsync(query);
+            var result = await _customerRepository.GetAllAsync();
 
             return result;
         }

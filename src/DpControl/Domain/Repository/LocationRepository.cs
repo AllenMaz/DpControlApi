@@ -173,9 +173,7 @@ namespace DpControl.Domain.Repository
         public LocationSearchModel FindById(int locationId)
         {
             var result = _context.Locations.Where(v => v.LocationId == locationId);
-            result = result.Include(l => l.GroupLocations).ThenInclude(gl => gl.Group);
-            result = result.Include(l => l.Alarms);
-            result = result.Include(l => l.Logs);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
 
             var location = result.FirstOrDefault();
             var locationSearch = LocationOperator.SetLocationSearchModelCascade(location);
@@ -186,9 +184,7 @@ namespace DpControl.Domain.Repository
         public async Task<LocationSearchModel> FindByIdAsync(int locationId)
         {
             var result = _context.Locations.Where(v => v.LocationId == locationId);
-            result = result.Include(l => l.GroupLocations).ThenInclude(gl => gl.Group);
-            result = result.Include(l => l.Alarms);
-            result = result.Include(l => l.Logs);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
 
             var location = await result.FirstOrDefaultAsync();
             var locationSearch = LocationOperator.SetLocationSearchModelCascade(location);
@@ -196,13 +192,14 @@ namespace DpControl.Domain.Repository
             return locationSearch;
         }
 
-        public IEnumerable<LocationSearchModel> GetAll(Query query)
+        public IEnumerable<LocationSearchModel> GetAll()
         {
             var queryData = from L in _context.Locations
                             select L;
 
-            var result = QueryOperate<Location>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<Location>.Execute(queryData);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
+
             //以下执行完后才会去数据库中查询
             var locations =  result.ToList();
             var locationsSearch = LocationOperator.SetLocationSearchModelCascade(locations);
@@ -211,13 +208,13 @@ namespace DpControl.Domain.Repository
             return locationsSearch;
         }
 
-        public async Task<IEnumerable<LocationSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<LocationSearchModel>> GetAllAsync()
         {
             var queryData = from L in _context.Locations
                             select L;
 
-            var result = QueryOperate<Location>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<Location>.Execute(queryData);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
 
             //以下执行完后才会去数据库中查询
             var locations = await result.ToListAsync();
@@ -381,27 +378,6 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return location.LocationId;
         }
-
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<Location> ExpandRelatedEntities(IQueryable<Location> result, string[] expandParams)
-        {
-            var needExpandGroups = ExpandOperator.NeedExpand("Groups", expandParams);
-            var needExpandAlarms = ExpandOperator.NeedExpand("Alarms", expandParams);
-            var needExpandLogs = ExpandOperator.NeedExpand("Logs", expandParams);
-
-            if (needExpandGroups)
-                result = result.Include(l => l.GroupLocations).ThenInclude(gl => gl.Group);
-            if (needExpandAlarms)
-                result = result.Include(l => l.Alarms);
-            if (needExpandLogs)
-                result = result.Include(l => l.Logs);
-
-            return result;
-        }
+        
     }
 }

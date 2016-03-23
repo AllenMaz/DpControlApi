@@ -59,10 +59,10 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
-        public async Task<IEnumerable<LogDescriptionSearchModel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<LogDescriptionSearchModel>> GetAllAsync()
         {
 
-            var result = await _logDescriptionRepository.GetAllAsync(query); ;
+            var result = await _logDescriptionRepository.GetAllAsync(); ;
 
             return result;
         }

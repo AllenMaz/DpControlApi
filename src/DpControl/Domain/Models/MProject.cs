@@ -31,7 +31,7 @@ namespace DpControl.Domain.Models
         public bool Completed { get; set; }
     }
 
-    public class ProjectSearchModel : ProjectBaseModel
+    public class ProjectSubSearchModel: ProjectBaseModel
     {
         public int? CustomerId { get; set; }
         public int ProjectId { get; set; }
@@ -40,10 +40,15 @@ namespace DpControl.Domain.Models
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public bool Completed { get; set; }
-        public IEnumerable<LocationSearchModel> Locations { get; set; }          
-        public IEnumerable<GroupSearchModel> Groups { get; set; }
-        public IEnumerable<SceneSearchModel> Scenes { get; set; }
-        public IEnumerable<HolidaySearchModel> Holidays { get; set; }
+    }
+
+    public class ProjectSearchModel : ProjectSubSearchModel
+    {
+        public CustomerSubSearchModel Customer { get; set; }
+        public IEnumerable<LocationSubSearchModel> Locations { get; set; }          
+        public IEnumerable<GroupSubSearchModel> Groups { get; set; }
+        public IEnumerable<SceneSubSearchModel> Scenes { get; set; }
+        public IEnumerable<HolidaySubSearchModel> Holidays { get; set; }
     }
 
     public static class ProjectOperator
@@ -78,13 +83,51 @@ namespace DpControl.Domain.Models
                 CreateDate = project.CreateDate,
                 Modifier = project.Modifier,
                 ModifiedDate = project.ModifiedDate,
+                Customer = CustomerOperator.SetCustomerSubSearchModel(project.Customer),
                 Scenes = SceneOperator.SetSceneSearchModelCascade(project.Scenes),
                 Groups = GroupOperator.SetGroupSearchModelCascade(project.Groups),
                 Locations = LocationOperator.SetLocationSearchModelCascade(project.Locations),
                 Holidays = HolidayOperator.SetHolidaySearchModelCascade(project.Holidays)
             };
             return projectSearchModel;
+            
+            
         }
-        
+
+        /// <summary>
+        /// Cascade set ProjectSubSearchModel Results
+        /// </summary>
+        /// <param name="projects"></param>
+        /// <returns></returns>
+        public static IEnumerable<ProjectSubSearchModel> SetProjectSubSearchModel(List<Project> projects)
+        {
+            var projectSearchModels = projects.Select(p => SetProjectSubSearchModel(p));
+            return projectSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set ProjectSubSearchModel Result
+        /// </summary>
+        /// <param name="project"></param>
+        /// <returns></returns>
+        public static ProjectSubSearchModel SetProjectSubSearchModel(Project project)
+        {
+            if (project == null) return null;
+            var projectSearchModel = new ProjectSubSearchModel()
+            {
+                ProjectId = project.ProjectId,
+                ProjectNo = project.ProjectNo,
+                ProjectName = project.ProjectName,
+                CustomerId = project.CustomerId,
+                Completed = project.Completed,
+                Creator = project.Creator,
+                CreateDate = project.CreateDate,
+                Modifier = project.Modifier,
+                ModifiedDate = project.ModifiedDate
+            };
+            return projectSearchModel;
+
+
+        }
     }
 }

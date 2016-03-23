@@ -59,10 +59,10 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
-        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync()
         {
 
-            var result = await _sceneSegmentRepository.GetAllAsync(query); ;
+            var result = await _sceneSegmentRepository.GetAllAsync(); ;
 
             return result;
         }

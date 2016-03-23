@@ -113,12 +113,12 @@ namespace DpControl.Domain.Repository
             return userGroup;
         }
 
-        public IEnumerable<UserGroupSearchModel> GetAll(Query query)
+        public IEnumerable<UserGroupSearchModel> GetAll()
         {
             var queryData = from U in _context.UserGroups
                             select U;
 
-            var result = QueryOperate<UserGroup>.Execute(queryData, query);
+            var result = QueryOperate<UserGroup>.Execute(queryData);
 
             //以下执行完后才会去数据库中查询
             var userGroups = result.ToList();
@@ -133,12 +133,12 @@ namespace DpControl.Domain.Repository
             return userGroupsSearch;
         }
 
-        public async Task<IEnumerable<UserGroupSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<UserGroupSearchModel>> GetAllAsync()
         {
             var queryData = from U in _context.UserGroups
                             select U;
 
-            var result = QueryOperate<UserGroup>.Execute(queryData, query);
+            var result = QueryOperate<UserGroup>.Execute(queryData);
 
             //以下执行完后才会去数据库中查询
             var userGroups = await result.ToListAsync();

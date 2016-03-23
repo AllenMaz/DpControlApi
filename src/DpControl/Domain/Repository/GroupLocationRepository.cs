@@ -113,12 +113,12 @@ namespace DpControl.Domain.Repository
             return groupLocation;
         }
 
-        public IEnumerable<GroupLocationSearchModel> GetAll(Query query)
+        public IEnumerable<GroupLocationSearchModel> GetAll()
         {
             var queryData = from G in _context.GroupLocations
                             select G;
 
-            var result = QueryOperate<GroupLocation>.Execute(queryData, query);
+            var result = QueryOperate<GroupLocation>.Execute(queryData);
 
             //以下执行完后才会去数据库中查询
             var groupLocations = result.ToList();
@@ -133,12 +133,12 @@ namespace DpControl.Domain.Repository
             return groupLocationsSearch;
         }
 
-        public async Task<IEnumerable<GroupLocationSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<GroupLocationSearchModel>> GetAllAsync()
         {
             var queryData = from G in _context.GroupLocations
                             select G;
 
-            var result = QueryOperate<GroupLocation>.Execute(queryData, query);
+            var result = QueryOperate<GroupLocation>.Execute(queryData);
 
             //以下执行完后才会去数据库中查询
             var groupLocations = await result.ToListAsync();

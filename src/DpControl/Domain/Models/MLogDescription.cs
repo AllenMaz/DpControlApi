@@ -23,13 +23,19 @@ namespace DpControl.Domain.Models
 
     public class LogDescriptionUpdateModel: LogDescriptionBaseModel
     {
+        public int LogDescriptionId { get; set; }
 
     }
 
-    public class LogDescriptionSearchModel: LogDescriptionBaseModel
+    public class LogDescriptionSubSearchModel: LogDescriptionBaseModel
     {
         public int LogDescriptionId { get; set; }
-        public IEnumerable<LogSearchModel> Logs { get; set; }
+
+    }
+
+    public class LogDescriptionSearchModel: LogDescriptionSubSearchModel
+    {
+        public IEnumerable<LogSubSearchModel> Logs { get; set; }
     }
 
     public static class LogDescriptionOperator
@@ -58,6 +64,34 @@ namespace DpControl.Domain.Models
                 DescriptionCode = logDescription.DescriptionCode,
                 Description = logDescription.Description,
                 Logs = LogOperator.SetLogSearchModelCascade(logDescription.Logs)
+            };
+
+            return logDescriptionSearchModel;
+        }
+
+        /// <summary>
+        /// Cascade set LogDescriptionSubSearchModel Results
+        /// </summary>
+        public static IEnumerable<LogDescriptionSubSearchModel> SetLogDescriptionSubSearchModel(List<LogDescription> logDescriptions)
+        {
+            var logDescriptionSearchModels = logDescriptions.Select(c => SetLogDescriptionSubSearchModel(c));
+
+            return logDescriptionSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set LogDescriptionSearchModel Result
+        /// </summary>
+        /// <param name="logDescription"></param>
+        /// <returns></returns>
+        public static LogDescriptionSubSearchModel SetLogDescriptionSubSearchModel(LogDescription logDescription)
+        {
+            if (logDescription == null) return null;
+            var logDescriptionSearchModel = new LogDescriptionSubSearchModel
+            {
+                LogDescriptionId = logDescription.LogDescriptionId,
+                DescriptionCode = logDescription.DescriptionCode,
+                Description = logDescription.Description
             };
 
             return logDescriptionSearchModel;

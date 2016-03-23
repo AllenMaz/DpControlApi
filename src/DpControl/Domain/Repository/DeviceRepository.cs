@@ -62,7 +62,8 @@ namespace DpControl.Domain.Repository
         public DeviceSearchModel FindById(int deviceId)
         {
             var result = _context.Devices.Where(v => v.DeviceId == deviceId);
-            result = result.Include(d => d.Locations);
+            result = (IQueryable<Device>)ExpandOperator.ExpandRelatedEntities<Device>(result);
+
             var device = result.FirstOrDefault();
             var deviceSearch = DeviceOperator.SetDeviceSearchModelCascade(device);
             return deviceSearch;
@@ -71,19 +72,20 @@ namespace DpControl.Domain.Repository
         public async Task<DeviceSearchModel> FindByIdAsync(int deviceId)
         {
             var result = _context.Devices.Where(v => v.DeviceId == deviceId);
-            result = result.Include(d=>d.Locations);
+            result = (IQueryable<Device>)ExpandOperator.ExpandRelatedEntities<Device>(result);
+
             var device = await result.FirstOrDefaultAsync();
             var deviceSearch = DeviceOperator.SetDeviceSearchModelCascade(device);
             return deviceSearch;
         }
 
-        public IEnumerable<DeviceSearchModel> GetAll(Query query)
+        public IEnumerable<DeviceSearchModel> GetAll()
         {
             var queryData = from D in _context.Devices
                             select D;
 
-            var result = QueryOperate<Device>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<Device>.Execute(queryData);
+            result = (IQueryable<Device>)ExpandOperator.ExpandRelatedEntities<Device>(result);
 
             //以下执行完后才会去数据库中查询
             var devices = result.ToList();
@@ -92,13 +94,13 @@ namespace DpControl.Domain.Repository
             return devicesSearch;
         }
 
-        public async Task<IEnumerable<DeviceSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<DeviceSearchModel>> GetAllAsync()
         {
             var queryData = from D in _context.Devices
                             select D;
 
-            var result = QueryOperate<Device>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<Device>.Execute(queryData);
+            result = (IQueryable<Device>)ExpandOperator.ExpandRelatedEntities<Device>(result);
 
             //以下执行完后才会去数据库中查询
             var devices = await result.ToListAsync();
@@ -154,20 +156,6 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return device.DeviceId;
         }
-
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<Device> ExpandRelatedEntities(IQueryable<Device> result, string[] expandParams)
-        {
-            var needExpandLocations = ExpandOperator.NeedExpand("Locations", expandParams);
-            if (needExpandLocations)
-                result = result.Include(d => d.Locations);
-
-            return result;
-        }
+        
     }
 }

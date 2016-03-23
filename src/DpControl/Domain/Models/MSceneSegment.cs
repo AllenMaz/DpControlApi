@@ -34,8 +34,7 @@ namespace DpControl.Domain.Models
 
     }
 
-
-    public class SceneSegmentSearchModel: SceneSegmentBaseModel
+    public class SceneSegmentSubSearchModel: SceneSegmentBaseModel
     {
         public int SceneSegmentId { get; set; }
         public int SceneId { get; set; }
@@ -43,6 +42,11 @@ namespace DpControl.Domain.Models
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
+    }
+    
+    public class SceneSegmentSearchModel: SceneSegmentSubSearchModel
+    {
+        public SceneSubSearchModel Scene { get; set; }
     }
 
     public static class SceneSegmentOperator
@@ -66,6 +70,41 @@ namespace DpControl.Domain.Models
         {
             if (sceneSegment == null) return null;
             var sceneSegmentSearchModel = new SceneSegmentSearchModel
+            {
+                SceneSegmentId = sceneSegment.SceneSegmentId,
+                SceneId = sceneSegment.SceneId,
+                SequenceNo = sceneSegment.SequenceNo,
+                StartTime = sceneSegment.StartTime,
+                Volumn = sceneSegment.Volumn,
+                Creator = sceneSegment.Creator,
+                CreateDate = sceneSegment.CreateDate,
+                Modifier = sceneSegment.Modifier,
+                ModifiedDate = sceneSegment.ModifiedDate,
+                Scene = SceneOperator.SetSceneSubSearchModel(sceneSegment.Scene)
+            };
+
+            return sceneSegmentSearchModel;
+        }
+
+        /// <summary>
+        /// Cascade set SceneSubSegmentSearchModel Results
+        /// </summary>
+        public static IEnumerable<SceneSegmentSubSearchModel> SetSceneSegmentSubSearchModel(List<SceneSegment> sceneSegments)
+        {
+            var sceneSegmentSearchModels = sceneSegments.Select(c => SetSceneSegmentSubSearchModel(c));
+
+            return sceneSegmentSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set SceneSegmentSearchModel Result
+        /// </summary>
+        /// <param name="sceneSegment"></param>
+        /// <returns></returns>
+        public static SceneSegmentSubSearchModel SetSceneSegmentSubSearchModel(SceneSegment sceneSegment)
+        {
+            if (sceneSegment == null) return null;
+            var sceneSegmentSearchModel = new SceneSegmentSubSearchModel
             {
                 SceneSegmentId = sceneSegment.SceneSegmentId,
                 SceneId = sceneSegment.SceneId,

@@ -71,8 +71,8 @@ namespace DpControl.Domain.Repository
         {
             var result = _context.LogDescriptions
                .Where(v => v.LogDescriptionId == logDescriptionId);
+            result = (IQueryable<LogDescription>)ExpandOperator.ExpandRelatedEntities<LogDescription>(result);
 
-            result = result.Include(l => l.Logs);
             var logDescription = result.FirstOrDefault();
             var logDescriptionSearch = LogDescriptionOperator.SetLogDescriptionSearchModelCascade(logDescription);
 
@@ -84,20 +84,21 @@ namespace DpControl.Domain.Repository
             var result = _context.LogDescriptions
                .Where(v => v.LogDescriptionId == logDescriptionId);
 
-            result = result.Include(l => l.Logs);
+            result = (IQueryable<LogDescription>)ExpandOperator.ExpandRelatedEntities<LogDescription>(result);
+
             var logDescription = await result.FirstOrDefaultAsync();
             var logDescriptionSearch = LogDescriptionOperator.SetLogDescriptionSearchModelCascade(logDescription);
 
             return logDescriptionSearch;
         }
 
-        public IEnumerable<LogDescriptionSearchModel> GetAll(Query query)
+        public IEnumerable<LogDescriptionSearchModel> GetAll()
         {
             var queryData = from L in _context.LogDescriptions
                             select L;
 
-            var result = QueryOperate<LogDescription>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<LogDescription>.Execute(queryData);
+            result = (IQueryable<LogDescription>)ExpandOperator.ExpandRelatedEntities<LogDescription>(result);
 
             //以下执行完后才会去数据库中查询
             var logDescriptions = result.ToList();
@@ -106,13 +107,13 @@ namespace DpControl.Domain.Repository
             return logDescriptionsSearch;
         }
 
-        public async Task<IEnumerable<LogDescriptionSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<LogDescriptionSearchModel>> GetAllAsync()
         {
             var queryData = from L in _context.LogDescriptions
                             select L;
 
-            var result = QueryOperate<LogDescription>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<LogDescription>.Execute(queryData);
+            result = (IQueryable<LogDescription>)ExpandOperator.ExpandRelatedEntities<LogDescription>(result);
 
             //以下执行完后才会去数据库中查询
             var logDescriptions = await result.ToListAsync();
@@ -185,19 +186,6 @@ namespace DpControl.Domain.Repository
             return logDescription.LogDescriptionId;
         }
 
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<LogDescription> ExpandRelatedEntities(IQueryable<LogDescription> result, string[] expandParams)
-        {
-            var needExpandLogs = ExpandOperator.NeedExpand("Logs", expandParams);
-            if (needExpandLogs)
-                result = result.Include(l => l.Logs);
-
-            return result;
-        }
+        
     }
 }

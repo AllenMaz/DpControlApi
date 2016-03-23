@@ -77,7 +77,7 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class LocationSearchModel : LocationBaseModel
+    public class LocationSubSearchModel: LocationBaseModel
     {
         public int LocationId { get; set; }
         public int? ProjectId { get; set; }
@@ -85,10 +85,15 @@ namespace DpControl.Domain.Models
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public IEnumerable<AlarmSearchModel> Alarms { get; set; }
-        public IEnumerable<LogSearchModel> Logs { get; set; }
+    }
 
-        public IEnumerable<GroupSearchModel> Groups { get; set; }
+    public class LocationSearchModel : LocationSubSearchModel
+    {
+        public ProjectSubSearchModel Project { get; set; }
+        public DeviceSubSearchModel Device { get; set; }
+        public IEnumerable<AlarmSubSearchModel> Alarms { get; set; }
+        public IEnumerable<LogSubSearchModel> Logs { get; set; }
+        public IEnumerable<GroupSubSearchModel> Groups { get; set; }
     }
 
     public static class LocationOperator
@@ -137,11 +142,57 @@ namespace DpControl.Domain.Models
                 ModifiedDate = location.ModifiedDate,
                 Groups = location.GroupLocations.Select(gl => GroupOperator.SetGroupSearchModelCascade(gl.Group)),
                 Logs = LogOperator.SetLogSearchModelCascade(location.Logs),
-                Alarms = AlarmOperator.SetAlarmSearchModelCascade(location.Alarms)
-
+                Alarms = AlarmOperator.SetAlarmSearchModelCascade(location.Alarms),
+                Project = ProjectOperator.SetProjectSubSearchModel(location.Project),
+                Device = DeviceOperator.SetDeviceSubSearchModel(location.Device)
             };
             return locationSearchModel;
         }
 
+        /// <summary>
+        /// Cascade set LocationSubSearchModel Results
+        /// </summary>
+        /// <param name="locations"></param>
+        /// <returns></returns>
+        public static IEnumerable<LocationSubSearchModel> SetLocationSubSearchModel(List<Location> locations)
+        {
+            var locationSearchModels = locations.Select(s => SetLocationSubSearchModel(s));
+            return locationSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set LocationSubSearchModel Result
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public static LocationSubSearchModel SetLocationSubSearchModel(Location location)
+        {
+            if (location == null) return null;
+            var locationSearchModel = new LocationSubSearchModel()
+            {
+                LocationId = location.LocationId,
+                ProjectId = location.ProjectId,
+                Building = location.Building,
+                CommAddress = location.CommAddress,
+                CommMode = location.CommMode,
+                CurrentPosition = location.CurrentPosition,
+                Description = location.Description,
+                DeviceSerialNo = location.DeviceSerialNo,
+                DeviceId = location.DeviceId,
+                DeviceType = location.DeviceType,
+                FavorPositionFirst = location.FavorPositionFirst,
+                FavorPositionrSecond = location.FavorPositionrSecond,
+                FavorPositionThird = location.FavorPositionThird,
+                Floor = location.Floor,
+                InstallationNumber = location.InstallationNumber,
+                Orientation = location.Orientation,
+                RoomNo = location.RoomNo,
+                Creator = location.Creator,
+                CreateDate = location.CreateDate,
+                Modifier = location.Modifier,
+                ModifiedDate = location.ModifiedDate
+            };
+            return locationSearchModel;
+        }
     }
 }

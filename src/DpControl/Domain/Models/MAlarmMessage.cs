@@ -25,10 +25,16 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class AlarmMessageSearchModel : AlarmMessageBaseModel
+    public class AlarmMessageSubSearchModel: AlarmMessageBaseModel
     {
         public int AlarmMessageId { get; set; }
-        public IEnumerable<AlarmSearchModel> Alarms { get; set; }
+
+    }
+
+
+    public class AlarmMessageSearchModel : AlarmMessageSubSearchModel
+    {
+        public IEnumerable<AlarmSubSearchModel> Alarms { get; set; }
 
 
     }
@@ -58,6 +64,34 @@ namespace DpControl.Domain.Models
                 ErrorCode = alarmMessage.ErrorCode,
                 Message = alarmMessage.Message,
                 Alarms = AlarmOperator.SetAlarmSearchModelCascade(alarmMessage.Alarms)
+            };
+
+            return alarmMessageSearchModel;
+        }
+
+        /// <summary>
+        /// Cascade set AlarmMessageSubSearchModel Results
+        /// </summary>
+        public static IEnumerable<AlarmMessageSubSearchModel> SetAlarmMessageSubSearchModel(List<AlarmMessage> alarmMessages)
+        {
+            var alarmMessageSearchModels = alarmMessages.Select(c => SetAlarmMessageSubSearchModel(c));
+
+            return alarmMessageSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set AlarmMessageSubSearchModel Result
+        /// </summary>
+        /// <param name="alarmMessage"></param>
+        /// <returns></returns>
+        public static AlarmMessageSubSearchModel SetAlarmMessageSubSearchModel(AlarmMessage alarmMessage)
+        {
+            if (alarmMessage == null) return null;
+            var alarmMessageSearchModel = new AlarmMessageSubSearchModel
+            {
+                AlarmMessageId = alarmMessage.AlarmMessageId,
+                ErrorCode = alarmMessage.ErrorCode,
+                Message = alarmMessage.Message
             };
 
             return alarmMessageSearchModel;

@@ -27,14 +27,18 @@ namespace DpControl.Domain.Models
     {
     }
 
-    public class CustomerSearchModel: CustomerBaseModel
+    public class CustomerSubSearchModel: CustomerBaseModel
     {
         public int CustomerId { get; set; }
         public string Creator { get; set; }
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public IEnumerable<ProjectSearchModel> Projects { get; set; }
+    }
+
+    public class CustomerSearchModel: CustomerSubSearchModel
+    {
+        public IEnumerable<ProjectSubSearchModel> Projects { get; set; }
     }
 
     public static class CustomerOperator
@@ -67,6 +71,38 @@ namespace DpControl.Domain.Models
                 Modifier = customer.Modifier,
                 ModifiedDate = customer.ModifiedDate,
                 Projects = ProjectOperator.SetProjectSearchModelCascade(customer.Projects)
+            };
+
+            return customerSearchModel;
+        }
+
+        /// <summary>
+        /// Cascade set CustomerSubSearchModel Results
+        /// </summary>
+        public static IEnumerable<CustomerSubSearchModel> SetCustomerSubSearchModel(List<Customer> customers)
+        {
+            var customerSearchModels = customers.Select(c => SetCustomerSubSearchModel(c));
+
+            return customerSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set CustomerSubSearchModel Result
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <returns></returns>
+        public static CustomerSubSearchModel SetCustomerSubSearchModel(Customer customer)
+        {
+            if (customer == null) return null;
+            var customerSearchModel = new CustomerSubSearchModel
+            {
+                CustomerId = customer.CustomerId,
+                CustomerName = customer.CustomerName,
+                CustomerNo = customer.CustomerNo,
+                Creator = customer.Creator,
+                CreateDate = customer.CreateDate,
+                Modifier = customer.Modifier,
+                ModifiedDate = customer.ModifiedDate
             };
 
             return customerSearchModel;

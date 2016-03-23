@@ -10,8 +10,8 @@ namespace DpControl.Domain.IRepository
     {
         int Add(TAddModel item);
         Task<int> AddAsync(TAddModel item);
-        IEnumerable<TSearchModel> GetAll(Query query);
-        Task<IEnumerable<TSearchModel>> GetAllAsync(Query query);
+        IEnumerable<TSearchModel> GetAll();
+        Task<IEnumerable<TSearchModel>> GetAllAsync();
         TSearchModel FindById(int itemId);
         Task<TSearchModel> FindByIdAsync(int itemId);
         int UpdateById(int itemId, TUpdateModel item);

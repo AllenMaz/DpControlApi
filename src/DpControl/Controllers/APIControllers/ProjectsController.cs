@@ -60,10 +60,10 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
-        public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync()
         {
 
-            var result = await _projectRepository.GetAllAsync(query); 
+            var result = await _projectRepository.GetAllAsync(); 
             
             return result;
         }

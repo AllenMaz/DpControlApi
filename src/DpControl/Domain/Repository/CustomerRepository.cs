@@ -91,7 +91,8 @@ namespace DpControl.Domain.Repository
         public CustomerSearchModel FindById(int customerId)
         {
             var result = _context.Customers.Where(c => c.CustomerId == customerId);
-            result = result.Include(c => c.Projects);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
+
             var customer = result.FirstOrDefault();
             var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customer);
 
@@ -101,7 +102,8 @@ namespace DpControl.Domain.Repository
         public async Task<CustomerSearchModel> FindByIdAsync(int customerId)
         {
             var result = _context.Customers.Where(c => c.CustomerId == customerId);
-            result = result.Include(c => c.Projects);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
+
             var customer = await result.FirstOrDefaultAsync();
             var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customer);
             
@@ -109,13 +111,13 @@ namespace DpControl.Domain.Repository
         }
 
 
-        public IEnumerable<CustomerSearchModel> GetAll(Query query)
+        public IEnumerable<CustomerSearchModel> GetAll()
         {
             var queryData = from C in _context.Customers
                             select C;
 
-            var result = QueryOperate<Customer>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<Customer>.Execute(queryData);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
 
             //以下执行完后才会去数据库中查询
             var customers = result.ToList();
@@ -124,13 +126,13 @@ namespace DpControl.Domain.Repository
             return customerSearch;
         }
         
-        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
         {
             var queryData = from C in _context.Customers
                         select C;
             
-            var result = QueryOperate<Customer>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<Customer>.Execute(queryData);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
 
             //以下执行完后才会去数据库中查询
             //N+1 Select 
@@ -226,21 +228,7 @@ namespace DpControl.Domain.Repository
 
             await _context.SaveChangesAsync();
         }
-
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<Customer> ExpandRelatedEntities(IQueryable<Customer> result, string[] expandParams)
-        {
-            var needExpandProjects = ExpandOperator.NeedExpand("Projects", expandParams);
-            if (needExpandProjects)
-                result = result.Include(c => c.Projects);
-
-            return result;
-        }
+       
     }
 
 }

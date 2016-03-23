@@ -59,10 +59,10 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin")]
         [HttpGet]
         [EnableQuery]
-        public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync([FromUri] Query query)
+        public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync()
         {
 
-            var result = await _alarmRepository.GetAllAsync(query); ;
+            var result = await _alarmRepository.GetAllAsync(); ;
 
             return result;
         }

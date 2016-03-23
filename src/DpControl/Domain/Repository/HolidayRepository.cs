@@ -77,6 +77,8 @@ namespace DpControl.Domain.Repository
         public HolidaySearchModel FindById(int holidayId)
         {
             var result = _context.Holidays.Where(v => v.HolidayId == holidayId);
+            result = (IQueryable<Holiday>)ExpandOperator.ExpandRelatedEntities<Holiday>(result);
+
             var holiday = result.FirstOrDefault();
             var holidaySearch = HolidayOperator.SetHolidaySearchModelCascade(holiday);
 
@@ -86,18 +88,21 @@ namespace DpControl.Domain.Repository
         public async Task<HolidaySearchModel> FindByIdAsync(int holidayId)
         {
             var result = _context.Holidays.Where(v => v.HolidayId == holidayId);
+            result = (IQueryable<Holiday>)ExpandOperator.ExpandRelatedEntities<Holiday>(result);
+
             var holiday = await result.FirstOrDefaultAsync();
             var holidaySearch = HolidayOperator.SetHolidaySearchModelCascade(holiday); 
 
             return holidaySearch;
         }
 
-        public IEnumerable<HolidaySearchModel> GetAll(Query query)
+        public IEnumerable<HolidaySearchModel> GetAll()
         {
             var queryData = from H in _context.Holidays
                             select H;
 
-            var result = QueryOperate<Holiday>.Execute(queryData, query);
+            var result = QueryOperate<Holiday>.Execute(queryData);
+            result = (IQueryable<Holiday>)ExpandOperator.ExpandRelatedEntities<Holiday>(result);
 
             //以下执行完后才会去数据库中查询
             var holidays = result.ToList();
@@ -106,12 +111,13 @@ namespace DpControl.Domain.Repository
             return holidaysSearch;
         }
 
-        public async Task<IEnumerable<HolidaySearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<HolidaySearchModel>> GetAllAsync()
         {
             var queryData = from H in _context.Holidays
                             select H;
 
-            var result = QueryOperate<Holiday>.Execute(queryData, query);
+            var result = QueryOperate<Holiday>.Execute(queryData);
+            result = (IQueryable<Holiday>)ExpandOperator.ExpandRelatedEntities<Holiday>(result);
 
             //以下执行完后才会去数据库中查询
             var holidays = await result.ToListAsync();

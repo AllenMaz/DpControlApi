@@ -90,8 +90,7 @@ namespace DpControl.Domain.Repository
         public SceneSearchModel FindById(int sceneId)
         {
             var result = _context.Scenes.Where(v => v.SceneId == sceneId);
-            result = result.Include(s => s.SceneSegments);
-            result = result.Include(s => s.Groups);
+            result = (IQueryable<Scene>)ExpandOperator.ExpandRelatedEntities<Scene>(result);
 
             var scene = result.FirstOrDefault();
             var sceneSearch = SceneOperator.SetSceneSearchModelCascade(scene);
@@ -102,8 +101,7 @@ namespace DpControl.Domain.Repository
         public async Task<SceneSearchModel> FindByIdAsync(int sceneId)
         {
             var result = _context.Scenes.Where(v => v.SceneId == sceneId);
-            result = result.Include(s => s.SceneSegments);
-            result = result.Include(s => s.Groups);
+            result = (IQueryable<Scene>)ExpandOperator.ExpandRelatedEntities<Scene>(result);
 
             var scene = await result.FirstOrDefaultAsync();
             var sceneSearch = SceneOperator.SetSceneSearchModelCascade(scene);
@@ -112,13 +110,13 @@ namespace DpControl.Domain.Repository
             
         }
 
-        public IEnumerable<SceneSearchModel> GetAll(Query query)
+        public IEnumerable<SceneSearchModel> GetAll()
         {
             var queryData = from S in _context.Scenes
                             select S;
 
-            var result = QueryOperate<Scene>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<Scene>.Execute(queryData);
+            result = (IQueryable<Scene>)ExpandOperator.ExpandRelatedEntities<Scene>(result);
 
             //以下执行完后才会去数据库中查询
             var scenes = result.ToList();
@@ -127,13 +125,13 @@ namespace DpControl.Domain.Repository
             return scenesSearch;
         }
 
-        public async Task<IEnumerable<SceneSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<SceneSearchModel>> GetAllAsync()
         {
             var queryData = from S in _context.Scenes
                             select S;
 
-            var result = QueryOperate<Scene>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<Scene>.Execute(queryData);
+            result = (IQueryable<Scene>)ExpandOperator.ExpandRelatedEntities<Scene>(result);
 
             //以下执行完后才会去数据库中查询
             var scenes = await result.ToListAsync();
@@ -214,24 +212,6 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return scene.SceneId;
         }
-
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<Scene> ExpandRelatedEntities(IQueryable<Scene> result, string[] expandParams)
-        {
-            var needExpandSceneSegments = ExpandOperator.NeedExpand("SceneSegments", expandParams);
-            var needExpandGroups = ExpandOperator.NeedExpand("Groups", expandParams);
-
-            if (needExpandSceneSegments)
-                result = result.Include(s => s.SceneSegments);
-            if (needExpandGroups)
-                result = result.Include(s => s.Groups);
-
-            return result;
-        }
+        
     }
 }

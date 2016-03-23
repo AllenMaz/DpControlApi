@@ -24,10 +24,14 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class DeviceSearchModel: DeviceBaseModel
+    public class DeviceSubSearchModel: DeviceBaseModel
     {
         public int DeviceId { get; set; }
-        public IEnumerable<LocationSearchModel> Locations { get; set; }
+    }
+
+    public class DeviceSearchModel: DeviceSubSearchModel
+    {
+        public IEnumerable<LocationSubSearchModel> Locations { get; set; }
     }
 
     public static class DeviceOperator
@@ -57,6 +61,35 @@ namespace DpControl.Domain.Models
                 Diameter = device.Diameter,
                 Torque = device.Torque,
                 Locations = LocationOperator.SetLocationSearchModelCascade(device.Locations)
+            };
+
+            return deviceSearchModel;
+        }
+
+        /// <summary>
+        /// Cascade set DeviceSubSearchModel Results
+        /// </summary>
+        public static IEnumerable<DeviceSubSearchModel> SetDeviceSubSearchModel(List<Device> devices)
+        {
+            var deviceSearchModels = devices.Select(c => SetDeviceSubSearchModel(c));
+
+            return deviceSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set DeviceSubSearchModel Result
+        /// </summary>
+        /// <param name="device"></param>
+        /// <returns></returns>
+        public static DeviceSubSearchModel SetDeviceSubSearchModel(Device device)
+        {
+            if (device == null) return null;
+            var deviceSearchModel = new DeviceSubSearchModel
+            {
+                DeviceId = device.DeviceId,
+                Voltage = device.Voltage,
+                Diameter = device.Diameter,
+                Torque = device.Torque
             };
 
             return deviceSearchModel;

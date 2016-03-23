@@ -23,20 +23,17 @@ namespace DpControl.Utility.Filters
     /// </summary>
     public class EnableQueryAttribute : ActionFilterAttribute
     {
-        //查询参数对象
-        private Query query ;
-        
         private Type _actionReturnType { get; set; }
 
         public EnableQueryAttribute()
         {
-            query = new Query();
+            Query.EmptyQuery();
         }
 
         public EnableQueryAttribute(Type actionReturnType)
         {
             _actionReturnType = actionReturnType;
-            query = new Query();
+            Query.EmptyQuery();
 
         }
 
@@ -67,21 +64,18 @@ namespace DpControl.Utility.Filters
             var selectString = context.HttpContext.Request.Query["select"].ToString().Trim();
             var expandString = context.HttpContext.Request.Query["expand"].ToString().Trim();
 
-            query.skip = GetSkipParam(skipString);
-            query.top = GetTopParam(topString);
-            query.orderby = GetOrderbyParam(orderbyString);
-            query.filter = GetFilterParam(filterString);
-            query.select = GetSelectParam(selectString);
-            query.expand = GetExpandParam(expandString);
+            Query.skip = GetSkipParam(skipString);
+            Query.top = GetTopParam(topString);
+            Query.orderby = GetOrderbyParam(orderbyString);
+            Query.filter = GetFilterParam(filterString);
+            Query.select = GetSelectParam(selectString);
+            Query.expand = GetExpandParam(expandString);
             
-
-            _expandParams = query.expand;
-            _selectParams = query.select;
             #endregion
 
             //给Action的查询参数赋值
-            string queryKey = GetActionQueryArgumentKey(context.ActionArguments);
-            context.ActionArguments[queryKey] = query;
+            //string queryKey = GetActionQueryArgumentKey(context.ActionArguments);
+            //context.ActionArguments[queryKey] = query;
         }
 
         private string GetActionQueryArgumentKey(IDictionary<string,object> actionArguments)
@@ -146,6 +140,8 @@ namespace DpControl.Utility.Filters
         /// <returns></returns>
         private OrderBy GetOrderbyParam(string orderbyString)
         {
+            if (string.IsNullOrEmpty(orderbyString)) return null;
+
             OrderBy orderbyParam = new OrderBy();
             string orderbyParamString = orderbyString;
             //校验字符串是否匹配 desc asc后缀
@@ -190,6 +186,8 @@ namespace DpControl.Utility.Filters
         /// <returns></returns>
         private string[] GetSelectParam(string selectString)
         {
+            if (string.IsNullOrEmpty(selectString)) return null;
+
             //以逗号分隔字符串
             string[] arrSelect = selectString.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             string[] selectField = new string[arrSelect.Length];
@@ -222,6 +220,8 @@ namespace DpControl.Utility.Filters
         /// <returns></returns>
         private string[] GetExpandParam(string expandString)
         {
+            if (string.IsNullOrEmpty(expandString)) return null;
+
             //以逗号分隔字符串
             string[] arrExpand = expandString.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             string[] expandField = new string[arrExpand.Length];
@@ -254,6 +254,8 @@ namespace DpControl.Utility.Filters
         /// <returns></returns>
         private Filter[] GetFilterParam(string filterString)
         {
+            if (string.IsNullOrEmpty(filterString)) return null;
+
             //split by "and" logical operator
             //case sensitive Conver filter operator to lower
             string lowerFilterString = Regex.Replace(filterString, FilterOperators.And, FilterOperators.And, RegexOptions.IgnoreCase);
@@ -337,7 +339,11 @@ namespace DpControl.Utility.Filters
             return success;
         }
 
-        //判断满足Filter,Select,OrderBy的数据类型
+        /// <summary>
+        /// 判断满足Filter,Select,OrderBy的数据类型
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         private bool IsFilter_Select_OrderbyType(PropertyInfo property)
         {
             bool isFilter_Select_OrderByType = false;
@@ -367,9 +373,6 @@ namespace DpControl.Utility.Filters
             return isFilter_Select_OrderByType;
         }
 
-        private string[] _expandParams;
-        private string[] _selectParams;
-
         /// <summary>
         /// 在controller action result执行之前调用 
         /// 获取返回结果后，重新组织查询结果格式
@@ -383,7 +386,9 @@ namespace DpControl.Utility.Filters
 
             if (result != null)
             {
-                var returnValue = ReturnExpandAndSelectResult(_actionReturnType, result.Value, _selectParams, _expandParams);
+                var selectParams = Query.select;
+                var expandParams = Query.expand;
+                var returnValue = ReturnExpandAndSelectResult(_actionReturnType, result.Value, selectParams, expandParams);
 
                 var responseData = returnValue;
                 if (!IsSingleResult(result.Value))
@@ -426,6 +431,11 @@ namespace DpControl.Utility.Filters
             #endregion
         }
 
+        /// <summary>
+        /// 判断result是单个结果，而不是list
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         private bool IsSingleResult(object result)
         {
             bool isSingleResult = false;
@@ -437,14 +447,22 @@ namespace DpControl.Utility.Filters
             return isSingleResult;
         }
 
-        private dynamic ReturnExpandAndSelectResult(Type resultType,object result, string[] selectParams, string[] expandParams)
+        /// <summary>
+        /// 返回expand 和select之后的结果
+        /// </summary>
+        /// <param name="resultType"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private dynamic ReturnExpandAndSelectResult(Type resultType, object result,string[] selectParams, string[] expandParams)
         {
+            if (result == null) return result;
+
             var isConstructedGenericType = result.GetType().IsConstructedGenericType;
             dynamic returnResult ;
             if (IsSingleResult(result))
             {
                 //
-                returnResult = DynamicExpandAndSelectResult(resultType, result, selectParams, expandParams);
+                returnResult = DynamicExpandAndSelectResult(resultType, result, selectParams,expandParams);
             }
             else
             {
@@ -455,21 +473,32 @@ namespace DpControl.Utility.Filters
             return returnResult;
         }
 
-        private dynamic DynamicExpandAndSelectResult(Type resultType,IEnumerable<object> results, string[] selectParams, string[] expandParams)
+        /// <summary>
+        /// 根据expand 和select条件动态构造返回的结果
+        /// </summary>
+        /// <param name="resultType"></param>
+        /// <param name="results"></param>
+        /// <returns></returns>
+        private dynamic DynamicExpandAndSelectResult(Type resultType, IEnumerable<object> results, string[] selectParams, string[] expandParams)
         {
             List<object> returnResults = new List<object>();
             //循环Action返回的结果集
             foreach (var result in results)
             {
-                var returnResult = this.DynamicExpandAndSelectResult(resultType, result,selectParams,expandParams);
+                var returnResult = this.DynamicExpandAndSelectResult(resultType, result, selectParams, expandParams);
                 returnResults.Add(returnResult);
             }
             return returnResults;
         }
 
-        private dynamic DynamicExpandAndSelectResult(Type resultType,object result,string[] selectParams,string[] expandParams)
+        /// <summary>
+        /// 根据expand 和select条件动态构造返回的结果
+        /// </summary>
+        /// <param name="resultType"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private dynamic DynamicExpandAndSelectResult(Type resultType, object result,string[] selectParams,string[] expandParams)
         {
-
             //新建一个动态词典，用于存放返回的结果
             var returnResult = new ExpandoObject() as IDictionary<string, object>;
             //循环Action返回类型的所有属性
@@ -497,7 +526,7 @@ namespace DpControl.Utility.Filters
                         && expandParams.Contains(property.Name))
                     {
                         var expandResultType = GetClassType(property.PropertyType);
-                        var expandResult = ReturnExpandAndSelectResult(expandResultType,val,null,null);
+                        var expandResult = ReturnExpandAndSelectResult(expandResultType, val,null,null);
                         returnResult.Add(property.Name, expandResult);
                         
                     }
@@ -516,12 +545,8 @@ namespace DpControl.Utility.Filters
             IList result = listData;
             if (listData.Count != 0 )
             {
-                int? skipParam = query.skip;
-                int? topParam = query.top;
-                OrderBy orderbyParam = query.orderby;
-
-                result = OrderByResult(listData,orderbyParam);
-                result = PageResult(result,skipParam,topParam);
+                result = OrderByResult(listData);
+                result = PageResult(result);
                 
             }
             return result;
@@ -532,8 +557,9 @@ namespace DpControl.Utility.Filters
         /// </summary>
         /// <param name="listData"></param>
         /// <returns></returns>
-        private IList OrderByResult(IList listData, OrderBy orderbyParam)
+        private IList OrderByResult(IList listData)
         {
+            var orderbyParam = Query.orderby;
             #region　orderby
             if (orderbyParam.OrderbyField.Length != 0)
             {
@@ -573,23 +599,26 @@ namespace DpControl.Utility.Filters
         /// 对结果进行分页
         /// </summary>
         /// <returns></returns>
-        private IList PageResult(IList listData, int? skipParam, int? topParam)
+        private IList PageResult(IList listData)
         {
+            int? skipParam = Query.skip;
+            int? topParam = Query.top;
+
             var result = listData;
             #region paging by skip and top
-            if (skipParam != null && query.top == null)
+            if (skipParam != null && topParam == null)
             {
                 int skipNum = System.Convert.ToInt32(skipParam);
                 result = listData.Cast<object>().Skip(skipNum).ToList();
 
             }
-            else if (skipParam == null && query.top != null)
+            else if (skipParam == null && topParam != null)
             {
                 int topNum = System.Convert.ToInt32(topParam);
                 result = listData.Cast<object>().Take(topNum).ToList();
 
             }
-            else if (skipParam != null && query.top != null)
+            else if (skipParam != null && topParam != null)
             {
                 int skipNum = System.Convert.ToInt32(skipParam);
                 int topNum = System.Convert.ToInt32(topParam);

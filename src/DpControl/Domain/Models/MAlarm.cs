@@ -23,12 +23,18 @@ namespace DpControl.Domain.Models
         
     }
 
-    public class AlarmSearchModel
+    public class AlarmSubSearchModel
     {
         public int AlarmId { get; set; }
         public int? AlarmMessageId { get; set; }
         public int? LocationId { get; set; }
         public DateTime CreateDate { get; set; }
+    }
+
+    public class AlarmSearchModel: AlarmSubSearchModel
+    {
+        public LocationSubSearchModel Location { get; set; }
+        public AlarmMessageSubSearchModel AlarmMessage { get; set; }
     }
 
     public static class AlarmOperator
@@ -52,6 +58,37 @@ namespace DpControl.Domain.Models
         {
             if (alarm == null) return null;
             var alarmSearchModel = new AlarmSearchModel
+            {
+                AlarmId = alarm.AlarmId,
+                AlarmMessageId = alarm.AlarmMessageId,
+                LocationId = alarm.LocationId,
+                CreateDate = alarm.CreateDate,
+                Location = LocationOperator.SetLocationSubSearchModel(alarm.Location),
+                AlarmMessage = AlarmMessageOperator.SetAlarmMessageSubSearchModel(alarm.AlarmMessage)
+            };
+
+            return alarmSearchModel;
+        }
+
+        /// <summary>
+        /// Cascade set AlarmSubSearchModel Results
+        /// </summary>
+        public static IEnumerable<AlarmSubSearchModel> SetAlarmSubSearchModel(List<Alarm> alarms)
+        {
+            var alarmSearchModels = alarms.Select(c => SetAlarmSubSearchModel(c));
+
+            return alarmSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set AlarmSubSearchModel Result
+        /// </summary>
+        /// <param name="alarm"></param>
+        /// <returns></returns>
+        public static AlarmSubSearchModel SetAlarmSubSearchModel(Alarm alarm)
+        {
+            if (alarm == null) return null;
+            var alarmSearchModel = new AlarmSubSearchModel
             {
                 AlarmId = alarm.AlarmId,
                 AlarmMessageId = alarm.AlarmMessageId,

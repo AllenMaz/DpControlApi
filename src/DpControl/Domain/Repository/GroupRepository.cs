@@ -106,7 +106,8 @@ namespace DpControl.Domain.Repository
         public GroupSearchModel FindById(int groupId)
         {
             var result = _context.Groups.Where(v => v.GroupId == groupId);
-            result = result.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
+
             var group = result.FirstOrDefault();
             var groupSearch = GroupOperator.SetGroupSearchModelCascade(group);
 
@@ -116,20 +117,22 @@ namespace DpControl.Domain.Repository
         public async Task<GroupSearchModel> FindByIdAsync(int groupId)
         {
             var result = _context.Groups.Where(v => v.GroupId == groupId);
-            result = result.Include(g=>g.GroupLocations).ThenInclude(gl=>gl.Location);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
+
             var group = await result.FirstOrDefaultAsync();
             var groupSearch = GroupOperator.SetGroupSearchModelCascade(group);
 
             return groupSearch;
         }
 
-        public IEnumerable<GroupSearchModel> GetAll(Query query)
+        public IEnumerable<GroupSearchModel> GetAll()
         {
             var queryData = from G in _context.Groups
                             select G;
 
-            var result = QueryOperate<Group>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<Group>.Execute(queryData);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
+
             //以下执行完后才会去数据库中查询
             var groups =  result.ToList();
             var groupsSearch = GroupOperator.SetGroupSearchModelCascade(groups);
@@ -137,13 +140,13 @@ namespace DpControl.Domain.Repository
             return groupsSearch;
         }
 
-        public async Task<IEnumerable<GroupSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<GroupSearchModel>> GetAllAsync()
         {
             var queryData = from G in _context.Groups
                             select G;
 
-            var result = QueryOperate<Group>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<Group>.Execute(queryData);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
 
             //以下执行完后才会去数据库中查询
             var groups = await result.ToListAsync();
@@ -235,20 +238,6 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return group.GroupId;
         }
-
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<Group> ExpandRelatedEntities(IQueryable<Group> result, string[] expandParams)
-        {
-            var needExpandLocations = ExpandOperator.NeedExpand("Locations", expandParams);
-            if (needExpandLocations)
-                result = result.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
-
-            return result;
-        }
+        
     }
 }

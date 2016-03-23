@@ -17,7 +17,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.ToTable("LogDescription");
             entityBuilder.Property(m => m.Description).HasMaxLength(500);
 
-            entityBuilder.HasMany(l => l.Logs).WithOne(d => d.Description).HasForeignKey(d => d.LogDescriptionId)
+            entityBuilder.HasMany(l => l.Logs).WithOne(d => d.LogDescription).HasForeignKey(d => d.LogDescriptionId)
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

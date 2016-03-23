@@ -74,6 +74,8 @@ namespace DpControl.Domain.Repository
         public AlarmSearchModel FindById(int alarmId)
         {
             var result = _context.Alarms.Where(v => v.AlarmId == alarmId);
+            result = (IQueryable<Alarm>)ExpandOperator.ExpandRelatedEntities<Alarm>(result);
+
             var alarm = result.FirstOrDefault();
             var alarmSearch = AlarmOperator.SetAlarmSearchModelCascade(alarm);
             return alarmSearch;
@@ -82,17 +84,20 @@ namespace DpControl.Domain.Repository
         public async Task<AlarmSearchModel> FindByIdAsync(int alarmId)
         {
             var result = _context.Alarms.Where(v => v.AlarmId == alarmId);
+            result = (IQueryable<Alarm>)ExpandOperator.ExpandRelatedEntities<Alarm>(result);
+
             var alarm = await result.FirstOrDefaultAsync();
             var alarmSearch = AlarmOperator.SetAlarmSearchModelCascade(alarm);
             return alarmSearch;
         }
 
-        public IEnumerable<AlarmSearchModel> GetAll(Query query)
+        public IEnumerable<AlarmSearchModel> GetAll()
         {
             var queryData = from A in _context.Alarms
                             select A;
 
-            var result = QueryOperate<Alarm>.Execute(queryData, query);
+            var result = QueryOperate<Alarm>.Execute(queryData);
+            result = (IQueryable<Alarm>)ExpandOperator.ExpandRelatedEntities<Alarm>(result);
 
             //以下执行完后才会去数据库中查询
             var alarms = result.ToList();
@@ -101,12 +106,13 @@ namespace DpControl.Domain.Repository
             return alarmsSearch;
         }
 
-        public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync()
         {
             var queryData = from A in _context.Alarms
                             select A;
 
-            var result = QueryOperate<Alarm>.Execute(queryData, query);
+            var result = QueryOperate<Alarm>.Execute(queryData);
+            result = (IQueryable<Alarm>)ExpandOperator.ExpandRelatedEntities<Alarm>(result);
 
             //以下执行完后才会去数据库中查询
             var alarms = await result.ToListAsync();

@@ -13,7 +13,7 @@ namespace DpControl.Domain.Entities
 
         #region Relationship
         public int? LogDescriptionId { get; set; }
-        public LogDescription Description { get; set; }
+        public LogDescription LogDescription { get; set; }
         public int? LocationId { get; set; }
         public Location Location { get; set; }
 

@@ -12,14 +12,14 @@ using Microsoft.Data.Entity;
 namespace DpControl.Domain.Models
 {
     
-    public class Query
+    public static class Query
     {
         /// <summary>
         /// 排序
         /// 格式：orderby=name,price desc/asc
         ///       orderby=name 
         /// </summary>
-        public OrderBy orderby { get; set; }
+        public static OrderBy orderby { get; set; }
 
 
         /// <summary>
@@ -27,46 +27,40 @@ namespace DpControl.Domain.Models
         /// 格式：skip=10
         /// @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
         /// </summary>
-        public int? skip { get; set; }
+        public static int? skip { get; set; }
 
         /// <summary>
         /// 返回前N条
         /// 格式：top=20
         /// @"^[1-9]([0-9]*)$|^[0-9]$" 只能是0或正整数
         /// </summary>
-        public int? top { get; set; }
+        public static int? top { get; set; }
 
         /// <summary>
         /// 选中要返回的属性结果
         /// 格式：select = name,price
         /// </summary>
-        public string[] select { get; set; }
+        public static string[] select { get; set; }
 
         /// <summary>
         /// Expand
         /// </summary>
-        public string[] expand { get; set; }
+        public static string[] expand { get; set; }
 
         /// <summary>
         /// Filter
         /// </summary>
-        public Filter[] filter { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        //private string inlinecount { get; set; }
+        public static Filter[] filter { get; set; }
 
-        public  Query()
+        public static void EmptyQuery()
         {
-            this.orderby = null;
-            this.skip = null;
-            this.top = null;
-            this.select = null;
-            this.expand = null;
-            this.filter = null;
+            skip = null;
+            top = null;
+            orderby = null;
+            filter = null;
+            select = null;
+            expand = null;
         }
-
         
     }
 
@@ -115,15 +109,197 @@ namespace DpControl.Domain.Models
 
     public static class ExpandOperator
     {
-        #region Expand
+        /// <summary>
+        /// Expand Related Entities
+        /// </summary>
+        /// <param name="result"></param>
+        /// 
+        /// <returns></returns>
+        public static IQueryable<T> ExpandRelatedEntities<T>(IQueryable<T> result)
+        {
+            if (typeof(T) == typeof(Customer))
+            {
+                var returnResult = result as IQueryable<Customer>;
+                var needExpandProjects = NeedExpand("Projects");
+                if (needExpandProjects)
+                    returnResult = returnResult.Include(c => c.Projects);
+                    
+
+                return (IQueryable<T>)returnResult;
+
+            }else if (typeof(T) == typeof(Project))
+            {
+                #region Project
+                var returnResult = result as IQueryable<Project>;
+                var needExpandScenes = ExpandOperator.NeedExpand("Scenes");
+                var needExpandGroups = ExpandOperator.NeedExpand("Groups");
+                var needExpandLocations = ExpandOperator.NeedExpand("Locations");
+                var needExpandHolidays = ExpandOperator.NeedExpand("Holidays");
+                var needExpandCustomer = ExpandOperator.NeedExpand("Customer");
+
+                if (needExpandScenes)
+                    returnResult = returnResult.Include(p => p.Scenes);
+                if (needExpandGroups)
+                    returnResult = returnResult.Include(p => p.Groups);
+                if (needExpandLocations)
+                    returnResult = returnResult.Include(p => p.Locations);
+                if (needExpandHolidays)
+                    returnResult = returnResult.Include(p => p.Holidays);
+                if (needExpandCustomer)
+                    returnResult = returnResult.Include(p => p.Customer);
+
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }else if (typeof(T) == typeof(Scene))
+            {
+                #region 
+                var returnResult = result as IQueryable<Scene>;
+                var needExpandSceneSegments = ExpandOperator.NeedExpand("SceneSegments");
+                var needExpandGroups = ExpandOperator.NeedExpand("Groups");
+                var needExpandProject = ExpandOperator.NeedExpand("Project");
+
+                if (needExpandSceneSegments)
+                    returnResult = returnResult.Include(s => s.SceneSegments);
+                if (needExpandGroups)
+                    returnResult = returnResult.Include(s => s.Groups);
+                if (needExpandProject)
+                    returnResult = returnResult.Include(s => s.Project);
+
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(SceneSegment))
+            {
+                #region 
+                var returnResult = result as IQueryable<SceneSegment>;
+                var needExpandScene = ExpandOperator.NeedExpand("Scene");
+                if (needExpandScene)
+                    returnResult = returnResult.Include(s => s.Scene);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(Group))
+            {
+                #region 
+                var returnResult = result as IQueryable<Group>;
+                var needExpandLocations = ExpandOperator.NeedExpand("Locations");
+                var needExpandProject = ExpandOperator.NeedExpand("Project");
+                var needExpandScene = ExpandOperator.NeedExpand("Scene");
+                if (needExpandLocations)
+                    returnResult = returnResult.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
+                if (needExpandProject)
+                    returnResult = returnResult.Include(g => g.Project);
+                if (needExpandScene)
+                    returnResult = returnResult.Include(g => g.Scene);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(Location))
+            {
+                #region 
+                var returnResult = result as IQueryable<Location>;
+                var needExpandGroups = ExpandOperator.NeedExpand("Groups");
+                var needExpandAlarms = ExpandOperator.NeedExpand("Alarms");
+                var needExpandLogs = ExpandOperator.NeedExpand("Logs");
+                var needExpandProject = ExpandOperator.NeedExpand("Project");
+                var needExpandDevice = ExpandOperator.NeedExpand("Device");
+
+                if (needExpandGroups)
+                    returnResult = returnResult.Include(l => l.GroupLocations).ThenInclude(gl => gl.Group);
+                if (needExpandAlarms)
+                    returnResult = returnResult.Include(l => l.Alarms);
+                if (needExpandLogs)
+                    returnResult = returnResult.Include(l => l.Logs);
+                if (needExpandProject)
+                    returnResult = returnResult.Include(l => l.Project);
+                if (needExpandDevice)
+                    returnResult = returnResult.Include(l => l.Device);
+
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(Device))
+            {
+                #region 
+                var returnResult = result as IQueryable<Device>;
+                var needExpandLocations = ExpandOperator.NeedExpand("Locations");
+                if (needExpandLocations)
+                    returnResult = returnResult.Include(d => d.Locations);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(AlarmMessage))
+            {
+                #region 
+                var returnResult = result as IQueryable<AlarmMessage>;
+                var needExpandAlarms = ExpandOperator.NeedExpand("Alarms");
+                if (needExpandAlarms)
+                    returnResult = returnResult.Include(a => a.Alarms);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(Alarm))
+            {
+                #region 
+                var returnResult = result as IQueryable<Alarm>;
+                var needExpandLocation = ExpandOperator.NeedExpand("Location");
+                var needExpandAlarmMessage = ExpandOperator.NeedExpand("AlarmMessage");
+                if (needExpandLocation)
+                    returnResult = returnResult.Include(a => a.Location);
+                if (needExpandAlarmMessage)
+                    returnResult = returnResult.Include(a => a.AlarmMessage);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(LogDescription))
+            {
+                #region 
+                var returnResult = result as IQueryable<LogDescription>;
+                var needExpandLogs = ExpandOperator.NeedExpand("Logs");
+                if (needExpandLogs)
+                    returnResult = returnResult.Include(l => l.Logs);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(Log))
+            {
+                #region 
+                var returnResult = result as IQueryable<Log>;
+                var needExpandLogDescription = ExpandOperator.NeedExpand("LogDescription");
+                var needExpandLocation = ExpandOperator.NeedExpand("Location");
+
+                if (needExpandLogDescription)
+                    returnResult = returnResult.Include(l => l.LogDescription);
+                if (needExpandLocation)
+                    returnResult = returnResult.Include(l => l.Location);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+            else if (typeof(T) == typeof(Holiday))
+            {
+                #region 
+                var returnResult = result as IQueryable<Holiday>;
+                var needExpandProject = ExpandOperator.NeedExpand("Project");
+                if (needExpandProject)
+                    returnResult = returnResult.Include(h=>h.Project);
+                return (IQueryable<T>)returnResult;
+                #endregion
+            }
+
+
+            return result;
+           
+        }
 
         /// <summary>
         /// Judge if need expand
         /// </summary>
         /// <param name="relatedEntityName"></param>
         /// <returns></returns>
-        public static bool NeedExpand(string relatedEntityName, string[] expandParams)
+        private static bool NeedExpand(string relatedEntityName)
         {
+            var expandParams = Query.expand;
+
             bool needExpand = false;
             if (expandParams != null && expandParams.Length > 0
                         && expandParams.Contains(relatedEntityName))
@@ -133,44 +309,42 @@ namespace DpControl.Domain.Models
 
             return needExpand;
         }
-
-        #endregion
     }
 
     public static class QueryOperate<T> where T :class //T 必须是引用类型
     {
-        public static IQueryable<T> Execute(IQueryable<T> queryData,Query query)
+        public static IQueryable<T> Execute(IQueryable<T> queryData)
         {
+            
+            int? skip = Query.skip;
+            int? top = Query.top;
+            OrderBy orderbyParam = Query.orderby;
+            Filter[] filterParams = Query.filter;
 
-            if (query != null)
-            {
-                int? skip = query.skip;
-                int? top = query.top;
-                OrderBy orderbyParam = query.orderby;
-                Filter[] filterParams = query.filter;
-                string[] expandParams = query.expand;
-                string[] selectParams = query.select;
-
-                //Filter operate
-                queryData = Filter(queryData,filterParams);
-                //paging operate
-                queryData = Paging(queryData, skip, top);
-                //orderby operate
-                queryData = OrderBy(queryData,orderbyParam);
-            }
+            //Filter operate
+            queryData = Filter(queryData,filterParams);
+            //paging operate
+            queryData = Paging(queryData, skip, top);
+            //orderby operate
+            queryData = OrderBy(queryData,orderbyParam);
+            
             return queryData;
         }
         #region Filter
         private static IQueryable<T> Filter(IQueryable<T> query, Filter[] filterParams)
         {
-            for (int i = 0; i < filterParams.Length; i++)
+            if (filterParams !=null)
             {
-                string propertyName = filterParams[i].FilterPropertyValue.First().Key;
-                string propertyValue = filterParams[i].FilterPropertyValue.First().Value;
-                string filterOperator = filterParams[i].FilterOperater;
-                query = ConstructWhereCondition(query, propertyName, propertyValue, filterOperator);
+                for (int i = 0; i < filterParams.Length; i++)
+                {
+                    string propertyName = filterParams[i].FilterPropertyValue.First().Key;
+                    string propertyValue = filterParams[i].FilterPropertyValue.First().Value;
+                    string filterOperator = filterParams[i].FilterOperater;
+                    query = ConstructWhereCondition(query, propertyName, propertyValue, filterOperator);
 
+                }
             }
+            
             return query;
         }
 

@@ -95,10 +95,7 @@ namespace DpControl.Domain.Repository
         public ProjectSearchModel FindById(int projectId)
         {
             var result = _context.Projects.Where(v => v.ProjectId == projectId);
-            result = result.Include(p => p.Scenes);
-            result = result.Include(p => p.Groups);
-            result = result.Include(p => p.Locations);
-            result = result.Include(p => p.Holidays);
+            result = (IQueryable<Project>)ExpandOperator.ExpandRelatedEntities<Project>(result);
 
             var project = result.FirstOrDefault();
             var projectSearch = ProjectOperator.SetProjectSearchModelCascade(project);
@@ -109,10 +106,7 @@ namespace DpControl.Domain.Repository
         public async Task<ProjectSearchModel> FindByIdAsync(int projectId)
         {
             var result = _context.Projects.Where(v => v.ProjectId == projectId);
-            result = result.Include(p => p.Scenes);
-            result = result.Include(p => p.Groups);
-            result = result.Include(p => p.Locations);
-            result = result.Include(p => p.Holidays);
+            result = (IQueryable<Project>)ExpandOperator.ExpandRelatedEntities<Project>(result);
 
             var project = await result.FirstOrDefaultAsync();
             var projectSearch = ProjectOperator.SetProjectSearchModelCascade(project);
@@ -120,13 +114,13 @@ namespace DpControl.Domain.Repository
             return projectSearch;
         }
 
-        public IEnumerable<ProjectSearchModel> GetAll(Query query)
+        public IEnumerable<ProjectSearchModel> GetAll()
         {
             var queryData = from P in _context.Projects
                             select P;
 
-            var result = QueryOperate<Project>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result, query.expand);
+            var result = QueryOperate<Project>.Execute(queryData);
+            result = (IQueryable<Project>)ExpandOperator.ExpandRelatedEntities<Project>(result);
 
             //以下执行完后才会去数据库中查询
             var projects = result.ToList();
@@ -136,13 +130,13 @@ namespace DpControl.Domain.Repository
             return projectSearch;
         }
 
-        public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync(Query query)
+        public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync()
         {
             var queryData = from P in _context.Projects
                             select P;
 
-            var result = QueryOperate<Project>.Execute(queryData, query);
-            result = ExpandRelatedEntities(result,query.expand);
+            var result = QueryOperate<Project>.Execute(queryData);
+            result = (IQueryable<Project>)ExpandOperator.ExpandRelatedEntities<Project>(result);
 
             //以下执行完后才会去数据库中查询
             var projects = await result.ToListAsync();
@@ -233,31 +227,7 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return project.ProjectId;
         }
-
-        /// <summary>
-        /// Expand Related Entities
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="expandParams"></param>
-        /// <returns></returns>
-        private IQueryable<Project> ExpandRelatedEntities(IQueryable<Project> result, string[] expandParams)
-        {
-            var needExpandScenes = ExpandOperator.NeedExpand("Scenes", expandParams);
-            var needExpandGroups = ExpandOperator.NeedExpand("Groups", expandParams);
-            var needExpandLocations = ExpandOperator.NeedExpand("Locations", expandParams);
-            var needExpandHolidays = ExpandOperator.NeedExpand("Holidays", expandParams);
-
-            if (needExpandScenes)
-                result = result.Include(p => p.Scenes);
-            if (needExpandGroups)
-                result = result.Include(p => p.Groups);
-            if (needExpandLocations)
-                result = result.Include(p => p.Locations);
-            if (needExpandHolidays)
-                result = result.Include(p => p.Holidays);
-
-            return result;
-        }
+        
 
     }
 }

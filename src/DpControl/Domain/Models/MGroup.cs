@@ -29,16 +29,21 @@ namespace DpControl.Domain.Models
 
     }
 
-    public class GroupSearchModel : GroupBaseModel
+    public class GroupSubSearchModel: GroupBaseModel
     {
         public int GroupId { get; set; }
         public int? ProjectId { get; set; }
-
         public string Creator { get; set; }
         public DateTime CreateDate { get; set; }
         public string Modifier { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public IEnumerable<LocationSearchModel> Locations { get; set; }
+    }
+    
+    public class GroupSearchModel : GroupSubSearchModel
+    {
+        public ProjectSubSearchModel Project { get; set; }
+        public SceneSubSearchModel Scene { get; set; }
+        public IEnumerable<LocationSubSearchModel> Locations { get; set; }
     }
 
     public static class GroupOperator
@@ -72,7 +77,43 @@ namespace DpControl.Domain.Models
                 CreateDate = group.CreateDate,
                 Modifier = group.Modifier,
                 ModifiedDate = group.ModifiedDate,
+                Project = ProjectOperator.SetProjectSubSearchModel(group.Project),
+                Scene = SceneOperator.SetSceneSubSearchModel(group.Scene),
                 Locations = group.GroupLocations.Select(v=>LocationOperator.SetLocationSearchModelCascade(v.Location)) 
+
+            };
+            return groupSearchModel;
+        }
+
+        /// <summary>
+        /// Cascade set GroupSubSearchModel Results
+        /// </summary>
+        /// <param name="groups"></param>
+        /// <returns></returns>
+        public static IEnumerable<GroupSubSearchModel> SetGroupSubSearchModel(List<Group> groups)
+        {
+            var groupSearchModels = groups.Select(s => SetGroupSubSearchModel(s));
+            return groupSearchModels;
+        }
+
+        /// <summary>
+        /// Cascade set GroupSubSearchModel Result
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public static GroupSubSearchModel SetGroupSubSearchModel(Group group)
+        {
+            if (group == null) return null;
+            var groupSearchModel = new GroupSubSearchModel()
+            {
+                GroupId = group.GroupId,
+                GroupName = group.GroupName,
+                ProjectId = group.ProjectId,
+                SceneId = group.SceneId,
+                Creator = group.Creator,
+                CreateDate = group.CreateDate,
+                Modifier = group.Modifier,
+                ModifiedDate = group.ModifiedDate
 
             };
             return groupSearchModel;
