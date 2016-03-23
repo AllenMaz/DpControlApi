@@ -36,6 +36,13 @@
             font-style:italic;
             font-weight:bold
         }
+        .importFont {
+            color:red;
+        }
+        .warningFont {
+            color:#9C2FFF;
+        }
+
         p.text-lowercase{text-transform:none}
 
     </style>
@@ -137,16 +144,20 @@
                     <li class="lead">
                         <strong>filter:</strong> Filters the results, based on a Boolean condition
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers which CustomerName equal to 'Allen' and CustomerNo equal to '333'<br />
-                            <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333</a>
+                            <span class="glyphicon glyphicon-leaf"></span> Filter the Groups(include Locations) which GroupId equal to 1 or 3<sup class="tipFont">New</sup><br />
+                            <a href="/v1/Groups?filter=GroupId eq 1 or GroupId eq 3&expand=Locations">/v1/Groups?filter=GroupId <strong class="warningFont">eq</strong> 1 <strong class="importFont">or</strong> GroupId <strong class="warningFont">eq</strong> 3&expand=Locations</a>
                         </p>
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers which CustomerId >= 15<br />
-                            <a href="/v1/Customers?filter=CustomerId gt 15">/v1/Customers?filter=CustomerId gt 15</a>
+                            <span class="glyphicon glyphicon-leaf"></span> Filter the Customers which CustomerName equal to 'Allen' and CustomerNo equal to '333'<br />
+                            <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">/v1/Customers?filter=CustomerName <strong class="warningFont">eq</strong> Allen <strong class="importFont">and</strong> CustomerNo <strong class="warningFont">eq</strong> 333</a>
                         </p>
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Return all Customers which CustomerId <= 10<br />
-                            <a href="/v1/Customers?filter=CustomerId lt 10">/v1/Customers?filter=CustomerId lt 10</a>
+                            <span class="glyphicon glyphicon-leaf"></span> Filter the Customers which CustomerId >= 15<br />
+                            <a href="/v1/Customers?filter=CustomerId gt 15">/v1/Customers?filter=CustomerId <strong class="warningFont">gt</strong> 15</a>
+                        </p>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> Filter the Customers which CustomerId <= 10<br />
+                            <a href="/v1/Customers?filter=CustomerId lt 10">/v1/Customers?filter=CustomerId <strong class="warningFont">lt</strong> 10</a>
                         </p>
                     </li>
                     <li class="lead">

@@ -84,8 +84,9 @@ namespace DpControl.Domain.Models
         /// value:PropertyValue
         /// </summary>
         public Dictionary<string, string> FilterPropertyValue { get; set; }
+        public string CompareOperator { get; set; }
+        public string LogicalOperator { get; set; }
 
-        public string FilterOperater { get; set; }
     }
 
     public static class FilterOperators
@@ -103,7 +104,8 @@ namespace DpControl.Domain.Models
         };
         
         public static readonly List<string> LogicalOperators = new List<string>() {
-            And
+            And,
+            Or
         };
     }
 
@@ -333,136 +335,92 @@ namespace DpControl.Domain.Models
         #region Filter
         private static IQueryable<T> Filter(IQueryable<T> query, Filter[] filterParams)
         {
-            if (filterParams !=null)
+            
+            var allFilterExpresson = ConstructMulitFilterLambadExpression(filterParams);
+            if (allFilterExpresson !=null)
+              query = query.Where(allFilterExpresson);
+            return query;
+        }
+
+        /// <summary>
+        /// Construct mulit filter conditions
+        /// </summary>
+        /// <param name="filterParams"></param>
+        /// <returns></returns>
+        private static Expression<Func<T, bool>> ConstructMulitFilterLambadExpression(Filter[] filterParams)
+        {
+            Expression<Func<T, bool>> mulitFilterExpression = null;
+            if (filterParams != null)
             {
                 for (int i = 0; i < filterParams.Length; i++)
                 {
-                    string propertyName = filterParams[i].FilterPropertyValue.First().Key;
-                    string propertyValue = filterParams[i].FilterPropertyValue.First().Value;
-                    string filterOperator = filterParams[i].FilterOperater;
-                    query = ConstructWhereCondition(query, propertyName, propertyValue, filterOperator);
+                    if (i == 0)
+                    {
+                        mulitFilterExpression = ConstructFilterLambadExpression(filterParams[i]);
+
+                    }
+                    else
+                    {
+                        var filterExpression = ConstructFilterLambadExpression(filterParams[i]);
+                        if (filterParams[i].LogicalOperator == FilterOperators.Or)
+                        {
+                            mulitFilterExpression = mulitFilterExpression.Or(filterExpression);
+                        }
+                        else
+                        {
+                            mulitFilterExpression = mulitFilterExpression.And(filterExpression);
+                        }
+                    }
+                    
 
                 }
             }
-            
-            return query;
+            return mulitFilterExpression;
         }
 
-        private static IQueryable<T> ConstructWhereCondition(IQueryable<T> query,string propertyName,object value,string filterOperator)
+        /// <summary>
+        /// Construct single filter condition
+        /// </summary>
+        /// <param name="filterParams"></param>
+        /// <returns></returns>
+        private static Expression<Func<T, bool>> ConstructFilterLambadExpression(Filter filterParam)
         {
-            var valueTypr = typeof(T).GetProperty(propertyName).PropertyType;
-            ParameterExpression param = Expression.Parameter(typeof(T), "c");
-            Expression left = Expression.Property(param, typeof(T).GetProperty(propertyName));
-            //Conver value to propertyType
-            var converValue = Convert.ChangeType(value,valueTypr);
-            Expression right = Expression.Constant(converValue);
-            Expression filter = Expression.Equal(left, right);
-            if (filterOperator.Equals(FilterOperators.LessThan))
+            Expression<Func<T, bool>> queryExpression = null ;
+            if (filterParam != null)
             {
-                filter = Expression.LessThanOrEqual(left, right);
-            }
-            else if (filterOperator.Equals(FilterOperators.MoreThan))
-            {
-                filter = Expression.GreaterThanOrEqual(left, right);
+                string propertyName = filterParam.FilterPropertyValue.First().Key;
+                string propertyValue = filterParam.FilterPropertyValue.First().Value;
+                string filterOperator = filterParam.CompareOperator;
 
-            }
-            else if (filterOperator.Equals(FilterOperators.Equal))
-            {
-                filter = Expression.Equal(left, right);
-            }
-            
-            return query = query.Where(Expression.Lambda<Func<T, bool>>(filter, param));
-        }
-
-        private static IQueryable<T> ConstructWhereLessThanCondition(IQueryable<T> query, string propertyName, object value)
-        {
-
-            var property = typeof(T).GetProperty(propertyName);
-            string typeName = property.PropertyType.Name;
-           
-            if (typeName == "Int16")
-            {
-                query = query.Where(v => System.Convert.ToInt16(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToInt16(value));
-
-            }
-            else if (typeName == "Int32")
-            {
-                query = query.Where(v => System.Convert.ToInt32(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToInt32(value));
-            }
-            else if (typeName == "Int64")
-            {
-                query = query.Where(v => System.Convert.ToInt64(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToInt64(value));
-            }
-            else if (typeName == "DateTime")
-            {
-                query = query.Where(v => System.Convert.ToDateTime(v.GetType().GetProperty(propertyName).GetValue(v, null)) <= System.Convert.ToDateTime(value));
-            }
-            return query;
-        }
-        private static IQueryable<T> ConstructWhereMoreThanCondition(IQueryable<T> query, string propertyName, object value)
-        {
-
-            var property = typeof(T).GetProperty(propertyName);
-            string typeName = property.PropertyType.Name;
-
-            if (typeName == "Int16")
-            {
-                query = query.Where(v => System.Convert.ToInt16(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToInt16(value));
-
-            }
-            else if (typeName == "Int32")
-            {
-                query = query.Where(v => System.Convert.ToInt32(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToInt32(value));
-            }
-            else if (typeName == "Int64")
-            {
-                query = query.Where(v => System.Convert.ToInt64(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToInt64(value));
-            }
-            else if (typeName == "DateTime")
-            {
-                query = query.Where(v => System.Convert.ToDateTime(v.GetType().GetProperty(propertyName).GetValue(v, null)) >= System.Convert.ToDateTime(value));
-            }
-            return query;
-        }
-        private static IQueryable<T> ConstructWhereEqualCondition(IQueryable<T> query,string propertyName,object value)
-        {
-
-            var property = typeof(T).GetProperty(propertyName);
-            string typeName = property.PropertyType.Name;
-            if (typeName == "String")
-            {
+                var valueTypr = typeof(T).GetProperty(propertyName).PropertyType;
                 ParameterExpression param = Expression.Parameter(typeof(T), "c");
                 Expression left = Expression.Property(param, typeof(T).GetProperty(propertyName));
-                Expression right = Expression.Constant(value);
+                //Conver value to propertyType
+                var converValue = Convert.ChangeType(propertyValue, valueTypr);
+                Expression right = Expression.Constant(converValue);
                 Expression filter = Expression.Equal(left, right);
-                query = query.Where(Expression.Lambda<Func<T, bool>>(filter, param));
+                if (filterOperator.Equals(FilterOperators.LessThan))
+                {
+                    filter = Expression.LessThanOrEqual(left, right);
+                }
+                else if (filterOperator.Equals(FilterOperators.MoreThan))
+                {
+                    filter = Expression.GreaterThanOrEqual(left, right);
 
-                query = query.Where(v => System.Convert.ToString(v.GetType().GetProperty(propertyName).GetValue(v, null)) == value.ToString());
+                }
+                else if (filterOperator.Equals(FilterOperators.Equal))
+                {
+                    filter = Expression.Equal(left, right);
+                }
 
-            }
-            else if (typeName == "Int16")
-            {
-                query = query.Where(v => System.Convert.ToInt16(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToInt16(value));
+                queryExpression = Expression.Lambda<Func<T, bool>>(filter, param);
+                return queryExpression;
                 
             }
-            else if (typeName == "Int32")
-            {
-                query = query.Where(v => System.Convert.ToInt32(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToInt32(value));
-            }
-            else if (typeName == "Int64")
-            {
-                query = query.Where(v => System.Convert.ToInt64(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToInt64(value));
-            }
-            else if (typeName == "Boolean")
-            {
-                query = query.Where(v => System.Convert.ToBoolean(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToBoolean(value));
-            }
-            else if (typeName == "DateTime")
-            {
-                query = query.Where(v => System.Convert.ToDateTime(v.GetType().GetProperty(propertyName).GetValue(v, null)) == System.Convert.ToDateTime(value));
-            }
-            return query;
+            return queryExpression;
+            
         }
+        
         #endregion
         #region Paging
         private static IQueryable<T> Paging(IQueryable<T> query, int? skip, int? top)
@@ -535,5 +493,47 @@ namespace DpControl.Domain.Models
         #endregion
 
         
+    }
+    public class ParameterRebinder : ExpressionVisitor
+    {
+        private readonly Dictionary<ParameterExpression, ParameterExpression> _map;
+
+        public ParameterRebinder(Dictionary<ParameterExpression, ParameterExpression> map)
+        {
+            _map = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
+        }
+        public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map, Expression exp)
+        {
+            return new ParameterRebinder(map).Visit(exp);
+        }
+        protected override Expression VisitParameter(ParameterExpression p)
+        {
+            ParameterExpression replacement;
+            if (_map.TryGetValue(p, out replacement))
+            {
+                p = replacement;
+            }
+            return base.VisitParameter(p);
+        }
+    }
+    public static class Utility
+    {
+        public static Expression<T> Compose<T>(this Expression<T> first, Expression<T> second, Func<Expression, Expression, Expression> merge)
+        {
+            // build parameter map (from parameters of second to parameters of first)
+            var map = first.Parameters.Select((f, i) => new { f, s = second.Parameters[i] }).ToDictionary(p => p.s, p => p.f);
+            // replace parameters in the second lambda expression with parameters from the first
+            var secondBody = ParameterRebinder.ReplaceParameters(map, second.Body);
+            // apply composition of lambda expression bodies to parameters from the first expression 
+            return Expression.Lambda<T>(merge(first.Body, secondBody), first.Parameters);
+        }
+        public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
+        {
+            return first.Compose(second, Expression.And);
+        }
+        public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
+        {
+            return first.Compose(second, Expression.Or);
+        }
     }
 }

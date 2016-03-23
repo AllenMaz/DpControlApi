@@ -257,58 +257,78 @@ namespace DpControl.Utility.Filters
             if (string.IsNullOrEmpty(filterString)) return null;
 
             //split by "and" logical operator
-            //case sensitive Conver filter operator to lower
+            //Conver filter operator to lower(case sensitive)
             string lowerFilterString = Regex.Replace(filterString, FilterOperators.And, FilterOperators.And, RegexOptions.IgnoreCase);
+            lowerFilterString = Regex.Replace(filterString, FilterOperators.Or, FilterOperators.Or, RegexOptions.IgnoreCase);
+
             lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.LessThan, FilterOperators.LessThan, RegexOptions.IgnoreCase);
             lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.MoreThan, FilterOperators.MoreThan, RegexOptions.IgnoreCase);
             lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.Equal, FilterOperators.Equal, RegexOptions.IgnoreCase);
             
+            //split by FilterOperators.Add
             string[] arrFilter = lowerFilterString.Split(new string[] { FilterOperators.And }, StringSplitOptions.RemoveEmptyEntries);
+            //split by FilterOperators.Add and OR ,to count total condition number
+            int totalFilterConditionNum = lowerFilterString
+                .Split(new string[] { FilterOperators.And, FilterOperators.Or }, StringSplitOptions.RemoveEmptyEntries)
+                .Count();
 
-            Filter[] filterParams = new Filter[arrFilter.Length];
+
+            Filter[] filterParams = new Filter[totalFilterConditionNum];
+            int filterParamsIndex = 0;
             for (int i = 0; i < arrFilter.Length; i++)
             {
-                string filterOperater = string.Empty;
-                if (arrFilter[i].Contains(FilterOperators.LessThan))
+                //判断每个被AND条件分割的条件中，是否含有OR条件
+                string[] arrSubFilter = arrFilter[i].Split(new string[] { FilterOperators.Or }, StringSplitOptions.RemoveEmptyEntries);
+                for (int j=0;j<arrSubFilter.Length;j++)
                 {
-                    filterOperater = FilterOperators.LessThan;
-                }
-                else if (arrFilter[i].Contains(FilterOperators.MoreThan))
-                {
-                    filterOperater = FilterOperators.MoreThan;
-                } else if (arrFilter[i].Contains(FilterOperators.Equal))
-                {
-                    filterOperater = FilterOperators.Equal;
-                }
-                string[] arrFieldAndValue = arrFilter[i].Split(new string[] { filterOperater }, StringSplitOptions.RemoveEmptyEntries);
-                if (arrFieldAndValue.Length !=2)
-                    throw new ExpectException("The query(filter) syntax errors:'"+arrFilter[i] +"' syntax error");
-                //校验输入的filter参数的属性值的范围必须在当前方法返回类型中的字段值中
-                var property = _actionReturnType.GetProperty(arrFieldAndValue[0]);
-                if (property == null)
-                    throw new ExpectException("The query(filter) syntax errors:Property '" + arrFieldAndValue[0] + "' not exist");
+                    #region
+                    string compareOperator = string.Empty;
+                    if (arrSubFilter[j].Contains(FilterOperators.LessThan))
+                    {
+                        compareOperator = FilterOperators.LessThan;
+                    }
+                    else if (arrSubFilter[j].Contains(FilterOperators.MoreThan))
+                    {
+                        compareOperator = FilterOperators.MoreThan;
+                    }
+                    else if (arrSubFilter[j].Contains(FilterOperators.Equal))
+                    {
+                        compareOperator = FilterOperators.Equal;
+                    }
+                    string[] arrFieldAndValue = arrSubFilter[j].Split(new string[] { compareOperator }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrFieldAndValue.Length != 2)
+                        throw new ExpectException("The query(filter) syntax errors:'" + arrSubFilter[j] + "' syntax error");
+                    //校验输入的filter参数的属性值的范围必须在当前方法返回类型中的字段值中
+                    var property = _actionReturnType.GetProperty(arrFieldAndValue[0]);
+                    if (property == null)
+                        throw new ExpectException("The query(filter) syntax errors:Property '" + arrFieldAndValue[0] + "' not exist");
 
-                //判断属性类型是否可用于filter
-                if (!IsFilter_Select_OrderbyType(property))
-                    throw new ExpectException("The query(filter) type errors:Property '" + arrFieldAndValue[i] + "' can't be filter");
+                    //判断属性类型是否可用于filter
+                    if (!IsFilter_Select_OrderbyType(property))
+                        throw new ExpectException("The query(filter) type errors:Property '" + arrFieldAndValue[1] + "' can't be filter");
 
 
-                try
-                {
-                    //Check if the value match the type of property
-                    Common.ConverValueToType(property.PropertyType, arrFieldAndValue[1]);
+                    try
+                    {
+                        //Check if the value match the type of property
+                        Common.ConverValueToType(property.PropertyType, arrFieldAndValue[1]);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ExpectException("The query(filter) syntax errors:Property '" + e.Message);
+                    }
+
+                    Filter filterParam = new Filter();
+                    Dictionary<string, string> propertyValue = new Dictionary<string, string>();
+                    propertyValue[arrFieldAndValue[0]] = arrFieldAndValue[1];
+                    filterParam.FilterPropertyValue = propertyValue;
+                    filterParam.CompareOperator = compareOperator;
+                    //如果有OR条件，则被OR分割的数组中，除了第一个条件是AND，其它都是OR
+                    //如果没有OR条件，则被OR分割的数组中只有一个元素，第个条件是AND
+                    filterParam.LogicalOperator = (j == 0) ? FilterOperators.And : FilterOperators.Or;
+                    filterParams[filterParamsIndex++] = filterParam;
+                    #endregion
                 }
-                catch (Exception e)
-                {
-                    throw new ExpectException("The query(filter) syntax errors:Property '" + e.Message);
-                }
-
-                Filter filterParam = new Filter();
-                Dictionary<string, string> propertyValue = new Dictionary<string, string>();
-                propertyValue[arrFieldAndValue[0]] = arrFieldAndValue[1];
-                filterParam.FilterPropertyValue = propertyValue;
-                filterParam.FilterOperater = filterOperater;
-                filterParams[i] = filterParam;
 
             }
 
