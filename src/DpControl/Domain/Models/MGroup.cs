@@ -79,7 +79,7 @@ namespace DpControl.Domain.Models
                 ModifiedDate = group.ModifiedDate,
                 Project = ProjectOperator.SetProjectSubSearchModel(group.Project),
                 Scene = SceneOperator.SetSceneSubSearchModel(group.Scene),
-                Locations = group.GroupLocations.Select(v=>LocationOperator.SetLocationSearchModelCascade(v.Location)) 
+                Locations = group.GroupLocations.Select(v => LocationOperator.SetLocationSearchModelCascade(v.Location))
 
             };
             return groupSearchModel;
