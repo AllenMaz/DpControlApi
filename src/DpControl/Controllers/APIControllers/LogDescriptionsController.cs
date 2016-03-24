@@ -16,24 +16,7 @@ namespace DpControl.Controllers.APIControllers
         [FromServices]
         public ILogDescriptionRepository _logDescriptionRepository { get; set; }
 
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] LogDescriptionAddModel mLogDescription)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-
-            var logDescriptionId = await _logDescriptionRepository.AddAsync(mLogDescription);
-            return CreatedAtRoute("GetByLogDescriptionIdAsync", new { controller = "LogDescriptions", logDescriptionId = logDescriptionId }, mLogDescription);
-        }
-
+        
         /// <summary>
         /// Search data by LogDescriptionId
         /// </summary>
@@ -52,6 +35,22 @@ namespace DpControl.Controllers.APIControllers
             return new ObjectResult(logDescription);
         }
 
+        #region Relations
+        /// <summary>
+        /// Get Logs Relation
+        /// </summary>
+        /// <param name="logDescriptionId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{logDescriptionId}/Logs")]
+        public async Task<IEnumerable<LogSubSearchModel>> GetLogsByLogDescriptionIdAsync(int logDescriptionId)
+        {
+            var logs = await _logDescriptionRepository.GetLogsByLogDescriptionIdAsync(logDescriptionId);
+            return logs;
+        }
+        #endregion
+
         /// <summary>
         /// Search all data
         /// </summary>
@@ -67,6 +66,23 @@ namespace DpControl.Controllers.APIControllers
             return result;
         }
 
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] LogDescriptionAddModel mLogDescription)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var logDescriptionId = await _logDescriptionRepository.AddAsync(mLogDescription);
+            return CreatedAtRoute("GetByLogDescriptionIdAsync", new { controller = "LogDescriptions", logDescriptionId = logDescriptionId }, mLogDescription);
+        }
 
         /// <summary>
         /// Delete data by LogDescriptionId

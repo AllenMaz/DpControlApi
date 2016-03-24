@@ -17,23 +17,7 @@ namespace DpControl.Controllers.APIControllers
         [FromServices]
         public IHolidayRepository _holidayRepository { get; set; }
 
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] HolidayAddModel mHoliday)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-
-            var holidayId = await _holidayRepository.AddAsync(mHoliday);
-            return CreatedAtRoute("GetByHolidayIdAsync", new { controller = "Holidays", holidayId = holidayId }, mHoliday);
-        }
+        
         /// <summary>
         /// Search data by holidayId
         /// </summary>
@@ -52,6 +36,26 @@ namespace DpControl.Controllers.APIControllers
             return new ObjectResult(holiday);
         }
 
+        #region Relations
+        /// <summary>
+        /// Get Project Relation
+        /// </summary>
+        /// <param name="holidayId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(ProjectSubSearchModel))]
+        [HttpGet("{holidayId}/Project")]
+        public async Task<IActionResult> GetProjectByHolidayIdAsync(int holidayId)
+        {
+            var project = await _holidayRepository.GetProjectByHolidayIdAsync(holidayId);
+            if (project == null)
+            {
+                return HttpNotFound();
+            }
+            return new ObjectResult(project);
+        }
+        #endregion
+
         /// <summary>
         /// Search all data
         /// </summary>
@@ -65,6 +69,24 @@ namespace DpControl.Controllers.APIControllers
             var result = await _holidayRepository.GetAllAsync(); ;
 
             return result;
+        }
+
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] HolidayAddModel mHoliday)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var holidayId = await _holidayRepository.AddAsync(mHoliday);
+            return CreatedAtRoute("GetByHolidayIdAsync", new { controller = "Holidays", holidayId = holidayId }, mHoliday);
         }
 
         /// <summary>

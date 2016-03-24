@@ -145,8 +145,11 @@ namespace DpControl
                     Title = "DpControl WebApi v1",
                     Description = "A WebApi Test and Document For DpControl",
                     TermsOfService = "None"
+                    
                 });
                 options.OperationFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlActionComments(pathToDoc));
+                //options.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
+                
             });
 
             services.ConfigureSwaggerSchema(options =>

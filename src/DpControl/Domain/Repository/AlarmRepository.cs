@@ -91,6 +91,8 @@ namespace DpControl.Domain.Repository
             return alarmSearch;
         }
 
+        
+
         public IEnumerable<AlarmSearchModel> GetAll()
         {
             var queryData = from A in _context.Alarms
@@ -121,6 +123,24 @@ namespace DpControl.Domain.Repository
             return alarmsSearch;
         }
 
+        public async Task<LocationSubSearchModel> GetLocationByAlarmIdAsync(int alarmId)
+        {
+            var alarm = await _context.Alarms
+                .Include(a => a.Location).Where(a => a.AlarmId == alarmId).FirstOrDefaultAsync();
+            var location = alarm == null ? null : alarm.Location;
+            var locationSearch = LocationOperator.SetLocationSubSearchModel(location);
+            return locationSearch;
+        }
+
+        public async Task<AlarmMessageSubSearchModel> GetAlarmMessageByAlarmIdAsync(int alarmId)
+        {
+            var alarm = await _context.Alarms
+                .Include(a => a.AlarmMessage).Where(a => a.AlarmId == alarmId).FirstOrDefaultAsync();
+            var alarmMessage = alarm == null ? null : alarm.AlarmMessage;
+            var alarmMessageSearch = AlarmMessageOperator.SetAlarmMessageSubSearchModel(alarmMessage);
+            return alarmMessageSearch;
+        }
+
         public void RemoveById(int alarmId)
         {
             var alarm = _context.Alarms.FirstOrDefault(c => c.AlarmId == alarmId);
@@ -146,7 +166,7 @@ namespace DpControl.Domain.Repository
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateByIdAsync(int alarmId, AlarmUpdateModel mAlarm)
+        public Task<int> UpdateByIdAsync(int itemId, AlarmUpdateModel item)
         {
             throw new NotImplementedException();
         }

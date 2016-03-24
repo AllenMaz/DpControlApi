@@ -29,6 +29,7 @@ namespace DpControl.APIControllers
         [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
 
+        
         #region GET
         /// <summary>
         /// Search data by CustomerId
@@ -48,6 +49,7 @@ namespace DpControl.APIControllers
             return new ObjectResult(customer);
         }
 
+        #region Relations
         /// <summary>
         /// Get Related Projects
         /// </summary>
@@ -55,11 +57,12 @@ namespace DpControl.APIControllers
         [APIAuthorize(Roles = "Admin,Public")]
         [HttpGet("{customerId}/Projects")]
         [EnableQuery]
-        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjects(int customerId)
+        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
         {
-            var result = await _customerRepository.GetProjectsByCustomerId(customerId);
+            var result = await _customerRepository.GetProjectsByCustomerIdAsync(customerId);
             return result;
         }
+        #endregion
 
         /// <summary>
         /// Search all data
@@ -102,6 +105,7 @@ namespace DpControl.APIControllers
 
         #endregion
 
+        
         /// <summary>
         /// Add data
         /// </summary>

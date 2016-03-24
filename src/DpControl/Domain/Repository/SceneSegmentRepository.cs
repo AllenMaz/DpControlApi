@@ -143,6 +143,17 @@ namespace DpControl.Domain.Repository
             return sceneSegmentsSearch;
         }
 
+        public async Task<SceneSubSearchModel> GetSceneBySceneSegmentIdAsync(int sceneSegmentId)
+        {
+            var sceneSegment =await _context.SceneSegments
+                    .Include(s => s.Scene)
+                    .Where(s => s.SceneSegmentId == sceneSegmentId)
+                    .FirstOrDefaultAsync();
+            var scene = sceneSegment == null ? null : sceneSegment.Scene;
+            var sceneSearch = SceneOperator.SetSceneSubSearchModel(scene);
+            return sceneSearch;
+        }
+
         public void RemoveById(int sceneSegmentId)
         {
             var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);

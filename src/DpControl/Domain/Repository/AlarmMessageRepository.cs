@@ -87,6 +87,15 @@ namespace DpControl.Domain.Repository
             return alarmMessageSearch;
         }
 
+        public async Task<IEnumerable<AlarmSubSearchModel>> GetAlarmsByAlarmMessageIdAsync(int alarmMessageId)
+        {
+            var queryData = _context.Alarms.Where(a=>a.AlarmMessageId == alarmMessageId);
+            var result = QueryOperate<Alarm>.Execute(queryData);
+            var alarms = await result.ToListAsync();
+            var alarmsSearch = AlarmOperator.SetAlarmSubSearchModel(alarms);
+            return alarmsSearch;
+        }
+
         public IEnumerable<AlarmMessageSearchModel> GetAll()
         {
             var queryData = from A in _context.AlarmMessages

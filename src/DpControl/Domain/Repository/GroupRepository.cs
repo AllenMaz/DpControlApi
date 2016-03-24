@@ -155,7 +155,37 @@ namespace DpControl.Domain.Repository
             return groupsSearch;
         }
 
-        
+        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsByGroupIdAsync(int groupId)
+        {
+            var queryData = _context.GroupLocations
+                .Where(gl=>gl.GroupId == groupId)
+                .Select(gl => gl.Location);
+
+            var result = QueryOperate<Location>.Execute(queryData);
+            var locations = await result.ToListAsync();
+            var locationsSearch = LocationOperator.SetLocationSubSearchModel(locations);
+            return locationsSearch;
+        }
+
+        public async Task<ProjectSubSearchModel> GetProjectByGroupIdAsync(int groupId)
+        {
+            var group = await _context.Groups
+                .Include(g => g.Project)
+                .Where(g => g.GroupId == groupId).FirstOrDefaultAsync();
+            var project = group == null ? null : group.Project;
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(project);
+            return projectSearch;
+        }
+
+        public async Task<SceneSubSearchModel> GetSceneByGroupIdAsync(int groupId)
+        {
+            var group = await _context.Groups
+                .Include(g => g.Scene)
+                .Where(g => g.GroupId == groupId).FirstOrDefaultAsync();
+            var scene = group == null ? null : group.Scene;
+            var sceneSearch = SceneOperator.SetSceneSubSearchModel(scene);
+            return sceneSearch;
+        }
 
         public void RemoveById(int groupId)
         {

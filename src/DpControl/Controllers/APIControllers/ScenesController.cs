@@ -17,24 +17,7 @@ namespace DpControl.Controllers.APIControllers
         [FromServices]
         public ISceneRepository _sceneRepository { get; set; }
 
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] SceneAddModel mScene)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-
-            var sceneId = await _sceneRepository.AddAsync(mScene);
-            return CreatedAtRoute("GetBySceneIdAsync", new { controller = "Scenes", sceneId = sceneId }, mScene);
-        }
-
+        
         /// <summary>
         /// Search data by SceneId
         /// </summary>
@@ -53,6 +36,40 @@ namespace DpControl.Controllers.APIControllers
             return new ObjectResult(scene);
         }
 
+        #region Relations
+        /// <summary>
+        /// Get Project Relation
+        /// </summary>
+        /// <param name="sceneId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(ProjectSubSearchModel))]
+        [HttpGet("{sceneId}/Project")]
+        public async Task<IActionResult> GetProjectBySceneIdAsync(int sceneId)
+        {
+            var project = await _sceneRepository.GetProjectBySceneIdAsync(sceneId);
+            if (project == null)
+            {
+                return HttpNotFound();
+            }
+            return new ObjectResult(project);
+        }
+
+        /// <summary>
+        /// Get SceneSegments Relation
+        /// </summary>
+        /// <param name="sceneId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{sceneId}/SceneSegments")]
+        public async Task<IEnumerable<SceneSegmentSubSearchModel>> GetSceneSegmentsBySceneIdAsync(int sceneId)
+        {
+            var sceneSegments = await _sceneRepository.GetSceneSegmentsBySceneIdAsync(sceneId);
+            return sceneSegments;
+        }
+        #endregion
+
         /// <summary>
         /// Search all data
         /// </summary>
@@ -66,6 +83,24 @@ namespace DpControl.Controllers.APIControllers
             var result = await _sceneRepository.GetAllAsync(); ;
 
             return result;
+        }
+
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] SceneAddModel mScene)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var sceneId = await _sceneRepository.AddAsync(mScene);
+            return CreatedAtRoute("GetBySceneIdAsync", new { controller = "Scenes", sceneId = sceneId }, mScene);
         }
 
         /// <summary>

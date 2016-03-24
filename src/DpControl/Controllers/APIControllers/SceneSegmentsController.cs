@@ -17,23 +17,7 @@ namespace DpControl.Controllers.APIControllers
         [FromServices]
         public ISceneSegmentRepository _sceneSegmentRepository { get; set; }
 
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] SceneSegmentAddModel mSceneSegment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-
-            var sceneSegmentId = await _sceneSegmentRepository.AddAsync(mSceneSegment);
-            return CreatedAtRoute("GetBySceneSegmentIdAsync", new { controller = "SceneSegments", sceneSegmentId = sceneSegmentId }, mSceneSegment);
-        }
+        
         /// <summary>
         /// Search data by sceneSegmentId
         /// </summary>
@@ -52,6 +36,26 @@ namespace DpControl.Controllers.APIControllers
             return new ObjectResult(sceneSegment);
         }
 
+        #region Relations
+        /// <summary>
+        /// Get Scene Relation
+        /// </summary>
+        /// <param name="sceneSegmentId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(SceneSubSearchModel))]
+        [HttpGet("{sceneSegmentId}/Scene")]
+        public async Task<IActionResult> GetSceneBySceneSegmentIdAsync(int sceneSegmentId)
+        {
+            var scene = await _sceneSegmentRepository.GetSceneBySceneSegmentIdAsync(sceneSegmentId);
+            if (scene == null)
+            {
+                return HttpNotFound();
+            }
+            return new ObjectResult(scene);
+        }
+        #endregion
+
         /// <summary>
         /// Search all data
         /// </summary>
@@ -65,6 +69,24 @@ namespace DpControl.Controllers.APIControllers
             var result = await _sceneSegmentRepository.GetAllAsync(); ;
 
             return result;
+        }
+
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] SceneSegmentAddModel mSceneSegment)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var sceneSegmentId = await _sceneSegmentRepository.AddAsync(mSceneSegment);
+            return CreatedAtRoute("GetBySceneSegmentIdAsync", new { controller = "SceneSegments", sceneSegmentId = sceneSegmentId }, mSceneSegment);
         }
 
         /// <summary>

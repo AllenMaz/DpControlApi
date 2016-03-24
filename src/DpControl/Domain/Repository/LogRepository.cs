@@ -133,6 +133,24 @@ namespace DpControl.Domain.Repository
             return logsSearch;
         }
 
+        public async Task<LocationSubSearchModel> GetLocationByLogIdAsync(int logId)
+        {
+            var log = await _context.Logs.Include(l => l.Location)
+                .Where(l => l.LogId == logId).FirstOrDefaultAsync();
+            var location = log == null ? null : log.Location;
+            var locationSearch = LocationOperator.SetLocationSubSearchModel(location);
+            return locationSearch;
+        }
+
+        public async Task<LogDescriptionSubSearchModel> GetLogDescriptionByLogIdAsync(int logId)
+        {
+            var log = await _context.Logs.Include(l => l.LogDescription)
+               .Where(l => l.LogId == logId).FirstOrDefaultAsync();
+            var logDescription = log == null ? null : log.LogDescription;
+            var logDescriptionSearch = LogDescriptionOperator.SetLogDescriptionSubSearchModel(logDescription);
+            return logDescriptionSearch;
+        }
+
         public void RemoveById(int logId)
         {
             var log = _context.Logs.FirstOrDefault(c => c.LogId == logId);

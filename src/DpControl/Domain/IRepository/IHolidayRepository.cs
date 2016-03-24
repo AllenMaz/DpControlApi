@@ -8,5 +8,8 @@ namespace DpControl.Domain.IRepository
 {
     public interface IHolidayRepository:IBaseRepository<HolidayAddModel,HolidayUpdateModel,HolidaySearchModel>
     {
+        #region Relation
+        Task<ProjectSubSearchModel> GetProjectByHolidayIdAsync(int holidayId);
+        #endregion
     }
 }

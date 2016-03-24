@@ -140,7 +140,28 @@ namespace DpControl.Domain.Repository
             return scenesSearch;
         }
 
-        
+        #region Relations
+        public async Task<ProjectSubSearchModel> GetProjectBySceneIdAsync(int sceneId)
+        {
+            var scenes =await _context.Scenes
+                .Include(s => s.Project).Where(s => s.SceneId == sceneId)
+                .FirstOrDefaultAsync();
+            var project = scenes == null ? null : scenes.Project;
+
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(project);
+            return projectSearch;
+        }
+
+        public async Task<IEnumerable<SceneSegmentSubSearchModel>> GetSceneSegmentsBySceneIdAsync(int sceneId)
+        {
+            var queryData = _context.SceneSegments.Where(s=>s.SceneId == sceneId);
+            var result = QueryOperate<SceneSegment>.Execute(queryData);
+            var sceneSegments = await result.ToListAsync();
+            var sceneSegmentsSearch = SceneSegmentOperator.SetSceneSegmentSubSearchModel(sceneSegments);
+            return sceneSegmentsSearch;
+        }
+
+        #endregion
 
         public void RemoveById(int sceneId)
         {

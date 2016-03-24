@@ -8,5 +8,9 @@ namespace DpControl.Domain.IRepository
 {
     public interface IAlarmRepository:IBaseRepository<AlarmAddModel,AlarmUpdateModel,AlarmSearchModel>
     {
+        #region Relations
+        Task<LocationSubSearchModel> GetLocationByAlarmIdAsync(int alarmId);
+        Task<AlarmMessageSubSearchModel> GetAlarmMessageByAlarmIdAsync(int alarmId);
+        #endregion
     }
 }

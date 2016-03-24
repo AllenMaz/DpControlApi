@@ -126,6 +126,15 @@ namespace DpControl.Domain.Repository
             return holidaysSearch;
         }
 
+        public async Task<ProjectSubSearchModel> GetProjectByHolidayIdAsync(int holidayId)
+        {
+            var holiday = await _context.Holidays.Include(h => h.Project)
+                .Where(h => h.HolidayId == holidayId).FirstOrDefaultAsync();
+            var project = holiday == null ? null : holiday.Project;
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(project);
+            return projectSearch;
+        }
+
         public void RemoveById(int holidayId)
         {
             var holiday = _context.Holidays.FirstOrDefault(c => c.HolidayId == holidayId);

@@ -15,25 +15,7 @@ namespace DpControl.Controllers.APIControllers
     {
         [FromServices]
         public ILocationRepository _locationRepository { get; set; }
-
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] LocationAddModel mLocation)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-
-            var locationId = await _locationRepository.AddAsync(mLocation);
-            return CreatedAtRoute("GetByLocationIdAsync", new { controller = "Locations", locationId = locationId }, mLocation);
-        }
-
+        
         /// <summary>
         /// Search data by LocationId
         /// </summary>
@@ -52,6 +34,86 @@ namespace DpControl.Controllers.APIControllers
             return new ObjectResult(location);
         }
 
+        #region Relations
+        /// <summary>
+        /// Get Project Relation
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(ProjectSubSearchModel))]
+        [HttpGet("{locationId}/Project")]
+        public async Task<IActionResult> GetProjectBySceneIdAsync(int locationId)
+        {
+            var project = await _locationRepository.GetProjectByLocationIdAsync(locationId);
+            if (project == null)
+            {
+                return HttpNotFound();
+            }
+            return new ObjectResult(project);
+        }
+
+        /// <summary>
+        /// Get Device Relation
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(DeviceSubSearchModel))]
+        [HttpGet("{locationId}/Device")]
+        public async Task<IActionResult> GetDeviceBySceneIdAsync(int locationId)
+        {
+            var device = await _locationRepository.GetDeviceByLocationIdAsync(locationId);
+            if (device == null)
+            {
+                return HttpNotFound();
+            }
+            return new ObjectResult(device);
+        }
+
+        /// <summary>
+        /// Get Groups Relation
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{locationId}/Groups")]
+        public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsBySceneIdAsync(int locationId)
+        {
+            var groups = await _locationRepository.GetGroupsByLocationIdAsync(locationId);
+            return groups;
+        }
+
+        /// <summary>
+        /// Get Logs Relation
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{locationId}/Logs")]
+        public async Task<IEnumerable<LogSubSearchModel>> GetLogsBySceneIdAsync(int locationId)
+        {
+            var logs = await _locationRepository.GetLogsByLocationIdAsync(locationId);
+            return logs;
+        }
+
+        /// <summary>
+        /// Get Alarms Relation
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{locationId}/Alarms")]
+        public async Task<IEnumerable<AlarmSubSearchModel>> GetAlarmsBySceneIdAsync(int locationId)
+        {
+            var alarms = await _locationRepository.GetAlarmsByLocationIdAsync(locationId);
+            return alarms;
+        }
+        #endregion
+
         /// <summary>
         /// Search all data
         /// </summary>
@@ -65,6 +127,24 @@ namespace DpControl.Controllers.APIControllers
             var result = await _locationRepository.GetAllAsync(); ;
 
             return result;
+        }
+
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] LocationAddModel mLocation)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var locationId = await _locationRepository.AddAsync(mLocation);
+            return CreatedAtRoute("GetByLocationIdAsync", new { controller = "Locations", locationId = locationId }, mLocation);
         }
 
         /// <summary>

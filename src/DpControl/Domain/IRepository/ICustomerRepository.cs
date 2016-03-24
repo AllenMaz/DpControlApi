@@ -8,6 +8,10 @@ namespace DpControl.Domain.IRepository
 {
     public interface ICustomerRepository:IBaseRepository<CustomerAddModel,CustomerUpdateModel,CustomerSearchModel>
     {
-        Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerId(int customerId);
+        #region Entity Relations
+
+        Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId);
+
+        #endregion
     }
 }

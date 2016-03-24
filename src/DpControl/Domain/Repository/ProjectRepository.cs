@@ -147,7 +147,58 @@ namespace DpControl.Domain.Repository
 
         }
 
-        
+        #region Relations
+        public async Task<CustomerSubSearchModel> GetCustomerByProjectIdAsync(int projectId)
+        {
+            var project = await _context.Projects.Include(p => p.Customer)
+                .Where(p => p.ProjectId == projectId).FirstOrDefaultAsync();
+
+            var customer = project == null ? null : project.Customer;
+
+            var customerSearch = CustomerOperator.SetCustomerSubSearchModel(customer);
+            return customerSearch;
+        }
+
+        public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsByProjectIdAsync(int projectId)
+        {
+            var queryData = _context.Groups.Where(g => g.ProjectId == projectId);
+            var result = QueryOperate<Group>.Execute(queryData);
+            var groups = await result.ToListAsync();
+
+            var groupsSearch = GroupOperator.SetGroupSubSearchModel(groups);
+            return groupsSearch;
+        }
+
+        public async Task<IEnumerable<HolidaySubSearchModel>> GetHolidaysByProjectIdAsync(int projectId)
+        {
+            var queryData = _context.Holidays.Where(g => g.ProjectId == projectId);
+            var result = QueryOperate<Holiday>.Execute(queryData);
+            var holidays = await result.ToListAsync();
+
+            var holidaysSearch = HolidayOperator.SetHolidaySubSearchModel(holidays);
+            return holidaysSearch;
+        }
+
+        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsByProjectIdAsync(int projectId)
+        {
+            var queryData = _context.Locations.Where(g => g.ProjectId == projectId);
+            var result = QueryOperate<Location>.Execute(queryData);
+            var locations = await result.ToListAsync();
+
+            var locationsSearch = LocationOperator.SetLocationSubSearchModel(locations);
+            return locationsSearch;
+        }
+
+        public async Task<IEnumerable<SceneSubSearchModel>> GetScenesByProjectIdAsync(int projectId)
+        {
+            var queryData = _context.Scenes.Where(g => g.ProjectId == projectId);
+            var result = QueryOperate<Scene>.Execute(queryData);
+            var scenes = await result.ToListAsync();
+
+            var scenesSearch = SceneOperator.SetSceneSubSearchModel(scenes);
+            return scenesSearch;
+        }
+        #endregion
 
         public void RemoveById(int projectId)
         {

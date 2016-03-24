@@ -15,6 +15,55 @@ namespace DpControl.Controllers.APIControllers
     {
         [FromServices]
         public IDeviceRepository _deviceRepository { get; set; }
+        
+        /// <summary>
+        /// Search data by DeviceId
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(DeviceSearchModel))]
+        [HttpGet("{deviceId}", Name = "GetByDeviceIdAsync")]
+        public async Task<IActionResult> GetBySceneIdAsync(int deviceId)
+        {
+            var device = await _deviceRepository.FindByIdAsync(deviceId);
+            if (device == null)
+            {
+                return HttpNotFound();
+            }
+            return new ObjectResult(device);
+        }
+
+        #region Relations
+        /// <summary>
+        /// Get Locations Relation
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{deviceId}/Locations")]
+        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsBySceneIdAsync(int deviceId)
+        {
+            var locations = await _deviceRepository.GetLocationsByDeviceIdAsync(deviceId);
+            return locations;
+        }
+        #endregion
+
+        /// <summary>
+        /// Search all data
+        /// </summary>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpGet]
+        [EnableQuery]
+        public async Task<IEnumerable<DeviceSearchModel>> GetAllAsync()
+        {
+
+            var result = await _deviceRepository.GetAllAsync(); ;
+
+            return result;
+        }
 
         /// <summary>
         /// Add data
@@ -32,39 +81,6 @@ namespace DpControl.Controllers.APIControllers
 
             var deviceId = await _deviceRepository.AddAsync(mDevice);
             return CreatedAtRoute("GetByDeviceIdAsync", new { controller = "Devices", deviceId = deviceId }, mDevice);
-        }
-
-        /// <summary>
-        /// Search data by DeviceId
-        /// </summary>
-        /// <param name="id">ID</param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [EnableQuery(typeof(DeviceSearchModel))]
-        [HttpGet("{deviceId}", Name = "GetByDeviceIdAsync")]
-        public async Task<IActionResult> GetBySceneIdAsync(int deviceId)
-        {
-            var deviceLocation = await _deviceRepository.FindByIdAsync(deviceId);
-            if (deviceLocation == null)
-            {
-                return HttpNotFound();
-            }
-            return new ObjectResult(deviceLocation);
-        }
-
-        /// <summary>
-        /// Search all data
-        /// </summary>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpGet]
-        [EnableQuery]
-        public async Task<IEnumerable<DeviceSearchModel>> GetAllAsync()
-        {
-
-            var result = await _deviceRepository.GetAllAsync(); ;
-
-            return result;
         }
 
         /// <summary>

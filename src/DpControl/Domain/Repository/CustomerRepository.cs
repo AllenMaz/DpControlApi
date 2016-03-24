@@ -18,7 +18,7 @@ namespace DpControl.Domain.Repository
     {
 
         private ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo;
+        private readonly IUserInfoRepository _userInfo; 
 
         #region Constructors
         public CustomerRepository()
@@ -142,7 +142,7 @@ namespace DpControl.Domain.Repository
             return customerSearch;
         }
 
-        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerId(int customerId)
+        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
         {
             var queryData = _context.Projects
                 .Where(v => v.CustomerId == customerId);

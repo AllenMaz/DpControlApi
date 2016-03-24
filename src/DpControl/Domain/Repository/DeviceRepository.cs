@@ -107,7 +107,15 @@ namespace DpControl.Domain.Repository
             var devicesSearch = DeviceOperator.SetDeviceSearchModelCascade(devices);
             return devicesSearch;
         }
-        
+
+        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsByDeviceIdAsync(int deviceId)
+        {
+            var queryData = _context.Locations.Where(l=>l.DeviceId == deviceId);
+            var result = QueryOperate<Location>.Execute(queryData);
+            var locations = await result.ToListAsync();
+            var locationsSearch = LocationOperator.SetLocationSubSearchModel(locations);
+            return locationsSearch;
+        }
 
         public void RemoveById(int deviceId)
         {

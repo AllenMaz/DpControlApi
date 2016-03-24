@@ -17,24 +17,7 @@ namespace DpControl.Controllers.APIControllers
     {
         [FromServices]
         public IProjectRepository _projectRepository { get; set; }
-
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] ProjectAddModel mProject)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-
-            var projectId = await _projectRepository.AddAsync(mProject);
-            return CreatedAtRoute("GetByProjectIdAsync", new { controller = "Projects", projectId = projectId }, mProject);
-        }
+        
         /// <summary>
         /// Search data by ProjectId
         /// </summary>
@@ -53,6 +36,82 @@ namespace DpControl.Controllers.APIControllers
             return new ObjectResult(project);
         }
 
+        #region Relations
+        /// <summary>
+        /// Get Customer Relation
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(CustomerSubSearchModel))]
+        [HttpGet("{projectId}/Customer")]
+        public async Task<IActionResult> GetCustomerByProjectIdAsync(int projectId)
+        {
+            var customer = await _projectRepository.GetCustomerByProjectIdAsync(projectId);
+            if (customer == null)
+            {
+                return HttpNotFound();
+            }
+            return new ObjectResult(customer);
+        }
+
+        /// <summary>
+        /// Get Groups Relation
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{projectId}/Groups")]
+        public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsByProjectIdAsync(int projectId)
+        {
+            var groups = await _projectRepository.GetGroupsByProjectIdAsync(projectId);
+            return groups;
+        }
+
+        /// <summary>
+        /// Get Locations Relation
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{projectId}/Locations")]
+        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsByProjectIdAsync(int projectId)
+        {
+            var locations = await _projectRepository.GetLocationsByProjectIdAsync(projectId);
+            return locations;
+        }
+
+        /// <summary>
+        /// Get Scenes Relation
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{projectId}/Scenes")]
+        public async Task<IEnumerable<SceneSubSearchModel>> GetScenesByProjectIdAsync(int projectId)
+        {
+            var scenes = await _projectRepository.GetScenesByProjectIdAsync(projectId);
+            return scenes;
+        }
+
+        /// <summary>
+        /// Get Locations Relation
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{projectId}/Holidays")]
+        public async Task<IEnumerable<HolidaySubSearchModel>> GetHolidaysByProjectIdAsync(int projectId)
+        {
+            var holidays = await _projectRepository.GetHolidaysByProjectIdAsync(projectId);
+            return holidays;
+        }
+        #endregion
+
         /// <summary>
         /// Search all data
         /// </summary>
@@ -66,6 +125,25 @@ namespace DpControl.Controllers.APIControllers
             var result = await _projectRepository.GetAllAsync(); 
             
             return result;
+        }
+        
+
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] ProjectAddModel mProject)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var projectId = await _projectRepository.AddAsync(mProject);
+            return CreatedAtRoute("GetByProjectIdAsync", new { controller = "Projects", projectId = projectId }, mProject);
         }
 
         /// <summary>

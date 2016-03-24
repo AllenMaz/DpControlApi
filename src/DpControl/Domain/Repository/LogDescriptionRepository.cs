@@ -121,7 +121,16 @@ namespace DpControl.Domain.Repository
 
             return logDescriptionsSearch;
         }
-        
+
+        public async Task<IEnumerable<LogSubSearchModel>> GetLogsByLogDescriptionIdAsync(int logDescriptionId)
+        {
+            var queryData = _context.Logs.Where(l=>l.LogDescriptionId == logDescriptionId);
+            var result = QueryOperate<Log>.Execute(queryData);
+            var logs = await result.ToListAsync();
+            var logsSearch = LogOperator.SetLogSubSearchModel(logs);
+            return logsSearch;
+        }
+
         public void RemoveById(int logDescriptionId)
         {
             var logDescription = _context.LogDescriptions.FirstOrDefault(c => c.LogDescriptionId == logDescriptionId);

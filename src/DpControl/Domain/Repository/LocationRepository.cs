@@ -191,6 +191,7 @@ namespace DpControl.Domain.Repository
             
             return locationSearch;
         }
+        
 
         public IEnumerable<LocationSearchModel> GetAll()
         {
@@ -222,7 +223,59 @@ namespace DpControl.Domain.Repository
 
             return locationsSearch;
         }
-        
+
+        #region Relations
+        public async Task<ProjectSubSearchModel> GetProjectByLocationIdAsync(int locationId)
+        {
+            var location = await _context.Locations
+                .Include(l => l.Project)
+                .Where(l => l.LocationId == locationId).FirstOrDefaultAsync();
+            var project = location == null ? null : location.Project;
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(project);
+            return projectSearch;
+        }
+
+        public async Task<IEnumerable<AlarmSubSearchModel>> GetAlarmsByLocationIdAsync(int locationId)
+        {
+            var queryData = _context.Alarms.Where(l=>l.LocationId == locationId);
+            var result = QueryOperate<Alarm>.Execute(queryData);
+            var alarms = await result.ToListAsync();
+            var alarmsSearch = AlarmOperator.SetAlarmSubSearchModel(alarms);
+            return alarmsSearch;
+        }
+
+        public async Task<DeviceSubSearchModel> GetDeviceByLocationIdAsync(int locationId)
+        {
+            var location = await _context.Locations
+                .Include(l => l.Device)
+                .Where(l => l.LocationId == locationId).FirstOrDefaultAsync();
+            var device = location == null ? null : location.Device;
+            var deviceSearch = DeviceOperator.SetDeviceSubSearchModel(device);
+            return deviceSearch;
+        }
+
+        public async Task<IEnumerable<LogSubSearchModel>> GetLogsByLocationIdAsync(int locationId)
+        {
+            var queryData = _context.Logs.Where(l => l.LocationId == locationId);
+            var result = QueryOperate<Log>.Execute(queryData);
+            var logs = await result.ToListAsync();
+            var logsSearch = LogOperator.SetLogSubSearchModel(logs);
+            return logsSearch;
+        }
+
+        public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsByLocationIdAsync(int locationId)
+        {
+            var queryData = _context.GroupLocations
+                .Where(gl => gl.LocationId == locationId)
+                .Select(gl => gl.Group);
+
+            var result = QueryOperate<Group>.Execute(queryData);
+            var groups = await result.ToListAsync();
+            var groupsSearch = GroupOperator.SetGroupSubSearchModel(groups);
+            return groupsSearch;
+        }
+        #endregion
+
         public void RemoveById(int locationId)
         {
             var location = _context.Locations.FirstOrDefault(l => l.LocationId == locationId);
@@ -378,6 +431,7 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return location.LocationId;
         }
-        
+
+       
     }
 }

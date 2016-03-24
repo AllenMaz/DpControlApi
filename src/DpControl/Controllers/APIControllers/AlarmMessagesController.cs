@@ -15,25 +15,7 @@ namespace DpControl.Controllers.APIControllers
     {
         [FromServices]
         public IAlarmMessageRepository _alarmMessageRepository { get; set; }
-
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] AlarmMessageAddModel mAlarmMessage)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-
-            var alarmMessageId = await _alarmMessageRepository.AddAsync(mAlarmMessage);
-            return CreatedAtRoute("GetByAlarmMessageIdAsync", new { controller = "AlarmMessages", alarmMessageId = alarmMessageId }, mAlarmMessage);
-        }
-
+        
         /// <summary>
         /// Search data by AlarmMessageId
         /// </summary>
@@ -52,6 +34,17 @@ namespace DpControl.Controllers.APIControllers
             return new ObjectResult(alarmMessage);
         }
 
+        #region Relations
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{alarmMessageId}/Alarms")]
+        public async Task<IEnumerable<AlarmSubSearchModel>> GetAlarmsByAlarmMessageIdAsync(int alarmMessageId)
+        {
+            var alarms = await _alarmMessageRepository.GetAlarmsByAlarmMessageIdAsync(alarmMessageId);
+            return alarms;
+        }
+        #endregion
+
         /// <summary>
         /// Search all data
         /// </summary>
@@ -67,6 +60,23 @@ namespace DpControl.Controllers.APIControllers
             return result;
         }
 
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] AlarmMessageAddModel mAlarmMessage)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var alarmMessageId = await _alarmMessageRepository.AddAsync(mAlarmMessage);
+            return CreatedAtRoute("GetByAlarmMessageIdAsync", new { controller = "AlarmMessages", alarmMessageId = alarmMessageId }, mAlarmMessage);
+        }
 
         /// <summary>
         /// Delete data by AlarmMessageId
