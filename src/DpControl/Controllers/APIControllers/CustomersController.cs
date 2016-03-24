@@ -28,27 +28,8 @@ namespace DpControl.APIControllers
 
         [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
-        
 
-        /// <summary>
-        /// Add data
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelStateError());
-            }
-            
-            int customerId =  await _customerRepository.AddAsync(mCustomer);
-            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
-        }
-
-       
+        #region GET
         /// <summary>
         /// Search data by CustomerId
         /// </summary>
@@ -65,6 +46,19 @@ namespace DpControl.APIControllers
                 return HttpNotFound();
             }
             return new ObjectResult(customer);
+        }
+
+        /// <summary>
+        /// Get Related Projects
+        /// </summary>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpGet("{customerId}/Projects")]
+        [EnableQuery]
+        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjects(int customerId)
+        {
+            var result = await _customerRepository.GetProjectsByCustomerId(customerId);
+            return result;
         }
 
         /// <summary>
@@ -104,6 +98,26 @@ namespace DpControl.APIControllers
             var result = await _customerRepository.GetAllAsync();
 
             return result;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            int customerId = await _customerRepository.AddAsync(mCustomer);
+            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
         }
 
         /// <summary>

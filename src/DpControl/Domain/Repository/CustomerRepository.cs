@@ -141,7 +141,18 @@ namespace DpControl.Domain.Repository
 
             return customerSearch;
         }
-        
+
+        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerId(int customerId)
+        {
+            var queryData = _context.Projects
+                .Where(v => v.CustomerId == customerId);
+
+            var result = QueryOperate<Project>.Execute(queryData);
+            var projects = await result.ToListAsync();
+
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(projects);
+            return projectSearch;
+        }
 
         public int UpdateById(int customerId,CustomerUpdateModel mcustomer)
         {
@@ -228,7 +239,8 @@ namespace DpControl.Domain.Repository
 
             await _context.SaveChangesAsync();
         }
-       
+
+        
     }
 
 }
