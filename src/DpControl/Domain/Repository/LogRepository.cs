@@ -14,7 +14,7 @@ namespace DpControl.Domain.Repository
     public class LogRepository : ILogRepository
     {
         ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo;
+        private readonly IUserInfoManagerRepository _userInfoManager;
 
         #region
         public LogRepository()
@@ -26,10 +26,10 @@ namespace DpControl.Domain.Repository
             _context = context;
         }
 
-        public LogRepository(ShadingContext context, IUserInfoRepository userInfo)
+        public LogRepository(ShadingContext context, IUserInfoManagerRepository userInfoManager)
         {
             _context = context;
-            _userInfo = userInfo;
+            _userInfoManager = userInfoManager;
         }
         #endregion
 
@@ -43,7 +43,7 @@ namespace DpControl.Domain.Repository
             if (logDescription == null)
                 throw new ExpectException("Could not find LogDescription data which LogDescriptionId equal to " + mLog.LogDescriptionId);
 
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             var model = new Log
             {
@@ -68,7 +68,7 @@ namespace DpControl.Domain.Repository
             if (logDescription == null)
                 throw new ExpectException("Could not find LogDescription data which LogDescriptionId equal to " + mLog.LogDescriptionId);
 
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
 
             var model = new Log
             {

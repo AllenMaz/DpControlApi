@@ -162,8 +162,9 @@ namespace DpControl
             #region Register Dependency Injection
             services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
-            services.AddScoped<IUserInfoRepository, UserInfoManager>();
+            services.AddScoped<IUserInfoManagerRepository, UserInfoManager>();
 
+            services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();

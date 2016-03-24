@@ -15,7 +15,7 @@ namespace DpControl.Domain.Repository
     {
         ShadingContext _context;
 
-        #region
+        #region construct
         public DeviceRepository()
         {
 

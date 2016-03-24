@@ -15,7 +15,6 @@ namespace DpControl.Domain.Repository
     {
 
         ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo;
 
         #region
         public LogDescriptionRepository()

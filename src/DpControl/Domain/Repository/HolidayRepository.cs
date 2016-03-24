@@ -14,7 +14,7 @@ namespace DpControl.Domain.Repository
     public class HolidayRepository : IHolidayRepository
     {
         ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo;
+        private readonly IUserInfoManagerRepository _userInfoManager;
 
         #region Constructors
         public HolidayRepository()
@@ -25,10 +25,10 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
-        public HolidayRepository(ShadingContext dbContext, IUserInfoRepository userInfo)
+        public HolidayRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
         {
             _context = dbContext;
-            _userInfo = userInfo;
+            _userInfoManager = userInfoManager;
         }
         #endregion
 
@@ -39,7 +39,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + mHoliday.ProjectId);
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             var model = new Holiday
             {
@@ -60,7 +60,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + mHoliday.ProjectId);
 
             //Get UserInfo
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
 
             var model = new Holiday
             {
@@ -162,7 +162,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find data which HolidayId equal to " + holidayId);
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             holiday.Day = mHoliday.Day;
             holiday.Modifier = user.UserName;
@@ -179,7 +179,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find data which HolidayId equal to " + holidayId);
 
             //Get UserInfo
-            var user =await _userInfo.GetUserInfoAsync();
+            var user =await _userInfoManager.GetUserInfoAsync();
 
             holiday.Day = mHoliday.Day;
             holiday.Modifier = user.UserName;

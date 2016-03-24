@@ -14,7 +14,7 @@ namespace DpControl.Domain.Repository
     public class SceneRepository : ISceneRepository
     {
         ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo;
+        private readonly IUserInfoManagerRepository _userInfoManager;
 
         #region Constructors
         public SceneRepository()
@@ -25,10 +25,10 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
-        public SceneRepository(ShadingContext dbContext, IUserInfoRepository userInfo)
+        public SceneRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
         {
             _context = dbContext;
-            _userInfo = userInfo;
+            _userInfoManager = userInfoManager;
         }
         #endregion
 
@@ -45,7 +45,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             var model = new Scene
             {
@@ -73,7 +73,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
             var model = new Scene
             {
                 ProjectId = scene.ProjectId,
@@ -198,7 +198,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which SceneName '" + mScene.SceneName + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             scene.SceneName = mScene.SceneName;
             scene.Enable = mScene.Enable;
@@ -223,7 +223,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user =await _userInfo.GetUserInfoAsync();
+            var user =await _userInfoManager.GetUserInfoAsync();
 
             scene.SceneName = mScene.SceneName;
             scene.Enable = mScene.Enable;

@@ -27,6 +27,7 @@ namespace DpControl.Domain.EFContext
         public DbSet<Scene> Scenes { get; set; }
         public DbSet<SceneSegment> SceneSegments { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

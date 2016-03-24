@@ -14,7 +14,7 @@ namespace DpControl.Domain.Repository
     public class SceneSegmentRepository : ISceneSegmentRepository
     {
         ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo;
+        private readonly IUserInfoManagerRepository _userInfoManager;
 
         #region Constructors
         public SceneSegmentRepository()
@@ -25,10 +25,10 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
-        public SceneSegmentRepository(ShadingContext dbContext, IUserInfoRepository userInfo)
+        public SceneSegmentRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
         {
             _context = dbContext;
-            _userInfo = userInfo;
+            _userInfoManager = userInfoManager;
         }
         #endregion
 
@@ -45,7 +45,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             var model = new SceneSegment
             {
@@ -74,7 +74,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user =await _userInfo.GetUserInfoAsync();
+            var user =await _userInfoManager.GetUserInfoAsync();
             var model = new SceneSegment
             {
                 SceneId = mSceneSegment.SceneId,
@@ -188,7 +188,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
             sceneSegment.StartTime = mSceneSegment.StartTime;
@@ -214,7 +214,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
 
             sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
             sceneSegment.StartTime = mSceneSegment.StartTime;

@@ -18,7 +18,7 @@ namespace DpControl.Domain.Repository
     {
 
         private ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo; 
+        private readonly IUserInfoManagerRepository _userInfoManager; 
 
         #region Constructors
         public CustomerRepository()
@@ -30,10 +30,10 @@ namespace DpControl.Domain.Repository
             _context = dbContext;
         }
 
-        public CustomerRepository(ShadingContext dbContext,IUserInfoRepository userInfo)
+        public CustomerRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
         {
             _context = dbContext;
-            _userInfo = userInfo;
+            _userInfoManager = userInfoManager;
         }
 
         #region Add
@@ -45,7 +45,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '"+customer.CustomerNo +"' already exist in system");
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             var model = new Customer
             {
@@ -69,7 +69,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
 
             var model = new Customer
             {
@@ -168,7 +168,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
-            var user =  _userInfo.GetUserInfo();
+            var user =  _userInfoManager.GetUserInfo();
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
@@ -192,7 +192,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '" + mcustomer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;

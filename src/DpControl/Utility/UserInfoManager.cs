@@ -1,5 +1,4 @@
-﻿using DpControl.Domain.IRepository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +8,7 @@ using DpControl.Utility.Authentication;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using System.Threading;
+using DpControl.Domain.IRepository;
 
 namespace DpControl.Utility
 {
@@ -26,7 +26,8 @@ namespace DpControl.Utility
         }
     }
 
-    public class UserInfoManager : IUserInfoRepository
+
+    public class UserInfoManager : IUserInfoManagerRepository
     {
         private readonly AbstractAuthentication _authentication;
         private readonly IHttpContextAccessor _httpContextAccessor;

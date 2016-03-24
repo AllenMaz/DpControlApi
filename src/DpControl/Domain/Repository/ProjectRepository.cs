@@ -17,7 +17,7 @@ namespace DpControl.Domain.Repository
     {
 
         private ShadingContext _context;
-        private readonly IUserInfoRepository _userInfo;
+        private readonly IUserInfoManagerRepository _userInfoManager;
 
         #region Constructors
         public ProjectRepository()
@@ -29,10 +29,10 @@ namespace DpControl.Domain.Repository
             _context = dbContext;
         }
 
-        public ProjectRepository(ShadingContext dbContext,IUserInfoRepository userInfo)
+        public ProjectRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
         {
             _context = dbContext;
-            _userInfo = userInfo;
+            _userInfoManager = userInfoManager;
         }
 
         #endregion
@@ -49,7 +49,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             var model = new Project
             {
@@ -77,7 +77,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
 
             var model = new Project
             {
@@ -242,7 +242,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfo.GetUserInfo();
+            var user = _userInfoManager.GetUserInfo();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;
@@ -267,7 +267,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfo.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoAsync();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;

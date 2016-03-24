@@ -24,7 +24,7 @@ namespace DpControl.Controllers.APIControllers
         [APIAuthorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(DeviceSearchModel))]
         [HttpGet("{deviceId}", Name = "GetByDeviceIdAsync")]
-        public async Task<IActionResult> GetBySceneIdAsync(int deviceId)
+        public async Task<IActionResult> GetByDeviceIdAsync(int deviceId)
         {
             var device = await _deviceRepository.FindByIdAsync(deviceId);
             if (device == null)
