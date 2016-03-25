@@ -24,6 +24,8 @@ using DpControl.Utility.Authorization;
 using DpControl.Utility;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Cors;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace DpControl
 {
@@ -79,7 +81,19 @@ namespace DpControl
                 );
             });
 
-            services.AddMvc();
+            //services.AddMvc();
+            services.AddMvc()
+            .AddJsonOptions(options =>
+            {
+                
+                var settings = options.SerializerSettings;
+                settings.Formatting = Formatting.Indented; //pretty-print
+                //settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                //settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                //settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //settings.NullValueHandling = NullValueHandling.Ignore;
+            });
+
             //services.Configure<MvcOptions>(options =>
             //{
             //    options.Filters.Add(new CorsAuthorizationFilterFactory("AllowOrigin"));
@@ -208,17 +222,15 @@ namespace DpControl
             // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
 
+            //response Compression :gzip.This middleware must before any other middlewares
+            app.UseMiddleware<CompressionMiddleware>();
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
-
-            
-
-            //Identity
-            app.UseIdentity();
-            
-
             //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
+            
+            //Identity
+            app.UseIdentity();
 
             app.UseStaticFiles();
 

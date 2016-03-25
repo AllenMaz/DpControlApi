@@ -127,14 +127,23 @@
                 <h3>There are some Features:</h3>
                 <ul>
                     <li class="lead">
-                        <strong>expand:</strong>  Expands related entities inline <sup class="tipFont">New</sup>
+                        <strong> Support Gzip compression</strong><sup class="tipFont">New</sup>
+                        <br />
+                        <p>Gzip compression may reduce the bandwidth needed to process a stream to as small as 1/5th 
+                        the size of an uncompressed stream. Request a gzipped stream by connecting with the following HTTP header:
+                        </p>
+                        <code>Accept-Encoding: deflate, gzip</code>
+                        <p>API will respond with a gzipped stream.</p>
+                    </li>
+                    <li class="lead">
+                        <strong>expand:</strong>  Expands related entities inline 
                         <p class="text-lowercase">
                             <a href="/v1/Projects?expand=Customer,Scenes,Groups,Locations">/v1/Projects?expand=Customer,Scenes,Groups,Locations</a>
                         </p>
                     </li>
 
                     <li class="lead">
-                        <strong>select:</strong> Selects which properties to include in the response<sup class="tipFont">New</sup>
+                        <strong>select:</strong> Selects which properties to include in the response
                         <p class="text-lowercase">
                             <a href="/v1/Projects?select=ProjectId,ProjectName,ProjectNo">/v1/Projects?select=ProjectId,ProjectName,ProjectNo</a>
                         </p>
@@ -144,7 +153,7 @@
                     <li class="lead">
                         <strong>filter:</strong> Filters the results, based on a Boolean condition
                         <p class="text-lowercase">
-                            <span class="glyphicon glyphicon-leaf"></span> Filter the Groups(include Locations) which GroupId equal to 1 or 3<sup class="tipFont">New</sup><br />
+                            <span class="glyphicon glyphicon-leaf"></span> Filter the Groups(include Locations) which GroupId equal to 1 or 3<br />
                             <a href="/v1/Groups?filter=GroupId eq 1 or GroupId eq 3&expand=Locations">/v1/Groups?filter=GroupId <strong class="warningFont">eq</strong> 1 <strong class="importFont">or</strong> GroupId <strong class="warningFont">eq</strong> 3&expand=Locations</a>
                         </p>
                         <p class="text-lowercase">
@@ -183,6 +192,7 @@
                     <li class="lead">
                         Support X-HTTP-Method-Override (Via Post to request Put,Patch,Delete)
                         <br />
+                        
                         <a id="aHttpOverrideTitle" href="#" style="cursor:help">Example</a>
                         <div id="divHttpOverride" style="display:none">
                             <img src="~/images/httpOverride.png" style="width:50%" />
