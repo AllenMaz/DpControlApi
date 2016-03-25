@@ -25,13 +25,13 @@ using DpControl.Utility;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Cors;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace DpControl
 {
     public class Startup
     {
-        private string pathToDoc;
+        private string _pathToDoc;
+        private string _apiPath;
         public static IConfigurationRoot Configuration { get; set; }
 
         public Startup(IHostingEnvironment env)
@@ -40,23 +40,23 @@ namespace DpControl
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-                //when publish ,filename mu be certain name
-                //.AddJsonFile($"appsettings.Development.json", optional: true);
-            
+            //when publish ,filename mu be certain name
+            //.AddJsonFile($"appsettings.Development.json", optional: true);
+
             if (env.IsEnvironment("Development"))
             {
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
-            
+
             //使用MapPath或者Combine，Migration数据库的时候会报错？
             //pathToDoc = env.MapPath("DpControl.xml");
-            pathToDoc = "../wwwroot/DpControl.xml";
+            _pathToDoc = "../wwwroot/DpControl.xml";
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
-        
-        
+
+
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
@@ -81,11 +81,10 @@ namespace DpControl
                 );
             });
 
-            //services.AddMvc();
             services.AddMvc()
             .AddJsonOptions(options =>
             {
-                
+
                 var settings = options.SerializerSettings;
                 settings.Formatting = Formatting.Indented; //pretty-print
                 //settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
@@ -94,21 +93,16 @@ namespace DpControl
                 //settings.NullValueHandling = NullValueHandling.Ignore;
             });
 
-            //services.Configure<MvcOptions>(options =>
-            //{
-            //    options.Filters.Add(new CorsAuthorizationFilterFactory("AllowOrigin"));
-            //});
-
             #region Cache
             //Add MemoryCache
             services.AddCaching();
             //Add SqlServerCache
             services.AddSqlServerCache(options =>
-             {
-                 options.ConnectionString = Configuration["SqlsServerCache:ConnectionString"];
-                 options.SchemaName = Configuration["SqlsServerCache:SchemaName"];
-                 options.TableName = Configuration["SqlsServerCache:TableName"];
-             }
+            {
+                options.ConnectionString = Configuration["SqlsServerCache:ConnectionString"];
+                options.SchemaName = Configuration["SqlsServerCache:SchemaName"];
+                options.TableName = Configuration["SqlsServerCache:TableName"];
+            }
             );
             #endregion
             #region  Add Identity
@@ -122,7 +116,8 @@ namespace DpControl
             })
             .AddEntityFrameworkStores<ShadingContext>()
             .AddDefaultTokenProviders();
-            
+
+            _apiPath = Configuration["APISettings:Path"];
             services.Configure<IdentityOptions>(options =>
             {
                 options.Cookies.ApplicationCookie.LoginPath = new PathString("/Account/Login");
@@ -131,7 +126,7 @@ namespace DpControl
                     OnRedirectToLogin = ctx =>
                     {
                         int httpStatusCode = ctx.Response.StatusCode;
-                        if (ctx.Request.Path.StartsWithSegments("/v1") &&
+                        if (ctx.Request.Path.StartsWithSegments(_apiPath) &&
                         (httpStatusCode == (int)HttpStatusCode.OK //使用Identity Authoriz授权失败时httpStatusCode == (int)HttpStatusCode.OK
                         || httpStatusCode == (int)HttpStatusCode.Unauthorized
                         || httpStatusCode == (int)HttpStatusCode.MethodNotAllowed))
@@ -159,26 +154,26 @@ namespace DpControl
                     Title = "DpControl WebApi v1",
                     Description = "A WebApi Test and Document For DpControl",
                     TermsOfService = "None"
-                    
+
                 });
-                options.OperationFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlActionComments(pathToDoc));
+                options.OperationFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlActionComments(_pathToDoc));
                 //options.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
-                
+
             });
 
             services.ConfigureSwaggerSchema(options =>
             {
                 options.DescribeAllEnumsAsStrings = true;
-                options.ModelFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlTypeComments(pathToDoc));
+                options.ModelFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlTypeComments(_pathToDoc));
             });
 
             #endregion
             #region Register Dependency Injection
             services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
+            services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<IUserInfoManagerRepository, UserInfoManager>();
 
-            services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
@@ -197,10 +192,10 @@ namespace DpControl
             #endregion
         }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-    {
-            
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -211,7 +206,7 @@ namespace DpControl
                 pathFormat: env.MapPath("Error/Exception.log"),
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}{NewLine}{NewLine}"
                 ).CreateLogger();
-            
+
             loggerFactory.AddSerilog(logWarning);
             #endregion
 
@@ -222,15 +217,22 @@ namespace DpControl
             // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
 
-            //response Compression :gzip.This middleware must before any other middlewares
-            app.UseMiddleware<CompressionMiddleware>();
+            //Response Compression:ZGip, before any other middlewares,
+            app.UseMiddleware<CompressionMiddleware>(new MiddlewareOptions() {
+                Path = _apiPath //for api
+            });
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
             //X-HTTP-Method-Override
-            app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
-            
+            app.UseMiddleware<XHttpHeaderOverrideMiddleware>(new MiddlewareOptions()
+            {
+                Path = _apiPath //for api
+            });
+
             //Identity
             app.UseIdentity();
+            
+            
 
             app.UseStaticFiles();
 
@@ -244,12 +246,12 @@ namespace DpControl
                     name: "default",
                     template: "{controller=Home}/{action=Default}/{id?}");
             });
-            
+
             app.UseSwaggerGen();
 
             app.UseSwaggerUi();
 
-            
+
 
             DbInitialization.Initialize(app.ApplicationServices);
         }

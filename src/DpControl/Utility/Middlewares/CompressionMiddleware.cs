@@ -12,17 +12,19 @@ namespace DpControl.Utility.Middlewares
     public class CompressionMiddleware
     {
         private readonly RequestDelegate _next;
+        private PathString _path;
         const string _header = "Accept-Encoding";
 
-        public CompressionMiddleware(RequestDelegate next)
+        public CompressionMiddleware(RequestDelegate next, MiddlewareOptions options)
         {
             _next = next;
+            _path = options.Path;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
             var httpHeads = httpContext.Request.Headers;
-            if (httpHeads.ContainsKey(_header))
+            if (httpContext.Request.Path.StartsWithSegments(_path) && httpHeads.ContainsKey(_header))
             {
                 var acceptEncoding = httpContext.Request.Headers[_header];
                 if (acceptEncoding.ToString().IndexOf
