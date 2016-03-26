@@ -6,12 +6,10 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface ISceneSegmentRepository
+    public interface ISceneSegmentRepository:IBaseRepository<SceneSegmentAddModel,SceneSegmentUpdateModel,SceneSegmentSearchModel>
     {
-        Task Add(int sceneId, List<MSceneSegment> sceneSegment);
-        Task<IEnumerable<MSceneSegment>> GetAll(int Id);
-        Task Remove(int Id);
-        Task UpdateById(MSceneSegment msceneSegment, int sceneId);
-        Task UpdateSegmentsBySceneId(List<MSceneSegment> segments, int sceneId);
+        #region Relations
+        Task<SceneSubSearchModel> GetSceneBySceneSegmentIdAsync(int sceneSegmentId);
+        #endregion
     }
 }

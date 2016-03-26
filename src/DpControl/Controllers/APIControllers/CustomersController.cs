@@ -1,12 +1,8 @@
 ﻿
 using DpControl.Controllers;
 using DpControl.Utility.Filters;
-using DpControl.Domain.EFContext;
-using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
-using DpControl.Domain.Repository;
-using DpControl.Models;
 using DpControl.Utility;
 using Microsoft.AspNet.Mvc;
 using System;
@@ -16,14 +12,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Caching.SqlServer;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.AspNet.Authorization;
 using DpControl.Utility.Authorization;
+using Microsoft.AspNet.Authorization;
+using DpControl.Utility.Authentication;
+using Microsoft.AspNet.Cors;
 
 namespace DpControl.APIControllers
 {
-
+   
     public class CustomersController : BaseAPIController
     {
         [FromServices]
@@ -32,60 +29,19 @@ namespace DpControl.APIControllers
         [FromServices]
         public IDistributedCache _sqlServerCache { get; set; }
 
-
-
+        
+        #region GET
         /// <summary>
-        /// Search all data
-        /// </summary>
-        /// <returns></returns>
-        [APIAuthorize(Roles ="Public")]
-        [HttpGet]
-        [EnableQuery]
-        [FormatReturnType]
-        public async Task<IEnumerable<MCustomer>> GetAll([FromUri] Query query)
-        {
-            string cacheKey = "CustomerGetAllCache";
-            IEnumerable<MCustomer> result;
-
-            byte[] cacheResult = await _sqlServerCache.GetAsync(cacheKey);
-            if (cacheResult == null)
-            {
-                //如果没有缓存，则从数据库查询数据，并缓存数据
-                result = await _customerRepository.GetAll();
-
-                string jsonResult = JsonHandler.ToJson(result);
-                var value = Encoding.UTF8.GetBytes(jsonResult);
-                await _sqlServerCache.SetAsync(
-                    cacheKey,
-                    value,
-                    new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
-            }
-            else
-            {
-                //如果有缓存，则直接返回缓存数据
-                string cacheResultStr = Encoding.UTF8.GetString(cacheResult);
-                result = JsonHandler.UnJson<IEnumerable<MCustomer>>(cacheResultStr);
-                
-            }
-           
-            
-
-            return result;
-        }
-
-
-        /// <summary>
-        /// Search data by CustomerNo
+        /// Search data by CustomerId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Public")]
-        [HttpGet("{customerNo}",Name = "GetByCustomerNo")]
-        public async Task<IActionResult> GetByCustomerNo(string customerNo)
+        [APIAuthorize(Roles = "Admin,Public")]
+        [EnableQuery(typeof(CustomerSearchModel))]
+        [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
+        public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
         {
-
-            var customer = await _customerRepository.FindByCustomerNo(customerNo);
+            var customer = await _customerRepository.FindByIdAsync(customerId);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -93,21 +49,79 @@ namespace DpControl.APIControllers
             return new ObjectResult(customer);
         }
 
+        #region Relations
+        /// <summary>
+        /// Get Related Projects
+        /// </summary>
+        /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
+        [HttpGet("{customerId}/Projects")]
+        [EnableQuery]
+        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
+        {
+            var result = await _customerRepository.GetProjectsByCustomerIdAsync(customerId);
+            return result;
+        }
+        #endregion
+
+        /// <summary>
+        /// Search all data
+        /// </summary>
+        /// <returns></returns>
+        [APIAuthorize(Roles ="Admin,Public")]
+        [HttpGet]
+        [EnableQuery]
+        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
+        {
+            //string cacheKey = "CustomerGetAllCache";
+            //IEnumerable<CustomerSearchModel> result;
+
+            //byte[] cacheResult = await _sqlServerCache.GetAsync(cacheKey);
+            //if (cacheResult == null)
+            //{
+            //    //如果没有缓存，则从数据库查询数据，并缓存数据
+            //    result = await _customerRepository.GetAllAsync(query);
+
+            //    string jsonResult = JsonHandler.ToJson(result);
+            //    var value = Encoding.UTF8.GetBytes(jsonResult);
+            //    await _sqlServerCache.SetAsync(
+            //        cacheKey,
+            //        value,
+            //        new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10))
+            //        .SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+            //}
+            //else
+            //{
+            //    //如果有缓存，则直接返回缓存数据
+            //    string cacheResultStr = Encoding.UTF8.GetString(cacheResult);
+            //    result = JsonHandler.UnJson<IEnumerable<CustomerSearchModel>>(cacheResultStr);
+
+            //}
+
+            var result = await _customerRepository.GetAllAsync();
+
+            return result;
+        }
+
+        #endregion
+
+        
         /// <summary>
         /// Add data
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] MCustomer mCustomer)
+        public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(); 
+                return HttpBadRequest(ModelStateError());
             }
 
-            await _customerRepository.Add(mCustomer);
-            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
+            int customerId = await _customerRepository.AddAsync(mCustomer);
+            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
         }
 
         /// <summary>
@@ -116,16 +130,17 @@ namespace DpControl.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="customer"></param>
         /// <returns></returns>
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] MCustomer mCustomer)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] CustomerUpdateModel mCustomer)
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest();
+                return HttpBadRequest(ModelStateError());
             }
-            mCustomer.CustomerId = id;
-            await _customerRepository.Update(mCustomer);
-            return CreatedAtRoute("GetByCustomerNo", new { controller = "Customers", customerNo = mCustomer.CustomerNo }, mCustomer);
+
+            var customerId = await _customerRepository.UpdateByIdAsync(id,mCustomer);
+            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
 
         }
 
@@ -133,12 +148,12 @@ namespace DpControl.APIControllers
         /// Delete data by CustomerNo
         /// </summary>
         /// <param name="customerId"></param>
+        [APIAuthorize(Roles = "Admin,Public")]
         [HttpDelete("{customerId}")]
-        public async Task DeleteByCustomerId(int customerId)
+        public async Task<IActionResult> DeleteByCustomerIdAsync(int customerId)
         {
-            await _customerRepository.RemoveById(customerId);
-
+            await _customerRepository.RemoveByIdAsync(customerId);
+            return Ok();
         }
     }
-    
 }

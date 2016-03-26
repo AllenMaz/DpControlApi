@@ -12,6 +12,7 @@ using System.Text;
 using DpControl.Models;
 using DpControl.Utility;
 using Microsoft.Extensions.Logging;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Utility.ExceptionHandler
 {
@@ -41,20 +42,22 @@ namespace DpControl.Utility.ExceptionHandler
                 var error = context.Features.Get<IExceptionHandlerFeature>();
                 if (error != null)
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    
                     var exceptionType = error.Error.GetType();
                     var exceptionMessage = error.Error.Message;
-                    
-                    if(exceptionType != typeof(Exception))
+
+                    int httpStatusCode = (int)HttpStatusCode.BadRequest;
+                    if (exceptionType != typeof(ExpectException))
                     {
+                        httpStatusCode = (int)HttpStatusCode.InternalServerError;
                         //系统异常
-                        exceptionMessage = "System is abnormal ！Error：" + exceptionMessage;
+                        exceptionMessage = "System is abnormal !";
                         //记录异常日志
-                        _logger.LogWarning(exceptionMessage ,error.Error);
+                        _logger.LogError(exceptionMessage,error.Error);
+                            
                     }
-                    int httpStatusCode = (int)HttpStatusCode.InternalServerError;
-                    string errMessage = ResponseHandler.ReturnError(httpStatusCode, exceptionMessage);
-                    
+                    string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { exceptionMessage });
+                    context.Response.StatusCode = httpStatusCode;
                     await context.Response.WriteAsync(errMessage, Encoding.UTF8);
                     
                 }

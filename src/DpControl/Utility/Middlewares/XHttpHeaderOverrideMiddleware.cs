@@ -14,17 +14,20 @@ namespace DpControl.Utility.Middlewares
     public class XHttpHeaderOverrideMiddleware
     {
         private readonly RequestDelegate _next;
+        private PathString _path;
         readonly string[] _methods = { "DELETE", "HEAD", "PUT" };
         const string _header = "X-HTTP-Method-Override";
 
-        public XHttpHeaderOverrideMiddleware(RequestDelegate next)
+        public XHttpHeaderOverrideMiddleware(RequestDelegate next,MiddlewareOptions options)
         {
             _next = next;
+            _path = options.Path;
         }
         public Task Invoke(HttpContext httpContext)
         {
             //如果是post请求，且请求头包含X-HTTP-Method-Override
-            if (httpContext.Request.Method == HttpMethod.Post.Method
+            if (httpContext.Request.Path.StartsWithSegments(_path)
+                && httpContext.Request.Method == HttpMethod.Post.Method
                 && httpContext.Request.Headers.ContainsKey(_header))
             {
                 string headerValue = httpContext.Request.Headers[_header];

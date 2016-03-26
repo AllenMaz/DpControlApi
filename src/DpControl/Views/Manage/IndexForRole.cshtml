@@ -1,174 +1,225 @@
 ﻿
+<style>
+    .SearchArea 
+    {
+    }
+    .SearchArea label{
+		float: left;
+		margin-left: 5px;
+		margin-top: 5px;
+		width: 80px;
+		text-align: right;
+	}
+	.SearchArea input{
+		float: left;
+		margin-left: 10px;
+	}
 
-<div class="container">
-    <div class="panel-group" id="divSearch">
-        <div class="panel panel-danger">
-            <div>
-                <div style="float:left;">
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group has-success">
-                            <label class="col-sm-1 control-label text-right fa-align-center">Name</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" id="name">
-                            </div>
+</style>
 
-                            <label class="col-sm-3 control-label text-right">NormalizedName</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" id="normalizedName">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div style="float:right;">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#divSearch"
-                                href="#divAdvancedSearch" class="glyphicon glyphicon-chevron-up">
-                                高级检索
-                            </a>
-                        </h4>
-                    </div>
-                </div>
-                <div style="clear:both;"></div>
+<div class="SearchArea">
+    <div class="SearchRow">
+        <div style="float:left;">
+            <label>Name:</label>
+            <input type="text" name="tbSearchName" class="input-sm" placeholder="Name" />
+        </div>
+        <div style="float:right">
+            <a class="btn btn-primary" href="#" id="btnSearch">Search</a>
+        </div>
+        <div style="clear:both;"></div>
 
-            </div>
-            
-            <div id="divAdvancedSearch" class="panel-collapse collapse">
-                <div class="panel-body">
-                    添加其余查询条件
-                </div>
+    </div>
+</div>
+<div id="toolbar">
+    <a class="btn btn-primary" href='#RoleAddModel' data-toggle='modal'>
+        <span class="iconfa-book">Add</span>
+    </a>
+    <a class="btn btn-info" href='#' id="btnEdit">
+        <span class="iconfa-pencil">Edit</span>
+    </a>
+    <a class="btn btn-primary" href='#' id="btnDelete">
+        <span class="iconfa-delete">Delete</span>
+    </a>
+
+</div>
+
+<table id="tableRole" class="table table-bordered">
+    
+</table>
+
+<!--Add-->
+<div aria-hidden="false" aria-labelledby="myModalLabel" data-backdrop="static" role="dialog" tabindex="-1" class="modal hide fade in" id="RoleAddModel" style="width:500px;">
+    <div class="modal-header">
+        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">&times;</button>
+        <h3 id="myModalLabel">Add Roles</h3>
+    </div>
+    <div class="modal-body" style="height:200px;">
+        
+        <div>
+            <div class="span4">
+                <label class="modallabel">Name</label>
+                <span class="field">
+                    <input type="text" id="tbAddName" class="input-large">
+                </span>
+                <br />
             </div>
         </div>
     </div>
-    <div id="toolbar">
-        <button id="btnAdd" class="btn btn-primary">
-            <i class="glyphicon glyphicon-plus"></i>Add
-        </button>
-        <button id="btnEdit" class="btn btn-success">
-            <i class="glyphicon glyphicon-plus"></i>Edit
-        </button>
-        <button id="btnDelete" class="btn btn-danger">
-            <i class="glyphicon glyphicon-remove"></i> Delete
-        </button>
-        
+    <div class="modal-footer">
+        <button data-dismiss="modal" class="btn">取消</button>
+        <button class="btn btn-primary" id="btnAdd">保存</button>
     </div>
-    <table id="table"></table>
 </div>
+<!--#myModal-->
 
-    
-<!--Script要放在HTML标签后，才能将值绑定到标签-->
-    <script type="text/javascript">
 
-    $(document).ready(function () {
+<script>
+
+    jQuery(document).ready(function () {
         InitTable();
-        InitToolBarButton();
+        InitToolBarButtons();
+        InitAddButtons();
+
+        //model hide event 
+        jQuery('#RoleAddModel').on('hide.bs.modal', function () {
+            debugger
+            // clear input content
+            jQuery("#tbAddName").val("");
+        });
     });
 
-        
+    jQuery("#checkTableAll").click(function () {
+        if (this.checked) {
+            jQuery("[name = checkTableRows]:checkbox").prop("checked", true);
 
-    function InitTable()
-    {
-        $('#table').bootstrapTable({
-            height: $(document.body).height() - $("#divSearch").height() - $("#toolbar").height(),
-            method: 'post',                 //The method type to request remote data.
-            url: '/Manage/GetRolePageData',
-            dataType: "json",               //The type of data that you are expecting back from the server.
-            contentType:'application/json',
-            pagination: true,               //True to show a pagination toolbar on table bottom.
-            pageSize: 10,                   //初始化每页显示几条
-            pageNumber:1,                   //初始化在第几页
-            pageList: [10,25,50,100,200,'All'],
-            sidePagination: "server",       //服务端请求
-            idField:'Id',
-            toolbar:'#toolbar',
-            showRefresh:true,
-            search:true,
-            queryParams: ConstructQueryParams,
-            // queryParamsType: "limit",
-            locale:'en-US',
-            columns: [{
-                checkbox: true
-            },
-            {
-                field: 'Id',
-                title: 'Id',
-                visible:false
-            },
-            {
-                field: 'Name',
-                title: 'Name'
-            },
-            {
-                field: 'NormalizedName',
-                title: 'NormalizedName'
+        } else {
+            jQuery("[name = checkTableRows]:checkbox").prop("checked", false);
+        }
+    });
+
+    function InitTable() {
+        jQuery('#tableRole').dataTable({
+            "bPaginate": true, //翻页功能  
+            "bSort": false, //排序功能   
+            /*默认排序设置*/
+            // "aaSorting": [[0, "desc"]],//设置第1个元素为默认排序  
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": "/Manage/GetRolePageData",
+            "fnServerData": retrieveData,    //发送额外的数据到服务器
+            "bAutoWidth": true,                    //自动计算列宽度 
+            //"iDisplayLength": 20,                    //每页显示8条数据   
+            "aLengthMenu": [[10,25, 50, 100, -1], ["10","25", "50", "100", "All"]],
+            "sPaginationType": "full_numbers", //分页风格
+            //"sDom": '<"top"lpf>rt<"bottom"filp><"clear">', //
+            //"sScrollX": "200px",
+            "sScrollY": document.body.clientHeight - jQuery(".SearchArea").height() - jQuery("#toolbar").height() ,
+            //"bScrollCollapse": true,
+            "bFilter":false,
+            "aoColumns": [
+                {
+                    "sTitle":"<input type='checkbox' id='checkTableAll'>",
+                    "mDataProp": "Id",
+                    "fnRender": function (obj) {
+                        var idValue = obj.aData.Id;
+                        return "<input type='checkbox' name='checkTableRows' value='" + idValue + "'>"
+                    },
+                    "sWidth": '1%'
+
+                },
+                {
+                    "sTitle": "Rows",
+                    "mData": "ConcurrencyStamp",
+                    "fnRender": function (obj) {
+                        var rowIndex = obj.iDataRow + 1;
+                        return rowIndex;
+                    },
+                    "sWidth": '1%'
+
+                },
+                {
+                    "sTitle": "Name",
+                    "mDataProp": "Name",
+                    "sWidth": '20%'
+                },
+                {
+                    "sTitle": "NormalizedName",
+                    "mDataProp": "NormalizedName"
+                }
+            ],
+            "oLanguage": {
+                "sLengthMenu": "Show _MENU_ entries",
+                "sZeroRecords": "没有检索到数据",
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+                "sInfoEmtpy": "No entities",
+                "sProcessing": "Data Loading...",
+                "sSearch": "Search：",
+                "oPaginate": {
+                    "sFirst": "First",
+                    "sPrevious": "Previous",
+                    "sNext": "Next",
+                    "sLast": "Last"
+                }
             }
-            ]
+
         });
     }
 
-    function ConstructQueryParams(param)
-    {
-        var params = {
-            limit: param.limit, //页面大小
-            offset:param.offset,//偏移数量
-            page: param.offset/param.limit, //页码
+    function retrieveData(sSource, aoData, fnCallback) {
+        // 将客户名称加入参数数组  
+        aoData.push({ "name": "customerName", "value": "asdas" });//添加自己的额外参数  
 
-        };
-        return params;
+        jQuery.ajax({
+            "type": "post",
+            //"contentType": "application/json",
+            "url": sSource,
+            "dataType": "json",
+            "data": aoData,
+            "success": function (resp) {
+
+                fnCallback(resp);
+
+            }
+        });
     }
 
-    function InitToolBarButton()
-    {
-        $("#btnAdd").click(function(){
-            location.href="/Manage/CreateRole";
-        });
+    function Search() {
+        var table = jQuery('#tableRole').DataTable();
+        table.fnDraw();
+    }
 
-        $("#btnEdit").click(function () {
-            layer.alert("Edit is not enabled", {
-                skin: 'layui-layer-molv'
-                           , closeBtn: 0
-                           , shift: 5 //动画类型
-            });
-        });
-
-        $("#btnDelete").click(function(){
-
-            var selections = $('#table').bootstrapTable('getSelections');
-            if(selections.length == 0)
+    //region Add model 
+    function InitAddButtons() {
+        jQuery("#btnAdd").click(function () {
+            var roleName = jQuery("#tbAddName").val();
+            if (roleName.trim() == "")
             {
-                layer.alert("Please select records", {
+                layer.alert("Please Input Role Name", {
                     skin: 'layui-layer-molv'
-                            ,closeBtn: 0
-                            ,shift: 5 //动画类型
+                          , closeBtn: 0
+                          , shift: 5 //动画类型
                 });
-                return ;
+                return;
             }
 
-            var roleIds =[];
-            for(var i=0;i<selections.length;i++)
-            {
-                var id = selections[i].Id;
-                roleIds.push(id);
-            }
-            //delete records
-            var jsonRoleIds = JSON.stringify(roleIds);
-            $.ajax({
-                type: "get",//使用get方法访问后台
+            jQuery.ajax({
+                type: "post",//使用post方法访问后台
                 dataType: "json",//返回json格式的数据
-                url: "/Manage/BachDeleteByRoleId",
-                data: {"RoleIds":jsonRoleIds},
-                async:false,
-                success: function(message){
-                    if(message.Success)
-                    {
+                url: "/Manage/CreateRole",
+                data: { "RoleName":roleName },
+                async: false,
+                success: function (message) {
+                    if (message.Success) {
+                        //clost model
+                        CloseAddModel();
                         //重新加载
-                        $('#table').bootstrapTable('refresh');
-                    }else{
+                        Search();
+                    } else {
 
                         layer.alert(message.Content, {
                             skin: 'layui-layer-lan'
-                            ,closeBtn: 0
-                            ,shift: 4 //动画类型
+                            , closeBtn: 0
+                            , shift: 4 //动画类型
                         });
 
                     }
@@ -178,4 +229,74 @@
         });
     }
 
+    //clost model
+    function CloseAddModel() {
+
+        jQuery('#RoleAddModel').modal('hide');
+    }
+
+    
+    //endregion
+
+
+    function InitToolBarButtons() {
+        jQuery("#btnSearch").click(function () {
+            Search();
+        });
+
+        
+
+        jQuery("#btnEdit").click(function () {
+            layer.alert("Edit is not enabled", {
+                skin: 'layui-layer-molv'
+                           , closeBtn: 0
+                           , shift: 5 //动画类型
+            });
+        });
+
+        jQuery("#btnDelete").click(function () {
+
+            var checkedItems = jQuery('input:checkbox[name="checkTableRows"]:checked');
+            if (checkedItems.length == 0) {
+                layer.alert("Please select records", {
+                    skin: 'layui-layer-molv'
+                            , closeBtn: 0
+                            , shift: 5 //动画类型
+                });
+                return;
+            }
+
+            var roleIds = [];
+            checkedItems.each(function () //multiple checkbox的name  
+            {
+                var id = jQuery(this).val();
+                roleIds.push(id);
+            });
+
+            //delete records
+            var jsonRoleIds = JSON.stringify(roleIds);
+            jQuery.ajax({
+                type: "get",//使用get方法访问后台
+                dataType: "json",//返回json格式的数据
+                url: "/Manage/BachDeleteByRoleId",
+                data: { "RoleIds": jsonRoleIds },
+                async: false,
+                success: function (message) {
+                    if (message.Success) {
+                        //重新加载
+                        Search();
+                    } else {
+
+                        layer.alert(message.Content, {
+                            skin: 'layui-layer-lan'
+                            , closeBtn: 0
+                            , shift: 4 //动画类型
+                        });
+
+                    }
+
+                }
+            });
+        });
+    }
 </script>

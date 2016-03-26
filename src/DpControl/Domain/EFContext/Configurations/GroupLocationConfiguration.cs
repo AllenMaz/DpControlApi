@@ -12,11 +12,13 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public GroupLocationConfiguration(EntityTypeBuilder<GroupLocation> entityBuilder)
         {
-            entityBuilder.ToTable("GroupLocations", "ControlSystem");
+            entityBuilder.ToTable("GroupLocations");
             entityBuilder.HasKey(gl => gl.GroupLocationId);
 
-            entityBuilder.HasOne(gl => gl.Group).WithMany(g => g.GroupLocations).IsRequired(false);
-            entityBuilder.HasOne(gl => gl.Location).WithMany(g => g.GroupLocations).IsRequired(false);
+            entityBuilder.HasOne(gl => gl.Group).WithMany(gl => gl.GroupLocations)
+                .HasForeignKey(gl=>gl.GroupId);
+            entityBuilder.HasOne(gl => gl.Location).WithMany(gl => gl.GroupLocations)
+                .HasForeignKey(gl=>gl.LocationId);
         }
     }
 }

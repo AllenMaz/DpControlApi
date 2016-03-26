@@ -10,7 +10,7 @@ using DpControl.Domain.EFContext;
 using DpControl.Utility.ExceptionHandler;
 using DpControl.Utility.Middlewares;
 using Microsoft.AspNet.Identity.EntityFramework;
-using DpControl.Domain.Models;
+using DpControl.Domain.Entities;
 using DpControl.Utility.Authentication;
 using Serilog.Core;
 using Serilog;
@@ -20,12 +20,18 @@ using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
 using System.Net;
+using DpControl.Utility.Authorization;
+using DpControl.Utility;
+using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Cors;
+using Newtonsoft.Json;
 
 namespace DpControl
 {
     public class Startup
     {
-        private string pathToDoc;
+        private string _pathToDoc;
+        private string _apiPath;
         public static IConfigurationRoot Configuration { get; set; }
 
         public Startup(IHostingEnvironment env)
@@ -34,6 +40,8 @@ namespace DpControl
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            //when publish ,filename mu be certain name
+            //.AddJsonFile($"appsettings.Development.json", optional: true);
 
             if (env.IsEnvironment("Development"))
             {
@@ -43,7 +51,7 @@ namespace DpControl
 
             //使用MapPath或者Combine，Migration数据库的时候会报错？
             //pathToDoc = env.MapPath("DpControl.xml");
-            pathToDoc = "../wwwroot/DpControl.xml";
+            _pathToDoc = "../wwwroot/DpControl.xml";
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -58,19 +66,33 @@ namespace DpControl
             services.AddEntityFramework()
                 .AddSqlServer();
 
-            var mvcBuilder = services.AddMvc(config =>
+            //Corss Origin Resource Sharing
+            services.AddCors(options =>
             {
-                // config.Filters.Add(new DigestAuthorizationAttribute());
+                options.AddPolicy("AllowAllOrigin",
+                    builder => builder.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowCredentials()
+                );
+                options.AddPolicy("RefuseAllOrigin",
+                    builder => builder.WithOrigins()
+                              .DisallowCredentials()
+                );
             });
-            #region 增加支持XML Formatter
-            //mvcBuilder.AddXmlDataContractSerializerFormatters();
 
-            //services.Configure<MvcOptions>(options =>
-            //{
-            //    options.Filters.Add(new GlobalExceptionFilter());
+            services.AddMvc()
+            .AddJsonOptions(options =>
+            {
 
-            //});
-            #endregion
+                var settings = options.SerializerSettings;
+                settings.Formatting = Formatting.Indented; //pretty-print
+                //settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                //settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                //settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //settings.NullValueHandling = NullValueHandling.Ignore;
+            });
+
             #region Cache
             //Add MemoryCache
             services.AddCaching();
@@ -84,10 +106,18 @@ namespace DpControl
             );
             #endregion
             #region  Add Identity
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonLetterOrDigit = false;
+                options.Password.RequireUppercase = false;
+            })
             .AddEntityFrameworkStores<ShadingContext>()
             .AddDefaultTokenProviders();
 
+            _apiPath = Configuration["APISettings:Path"];
             services.Configure<IdentityOptions>(options =>
             {
                 options.Cookies.ApplicationCookie.LoginPath = new PathString("/Account/Login");
@@ -96,7 +126,7 @@ namespace DpControl
                     OnRedirectToLogin = ctx =>
                     {
                         int httpStatusCode = ctx.Response.StatusCode;
-                        if (ctx.Request.Path.StartsWithSegments("/v1") &&
+                        if (ctx.Request.Path.StartsWithSegments(_apiPath) &&
                         (httpStatusCode == (int)HttpStatusCode.OK //使用Identity Authoriz授权失败时httpStatusCode == (int)HttpStatusCode.OK
                         || httpStatusCode == (int)HttpStatusCode.Unauthorized
                         || httpStatusCode == (int)HttpStatusCode.MethodNotAllowed))
@@ -124,27 +154,41 @@ namespace DpControl
                     Title = "DpControl WebApi v1",
                     Description = "A WebApi Test and Document For DpControl",
                     TermsOfService = "None"
+
                 });
-                options.OperationFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlActionComments(pathToDoc));
+                options.OperationFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlActionComments(_pathToDoc));
+                //options.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
+
             });
 
             services.ConfigureSwaggerSchema(options =>
             {
                 options.DescribeAllEnumsAsStrings = true;
-                options.ModelFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlTypeComments(pathToDoc));
+                options.ModelFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlTypeComments(_pathToDoc));
             });
 
             #endregion
             #region Register Dependency Injection
-            services.AddSingleton<ShadingContext, ShadingContext>();
+            services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
-            services.AddSingleton<ICustomerRepository, CustomerRepository>();
-            services.AddSingleton<IGroupRepository, GroupRepository>();
-            services.AddSingleton<ILocationRepository, LocationRepository>();
-            services.AddSingleton<IOperatorRepository, OperatorRepository>();
-            services.AddSingleton<ISceneRepository, SceneRepository>();
-            services.AddSingleton<ISceneSegmentRepository, SceneSegmentRepository>();
+            services.AddScoped<IUserInfoRepository, UserInfoRepository>();
+            services.AddScoped<IUserInfoManagerRepository, UserInfoManager>();
 
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<ISceneRepository, SceneRepository>();
+            services.AddScoped<ISceneSegmentRepository, SceneSegmentRepository>();
+            services.AddScoped<IGroupLocationRepository, GroupLocationRepository>();
+            services.AddScoped<IUserGroupRepository, UserGroupRepository>();
+            services.AddScoped<IUserLocationRepository, UserLocationRepository>();
+            services.AddScoped<IAlarmRepository, AlarmRepository>();
+            services.AddScoped<IAlarmMessageRepository, AlarmMessageRepository>();
+            services.AddScoped<IHolidayRepository, HolidayRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
+            services.AddScoped<ILogDescriptionRepository, LogDescriptionRepository>();
             #endregion
         }
 
@@ -157,9 +201,9 @@ namespace DpControl
 
             #region Serilog Logging
             var logWarning = new Serilog.LoggerConfiguration()
-                .MinimumLevel.Warning()
+                .MinimumLevel.Error()
                 .WriteTo.RollingFile(
-                pathFormat: env.MapPath("Warning/Exception.log"),
+                pathFormat: env.MapPath("Error/Exception.log"),
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}{NewLine}{NewLine}"
                 ).CreateLogger();
 
@@ -173,23 +217,34 @@ namespace DpControl
             // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
 
+            //Response Compression:ZGip, before any other middlewares,
+            app.UseMiddleware<CompressionMiddleware>(new MiddlewareOptions() {
+                Path = _apiPath //for api
+            });
             //捕获全局异常消息
             app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+            //X-HTTP-Method-Override
+            app.UseMiddleware<XHttpHeaderOverrideMiddleware>(new MiddlewareOptions()
+            {
+                Path = _apiPath //for api
+            });
 
             //Identity
             app.UseIdentity();
-
-            //X-HTTP-Method-Override
-            app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
+            
+            
 
             app.UseStaticFiles();
+
+            //before UseMvc
+            app.UseCors("AllowAllOrigin");
 
             //app.UseMvc();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Default}/{id?}");
             });
 
             app.UseSwaggerGen();

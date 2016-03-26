@@ -6,13 +6,12 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface IGroupRepository
+    public interface IGroupRepository:IBaseRepository<GroupAddModel,GroupUpdateModel,GroupSearchModel>
     {
-        Task Add(string groupName, string ProjectNo);
-        Task<IEnumerable<MGroup>> GetAll(string projectNo);
-        Task RemoveByName(string groupName, string projectNo);
-        Task RemoveById(int Id);
-        Task Update(MGroup mGroup, string projectNo);
-        Task AddLocationToGroup(int locationId, int groupId);
+        #region Relations
+        Task<SceneSubSearchModel> GetSceneByGroupIdAsync(int groupId);
+        Task<ProjectSubSearchModel> GetProjectByGroupIdAsync(int groupId);
+        Task<IEnumerable<LocationSubSearchModel>> GetLocationsByGroupIdAsync(int groupId);
+        #endregion
     }
 }   

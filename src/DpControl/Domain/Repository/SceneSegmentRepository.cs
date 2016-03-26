@@ -7,12 +7,14 @@ using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Domain.Repository
 {
     public class SceneSegmentRepository : ISceneSegmentRepository
     {
         ShadingContext _context;
+        private readonly IUserInfoManagerRepository _userInfoManager;
 
         #region Constructors
         public SceneSegmentRepository()
@@ -23,119 +25,208 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
+        public SceneSegmentRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
+        {
+            _context = dbContext;
+            _userInfoManager = userInfoManager;
+        }
         #endregion
 
-        public async Task Add(int sceneId, List<MSceneSegment> segments)
+        public int Add(SceneSegmentAddModel mSceneSegment)
         {
-            if (sceneId == 0 || segments == null)
-            {
-                throw new ArgumentNullException();
-            }
+            var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == mSceneSegment.SceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
+            
+            //SequenceNo must be unique
+            var checkData = _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo equal to '" + mSceneSegment.SequenceNo + "' already exist in system");
 
-            // create new Group
-            for (int i= 0;i< segments.OrderBy(s => s.SequenceNo).ToList().Count; i++)
+
+            //Get UserInfo
+            var user = _userInfoManager.GetUserInfo();
+
+            var model = new SceneSegment
             {
-                _context.SceneSegments.Add(new SceneSegment
-                {
-                    SequenceNo = i + 1,
-                    StartTime = segments.ElementAt(i).StartTime,
-                    Volumn = segments.ElementAt(i).Volumn,
-                    SceneId = sceneId,
-                    ModifiedDate = DateTime.Now
-                });
-            }
+                SceneId = mSceneSegment.SceneId,
+                SequenceNo = mSceneSegment.SequenceNo,
+                StartTime = mSceneSegment.StartTime,
+                Volumn = mSceneSegment.Volumn,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+            _context.SceneSegments.Add(model);
+            _context.SaveChanges();
+            return model.SceneSegmentId;
+        }
+
+        public async Task<int> AddAsync(SceneSegmentAddModel mSceneSegment)
+        {
+            var scene = _context.Scenes.FirstOrDefault(c => c.SceneId == mSceneSegment.SceneId);
+            if (scene == null)
+                throw new ExpectException("Could not find Scene data which SceneId equal to " + mSceneSegment.SceneId);
+
+            //SequenceNo must be unique
+            var checkData = await _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo equal to '" + mSceneSegment.SequenceNo + "' already exist in system");
+
+
+            //Get UserInfo
+            var user =await _userInfoManager.GetUserInfoAsync();
+            var model = new SceneSegment
+            {
+                SceneId = mSceneSegment.SceneId,
+                SequenceNo = mSceneSegment.SequenceNo,
+                StartTime = mSceneSegment.StartTime,
+                Volumn = mSceneSegment.Volumn,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+            _context.SceneSegments.Add(model);
+            await _context.SaveChangesAsync();
+            return model.SceneSegmentId;
+        }
+
+        public SceneSegmentSearchModel FindById(int sceneSegmentId)
+        {
+            var result = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId);
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
+
+            var sceneSegment = result.FirstOrDefault();
+            var sceneSegmentSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegment);
+
+            return sceneSegmentSearch;
+        }
+
+        public async Task<SceneSegmentSearchModel> FindByIdAsync(int sceneSegmentId)
+        {
+            var result = _context.SceneSegments.Where(v => v.SceneSegmentId == sceneSegmentId);
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
+
+            var sceneSegment = await result.FirstOrDefaultAsync();
+            var sceneSegmentSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegment);
+
+            return sceneSegmentSearch;
+            
+        }
+
+        public IEnumerable<SceneSegmentSearchModel> GetAll()
+        {
+            var queryData = from S in _context.SceneSegments
+                            select S;
+
+            var result = QueryOperate<SceneSegment>.Execute(queryData);
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
+
+            //以下执行完后才会去数据库中查询
+            var sceneSegments = result.ToList();
+            var sceneSegmentsSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegments);
+
+            return sceneSegmentsSearch;
+        }
+
+        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync()
+        {
+            var queryData = from S in _context.SceneSegments
+                            select S;
+
+            var result = QueryOperate<SceneSegment>.Execute(queryData);
+            result = (IQueryable<SceneSegment>)ExpandOperator.ExpandRelatedEntities<SceneSegment>(result);
+
+            //以下执行完后才会去数据库中查询
+            var sceneSegments = await result.ToListAsync();
+
+            var sceneSegmentsSearch = SceneSegmentOperator.SetSceneSegmentSearchModelCascade(sceneSegments);
+
+            return sceneSegmentsSearch;
+        }
+
+        public async Task<SceneSubSearchModel> GetSceneBySceneSegmentIdAsync(int sceneSegmentId)
+        {
+            var sceneSegment =await _context.SceneSegments
+                    .Include(s => s.Scene)
+                    .Where(s => s.SceneSegmentId == sceneSegmentId)
+                    .FirstOrDefaultAsync();
+            var scene = sceneSegment == null ? null : sceneSegment.Scene;
+            var sceneSearch = SceneOperator.SetSceneSubSearchModel(scene);
+            return sceneSearch;
+        }
+
+        public void RemoveById(int sceneSegmentId)
+        {
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
+
+            _context.SceneSegments.Remove(sceneSegment);
+            _context.SaveChanges();
+        }
+
+        public async Task RemoveByIdAsync(int sceneSegmentId)
+        {
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
+
+            _context.SceneSegments.Remove(sceneSegment);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<MSceneSegment>> GetAll(int Id)
+        public int UpdateById(int sceneSegmentId, SceneSegmentUpdateModel mSceneSegment)
         {
-            if (Id == 0)
-            {
-                throw new ArgumentNullException();
-            }
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
 
-            return await _context.SceneSegments.Where(ss=>ss.SceneId==Id).OrderBy(s=>s.SequenceNo).Select(s => new MSceneSegment
-            {
-                SceneSegmentId=s.SceneSegmentId,
-                SequenceNo =s.SequenceNo,
-                StartTime=s.StartTime,
-                Volumn=s.Volumn
-            })
-            .ToListAsync<MSceneSegment>();
+            //SequenceNo must be unique
+            var checkData = _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo
+                                                        && s.SceneSegmentId != sceneSegmentId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo '" + mSceneSegment.SequenceNo + "' already exist in system");
+
+
+            //Get UserInfo
+            var user = _userInfoManager.GetUserInfo();
+
+            sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
+            sceneSegment.StartTime = mSceneSegment.StartTime;
+            sceneSegment.Volumn = mSceneSegment.Volumn;
+            sceneSegment.Modifier = user.UserName;
+            sceneSegment.ModifiedDate = DateTime.Now;
+
+             _context.SaveChanges();
+            return sceneSegment.SceneSegmentId;
         }
 
-        // remove segment by SegmentId
-        public async Task Remove(int Id)
+        public async Task<int> UpdateByIdAsync(int sceneSegmentId, SceneSegmentUpdateModel mSceneSegment)
         {
-            if (Id == 0)
-            {
-                throw new ArgumentNullException();
-            }
+            var sceneSegment = _context.SceneSegments.FirstOrDefault(c => c.SceneSegmentId == sceneSegmentId);
+            if (sceneSegment == null)
+                throw new ExpectException("Could not find data which SceneSegmentId equal to " + sceneSegmentId);
 
-            var toDelete = new SceneSegment { SceneId = Id };
-            _context.SceneSegments.Attach(toDelete);
-            _context.SceneSegments.Remove(toDelete);
-            await _context.SaveChangesAsync();
-        }
-        /// <summary>
-        /// update a single segment by segmentId
-        /// </summary>
-        /// <param name="msceneSegment"></param>
-        /// <param name="sceneId"></param>
-        /// <returns></returns>
-        public async Task UpdateById(MSceneSegment msceneSegment, int sceneId)
-        {
-            if(sceneId==0 || msceneSegment == null)
-            {
-                throw new ArgumentNullException();
-            }
+            //SequenceNo must be unique
+            var checkData = await _context.SceneSegments.Where(s => s.SequenceNo == mSceneSegment.SequenceNo
+                                                        && s.SceneSegmentId != sceneSegmentId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which SequenceNo '" + mSceneSegment.SequenceNo + "' already exist in system");
 
-            var _single = _context.SceneSegments.Where(s => s.SceneSegmentId == msceneSegment.SceneSegmentId).Single();
 
-            _single.SequenceNo = msceneSegment.SequenceNo;
-            _single.StartTime = msceneSegment.StartTime;
-            _single.Volumn = msceneSegment.Volumn;
-            _single.SceneId = sceneId;
+            //Get UserInfo
+            var user = await _userInfoManager.GetUserInfoAsync();
+
+            sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
+            sceneSegment.StartTime = mSceneSegment.StartTime;
+            sceneSegment.Volumn = mSceneSegment.Volumn;
+            sceneSegment.Modifier = user.UserName;
+            sceneSegment.ModifiedDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
+            return sceneSegment.SceneSegmentId;
         }
+       
 
-        public async Task UpdateSegmentsBySceneId(List<MSceneSegment> segments, int sceneId)
-        {
-            if (sceneId == 0 || segments == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            var _single = _context.Scenes.Where(s => s.SceneId == sceneId).Single();
-
-            segments.ForEach(delegate (MSceneSegment sg)
-            {
-                _context.SceneSegments.Add(new SceneSegment
-                {
-                    SequenceNo = sg.SequenceNo,
-                    StartTime = sg.StartTime,
-                    Volumn = sg.Volumn,
-                    SceneId = sceneId,
-                    ModifiedDate = DateTime.Now
-                });
-            });
-
-            await _context.SaveChangesAsync();
-        }
-
-        //async Task<Scene> GetCustomerByProjectNo(string projectNo, int Id )
-        //{
-        //    var query = await _context.Customers
-        //                .Include(c => c.Scenes)
-        //                .Where(c => c.ProjectNo == projectNo)
-        //                .SingleAsync();
-        //    if (query == null)
-        //    {
-        //        throw new KeyNotFoundException();
-        //    }
-        //    return query.Scenes.Where(s=>s.SceneId==Id).Single();
-        //}
 
     }
 }

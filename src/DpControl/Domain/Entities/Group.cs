@@ -10,22 +10,26 @@ namespace DpControl.Domain.Entities
         public int GroupId { get; set; }
         public string GroupName { get; set; }
 
+        public string Creator { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string Modifier { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public byte[] RowVersion { get; set; }
+
         #region relationship
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public int? ProjectId { get; set; }
+        public Project Project { get; set; }
         public virtual List<GroupLocation> GroupLocations { get; set; }     // many-to-many
-        public virtual List<GroupOperator> GroupOperators { get; set; }       // many-to-many
+        public List<UserGroup> UserGroups { get; set; }       // many-to-many
         public int? SceneId { get; set; }
-        public Scene Scene { get; set; }         // one-to-many: one Scene can have multi-group; but one group only belong to a single scene.
+        public virtual Scene Scene { get; set; }         // one-to-many: one Scene can have multi-group; but one group only belong to a single scene.
         #endregion
 
-        public DateTime ModifiedDate { get; set; }
-        public byte[] RowVersion { get; set; }
 
         public Group()
         {
             this.GroupLocations = new List<GroupLocation>();
-            this.GroupOperators = new List<GroupOperator>();
+            this.UserGroups = new List<UserGroup>();
         }
     }
 }

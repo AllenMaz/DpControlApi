@@ -12,13 +12,13 @@ namespace DpControl.Domain.EFContext.Configurations
     {
         public SceneSegmentConfiguration(EntityTypeBuilder<SceneSegment> entityBuilder)
         {
-            entityBuilder.ToTable("SceneSegments", "ControlSystem");
+            entityBuilder.ToTable("SceneSegments");
             entityBuilder.HasKey(s => s.SceneSegmentId);
 
             entityBuilder.Property(s => s.SequenceNo).IsRequired();
             entityBuilder.Property(s => s.StartTime).HasMaxLength(10).IsRequired();
-
-            entityBuilder.Property(s => s.ModifiedDate).IsRequired();
+            entityBuilder.Property(s => s.Creator).IsRequired();
+            entityBuilder.Property(s => s.CreateDate).IsRequired();
             entityBuilder.Property(s => s.RowVersion).ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 
         }

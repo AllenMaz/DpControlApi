@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DpControl.Domain.Models;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
-using DpControl.Domain.Models;
-using System.Reflection;
-//using Microsoft.Extensions.DependencyInjection;
-
+using DpControl.Domain.Execptions;
+using DpControl.Utility.Authentication;
+using System.Dynamic;
 
 namespace DpControl.Domain.Repository
 {
@@ -17,6 +18,7 @@ namespace DpControl.Domain.Repository
     {
 
         private ShadingContext _context;
+        private readonly IUserInfoManagerRepository _userInfoManager; 
 
         #region Constructors
         public CustomerRepository()
@@ -28,112 +30,217 @@ namespace DpControl.Domain.Repository
             _context = dbContext;
         }
 
+        public CustomerRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
+        {
+            _context = dbContext;
+            _userInfoManager = userInfoManager;
+        }
+
+        #region Add
+        public int Add(CustomerAddModel customer)
+        {
+            //CustomerNo must be unique
+            var checkData = _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToList().Count ;
+            if (checkData >0)
+                throw new ExpectException("The data which CustomerNo equal to '"+customer.CustomerNo +"' already exist in system");
+
+            //Get UserInfo
+            var user = _userInfoManager.GetUserInfo();
+
+            var model = new Customer
+            {
+                CustomerName = customer.CustomerName,
+                CustomerNo = customer.CustomerNo,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+
+            _context.Customers.Add(model);
+
+           _context.SaveChanges();
+            return model.CustomerId; 
+        }
+        
+        public async Task<int> AddAsync(CustomerAddModel customer)
+        {
+            //CustomerNo must be unique
+            var checkData = await _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
+
+            //Get UserInfo
+            var user = await _userInfoManager.GetUserInfoAsync();
+
+            var model = new Customer
+            {
+                CustomerName = customer.CustomerName,
+                CustomerNo = customer.CustomerNo,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+
+            _context.Customers.Add(model);
+
+            await _context.SaveChangesAsync();
+            return model.CustomerId;
+
+        }
+        
         #endregion
 
-        public async Task<IEnumerable<MCustomer>> GetAll()
+        public CustomerSearchModel FindById(int customerId)
         {
-            var customers = await _context.Customers.Select(c => new MCustomer
-            {
-                    CustomerId      =   c.CustomerId,
-                    CustomerName = c.CustomerName,
-                    CustomerNo = c.CustomerNo,
-                    ProjectName = c.ProjectName,
-                    ProjectNo = c.ProjectNo
-                })
-                .OrderBy(c => c.CustomerNo)
-            .ToListAsync<MCustomer>();
-            return customers;
-        }
-        public async Task<IEnumerable<MCustomer>> FindByCustomerNo(string customerNo)
-        {
-            var customer =  _context.Customers
-                        .Where(c => c.CustomerNo == customerNo)
-                        .Select(c=> new MCustomer
-                        {
-                            CustomerId = c.CustomerId,
-                            CustomerName = c.CustomerName,
-                            CustomerNo = c.CustomerNo,
-                            ProjectName = c.ProjectName,
-                            ProjectNo = c.ProjectNo
-                        });
-                if (customer == null)
-                    throw new KeyNotFoundException();
-            return await customer.ToListAsync<MCustomer>();
+            var result = _context.Customers.Where(c => c.CustomerId == customerId);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
+
+            var customer = result.FirstOrDefault();
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customer);
+
+            return customerSearch;
         }
 
-        public async Task Add(MCustomer customer)
+        public async Task<CustomerSearchModel> FindByIdAsync(int customerId)
         {
-                if (customer == null)
-                {
-                    throw new ArgumentNullException();
-                }
-            _context.Customers.Add(new Customer
-                {
-                    CustomerName = customer.CustomerName,
-                    CustomerNo = customer.CustomerNo,
-                    ProjectName = customer.ProjectName,
-                    ProjectNo = customer.ProjectNo,
-                    ModifiedDate = DateTime.Now
-                }); 
+            var result = _context.Customers.Where(c => c.CustomerId == customerId);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
+
+            var customer = await result.FirstOrDefaultAsync();
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customer);
+            
+            return customerSearch;
+        }
+
+
+        public IEnumerable<CustomerSearchModel> GetAll()
+        {
+            var queryData = from C in _context.Customers
+                            select C;
+
+            var result = QueryOperate<Customer>.Execute(queryData);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
+
+            //以下执行完后才会去数据库中查询
+            var customers = result.ToList();
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customers);
+
+            return customerSearch;
+        }
+        
+        public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
+        {
+            var queryData = from C in _context.Customers
+                        select C;
+            
+            var result = QueryOperate<Customer>.Execute(queryData);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
+
+            //以下执行完后才会去数据库中查询
+            //N+1 Select 
+            var customers = await result.ToListAsync();
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customers);
+
+            return customerSearch;
+        }
+
+        public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
+        {
+            var queryData = _context.Projects
+                .Where(v => v.CustomerId == customerId);
+
+            var result = QueryOperate<Project>.Execute(queryData);
+            var projects = await result.ToListAsync();
+
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(projects);
+            return projectSearch;
+        }
+
+        public int UpdateById(int customerId,CustomerUpdateModel mcustomer)
+        {
+            
+            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
+            if (customer == null)
+                throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
+
+            //Check CustomerNo must be unique 
+            var checkData =  _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo
+                                                            && c.CustomerId != customerId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
+
+            //Get UserInfo
+            var user =  _userInfoManager.GetUserInfo();
+
+            customer.CustomerName = mcustomer.CustomerName;
+            customer.CustomerNo = mcustomer.CustomerNo;
+            customer.Modifier = user.UserName;
+            customer.ModifiedDate = DateTime.Now;
+
+            _context.SaveChanges();
+
+            return customer.CustomerId;
+        }
+
+        public async Task<int> UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer)
+        {
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
+            if (customer == null)
+                throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
+            //Check CustomerNo must be unique 
+            var checkData = await _context.Customers.Where(c => c.CustomerNo == mcustomer.CustomerNo 
+                                                            && c.CustomerId != customerId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which CustomerNo equal to '" + mcustomer.CustomerNo + "' already exist in system");
+
+            //Get UserInfo
+            var user = await _userInfoManager.GetUserInfoAsync();
+
+            customer.CustomerName = mcustomer.CustomerName;
+            customer.CustomerNo = mcustomer.CustomerNo;
+            customer.Modifier = user.UserName;
+            customer.ModifiedDate = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return customer.CustomerId; 
+        }
+
+        public void RemoveById(int id)
+        {
+            var customer = _context.Customers.Include(c => c.Projects).FirstOrDefault(v => v.CustomerId == id);
+            if (customer == null)
+                throw new ExpectException("Could not find data which CustomerId equal to " + id);
+
+            _context.Customers.Remove(customer);
+
+            //Cascade delete Projects
+            _context.Projects.RemoveRange(customer.Projects);
+            //Casecade delete other 
+
+
+            #endregion
+
+            _context.SaveChanges();
+
+        }
+
+        public async Task RemoveByIdAsync(int id)
+        {
+            var customer = await _context.Customers.Include(c=>c.Projects).FirstOrDefaultAsync(v => v.CustomerId == id);
+            if (customer == null)
+                throw new ExpectException("Could not find data which CustomerId equal to "+id);
+
+            _context.Customers.Remove(customer);
+            #region Cascade delete dependent entities
+            //Cascade delete Projects
+            _context.Projects.RemoveRange(customer.Projects);
+            //Casecade delete other 
+
+
+            #endregion
+
             await _context.SaveChangesAsync();
         }
- 
-        public async Task Update(MCustomer mcustomer)
-        {
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == mcustomer.CustomerId);
-                if (customer == null)
-                    throw new KeyNotFoundException();
-                customer.CustomerName = mcustomer.CustomerName;
-                customer.CustomerNo = mcustomer.CustomerNo;
-                customer.ProjectName = mcustomer.ProjectName;
-                customer.ProjectNo = mcustomer.ProjectNo;
-                customer.ModifiedDate = DateTime.Now;
 
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task RemoveById(int Id)
-                {
-            var toDelete = new Customer { CustomerId = Id };
-            _context.Customers.Attach(toDelete);
-            _context.Customers.Remove(toDelete);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<IEnumerable<String>> GetCustomerName()
-        {
-            return await _context.Customers.Select(c => c.CustomerName).Distinct().ToListAsync<String>();
-        }
-
-        //public async Task<IEnumerable<MCustomer>> FindRangeByOrder(Query query)
-        //{
-        //    var customers =  _context.Customers.Select(c => new MCustomer
-        //    {
-        //        CustomerId = c.CustomerId,
-        //        CustomerName = c.CustomerName,
-        //        CustomerNo = c.CustomerNo,
-        //        ProjectName = c.ProjectName,
-        //        ProjectNo = c.ProjectNo
-        //    });
-
-        //    if (query.orderby.OrderbyBehavior == "DESC")
-        //    {
-        //        for(int i = 0; i < query.orderby.OrderbyField.Length; i++)
-        //        {
-        //            if(typeof(MCustomer).GetProperty)
-        //            customers = customers.OrderBy();
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        customers.OrderBy()
-        //    }
-        //    .OrderBy(c => c.CustomerNo)
-        //    .ToListAsync<MCustomer>();
-        //    return customers;
-        //}
-
-//        Array
+        
     }
+
 }

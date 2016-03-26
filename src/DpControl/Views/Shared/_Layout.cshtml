@@ -24,77 +24,47 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/locale/bootstrap-table-zh-CN.min.js"></script>
     </environment>
-    <link rel="stylesheet" href="~/css/CssInitialization.css" />
 
     <script src="~/lib/knockout/dist/knockout.js"></script>
     <script src="~/lib/layer/layer.js"></script>
     
 
-    <style>
-
-        .divHead {
-            padding: 30px 100px;
-            padding-top:5px;
-            background-color: #A4ACAD;
-        }
-
-        .divContent {
-            min-height:300px;
-            padding: 50px 100px;
-            background-color: azure;
-        }
-
-        .divFoot{
-
-            height:100px;
-            padding:10px 100px;
-            background-color:#D9EDF7
-        }
-        #divHeadRight{
-            float:right ;
-            width:30%;
-        }
-
-        .clear {
-            clear :both ;
-        }
-
-
-        a{
-            color:red
-        }
-        a:hover, a:focus
-        {
-            color:yellow;
-            text-decoration:underline;
-        }
-        
-    </style>
 </head>
 <body>
-    <div class="divHead">
-        <div id="divHeadTop">
-            <div id="divHeadLeft">&nbsp;</div>
-            <div id="divHeadRight">
-                @await Html.PartialAsync("_LoginPartial")
-
+    <div class="navbar navbar-inverse">
+        <!--.container 类用于固定宽度并支持响应式布局的容器-->
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Restful WebApi", "Default", "Home", null, new { @class = "navbar-brand" })
+                
             </div>
-            <div class="clear"></div>
-        </div>
-        <div id="divHeadBottom">
-            <label style="font-size:x-large"><a class="aHome" href="/" style="text-decoration:none;color:black">Restful WebApi For DpControl v1  </a></label>
-            <label style="font-size:large">More Detail,Click: </label><a style="font-size:large;" href="/Swagger/ui">API Document</a>
-            <br />
-            <label><a href="http://192.168.20.239:8080/bugnet" target="_blank"  style="color:#EEE">DpControl Project Management</a></label>
-        </div>
+            <div class="navbar-collapse collapse">
 
+                @await Html.PartialAsync("_LoginPartial")
+            </div>
+            <div class="row" style="padding-left:15px;">
+                <label style="color:#EEE">More Detail,Click: </label>
+                <a href="/Swagger/ui" target="_blank" style="color:#60B733">API Document</a> 
+                <br />
+                @*<label>
+                    <a href="http://192.168.20.239:8080/bugnet" target="_blank" style="color:#EEE">DpControl Project Management</a>
+                </label>*@
+            </div>
+        </div>
     </div>
-    <div class="divContent">
+
+    <div class="container body-content">
         @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.ToString("yyyy/MM/dd") - Padmate</p>
+        </footer>
     </div>
-    <div class="divFoot">
-        Welcome to Padmate
 
-    </div>
 </body>
 </html>

@@ -6,10 +6,11 @@ using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface IAlarmRepository
+    public interface IAlarmRepository:IBaseRepository<AlarmAddModel,AlarmUpdateModel,AlarmSearchModel>
     {
-        Task Add(string sceneName, string projectNo);
-        Task<IEnumerable<MAlarm>> GetAll(string projectNo);
-        Task UpdateById(MScene mscene, string projectNo);
+        #region Relations
+        Task<LocationSubSearchModel> GetLocationByAlarmIdAsync(int alarmId);
+        Task<AlarmMessageSubSearchModel> GetAlarmMessageByAlarmIdAsync(int alarmId);
+        #endregion
     }
 }

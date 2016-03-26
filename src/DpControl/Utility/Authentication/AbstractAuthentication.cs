@@ -1,4 +1,4 @@
-﻿using DpControl.Domain.Models;
+﻿using DpControl.Domain.Entities;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
@@ -36,6 +36,46 @@ namespace DpControl.Utility.Authentication
             return userName;
         }
 
+        /// <summary>
+        /// Do Authentication and Login;
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
+        public async Task<bool> DoAuthenticationAndLogin(HttpContext httpContext)
+        {
+            bool loginSuccess = false;
+            StringValues authHeader;
+            if (httpContext.Request.Headers.TryGetValue("Authorization", out authHeader) &&
+                authHeader.Any() &&
+                authHeader[0].StartsWith(_scheme))
+            {
+                var headParams = authHeader.First().Substring(_scheme.Length);
+                loginSuccess = await Login(headParams, httpContext);
+
+            }
+            return loginSuccess;
+        }
+
+        /// <summary>
+        /// Get User Info
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
+        public async Task<ApplicationUser> GetUserInfo(HttpContext httpContext)
+        {
+            ApplicationUser currentUser = null;
+            StringValues authHeader;
+            if (httpContext.Request.Headers.TryGetValue("Authorization", out authHeader) &&
+                authHeader.Any() &&
+                authHeader[0].StartsWith(_scheme))
+            {
+                var headParams = authHeader.First().Substring(_scheme.Length);
+                currentUser = await GetUserInfo(headParams, httpContext);
+
+            }
+            return currentUser;
+        }
+
         public abstract void Challenge(HttpContext httpContext);
 
         protected void ApplyChallenge(HttpContext context,string parameter)
@@ -47,5 +87,11 @@ namespace DpControl.Utility.Authentication
         
 
         protected abstract Task<string> CheckUserInfo(string headParams, HttpContext httpContext);
+
+        protected abstract Task<bool> Login(string headParams, HttpContext httpContext);
+
+        protected abstract Task<ApplicationUser> GetUserInfo(string headParams, HttpContext httpContext);
+
+
     }
 }

@@ -2,18 +2,17 @@
 
 @if (User.IsSignedIn())
 {
-    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
-       
-        <label style="color:white;margin-right:10px;">Hello @User.GetUserName()!</label>
-        <a asp-controller="Manage" asp-action="IndexForRole" style="color:white;margin-right:10px;">Add Role</a>
-        <a asp-controller="Manage" asp-action="IndexForUser" style="color:white;margin-right:10px;">Add User</a>
-        
-        <button type="submit" class="btn-link navbar-link" style="color:white">Log off</button>
-            
-    </form>
+    <ul class="nav navbar-nav navbar-right">
+
+        <li><a asp-controller="Home" asp-action="Index"> Hello @User.GetUserName()!</a></li>
+
+    </ul>
+    
 }
 else
 {
-    <a asp-controller="Account" asp-action="InitAdmin" style="color:white;margin-right:10px;">初始化管理员用户</a>
-    <a asp-controller="Account" asp-action="Login" style="color:white">Sign In</a>
+    <ul class="nav navbar-nav navbar-right">
+        <li><a asp-controller="Account" asp-action="InitAdmin">Initialize Administrator</a></li>
+        <li><a asp-controller="Account" asp-action="Login" target="_blank">Sign In</a></li>
+    </ul>
 }

@@ -21,10 +21,10 @@ namespace DpControl.Domain.Repository
 
         public static async Task<int> GetLocationIdByProjectNo(string projectNo)
         {
-            var project = await _context.Customers.SingleAsync(c => c.ProjectNo == projectNo);
+            var project = await _context.Projects.SingleAsync(c => c.ProjectNo == projectNo);
             if (project == null)
                 throw new NullReferenceException();
-            return project.CustomerId;
+            return 1;
         }
     }
 }

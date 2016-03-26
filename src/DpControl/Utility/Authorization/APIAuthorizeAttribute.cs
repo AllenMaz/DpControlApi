@@ -1,4 +1,5 @@
-﻿using DpControl.Domain.Models;
+﻿using DpControl.Domain.Entities;
+using DpControl.Models;
 using DpControl.Utility.Authentication;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
@@ -14,6 +15,15 @@ using System.Threading.Tasks;
 
 namespace DpControl.Utility.Authorization
 {
+    /*
+    you can use this Attribute  like:
+
+    [APIAuthorize(Roles = "Admin")]
+    public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync([FromUri] Query query)
+    {
+        //logic
+    }
+    */
     /// <summary>
     /// Restful web api Authorization 
     /// </summary>
@@ -22,7 +32,7 @@ namespace DpControl.Utility.Authorization
         private AbstractAuthentication _authentication;
         private IMemoryCache _memoryCache;
         private UserManager<ApplicationUser> _userManager;
-
+        
 
         /// <summary>
         /// 获取依赖注入实例
@@ -40,7 +50,7 @@ namespace DpControl.Utility.Authorization
 
         public string Roles { get; set; }
         
-        
+         
         public override async Task OnAuthorizationAsync(AuthorizationContext context)
         {
             //if allowanonymous
@@ -65,6 +75,8 @@ namespace DpControl.Utility.Authorization
                     _authentication.Challenge(httpContext);
                     Fail(context);
                 }
+                
+                
             }
             
         }
@@ -91,9 +103,9 @@ namespace DpControl.Utility.Authorization
 
         private async void Challenge(HttpContext context)
         {
-            int httpStatusCode = (int)HttpStatusCode.MethodNotAllowed;
+            int httpStatusCode = (int)HttpStatusCode.NotFound;
             context.Response.StatusCode = httpStatusCode;
-            string errMessage = ResponseHandler.ReturnError(httpStatusCode,"You have no permission!");
+            string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { "You have no permission!" });
             await context.Response.WriteAsync(errMessage);
 
         }

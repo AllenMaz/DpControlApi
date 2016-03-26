@@ -10,7 +10,12 @@ namespace DpControl.Domain.Entities
     {
         public int LogDescriptionId { get; set; }
         public string Description { get; set; }
-        public int DescriptionNo { get; set; }
+        public int DescriptionCode { get; set; }
         public List<Log> Logs { get; set; }
+
+        public LogDescription()
+        {
+            this.Logs = new List<Log>();
+        }
     }
 }

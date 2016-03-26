@@ -7,12 +7,14 @@ using DpControl.Domain.IRepository;
 using DpControl.Domain.Entities;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Domain.Repository
 {
     public class GroupRepository : IGroupRepository
     {
         private ShadingContext _context;
+        private readonly IUserInfoManagerRepository _userInfoManager;
 
         #region Constructors
         public GroupRepository()
@@ -23,135 +25,249 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
+        public GroupRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
+        {
+            _context = dbContext;
+            _userInfoManager = userInfoManager;
+        }
         #endregion
 
-        public async Task Add(string groupName, string projectNo)
+        public int Add(GroupAddModel group)
         {
-            if (groupName == null || string.IsNullOrEmpty(projectNo))
+            var project = _context.Projects.FirstOrDefault(p => p.ProjectId == group.ProjectId);
+            if (project == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + group.ProjectId);
+            
+            //If SceneId not null,check whether corresponding Scenes data existed
+            if (group.SceneId != null)
             {
-                throw new ArgumentNullException();
+                var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == group.SceneId);
+                if (scene == null)
+                    throw new ExpectException("Could not find Scenes data which SceneId equal to " + group.SceneId);
             }
 
-            // the GroupName is set as  an Index, so the same name will be validated in database
+            //GroupName must be unique
+            var checkData = _context.Groups.Where(g => g.GroupName == group.GroupName).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which GroupName equal to '" + group.GroupName + "' already exist in system.");
 
-            var _customer = _context.Customers.Single(c => c.ProjectNo == projectNo);
+            //Get UserInfo
+            var user = _userInfoManager.GetUserInfo();
 
-            // create new Group
-            _context.Groups.Add(new Group
+            var model = new Group
             {
-                GroupName = groupName,
-                ModifiedDate = DateTime.Now,
-                CustomerId = _customer.CustomerId
-            });
+                GroupName = group.GroupName,
+                ProjectId = group.ProjectId,
+                SceneId = group.SceneId,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+            _context.Groups.Add(model);
+            _context.SaveChanges();
+            return model.GroupId;
+        }
+
+        public async Task<int> AddAsync(GroupAddModel group)
+        {
+            //Chech whether the Foreign key ProjectId data exist
+            var project = _context.Projects.FirstOrDefault(p => p.ProjectId == group.ProjectId);
+            if (project == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + group.ProjectId);
+
+            //If SceneId not null,check whether corresponding Scenes data existed
+            if (group.SceneId !=null)
+            {
+                var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == group.SceneId);
+                if (scene == null)
+                    throw new ExpectException("Could not find Scenes data which SceneId equal to " + group.SceneId);
+            }
+
+            //GroupName must be unique
+            var checkData =await _context.Groups.Where(g => g.GroupName == group.GroupName).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which GroupName equal to '"+group.GroupName + "' already exist in system.");
+
+            //Get UserInfo
+            var user = await _userInfoManager.GetUserInfoAsync();
+
+            var model = new Group
+            {
+                GroupName = group.GroupName,
+                ProjectId = group.ProjectId,
+                SceneId = group.SceneId,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+            _context.Groups.Add(model);
             await _context.SaveChangesAsync();
+            return model.GroupId;
         }
 
-        public async Task<IEnumerable<MGroup>> GetAll(string projectNo)
+        public GroupSearchModel FindById(int groupId)
         {
-            var _customer= await _context.Customers
-                        .Include(c => c.Groups)
-                        .Where(c => c.ProjectNo == projectNo)
-                        .SingleAsync();
+            var result = _context.Groups.Where(v => v.GroupId == groupId);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
 
-            return _customer.Groups.Select(g => new MGroup
-                    {
-                        GroupId = g.GroupId,
-                        GroupName = g.GroupName
-                    }).ToList<MGroup>();
+            var group = result.FirstOrDefault();
+            var groupSearch = GroupOperator.SetGroupSearchModelCascade(group);
+
+            return groupSearch;
         }
 
-        public async Task RemoveByName(string groupName, string projectNo)
+        public async Task<GroupSearchModel> FindByIdAsync(int groupId)
         {
-            //           var query = await GetCustomerByProjectNo(projectNo);
-            var _single = _context.Customers
-                       .Include(c => c.Groups)
-                       .Where(c => c.ProjectNo == projectNo)
-                       .Single()
-                       .Groups.Where(g => g.GroupName == groupName).Single();       // InvalidOperationException, if no element, 
+            var result = _context.Groups.Where(v => v.GroupId == groupId);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
 
-            // remove data in related table - GroupLocation
-            var _groupLocation = _context.GroupLocations.Where(gl => gl.GroupId == _single.GroupId);
-            foreach(var gl in _groupLocation)
+            var group = await result.FirstOrDefaultAsync();
+            var groupSearch = GroupOperator.SetGroupSearchModelCascade(group);
+
+            return groupSearch;
+        }
+
+        public IEnumerable<GroupSearchModel> GetAll()
+        {
+            var queryData = from G in _context.Groups
+                            select G;
+
+            var result = QueryOperate<Group>.Execute(queryData);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
+
+            //以下执行完后才会去数据库中查询
+            var groups =  result.ToList();
+            var groupsSearch = GroupOperator.SetGroupSearchModelCascade(groups);
+
+            return groupsSearch;
+        }
+
+        public async Task<IEnumerable<GroupSearchModel>> GetAllAsync()
+        {
+            var queryData = from G in _context.Groups
+                            select G;
+
+            var result = QueryOperate<Group>.Execute(queryData);
+            result = (IQueryable<Group>)ExpandOperator.ExpandRelatedEntities<Group>(result);
+
+            //以下执行完后才会去数据库中查询
+            var groups = await result.ToListAsync();
+            var groupsSearch = GroupOperator.SetGroupSearchModelCascade(groups);
+
+            return groupsSearch;
+        }
+
+        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsByGroupIdAsync(int groupId)
+        {
+            var queryData = _context.GroupLocations
+                .Where(gl=>gl.GroupId == groupId)
+                .Select(gl => gl.Location);
+
+            var result = QueryOperate<Location>.Execute(queryData);
+            var locations = await result.ToListAsync();
+            var locationsSearch = LocationOperator.SetLocationSubSearchModel(locations);
+            return locationsSearch;
+        }
+
+        public async Task<ProjectSubSearchModel> GetProjectByGroupIdAsync(int groupId)
+        {
+            var group = await _context.Groups
+                .Include(g => g.Project)
+                .Where(g => g.GroupId == groupId).FirstOrDefaultAsync();
+            var project = group == null ? null : group.Project;
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(project);
+            return projectSearch;
+        }
+
+        public async Task<SceneSubSearchModel> GetSceneByGroupIdAsync(int groupId)
+        {
+            var group = await _context.Groups
+                .Include(g => g.Scene)
+                .Where(g => g.GroupId == groupId).FirstOrDefaultAsync();
+            var scene = group == null ? null : group.Scene;
+            var sceneSearch = SceneOperator.SetSceneSubSearchModel(scene);
+            return sceneSearch;
+        }
+
+        public void RemoveById(int groupId)
+        {
+            var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
+            if (group == null)
+                throw new ExpectException("Could not find data which GroupId equal to " + groupId);
+
+            _context.Groups.Remove(group);
+            _context.SaveChanges();
+        }
+
+        public async Task RemoveByIdAsync(int groupId)
+        {
+            var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
+            if (group == null)
+                throw new ExpectException("Could not find data which GroupId equal to " + groupId);
+
+            _context.Groups.Remove(group);
+           await _context.SaveChangesAsync();
+        }
+
+        public int UpdateById(int groupId, GroupUpdateModel mgroup)
+        {
+            var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
+            if (group == null)
+                throw new ExpectException("Could not find data which GroupId equal to " + groupId);
+            //If SceneId not null,check whether corresponding Scenes data existed
+            if (mgroup.SceneId != null)
             {
-                _context.GroupLocations.Remove(gl);
+                var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == mgroup.SceneId);
+                if (scene == null)
+                    throw new ExpectException("Could not find Scenes data which SceneId equal to " + mgroup.SceneId);
             }
+            //GroupName must be unique
+            var checkData = _context.Groups.Where(g => g.GroupName == mgroup.GroupName
+                                                        && g.GroupId != groupId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which GroupName equal to '" + mgroup.GroupName + "' already exist in system.");
 
-            // remove data in related table - GroupOperator
-            var _groupOperator = _context.GroupOperators.Where(gl => gl.GroupId == _single.GroupId);
-            foreach (var gl in _groupOperator)
+
+            //Get UserInfo
+            var user = _userInfoManager.GetUserInfo();
+
+            group.GroupName = mgroup.GroupName;
+            group.SceneId = mgroup.SceneId;
+            group.Modifier = user.UserName;
+            group.ModifiedDate = DateTime.Now;
+
+            _context.SaveChanges();
+            return group.GroupId;
+        }
+
+        public async Task<int> UpdateByIdAsync(int groupId, GroupUpdateModel mgroup)
+        {
+            var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
+            if (group == null)
+                throw new ExpectException("Could not find data which GroupId equal to " + groupId);
+            //If SceneId not null,check whether corresponding Scenes data existed
+            if (mgroup.SceneId != null)
             {
-                _context.GroupOperators.Remove(gl);
+                var scene = _context.Scenes.FirstOrDefault(p => p.SceneId == mgroup.SceneId);
+                if (scene == null)
+                    throw new ExpectException("Could not find Scenes data which SceneId equal to " + mgroup.SceneId);
             }
+            //GroupName must be unique
+            var checkData = await _context.Groups.Where(g => g.GroupName == mgroup.GroupName
+                                                        && g.GroupId != groupId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which GroupName equal to '" + mgroup.GroupName + "' already exist in system.");
 
-            _context.Remove(_single);
+
+            //Get UserInfo
+            var user = await _userInfoManager.GetUserInfoAsync();
+
+            group.GroupName = mgroup.GroupName;
+            group.SceneId = mgroup.SceneId;
+            group.Modifier = user.UserName;
+            group.ModifiedDate = DateTime.Now;
+
             await _context.SaveChangesAsync();
-
-            // remove 
+            return group.GroupId;
         }
-
-        public async Task RemoveById(int Id)
-        {
-            if (Id == 0)
-            {
-                throw new Exception("The group does not exist.");
-            }
-
-            var toDelete = new Group { GroupId = Id };
-            _context.Groups.Attach(toDelete);
-
-            // remove data in related table - GroupLocation
-            var _groupLocation = _context.GroupLocations.Where(gl => gl.GroupId ==Id);
-            foreach (var gl in _groupLocation)
-            {
-                _context.GroupLocations.Remove(gl);
-            }
-
-            // remove data in related table - GroupOperator
-            var _groupOperator = _context.GroupOperators.Where(gl => gl.GroupId == Id);
-            foreach (var gl in _groupOperator)
-            {
-                _context.GroupOperators.Remove(gl);
-            }
-
-            _context.Groups.Remove(toDelete);
-            await _context.SaveChangesAsync();
-
-            //            _context.Database.ExecuteSqlCommandAsync("Delete From operators where OperatorId = Id");
-        }
-
-        public async Task Update(MGroup mGroup, string projectNo)
-        {
-            var _single =_context.Customers
-                        .Include(c => c.Groups)
-                        .Where(c => c.ProjectNo == projectNo)
-                        .Single()
-                        .Groups.Where(g => g.GroupId == mGroup.GroupId).Single();       // InvalidOperationException, if no element, 
-            _single.GroupName = mGroup.GroupName;
-            _context.Groups.Update(_single);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task AddLocationToGroup(int locationId, int groupId)
-        {
-            var _group = _context.Groups.Where(g => g.GroupId == groupId);
-            var _location = _context.Locations.Where(g => g.LocationId == locationId);
-
-            _context.GroupLocations.Add(new GroupLocation
-            {
-                GroupId = groupId,
-                LocationId = locationId
-            });
-            await _context.SaveChangesAsync();
-        }
-
-
-        //Customer GetCustomerByProjectNo(string projectNo)
-        //{
-        //    var query =  _context.Customers
-        //                .Include(c => c.Groups)
-        //                .Where(c => c.ProjectNo == projectNo)
-        //                .Single();
-        //    return query;
-        //}
+        
     }
 }

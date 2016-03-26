@@ -34,7 +34,9 @@
     "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
     "Serilog.Framework.Logging": "1.0.0-rc1-final-10083",
     "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final"
+    "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
+    "Microsoft.AspNet.Cors": "6.0.0-rc1-final",
+    "MailKit": "1.3.0-beta7"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel",

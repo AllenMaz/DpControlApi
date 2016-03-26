@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DpControl.Domain.Models;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface ICustomerRepository
+    public interface ICustomerRepository:IBaseRepository<CustomerAddModel,CustomerUpdateModel,CustomerSearchModel>
     {
-        Task Add( MCustomer item);
-        Task<IEnumerable<MCustomer>> GetAll();
-        Task<IEnumerable<MCustomer>> FindByCustomerNo(string customerNo);
-        Task RemoveById(int Id);
-        Task Update(MCustomer mcustomer);
-        Task<IEnumerable<String>> GetCustomerName();
+        #region Entity Relations
 
-        //Task<IEnumerable<MCustomer>> FindRangeByOrder(Query query);
+        Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId);
+
+        #endregion
     }
 }

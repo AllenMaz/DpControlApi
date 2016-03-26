@@ -1,4 +1,4 @@
-﻿using DpControl.Domain.Models;
+﻿using DpControl.Domain.Entities;
 using DpControl.ViewModels;
 using DpControl.ViewModels.Account;
 using Microsoft.AspNet.Authorization;
@@ -49,7 +49,7 @@ namespace DpControl.Controllers
         public async Task<IActionResult> InitAdmin(RegisterViewModel model)
         {
             string userName = "Admin";
-            string password = "Admin_123";
+            string password = "admin123";
             string roleName = "Admin";
             //判断系统中是否已经存在Admin用户
             var admin = _userManager.FindByNameAsync(userName);
@@ -137,7 +137,7 @@ namespace DpControl.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction(nameof(HomeController.Default), "Home");
         }
 
         //

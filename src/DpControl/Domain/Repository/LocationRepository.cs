@@ -7,12 +7,16 @@ using DpControl.Domain.Entities;
 using DpControl.Domain.Models;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.EFContext;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Domain.Repository
 {
     public class LocationRepository : ILocationRepository
     {
         ShadingContext _context;
+        private readonly IUserInfoManagerRepository _userInfoManager;
+
+        #region
         public LocationRepository()
         {
 
@@ -22,179 +26,412 @@ namespace DpControl.Domain.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<MLocation>> GetAllByProjectNo(string projectNo)
+        public LocationRepository(ShadingContext context, IUserInfoManagerRepository userInfoManager)
         {
-            if( string.IsNullOrWhiteSpace(projectNo))
-            {
-                throw new ArgumentNullException();
-            }
-
-            // get projectNo from Customer
-            var _customer = await _context.Customers
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            return _customer.DeviceLocations.Select(l => new MLocation
-            {
-                LocationId = l.LocationId,
-                Building = l.Building,
-                Floor = l.Floor,
-                RoomNo = l.RoomNo,
-                Orientation = l.Orientation,
-                InstallationNumber = l.InstallationNumber,
-
-                DeviceType = l.DeviceType,
-                CommMode = l.CommMode,
-                DeviceSerialNo = l.DeviceSerialNo,
-                CommAddress = l.CommAddress,
-                CurrentPosition = l.CurrentPosition,
-                FavorPositionFirst = l.FavorPositionFirst,
-                FavorPositionrSecond = l.FavorPositionrSecond,
-                FavorPositionThird = l.FavorPositionThird,
-            }).ToList<MLocation>().OrderBy(m=>m.Building).ThenByDescending(m=>m.Floor).ThenByDescending(m=>m.Orientation);
+            _context = context;
+            _userInfoManager = userInfoManager;
         }
+        #endregion
 
-        //finding an device location through device serial no
-        public async Task<MLocationOnly> Find(string serialNo, string projectNo)
+        public int Add(LocationAddModel mLocation)
         {
-            if (string.IsNullOrWhiteSpace(serialNo) || string.IsNullOrWhiteSpace(projectNo))
+            var customer = _context.Projects.FirstOrDefault(l => l.ProjectId == mLocation.ProjectId);
+            if (customer == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + mLocation.ProjectId);
+
+            var device = _context.Devices.FirstOrDefault(l => l.DeviceId == mLocation.DeviceId);
+            if (device == null)
+                throw new ExpectException("Could not find Device data which DeviceId equal to " + mLocation.DeviceId);
+
+            //InstallationNumber must be unique
+            var checkData = _context.Locations.Where(dl => dl.InstallationNumber == mLocation.InstallationNumber).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = _context.Locations.Where(dl => dl.DeviceSerialNo == mLocation.DeviceSerialNo).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
             {
-                throw new ArgumentNullException();
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
             }
 
-            // get projectNo from Customer
-            var _customer = await _context.Customers
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
-
-            var location = _customer.DeviceLocations.FirstOrDefault(l => (l.DeviceSerialNo == serialNo) );
-            return new MLocationOnly
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
             {
-                LocationId = location.LocationId,
-                Building = location.Building,
-                Floor = location.Floor,
-                Orientation = location.Orientation,
-                RoomNo = location.RoomNo,
-                InstallationNumber = location.InstallationNumber
-            };
-        }
-
-        public async Task Add(MLocation mLocation, string projectNo)
-        {
-            if (mLocation == null || string.IsNullOrWhiteSpace(projectNo))
-            {
-                throw new ArgumentNullException();
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
             }
 
-            // get projectNo from Customer
-            var _customer = await _context.Customers
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
 
-            _customer.DeviceLocations.Add(new Location
+            //Get UserInfo
+            var user = _userInfoManager.GetUserInfo();
+
+            var model = new Location
             {
                 Building = mLocation.Building,
-                Floor = mLocation.Floor,
-                RoomNo = mLocation.RoomNo,
-                Orientation = mLocation.Orientation,
-                InstallationNumber = mLocation.InstallationNumber,
-
-                DeviceType = mLocation.DeviceType,
-                CommMode = mLocation.CommMode,
-                DeviceSerialNo = mLocation.DeviceSerialNo,
                 CommAddress = mLocation.CommAddress,
+                CommMode = mLocation.CommMode,
                 CurrentPosition = mLocation.CurrentPosition,
+                Description = mLocation.Description,
+                DeviceSerialNo = mLocation.DeviceSerialNo,
+                DeviceId = mLocation.DeviceId,
+                DeviceType = mLocation.DeviceType,
                 FavorPositionFirst = mLocation.FavorPositionFirst,
                 FavorPositionrSecond = mLocation.FavorPositionrSecond,
                 FavorPositionThird = mLocation.FavorPositionThird,
-                ModifiedDate = DateTime.Now,
-                CustomerId = _customer.CustomerId
-            });
-            await _context.SaveChangesAsync();
+                Floor = mLocation.Floor,
+                InstallationNumber = mLocation.InstallationNumber,
+                Orientation = mLocation.Orientation,
+                ProjectId = mLocation.ProjectId,
+                RoomNo = mLocation.RoomNo,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+            _context.Locations.Add(model);
+            _context.SaveChangesAsync();
+            return model.LocationId;
         }
 
-        public async Task Update(MLocation mLocation, string projectNo)
+        public async Task<int> AddAsync(LocationAddModel mLocation)
         {
-            if (mLocation == null || string.IsNullOrWhiteSpace(projectNo))
+            var customer = _context.Projects.FirstOrDefault(l=>l.ProjectId == mLocation.ProjectId);
+            if (customer == null)
+                throw new ExpectException("Could not find Project data which ProjectId equal to " + mLocation.ProjectId);
+
+            if (mLocation.DeviceId != null)
             {
-                throw new ArgumentNullException();
+                var device = _context.Devices.FirstOrDefault(l => l.DeviceId == mLocation.DeviceId);
+                if (device == null)
+                    throw new ExpectException("Could not find Device data which DeviceId equal to " + mLocation.DeviceId);
+
+            }
+            //InstallationNumber must be unique
+            var checkData = await _context.Locations.Where(dl=>dl.InstallationNumber == mLocation.InstallationNumber).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = await _context.Locations.Where(dl => dl.DeviceSerialNo == mLocation.DeviceSerialNo).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation),mLocation.Orientation))
+            {
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
             }
 
-            // get projectNo from Customer
-            var _customer = await _context.Customers
-                .Include(c => c.DeviceLocations)
-                .Where(c => c.ProjectNo == projectNo)
-                .SingleAsync();
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
+            {
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
+            }
 
-            var _single = _customer.DeviceLocations.Where(l => l.LocationId == mLocation.LocationId).Single();
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
 
-            _single.CustomerId = _customer.CustomerId;
-            _single.Building = mLocation.Building;
-            _single.Floor = mLocation.Floor;
-            _single.RoomNo = mLocation.RoomNo;
-            _single.Orientation = mLocation.Orientation;
-            _single.InstallationNumber = mLocation.InstallationNumber;
+            //Get UserInfo
+            var user = await _userInfoManager.GetUserInfoAsync();
 
-            _single.DeviceType = mLocation.DeviceType;
-            _single.CommMode = mLocation.CommMode;
-            _single.DeviceSerialNo = mLocation.DeviceSerialNo;
-            _single.CommAddress = mLocation.CommAddress;
-            _single.CurrentPosition = mLocation.CurrentPosition;
-            _single.FavorPositionFirst = mLocation.FavorPositionFirst;
-            _single.FavorPositionrSecond = mLocation.FavorPositionrSecond;
-            _single.FavorPositionThird = mLocation.FavorPositionThird;
-            _single.ModifiedDate = DateTime.Now;
-
+            var model = new Location
+            {
+                Building = mLocation.Building,
+                CommAddress = mLocation.CommAddress,
+                CommMode = mLocation.CommMode,
+                CurrentPosition = mLocation.CurrentPosition,
+                Description = mLocation.Description,
+                DeviceSerialNo = mLocation.DeviceSerialNo,
+                DeviceId = mLocation.DeviceId,
+                DeviceType = mLocation.DeviceType,
+                FavorPositionFirst = mLocation.FavorPositionFirst,
+                FavorPositionrSecond = mLocation.FavorPositionrSecond,
+                FavorPositionThird = mLocation.FavorPositionThird,
+                Floor = mLocation.Floor,
+                InstallationNumber = mLocation.InstallationNumber,
+                Orientation =mLocation.Orientation,
+                ProjectId = mLocation.ProjectId,
+                RoomNo = mLocation.RoomNo,
+                Creator = user.UserName,
+                CreateDate = DateTime.Now
+            };
+            _context.Locations.Add(model);
             await _context.SaveChangesAsync();
+            return model.LocationId;
         }
 
-        // remove the item by id
-        public async Task Remove(int Id)
+        public LocationSearchModel FindById(int locationId)
         {
-            if (Id == 0)
-            {
-                throw new Exception("The group does not exist.");
-            }
+            var result = _context.Locations.Where(v => v.LocationId == locationId);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
 
-            var toDelete = new Location { LocationId = Id };
-            _context.Locations.Attach(toDelete);
+            var location = result.FirstOrDefault();
+            var locationSearch = LocationOperator.SetLocationSearchModelCascade(location);
 
-            // remove data in related table - GroupLocation
-            var _groupLocation = _context.GroupLocations.Where(gl => gl.LocationId == Id);
-            foreach (var gl in _groupLocation)
-            {
-                _context.GroupLocations.Remove(gl);
-            }
+            return locationSearch;
+        }
 
-            // remove data in related table - GroupOperator
-            var _groupOperator = _context.OperatorLocation.Where(ol => ol.LocationId == Id);
-            foreach (var ol in _groupOperator)
-            {
-                _context.OperatorLocation.Remove(ol);
-            }
+        public async Task<LocationSearchModel> FindByIdAsync(int locationId)
+        {
+            var result = _context.Locations.Where(v => v.LocationId == locationId);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
 
-            //remove data in related table - Logs - optional relationship with data undeleted (set to Null), just load data into memory
-            _context.Logs.Where(l => l.LocationId == Id).Load();
-            _context.Alarms.Where(a => a.LocationId == Id).Load();
+            var location = await result.FirstOrDefaultAsync();
+            var locationSearch = LocationOperator.SetLocationSearchModelCascade(location);
+            
+            return locationSearch;
+        }
+        
 
-            _context.Locations.Remove(toDelete);
+        public IEnumerable<LocationSearchModel> GetAll()
+        {
+            var queryData = from L in _context.Locations
+                            select L;
+
+            var result = QueryOperate<Location>.Execute(queryData);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
+
+            //以下执行完后才会去数据库中查询
+            var locations =  result.ToList();
+            var locationsSearch = LocationOperator.SetLocationSearchModelCascade(locations);
+
+
+            return locationsSearch;
+        }
+
+        public async Task<IEnumerable<LocationSearchModel>> GetAllAsync()
+        {
+            var queryData = from L in _context.Locations
+                            select L;
+
+            var result = QueryOperate<Location>.Execute(queryData);
+            result = (IQueryable<Location>)ExpandOperator.ExpandRelatedEntities<Location>(result);
+
+            //以下执行完后才会去数据库中查询
+            var locations = await result.ToListAsync();
+            var locationsSearch = LocationOperator.SetLocationSearchModelCascade(locations);
+
+            return locationsSearch;
+        }
+
+        #region Relations
+        public async Task<ProjectSubSearchModel> GetProjectByLocationIdAsync(int locationId)
+        {
+            var location = await _context.Locations
+                .Include(l => l.Project)
+                .Where(l => l.LocationId == locationId).FirstOrDefaultAsync();
+            var project = location == null ? null : location.Project;
+            var projectSearch = ProjectOperator.SetProjectSubSearchModel(project);
+            return projectSearch;
+        }
+
+        public async Task<IEnumerable<AlarmSubSearchModel>> GetAlarmsByLocationIdAsync(int locationId)
+        {
+            var queryData = _context.Alarms.Where(l=>l.LocationId == locationId);
+            var result = QueryOperate<Alarm>.Execute(queryData);
+            var alarms = await result.ToListAsync();
+            var alarmsSearch = AlarmOperator.SetAlarmSubSearchModel(alarms);
+            return alarmsSearch;
+        }
+
+        public async Task<DeviceSubSearchModel> GetDeviceByLocationIdAsync(int locationId)
+        {
+            var location = await _context.Locations
+                .Include(l => l.Device)
+                .Where(l => l.LocationId == locationId).FirstOrDefaultAsync();
+            var device = location == null ? null : location.Device;
+            var deviceSearch = DeviceOperator.SetDeviceSubSearchModel(device);
+            return deviceSearch;
+        }
+
+        public async Task<IEnumerable<LogSubSearchModel>> GetLogsByLocationIdAsync(int locationId)
+        {
+            var queryData = _context.Logs.Where(l => l.LocationId == locationId);
+            var result = QueryOperate<Log>.Execute(queryData);
+            var logs = await result.ToListAsync();
+            var logsSearch = LogOperator.SetLogSubSearchModel(logs);
+            return logsSearch;
+        }
+
+        public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsByLocationIdAsync(int locationId)
+        {
+            var queryData = _context.GroupLocations
+                .Where(gl => gl.LocationId == locationId)
+                .Select(gl => gl.Group);
+
+            var result = QueryOperate<Group>.Execute(queryData);
+            var groups = await result.ToListAsync();
+            var groupsSearch = GroupOperator.SetGroupSubSearchModel(groups);
+            return groupsSearch;
+        }
+        #endregion
+
+        public void RemoveById(int locationId)
+        {
+            var location = _context.Locations.FirstOrDefault(l => l.LocationId == locationId);
+            if (location == null)
+                throw new ExpectException("Could not find data which DeviceLocation equal to " + locationId);
+
+            _context.Remove(location);
+             _context.SaveChanges();
+        }
+
+        public async Task RemoveByIdAsync(int locationId)
+        {
+            var location = _context.Locations.FirstOrDefault(l=>l.LocationId == locationId);
+            if (location == null)
+                throw new ExpectException("Could not find data which LocationId equal to " + locationId);
+
+            _context.Remove(location);
             await _context.SaveChangesAsync();
         }
 
-        //async Task<Customer> GetCustomerByProjectNo(string projectNo)
-        //{
-        //    var query = await _context.Customers
-        //                .Include(c => c.DeviceLocations)
-        //                .Where(c => c.ProjectNo == projectNo)
-        //                .SingleAsync();
-        //    if (query == null)
-        //    {
-        //        throw new KeyNotFoundException();
-        //    }
-        //    return query;
-        //}
+        public int UpdateById(int locationId, LocationUpdateModel mLocation)
+        {
+            var location = _context.Locations.FirstOrDefault(l => l.LocationId == locationId);
+            if (location == null)
+                throw new ExpectException("Could not find data which LocationId equal to " + locationId);
+
+            var device = _context.Devices.FirstOrDefault(l => l.DeviceId == mLocation.DeviceId);
+            if (device == null)
+                throw new ExpectException("Could not find Device data which DeviceId equal to " + mLocation.DeviceId);
+
+
+            //InstallationNumber must be unique
+            var checkData = _context.Locations
+                .Where(dl => dl.InstallationNumber == mLocation.InstallationNumber
+                && dl.LocationId != locationId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = _context.Locations
+                .Where(dl => dl.DeviceSerialNo == mLocation.DeviceSerialNo
+                && dl.LocationId != locationId).ToList();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
+            {
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
+            }
+
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
+            {
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
+            }
+
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
+
+            //Get UserInfo
+            var user = _userInfoManager.GetUserInfo();
+
+            location.Building = mLocation.Building;
+            location.CommAddress = mLocation.CommAddress;
+            location.CommMode = mLocation.CommMode;
+            location.CurrentPosition = mLocation.CurrentPosition;
+            location.Description = mLocation.Description;
+            location.DeviceSerialNo = mLocation.DeviceSerialNo;
+            location.DeviceId = mLocation.DeviceId;
+            location.DeviceType = mLocation.DeviceType;
+            location.FavorPositionFirst = mLocation.FavorPositionFirst;
+            location.FavorPositionrSecond = mLocation.FavorPositionrSecond;
+            location.FavorPositionThird = mLocation.FavorPositionThird;
+            location.Floor = mLocation.Floor;
+            location.InstallationNumber = mLocation.InstallationNumber;
+            location.Orientation = mLocation.Orientation;
+            location.RoomNo = mLocation.RoomNo;
+            location.Modifier = user.UserName;
+            location.ModifiedDate = DateTime.Now;
+
+            _context.SaveChanges();
+            return location.LocationId;
+        }
+
+        public async Task<int> UpdateByIdAsync(int locationId, LocationUpdateModel mLocation)
+        {
+            var location = _context.Locations.FirstOrDefault(l => l.LocationId == locationId);
+            if (location == null)
+                throw new ExpectException("Could not find data which DeviceLocation equal to " + locationId);
+
+            var device = _context.Devices.FirstOrDefault(l => l.DeviceId == mLocation.DeviceId);
+            if (device == null)
+                throw new ExpectException("Could not find Device data which DeviceId equal to " + mLocation.DeviceId);
+
+
+            //InstallationNumber must be unique
+            var checkData = await _context.Locations
+                .Where(dl => dl.InstallationNumber == mLocation.InstallationNumber
+                && dl.LocationId != locationId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which InstallationNumber equal to '" + mLocation.InstallationNumber + "' already exist in system");
+
+            //DeviceSerialNo must be unique
+            checkData = await _context.Locations
+                .Where(dl => dl.DeviceSerialNo == mLocation.DeviceSerialNo
+                && dl.LocationId != locationId).ToListAsync();
+            if (checkData.Count > 0)
+                throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
+
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
+            {
+                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
+            }
+
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
+            {
+                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
+            }
+
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
+            {
+                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
+            }
+
+            //Get UserInfo
+            var user = await _userInfoManager.GetUserInfoAsync();
+
+            location.Building = mLocation.Building;
+            location.CommAddress = mLocation.CommAddress;
+            location.CommMode = mLocation.CommMode;
+            location.CurrentPosition = mLocation.CurrentPosition;
+            location.Description = mLocation.Description;
+            location.DeviceSerialNo = mLocation.DeviceSerialNo;
+            location.DeviceId = mLocation.DeviceId;
+            location.DeviceType = mLocation.DeviceType;
+            location.FavorPositionFirst = mLocation.FavorPositionFirst;
+            location.FavorPositionrSecond = mLocation.FavorPositionrSecond;
+            location.FavorPositionThird = mLocation.FavorPositionThird;
+            location.Floor = mLocation.Floor;
+            location.InstallationNumber = mLocation.InstallationNumber;
+            location.Orientation = mLocation.Orientation;
+            location.RoomNo = mLocation.RoomNo;
+            location.Modifier = user.UserName;
+            location.ModifiedDate = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return location.LocationId;
+        }
+
+       
     }
 }
