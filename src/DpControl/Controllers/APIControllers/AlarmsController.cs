@@ -102,6 +102,7 @@ namespace DpControl.Controllers.APIControllers
             }
 
             var alarmId = await _alarmRepository.AddAsync(mAlarm);
+            
             return CreatedAtRoute("GetByAlarmIdAsync", new { controller = "Alarms", alarmId = alarmId }, mAlarm);
         }
 
