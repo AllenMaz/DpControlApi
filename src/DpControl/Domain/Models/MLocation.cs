@@ -37,7 +37,7 @@ namespace DpControl.Domain.Models
         [MaxLength(40, ErrorMessage = "CommAddress(Communication Address) must be less than 40 characters!")]
         public string CommAddress { get; set; }
 
-        [MaxLength(16, ErrorMessage = "DeviceSerialNo must be less than 16 characters!")]
+        [MaxLength(50, ErrorMessage = "DeviceSerialNo must be less than 50 characters!")]
         public string DeviceSerialNo { get; set; }
         
         public int? DeviceId { get; set; }

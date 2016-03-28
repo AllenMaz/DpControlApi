@@ -19,7 +19,7 @@ namespace DpControl.Domain.EFContext.Configurations
             entityBuilder.Property(l => l.Floor).HasMaxLength(20);
             entityBuilder.Property(l => l.RoomNo).HasMaxLength(50);
             entityBuilder.Property(l => l.CommAddress).HasMaxLength(40);
-            entityBuilder.Property(i => i.DeviceSerialNo).HasMaxLength(16);
+            entityBuilder.Property(i => i.DeviceSerialNo).HasMaxLength(50);
             entityBuilder.Property(i => i.Description).HasMaxLength(2000);
 
             entityBuilder.Property(l => l.Creator).HasMaxLength(50).IsRequired();
