@@ -2,6 +2,7 @@
 using DpControl.Domain.Models;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] UserLocationAddModel mUserLocation)
         {
@@ -39,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(UserLocationSearchModel))]
         [HttpGet("{userLocationId}", Name = "GetByUserLocationIdAsync")]
         public async Task<IActionResult> GetByUserLocationIdAsync(int userLocationId)
@@ -56,7 +57,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<UserLocationSearchModel>> GetAllAsync()
@@ -72,7 +73,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by UserLocationId
         /// </summary>
         /// <param name="userLocationId"></param>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{userLocationId}")]
         public async Task<IActionResult> DeleteByUserLocationIdAsync(int userLocationId)
         {

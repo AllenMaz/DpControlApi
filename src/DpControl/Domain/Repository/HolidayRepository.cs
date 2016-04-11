@@ -39,7 +39,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + mHoliday.ProjectId);
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new Holiday
             {
@@ -60,7 +60,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find Project data which ProjectId equal to " + mHoliday.ProjectId);
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             var model = new Holiday
             {
@@ -162,7 +162,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find data which HolidayId equal to " + holidayId);
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             holiday.Day = mHoliday.Day;
             holiday.Modifier = user.UserName;
@@ -179,7 +179,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("Could not find data which HolidayId equal to " + holidayId);
 
             //Get UserInfo
-            var user =await _userInfoManager.GetUserInfoAsync();
+            var user =await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             holiday.Day = mHoliday.Day;
             holiday.Modifier = user.UserName;

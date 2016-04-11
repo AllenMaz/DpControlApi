@@ -52,7 +52,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which GroupName equal to '" + group.GroupName + "' already exist in system.");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new Group
             {
@@ -88,7 +88,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which GroupName equal to '"+group.GroupName + "' already exist in system.");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             var model = new Group
             {
@@ -227,7 +227,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             group.GroupName = mgroup.GroupName;
             group.SceneId = mgroup.SceneId;
@@ -258,7 +258,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             group.GroupName = mgroup.GroupName;
             group.SceneId = mgroup.SceneId;

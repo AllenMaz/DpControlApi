@@ -45,7 +45,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new SceneSegment
             {
@@ -74,7 +74,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user =await _userInfoManager.GetUserInfoAsync();
+            var user =await _userInfoManager.GetUserInfoFromHttpHeadAsync();
             var model = new SceneSegment
             {
                 SceneId = mSceneSegment.SceneId,
@@ -188,7 +188,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
             sceneSegment.StartTime = mSceneSegment.StartTime;
@@ -214,7 +214,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             sceneSegment.SequenceNo = mSceneSegment.SequenceNo;
             sceneSegment.StartTime = mSceneSegment.StartTime;

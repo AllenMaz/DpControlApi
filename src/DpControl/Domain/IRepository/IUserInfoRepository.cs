@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DpControl.Domain.IRepository
@@ -11,8 +12,24 @@ namespace DpControl.Domain.IRepository
     /// </summary>
     public interface IUserInfoManagerRepository
     {
-        UserInfo GetUserInfo();
-        Task<UserInfo> GetUserInfoAsync();
+        /// <summary>
+        /// Get UserInfo from Http Head
+        /// Basic Authorization / Digest Authorization
+        /// </summary>
+        /// <returns></returns>
+        UserInfo GetUserInfoFromHttpHead();
+
+        /// <summary>
+        /// /// <summary>
+        /// Get UserInfo from Http Head
+        /// Basic Authorization / Digest Authorization
+        /// </summary>
+        /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
+        Task<UserInfo> GetUserInfoFromHttpHeadAsync();
+
+        ClaimsPrincipal GetUserInfoFromHttpContext();
     }
 
     /// <summary>

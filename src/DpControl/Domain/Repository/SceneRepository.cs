@@ -45,7 +45,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new Scene
             {
@@ -73,7 +73,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
             var model = new Scene
             {
                 ProjectId = scene.ProjectId,
@@ -198,7 +198,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which SceneName '" + mScene.SceneName + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             scene.SceneName = mScene.SceneName;
             scene.Enable = mScene.Enable;
@@ -223,7 +223,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user =await _userInfoManager.GetUserInfoAsync();
+            var user =await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             scene.SceneName = mScene.SceneName;
             scene.Enable = mScene.Enable;

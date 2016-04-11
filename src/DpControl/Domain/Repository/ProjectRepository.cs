@@ -49,7 +49,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new Project
             {
@@ -77,7 +77,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             var model = new Project
             {
@@ -242,7 +242,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;
@@ -267,7 +267,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;

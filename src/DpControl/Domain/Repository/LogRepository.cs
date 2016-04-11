@@ -43,7 +43,7 @@ namespace DpControl.Domain.Repository
             if (logDescription == null)
                 throw new ExpectException("Could not find LogDescription data which LogDescriptionId equal to " + mLog.LogDescriptionId);
 
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new Log
             {
@@ -68,7 +68,7 @@ namespace DpControl.Domain.Repository
             if (logDescription == null)
                 throw new ExpectException("Could not find LogDescription data which LogDescriptionId equal to " + mLog.LogDescriptionId);
 
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             var model = new Log
             {

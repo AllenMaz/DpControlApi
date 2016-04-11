@@ -3,6 +3,7 @@ using DpControl.Domain.Models;
 using DpControl.Utility.Authentication;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(SceneSearchModel))]
         [HttpGet("{sceneId}", Name = "GetBySceneIdAsync")]
         public async Task<IActionResult> GetBySceneIdAsync(int sceneId)
@@ -42,7 +43,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="sceneId"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(ProjectSubSearchModel))]
         [HttpGet("{sceneId}/Project")]
         public async Task<IActionResult> GetProjectBySceneIdAsync(int sceneId)
@@ -60,7 +61,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="sceneId"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{sceneId}/SceneSegments")]
         public async Task<IEnumerable<SceneSegmentSubSearchModel>> GetSceneSegmentsBySceneIdAsync(int sceneId)
@@ -74,7 +75,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<SceneSearchModel>> GetAllAsync()
@@ -90,7 +91,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] SceneAddModel mScene)
         {
@@ -109,7 +110,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="SceneId"></param>
         /// <param name="project"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] SceneUpdateModel mScene)
         {
@@ -127,7 +128,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by SceneId
         /// </summary>
         /// <param name="SceneId"></param>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{sceneId}")]
         public async Task<IActionResult> DeleteBySceneIdAsync(int sceneId)
         {

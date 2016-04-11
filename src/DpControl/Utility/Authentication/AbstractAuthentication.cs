@@ -61,7 +61,7 @@ namespace DpControl.Utility.Authentication
         /// </summary>
         /// <param name="httpContext"></param>
         /// <returns></returns>
-        public async Task<ApplicationUser> GetUserInfo(HttpContext httpContext)
+        public async Task<ApplicationUser> GetUserInfoFromHttpHeadAsync(HttpContext httpContext)
         {
             ApplicationUser currentUser = null;
             StringValues authHeader;

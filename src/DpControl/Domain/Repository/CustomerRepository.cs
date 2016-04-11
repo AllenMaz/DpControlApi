@@ -45,7 +45,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '"+customer.CustomerNo +"' already exist in system");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new Customer
             {
@@ -69,7 +69,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             var model = new Customer
             {
@@ -168,7 +168,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
-            var user =  _userInfoManager.GetUserInfo();
+            var user =  _userInfoManager.GetUserInfoFromHttpHead();
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
@@ -192,7 +192,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which CustomerNo equal to '" + mcustomer.CustomerNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;

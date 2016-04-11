@@ -9,6 +9,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using System.Threading;
 using DpControl.Domain.IRepository;
+using System.Security.Claims;
 
 namespace DpControl.Utility
 {
@@ -39,14 +40,15 @@ namespace DpControl.Utility
         }
 
         /// <summary>
-        /// Get UserInfo
+        /// Get UserInfo from Http Head
+        /// Basic Authorization / Digest Authorization
         /// </summary>
         /// <returns></returns>
-        public UserInfo GetUserInfo()
+        public UserInfo GetUserInfoFromHttpHead()
         {
             UserInfo userInfo = new UserInfo();
             //call async method
-            var user = Task.Run<ApplicationUser>(() => _authentication.GetUserInfo(_httpContextAccessor.HttpContext)).Result;
+            var user = Task.Run<ApplicationUser>(() => _authentication.GetUserInfoFromHttpHeadAsync(_httpContextAccessor.HttpContext)).Result;
             
             if (user != null)
             {
@@ -62,13 +64,14 @@ namespace DpControl.Utility
         }
 
         /// <summary>
-        /// Get UserInfo
+        /// Get UserInfo from Http Head
+        /// Basic Authorization / Digest Authorization
         /// </summary>
         /// <returns></returns>
-        public async Task<UserInfo> GetUserInfoAsync()
+        public async Task<UserInfo> GetUserInfoFromHttpHeadAsync()
         {
             UserInfo userInfo = new UserInfo();
-            var user = await _authentication.GetUserInfo(_httpContextAccessor.HttpContext);
+            var user = await _authentication.GetUserInfoFromHttpHeadAsync(_httpContextAccessor.HttpContext);
             if (user != null)
             {
                 //Construct UserInfo
@@ -80,6 +83,12 @@ namespace DpControl.Utility
                 userInfo = null;
             }
             return userInfo;
+        }
+
+        public ClaimsPrincipal GetUserInfoFromHttpContext()
+        {
+            var user = _httpContextAccessor.HttpContext.User;
+            return user;
         }
     }
 }

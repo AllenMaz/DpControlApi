@@ -72,7 +72,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             var model = new Location
             {
@@ -142,7 +142,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             var model = new Location
             {
@@ -340,7 +340,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _userInfoManager.GetUserInfoFromHttpHead();
 
             location.Building = mLocation.Building;
             location.CommAddress = mLocation.CommAddress;
@@ -408,7 +408,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
 
             location.Building = mLocation.Building;
             location.CommAddress = mLocation.CommAddress;

@@ -25,6 +25,8 @@ using DpControl.Utility;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Cors;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
 
 namespace DpControl
 {
@@ -80,7 +82,7 @@ namespace DpControl
                               .DisallowCredentials()
                 );
             });
-
+            
             services.AddMvc()
             .AddJsonOptions(options =>
             {
@@ -131,7 +133,8 @@ namespace DpControl
                         || httpStatusCode == (int)HttpStatusCode.Unauthorized
                         || httpStatusCode == (int)HttpStatusCode.MethodNotAllowed))
                         {
-
+                            ctx.Response.StatusCode = 401;
+                            ctx.Response.WriteAsync("UnAuthorized");
                             return Task.FromResult<object>(null);
                         }
                         else
@@ -217,6 +220,21 @@ namespace DpControl
             // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
 
+            //before UseMvc
+            app.UseCors("AllowAllOrigin");
+
+            #region OAuth2.0 Token授权（IdentityServer4）
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            app.UseIdentityServerAuthentication(options =>
+            {
+                options.Authority = Configuration["IdentityServer:AuthorizationServerBaseAddress"]; 
+                options.ScopeName = Configuration["IdentityServer:APIScopeName"];         
+                options.ScopeSecret = Configuration["IdentityServer:APIScopeSecret"];
+                options.AutomaticAuthenticate = true;
+                options.AutomaticChallenge = true;
+            });
+            #endregion
+
             //Response Compression:ZGip, before any other middlewares,
             app.UseMiddleware<CompressionMiddleware>(new MiddlewareOptions() {
                 Path = _apiPath //for api
@@ -232,13 +250,8 @@ namespace DpControl
             //Identity
             app.UseIdentity();
             
-            
-
             app.UseStaticFiles();
-
-            //before UseMvc
-            app.UseCors("AllowAllOrigin");
-
+            
             //app.UseMvc();
             app.UseMvc(routes =>
             {
