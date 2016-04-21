@@ -14,7 +14,7 @@ namespace DpControl.Domain.Repository
     public class GroupRepository : IGroupRepository
     {
         private ShadingContext _context;
-        private readonly IUserInfoManagerRepository _userInfoManager;
+        private readonly ILoginUserRepository _loginUser;
 
         #region Constructors
         public GroupRepository()
@@ -25,10 +25,10 @@ namespace DpControl.Domain.Repository
         {
             _context = dbContext;
         }
-        public GroupRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
+        public GroupRepository(ShadingContext dbContext, ILoginUserRepository loginUser)
         {
             _context = dbContext;
-            _userInfoManager = userInfoManager;
+            _loginUser = loginUser;
         }
         #endregion
 
@@ -52,7 +52,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which GroupName equal to '" + group.GroupName + "' already exist in system.");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _loginUser.GetLoginUserInfo();
 
             var model = new Group
             {
@@ -88,7 +88,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which GroupName equal to '"+group.GroupName + "' already exist in system.");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = _loginUser.GetLoginUserInfo();
 
             var model = new Group
             {
@@ -227,7 +227,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _loginUser.GetLoginUserInfo();
 
             group.GroupName = mgroup.GroupName;
             group.SceneId = mgroup.SceneId;
@@ -258,7 +258,7 @@ namespace DpControl.Domain.Repository
 
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = _loginUser.GetLoginUserInfo();
 
             group.GroupName = mgroup.GroupName;
             group.SceneId = mgroup.SceneId;

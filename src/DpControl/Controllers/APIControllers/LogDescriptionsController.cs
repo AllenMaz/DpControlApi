@@ -2,6 +2,7 @@
 using DpControl.Domain.Models;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(LogDescriptionSearchModel))]
         [HttpGet("{logDescriptionId}", Name = "GetByLogDescriptionIdAsync")]
         public async Task<IActionResult> GetByLogDescriptionIdAsync(int logDescriptionId)
@@ -41,7 +42,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="logDescriptionId"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{logDescriptionId}/Logs")]
         public async Task<IEnumerable<LogSubSearchModel>> GetLogsByLogDescriptionIdAsync(int logDescriptionId)
@@ -55,7 +56,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<LogDescriptionSearchModel>> GetAllAsync()
@@ -71,7 +72,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] LogDescriptionAddModel mLogDescription)
         {
@@ -88,7 +89,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by LogDescriptionId
         /// </summary>
         /// <param name="logDescriptionId"></param>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{logDescriptionId}")]
         public async Task<IActionResult> DeleteByLogDescriptionIdAsync(int logDescriptionId)
         {
@@ -102,7 +103,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="LogDescriptionId"></param>
         /// <param name="LogDescription"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] LogDescriptionUpdateModel mLogDescription)
         {

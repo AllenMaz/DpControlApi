@@ -1,6 +1,7 @@
 ﻿using DpControl.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +16,10 @@ namespace DpControl.Domain.Models
     {
         public int AlarmMessageId { get; set; }
         public int LocationId { get; set; }
+
+
+        [RegularExpression(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$", ErrorMessage = "Invalid email address format")]
+        public string Email { get; set; }
     }
 
     public class AlarmUpdateModel

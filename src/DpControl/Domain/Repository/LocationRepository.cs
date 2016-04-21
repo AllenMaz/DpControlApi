@@ -14,7 +14,7 @@ namespace DpControl.Domain.Repository
     public class LocationRepository : ILocationRepository
     {
         ShadingContext _context;
-        private readonly IUserInfoManagerRepository _userInfoManager;
+        private readonly ILoginUserRepository _loginUser;
 
         #region
         public LocationRepository()
@@ -26,10 +26,10 @@ namespace DpControl.Domain.Repository
             _context = context;
         }
 
-        public LocationRepository(ShadingContext context, IUserInfoManagerRepository userInfoManager)
+        public LocationRepository(ShadingContext context, ILoginUserRepository loginUser)
         {
             _context = context;
-            _userInfoManager = userInfoManager;
+            _loginUser = loginUser;
         }
         #endregion
 
@@ -72,7 +72,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _loginUser.GetLoginUserInfo();
 
             var model = new Location
             {
@@ -142,7 +142,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = _loginUser.GetLoginUserInfo();
 
             var model = new Location
             {
@@ -340,7 +340,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfo();
+            var user = _loginUser.GetLoginUserInfo();
 
             location.Building = mLocation.Building;
             location.CommAddress = mLocation.CommAddress;
@@ -408,7 +408,7 @@ namespace DpControl.Domain.Repository
             }
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoAsync();
+            var user = _loginUser.GetLoginUserInfo();
 
             location.Building = mLocation.Building;
             location.CommAddress = mLocation.CommAddress;

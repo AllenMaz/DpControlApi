@@ -8,6 +8,7 @@ using DpControl.Domain.EFContext;
 using DpControl.Domain.Execptions;
 using DpControl.Domain.Entities;
 using Microsoft.Data.Entity;
+using MimeKit;
 
 namespace DpControl.Domain.Repository
 {
@@ -68,6 +69,36 @@ namespace DpControl.Domain.Repository
             };
             _context.Alarms.Add(model);
             await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(mAlarm.Email))
+            {
+                //Send Mail
+                MailSend mailSend = new MailSend();
+                mailSend.To.Add(new MailboxAddress("", mAlarm.Email));
+                mailSend.Subject = "AlarmMessage";
+
+                var builder = new BodyBuilder();
+
+                // Set the plain-text version of the message text
+                builder.HtmlBody = string.Format(@"
+<!DOCTYPE html><html><head><meta charset='utf - 8'><title>MailAlarm</title><style></style></head><body id='preview'>
+<p><font style='font-weight:bold;'>Location Information</font></p>
+<p>DeviceSerialNo：{0}</p>
+<p><font style='font-weight:bold;'>Alarm Message</font></p>
+<p>ErrorCode：{1}</p>
+<p>Message：{2}</p>
+<br/>
+<br/>
+<br/>
+--This is a system email 
+</ body ></ html > ", location.DeviceSerialNo, alarmMessage.ErrorCode, alarmMessage.Message);
+
+
+                mailSend.Body = builder.ToMessageBody();
+                await mailSend.SendAsync();
+            }
+           
+
             return model.AlarmId;
         }
 

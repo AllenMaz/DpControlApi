@@ -36,7 +36,10 @@
     "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-final",
     "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
     "Microsoft.AspNet.Cors": "6.0.0-rc1-final",
-    "MailKit": "1.3.0-beta7"
+    "MailKit": "1.3.0-beta7",
+    "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+    "IdentityServer4.AccessTokenValidation": "1.0.0-beta3",
+    "Microsoft.AspNet.Authorization": "1.0.0-rc1-final"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel",

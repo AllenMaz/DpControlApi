@@ -2,6 +2,7 @@
 using DpControl.Domain.Models;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] UserGroupAddModel mUserGroup)
         {
@@ -39,7 +40,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(UserGroupSearchModel))]
         [HttpGet("{userGroupId}", Name = "GetByUserGroupIdAsync")]
         public async Task<IActionResult> GetByUserGroupIdAsync(int userGroupId)
@@ -56,7 +57,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<UserGroupSearchModel>> GetAllAsync()
@@ -72,7 +73,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by UserGroupId
         /// </summary>
         /// <param name="userGroupId"></param>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{userGroupId}")]
         public async Task<IActionResult> DeleteByUserGroupIdAsync(int userGroupId)
         {

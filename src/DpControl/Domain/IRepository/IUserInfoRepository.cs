@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DpControl.Domain.IRepository
@@ -9,10 +10,11 @@ namespace DpControl.Domain.IRepository
     /// <summary>
     /// use to get login user info
     /// </summary>
-    public interface IUserInfoManagerRepository
+    public interface ILoginUserRepository
     {
-        UserInfo GetUserInfo();
-        Task<UserInfo> GetUserInfoAsync();
+        UserInfo GetLoginUserInfo();
+        
+
     }
 
     /// <summary>

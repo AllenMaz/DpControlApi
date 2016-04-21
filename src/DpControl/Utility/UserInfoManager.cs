@@ -9,6 +9,8 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using System.Threading;
 using DpControl.Domain.IRepository;
+using System.Security.Claims;
+using IdentityModel.Constants;
 
 namespace DpControl.Utility
 {
@@ -27,7 +29,7 @@ namespace DpControl.Utility
     }
 
 
-    public class UserInfoManager : IUserInfoManagerRepository
+    public class UserInfoManager : ILoginUserRepository
     {
         private readonly AbstractAuthentication _authentication;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -38,15 +40,30 @@ namespace DpControl.Utility
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public UserInfo GetLoginUserInfo()
+        {
+            UserInfo userInfo = new UserInfo();
+            //ClaimsPrincipal
+            var claimsPrincipal = _httpContextAccessor.HttpContext.User;
+            var aa = claimsPrincipal.Claims.First(c => c.Type == JwtClaimTypes.Name);
+
+            userInfo.UserName = claimsPrincipal.Claims.First(c=>c.Type == JwtClaimTypes.Name).Value;
+            userInfo.Roles = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Role).Select(c=>c.Value).ToList();
+
+            return userInfo;
+        }
+        
+
         /// <summary>
-        /// Get UserInfo
+        /// Get UserInfo from Http Head
+        /// Basic Authorization / Digest Authorization
         /// </summary>
         /// <returns></returns>
-        public UserInfo GetUserInfo()
+        private UserInfo GetUserInfoFromHttpHead()
         {
             UserInfo userInfo = new UserInfo();
             //call async method
-            var user = Task.Run<ApplicationUser>(() => _authentication.GetUserInfo(_httpContextAccessor.HttpContext)).Result;
+            var user = Task.Run<ApplicationUser>(() => _authentication.GetUserInfoFromHttpHeadAsync(_httpContextAccessor.HttpContext)).Result;
             
             if (user != null)
             {
@@ -62,13 +79,14 @@ namespace DpControl.Utility
         }
 
         /// <summary>
-        /// Get UserInfo
+        /// Get UserInfo from Http Head
+        /// Basic Authorization / Digest Authorization
         /// </summary>
         /// <returns></returns>
-        public async Task<UserInfo> GetUserInfoAsync()
+        private async Task<UserInfo> GetUserInfoFromHttpHeadAsync()
         {
             UserInfo userInfo = new UserInfo();
-            var user = await _authentication.GetUserInfo(_httpContextAccessor.HttpContext);
+            var user = await _authentication.GetUserInfoFromHttpHeadAsync(_httpContextAccessor.HttpContext);
             if (user != null)
             {
                 //Construct UserInfo
@@ -81,5 +99,8 @@ namespace DpControl.Utility
             }
             return userInfo;
         }
+
+
+        
     }
 }

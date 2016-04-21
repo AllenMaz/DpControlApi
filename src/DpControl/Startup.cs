@@ -25,6 +25,8 @@ using DpControl.Utility;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Cors;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
 
 namespace DpControl
 {
@@ -80,7 +82,7 @@ namespace DpControl
                               .DisallowCredentials()
                 );
             });
-
+            
             services.AddMvc()
             .AddJsonOptions(options =>
             {
@@ -131,7 +133,8 @@ namespace DpControl
                         || httpStatusCode == (int)HttpStatusCode.Unauthorized
                         || httpStatusCode == (int)HttpStatusCode.MethodNotAllowed))
                         {
-
+                            ctx.Response.StatusCode = 401;
+                            ctx.Response.WriteAsync("UnAuthorized");
                             return Task.FromResult<object>(null);
                         }
                         else
@@ -172,7 +175,7 @@ namespace DpControl
             services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
-            services.AddScoped<IUserInfoManagerRepository, UserInfoManager>();
+            services.AddScoped<ILoginUserRepository, UserInfoManager>();
 
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -217,12 +220,41 @@ namespace DpControl
             // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
 
+            //before UseMvc
+            app.UseCors("AllowAllOrigin");
+
+
+            #region OAuth2.0 Token授权
+            #region IdentityServer3
+            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); 
+            //app.UseJwtBearerAuthentication(options =>
+            //{
+            //    options.Authority = "http://localhost:30466";
+            //    options.Audience = "http://localhost:30466/resources";
+            //    options.RequireHttpsMetadata = false;
+            //    options.AutomaticAuthenticate = true;
+            //});
+            //app.UseMiddleware<RequiredScopesMiddleware>(new List<string> { "dpcontrolapiscope" });
+            #endregion
+            #region IdentityServer4
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            app.UseIdentityServerAuthentication(options =>
+            {
+                options.Authority = Configuration["IdentityServer:AuthorizationServerBaseAddress"];
+                options.ScopeName = Configuration["IdentityServer:APIScopeName"];
+                options.ScopeSecret = Configuration["IdentityServer:APIScopeSecret"];
+                options.AutomaticAuthenticate = true;
+                options.AutomaticChallenge = true;
+            });
+            #endregion
+            #endregion
+
             //Response Compression:ZGip, before any other middlewares,
             app.UseMiddleware<CompressionMiddleware>(new MiddlewareOptions() {
                 Path = _apiPath //for api
             });
             //捕获全局异常消息
-            app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+            app.UseExceptionHandler(errorApp => new GlobalExceptionBuilder(loggerFactory).ExceptionBuilder(errorApp));
             //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>(new MiddlewareOptions()
             {
@@ -232,13 +264,8 @@ namespace DpControl
             //Identity
             app.UseIdentity();
             
-            
-
             app.UseStaticFiles();
-
-            //before UseMvc
-            app.UseCors("AllowAllOrigin");
-
+            
             //app.UseMvc();
             app.UseMvc(routes =>
             {

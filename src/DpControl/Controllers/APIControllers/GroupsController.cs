@@ -3,6 +3,7 @@ using DpControl.Domain.Models;
 using DpControl.Utility.Authentication;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(GroupSearchModel))]
         [HttpGet("{groupId}", Name = "GetByGroupIdAsync")]
         public async Task<IActionResult> GetByGroupIdAsync(int groupId)
@@ -41,7 +42,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(ProjectSubSearchModel))]
         [HttpGet("{groupId}/Project")]
         public async Task<IActionResult> GetProjectByGroupIdAsync(int groupId)
@@ -59,7 +60,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(SceneSubSearchModel))]
         [HttpGet("{groupId}/Scene")]
         public async Task<IActionResult> GetSceneByGroupIdAsync(int groupId)
@@ -77,7 +78,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{groupId}/Locations")]
         public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsByGroupIdAsync(int groupId)
@@ -91,7 +92,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<GroupSearchModel>> GetAllAsync()
@@ -107,7 +108,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] GroupAddModel mGroup)
         {
@@ -126,7 +127,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="GroupId"></param>
         /// <param name="Group"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPut("{groupId}")]
         public async Task<IActionResult> UpdateAsync(int groupId, [FromBody] GroupUpdateModel mGroup)
         {
@@ -144,7 +145,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by GroupId
         /// </summary>
         /// <param name="groupId"></param>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{groupId}")]
         public async Task<IActionResult> DeleteByGroupIdIdAsync(int groupId)
         {

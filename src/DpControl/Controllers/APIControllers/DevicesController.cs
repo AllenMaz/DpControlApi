@@ -2,6 +2,7 @@
 using DpControl.Domain.Models;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(DeviceSearchModel))]
         [HttpGet("{deviceId}", Name = "GetByDeviceIdAsync")]
         public async Task<IActionResult> GetByDeviceIdAsync(int deviceId)
@@ -40,7 +41,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="deviceId"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{deviceId}/Locations")]
         public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsBySceneIdAsync(int deviceId)
@@ -54,7 +55,7 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<DeviceSearchModel>> GetAllAsync()
@@ -70,7 +71,7 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] DeviceAddModel mDevice)
         {
@@ -89,7 +90,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="deviceId"></param>
         /// <param name="Location"></param>
         /// <returns></returns>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] DeviceUpdateModel mDevice)
         {
@@ -107,7 +108,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by DeviceId
         /// </summary>
         /// <param name="DeviceId"></param>
-        [APIAuthorize(Roles = "Admin,Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{deviceId}")]
         public async Task<IActionResult> DeleteByDeviceIdAsync(int deviceId)
         {
