@@ -10,26 +10,11 @@ namespace DpControl.Domain.IRepository
     /// <summary>
     /// use to get login user info
     /// </summary>
-    public interface IUserInfoManagerRepository
+    public interface ILoginUserRepository
     {
-        /// <summary>
-        /// Get UserInfo from Http Head
-        /// Basic Authorization / Digest Authorization
-        /// </summary>
-        /// <returns></returns>
-        UserInfo GetUserInfoFromHttpHead();
+        UserInfo GetLoginUserInfo();
+        
 
-        /// <summary>
-        /// /// <summary>
-        /// Get UserInfo from Http Head
-        /// Basic Authorization / Digest Authorization
-        /// </summary>
-        /// <returns></returns>
-        /// </summary>
-        /// <returns></returns>
-        Task<UserInfo> GetUserInfoFromHttpHeadAsync();
-
-        ClaimsPrincipal GetUserInfoFromHttpContext();
     }
 
     /// <summary>

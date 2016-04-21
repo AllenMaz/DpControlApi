@@ -17,7 +17,7 @@ namespace DpControl.Domain.Repository
     {
 
         private ShadingContext _context;
-        private readonly IUserInfoManagerRepository _userInfoManager;
+        private readonly ILoginUserRepository _loginUser;
 
         #region Constructors
         public ProjectRepository()
@@ -29,10 +29,10 @@ namespace DpControl.Domain.Repository
             _context = dbContext;
         }
 
-        public ProjectRepository(ShadingContext dbContext, IUserInfoManagerRepository userInfoManager)
+        public ProjectRepository(ShadingContext dbContext, ILoginUserRepository loginUser)
         {
             _context = dbContext;
-            _userInfoManager = userInfoManager;
+            _loginUser = loginUser;
         }
 
         #endregion
@@ -49,7 +49,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfoFromHttpHead();
+            var user = _loginUser.GetLoginUserInfo();
 
             var model = new Project
             {
@@ -77,7 +77,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
+            var user = _loginUser.GetLoginUserInfo();
 
             var model = new Project
             {
@@ -242,7 +242,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = _userInfoManager.GetUserInfoFromHttpHead();
+            var user = _loginUser.GetLoginUserInfo();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;
@@ -267,7 +267,7 @@ namespace DpControl.Domain.Repository
                 throw new ExpectException("The data which ProjectNo '" + mproject.ProjectNo + "' already exist in system");
 
             //Get UserInfo
-            var user = await _userInfoManager.GetUserInfoFromHttpHeadAsync();
+            var user = _loginUser.GetLoginUserInfo();
 
             project.ProjectName = mproject.ProjectName;
             project.ProjectNo = mproject.ProjectNo;

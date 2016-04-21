@@ -19,22 +19,20 @@ namespace DpControl.Utility.ExceptionHandler
     public class GlobalExceptionBuilder 
     {
         private static ILogger _logger;
-        public GlobalExceptionBuilder()
+       
+        public GlobalExceptionBuilder(ILoggerFactory loggerFactory)
         {
+            _logger = loggerFactory.CreateLogger<GlobalExceptionBuilder>();
 
         }
 
-        public GlobalExceptionBuilder(ILogger logger)
-        {
-            _logger = logger;
-        }
 
         /// <summary>
         /// 判断不同的异常并将不同类型的异常转换为HttpStatusCode
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IApplicationBuilder ExceptionBuilder(IApplicationBuilder builder)
+        public IApplicationBuilder ExceptionBuilder(IApplicationBuilder builder)
         {
             builder.Run(async context =>
             {
@@ -53,7 +51,7 @@ namespace DpControl.Utility.ExceptionHandler
                         //系统异常
                         exceptionMessage = "System is abnormal !";
                         //记录异常日志
-                        _logger.LogError(exceptionMessage,error.Error);
+                        _logger.LogError(exceptionMessage+" Request finished.");
                             
                     }
                     string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { exceptionMessage });

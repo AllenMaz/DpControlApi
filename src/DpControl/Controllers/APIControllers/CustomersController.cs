@@ -53,7 +53,7 @@ namespace DpControl.APIControllers
         /// Get Related Projects
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Public")]
+        [Authorize(Roles = "Admin,Public")]
         [HttpGet("{customerId}/Projects")]
         [EnableQuery]
         public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
@@ -67,7 +67,7 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()

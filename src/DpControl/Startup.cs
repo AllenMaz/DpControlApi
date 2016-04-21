@@ -175,7 +175,7 @@ namespace DpControl
             services.AddTransient<ShadingContext, ShadingContext>();
             services.AddScoped<AbstractAuthentication, BasicAuthentication>();
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
-            services.AddScoped<IUserInfoManagerRepository, UserInfoManager>();
+            services.AddScoped<ILoginUserRepository, UserInfoManager>();
 
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -223,16 +223,30 @@ namespace DpControl
             //before UseMvc
             app.UseCors("AllowAllOrigin");
 
-            #region OAuth2.0 Token授权（IdentityServer4）
+
+            #region OAuth2.0 Token授权
+            #region IdentityServer3
+            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); 
+            //app.UseJwtBearerAuthentication(options =>
+            //{
+            //    options.Authority = "http://localhost:30466";
+            //    options.Audience = "http://localhost:30466/resources";
+            //    options.RequireHttpsMetadata = false;
+            //    options.AutomaticAuthenticate = true;
+            //});
+            //app.UseMiddleware<RequiredScopesMiddleware>(new List<string> { "dpcontrolapiscope" });
+            #endregion
+            #region IdentityServer4
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             app.UseIdentityServerAuthentication(options =>
             {
-                options.Authority = Configuration["IdentityServer:AuthorizationServerBaseAddress"]; 
-                options.ScopeName = Configuration["IdentityServer:APIScopeName"];         
+                options.Authority = Configuration["IdentityServer:AuthorizationServerBaseAddress"];
+                options.ScopeName = Configuration["IdentityServer:APIScopeName"];
                 options.ScopeSecret = Configuration["IdentityServer:APIScopeSecret"];
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
             });
+            #endregion
             #endregion
 
             //Response Compression:ZGip, before any other middlewares,
@@ -240,7 +254,7 @@ namespace DpControl
                 Path = _apiPath //for api
             });
             //捕获全局异常消息
-            app.UseExceptionHandler(errorApp => GlobalExceptionBuilder.ExceptionBuilder(errorApp));
+            app.UseExceptionHandler(errorApp => new GlobalExceptionBuilder(loggerFactory).ExceptionBuilder(errorApp));
             //X-HTTP-Method-Override
             app.UseMiddleware<XHttpHeaderOverrideMiddleware>(new MiddlewareOptions()
             {
