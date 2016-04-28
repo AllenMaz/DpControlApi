@@ -160,15 +160,7 @@ namespace DpControl
                     TermsOfService = "None"
                     
                 });
-                //options.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
-                //{
-                //    Type = "oauth2",
-                //    Flow = "implicit",
-                //    AuthorizationUrl = "<URL>",
-                //    Scopes = new Dictionary<string, string> { { "dpcontrolapiscope", "dpcontrolapiscope" } }
-                //});
-
-                //options.OperationFilter<AssignSecurityRequirements>();
+                
                 options.OperationFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlActionComments(_pathToDoc));
                 //options.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
 
