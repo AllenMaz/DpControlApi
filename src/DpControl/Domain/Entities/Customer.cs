@@ -16,12 +16,10 @@ namespace DpControl.Domain.Entities
         public DateTime? ModifiedDate { get; set; }
         public byte[] RowVersion { get; set; }
         public virtual List<Project> Projects { get; set; }
-        public virtual List<ApplicationUser> Users { get; set; }
 
         public Customer()
         {
             this.Projects = new List<Project>();
-            this.Users = new List<ApplicationUser>();
         }
     }
 }

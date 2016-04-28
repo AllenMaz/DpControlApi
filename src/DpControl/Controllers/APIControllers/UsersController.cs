@@ -78,5 +78,52 @@ namespace DpControl.Controllers.APIControllers
 
             return result;
         }
+
+        /// <summary>
+        /// Add data
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] UserAddModel mUserAddModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            string userId = await _userInfoRepository.AddAsync(mUserAddModel);
+            return CreatedAtRoute("GetByUserIdAsync", new { controller = "Users", userId = userId }, mUserAddModel);
+        }
+
+        /// <summary>
+        /// Edit data by UserId
+        /// </summary>
+        /// <param name="customerNo"></param>
+        /// <param name="customer"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(string id, [FromBody] UserUpdateModel mUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelStateError());
+            }
+
+            var userId = await _userInfoRepository.UpdateByIdAsync(id, mUser);
+            return CreatedAtRoute("GetByUserIdAsync", new { controller = "Users", userId = userId }, mUser);
+
+        }
+
+        /// <summary>
+        /// Delete data by UserId
+        /// </summary>
+        /// <param name="userId"></param>
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteByUserIdAsync(string userId)
+        {
+            await _userInfoRepository.RemoveByIdAsync(userId);
+            return Ok();
+        }
     }
 }

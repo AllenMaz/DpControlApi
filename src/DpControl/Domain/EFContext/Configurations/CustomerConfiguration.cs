@@ -27,8 +27,8 @@ namespace DpControl.Domain.EFContext.Configurations
                 .OnDelete(DeleteBehavior.SetNull);
 
             //when delete Customer ,SetNull for AspNetUsers
-            entityBuilder.HasMany(c=>c.Users).WithOne(c=>c.Customer).HasForeignKey(o => o.CustomerId)
-                .OnDelete(DeleteBehavior.SetNull);
+            //entityBuilder.HasMany(c=>c.Users).WithOne(c=>c.Customer).HasForeignKey(o => o.CustomerNo)
+            //    .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

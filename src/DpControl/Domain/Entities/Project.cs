@@ -14,7 +14,6 @@ namespace DpControl.Domain.Entities
         #region relationship
         public int? CustomerId { get; set; }
         public Customer Customer { get; set; }
-        public virtual List<ApplicationUser> Users { get; set; }
         public virtual List<Location> Locations { get; set; }           // Devices contained in a company accessed through Locations
         public virtual List<Group> Groups { get; set; }
         public virtual List<Scene> Scenes { get; set; }
@@ -29,7 +28,6 @@ namespace DpControl.Domain.Entities
 
         public Project()
         {
-            this.Users = new List<ApplicationUser>();
             this.Locations = new List<Location>();
             this.Groups = new List<Group>();
             this.Scenes = new List<Scene>();

@@ -110,7 +110,12 @@ namespace DpControl.Domain.Repository
             return customerSearch;
         }
 
-
+        /// <summary>
+        /// Get All Customers
+        /// If user has CustomerNo ,then filter by CustomerNo
+        /// if user's CustomerNo is null ,then return all Customers
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<CustomerSearchModel> GetAll()
         {
             var queryData = from C in _context.Customers

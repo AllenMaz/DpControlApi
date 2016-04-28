@@ -11,6 +11,7 @@ using System.Threading;
 using DpControl.Domain.IRepository;
 using System.Security.Claims;
 using IdentityModel.Constants;
+using Microsoft.AspNet.Identity;
 
 namespace DpControl.Utility
 {
@@ -33,49 +34,92 @@ namespace DpControl.Utility
     {
         private readonly AbstractAuthentication _authentication;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public UserInfoManager(AbstractAuthentication authentication
-            , IHttpContextAccessor httpContextAccessor)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public UserInfoManager(AbstractAuthentication authentication,
+             IHttpContextAccessor httpContextAccessor,
+             UserManager<ApplicationUser> userManager)
         {
             _authentication = authentication;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
-        public UserInfo GetLoginUserInfo()
+        
+        public LoginUserInfo GetLoginUserInfo()
         {
-            UserInfo userInfo = new UserInfo();
+            var loginUserInfo = this.GetOAuth2LoginUserInfo();
+            //var loginUserInfo = this.GetBasicLoginUserInfo();
+            return loginUserInfo;
+        }
+
+        
+
+        public async Task<LoginUserInfo> GetLoginUserInfoAsync()
+        {
+            var loginUserInfo = await this.GetOAuth2LoginUserInfoAsync();
+            return loginUserInfo;
+        }
+
+        private LoginUserInfo GetOAuth2LoginUserInfo()
+        {
+            LoginUserInfo loginUserInfo = new LoginUserInfo();
+            //ClaimsPrincipal 
+            var claimsPrincipal = _httpContextAccessor.HttpContext.User;
+            var userName = claimsPrincipal.Claims.First(c => c.Type == JwtClaimTypes.Name).Value;
+
+            var user = Task.Run<ApplicationUser>(() => _userManager.FindByNameAsync(userName)).Result;
+
+            loginUserInfo.UserName = userName;
+            loginUserInfo.CustomerNo = user.CustomerNo;
+            loginUserInfo.ProjectNo = user.ProjectNo;
+            loginUserInfo.Roles = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Role).Select(c => c.Value).ToList();
+
+            return loginUserInfo;
+        }
+
+
+
+        private async Task<LoginUserInfo> GetOAuth2LoginUserInfoAsync()
+        {
+            LoginUserInfo loginUserInfo = new LoginUserInfo();
             //ClaimsPrincipal
             var claimsPrincipal = _httpContextAccessor.HttpContext.User;
-            var aa = claimsPrincipal.Claims.First(c => c.Type == JwtClaimTypes.Name);
+            var userName = claimsPrincipal.Claims.First(c => c.Type == JwtClaimTypes.Name).Value;
 
-            userInfo.UserName = claimsPrincipal.Claims.First(c=>c.Type == JwtClaimTypes.Name).Value;
-            userInfo.Roles = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Role).Select(c=>c.Value).ToList();
+            var user = await _userManager.FindByNameAsync(userName);
+            loginUserInfo.UserName = userName;
+            loginUserInfo.CustomerNo = user.CustomerNo;
+            loginUserInfo.ProjectNo = user.ProjectNo;
+            loginUserInfo.Roles = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Role).Select(c => c.Value).ToList();
 
-            return userInfo;
+            return loginUserInfo;
         }
-        
 
         /// <summary>
         /// Get UserInfo from Http Head
         /// Basic Authorization / Digest Authorization
         /// </summary>
         /// <returns></returns>
-        private UserInfo GetUserInfoFromHttpHead()
+        private LoginUserInfo GetBasicLoginUserInfo()
         {
-            UserInfo userInfo = new UserInfo();
+            LoginUserInfo loginUserInfo = new LoginUserInfo();
             //call async method
             var user = Task.Run<ApplicationUser>(() => _authentication.GetUserInfoFromHttpHeadAsync(_httpContextAccessor.HttpContext)).Result;
-            
+
             if (user != null)
             {
-                //Construct UserInfo
-                userInfo.UserName = user.UserName;
+                var userInfo = Task.Run<ApplicationUser>(() => _userManager.FindByNameAsync(user.UserName)).Result;
 
+                loginUserInfo.UserName = userInfo.UserName;
+                loginUserInfo.CustomerNo = userInfo.CustomerNo;
+                loginUserInfo.ProjectNo = userInfo.ProjectNo;
             }
             else
             {
-                userInfo = null;
+                loginUserInfo = null;
             }
-            return userInfo;
+            return loginUserInfo;
         }
 
         /// <summary>
@@ -83,24 +127,25 @@ namespace DpControl.Utility
         /// Basic Authorization / Digest Authorization
         /// </summary>
         /// <returns></returns>
-        private async Task<UserInfo> GetUserInfoFromHttpHeadAsync()
+        private async Task<LoginUserInfo> GetBasicLoginUserInfoAsync()
         {
-            UserInfo userInfo = new UserInfo();
+            LoginUserInfo loginUserInfo = new LoginUserInfo();
             var user = await _authentication.GetUserInfoFromHttpHeadAsync(_httpContextAccessor.HttpContext);
             if (user != null)
             {
                 //Construct UserInfo
-                userInfo.UserName = user.UserName;
-
+                var userInfo = await _userManager.FindByNameAsync(user.UserName);
+                loginUserInfo.UserName = userInfo.UserName;
+                loginUserInfo.CustomerNo = userInfo.CustomerNo;
+                loginUserInfo.ProjectNo = userInfo.ProjectNo;
             }
             else
             {
-                userInfo = null;
+                loginUserInfo = null;
             }
-            return userInfo;
+            return loginUserInfo;
         }
 
 
-        
     }
 }

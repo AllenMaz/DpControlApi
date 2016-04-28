@@ -76,4 +76,25 @@ namespace DpControl.Utility
 
         
     }
+
+    public static class Role
+    {
+        public const string Admin = "Admin";
+        public const string Engineer = "Engineer";
+        public const string CustomerService = "CustomerService";
+        public const string NormalUser = "NormalUser";
+
+        public static string ConstructAuthorizationRoles(string[] roleParams)
+        {
+            string authroizationRoles = string.Empty;
+            for (int i=0;i<roleParams.Length;i++)
+            {
+                authroizationRoles += roleParams[i];
+                if (i != roleParams.Length -1) 
+                    authroizationRoles += ",";
+            }
+
+            return authroizationRoles;
+        }
+    }
 }

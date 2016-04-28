@@ -30,13 +30,13 @@ namespace DpControl.Domain.EFContext.Configurations
             //when delete project ,SetNull for DeviceLocations
             entityBuilder.HasMany(p => p.Locations).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId)
                 .OnDelete(DeleteBehavior.SetNull);
-            //when delete project ,SetNull for AspNetUsers
-            entityBuilder.HasMany(p => p.Users).WithOne(o => o.Project).HasForeignKey(o => o.ProjectId)
-                .OnDelete(DeleteBehavior.SetNull);
             //when delete project ,SetNull for Scenes
             entityBuilder.HasMany(p => p.Scenes).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId)
                 .OnDelete(DeleteBehavior.SetNull);
             entityBuilder.HasMany(p => p.Holidays).WithOne(l => l.Project).HasForeignKey(l => l.ProjectId);
+            //when delete project ,SetNull for AspNetUsers
+            //entityBuilder.HasMany(p => p.Users).WithOne(o => o.Project).HasForeignKey(o => o.ProjectNo)
+            //    .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

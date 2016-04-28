@@ -148,27 +148,41 @@ namespace DpControl
             #endregion
             #region  swagger
             services.AddSwaggerGen();
+            
             services.ConfigureSwaggerDocument(options =>
             {
-
+                
                 options.SingleApiVersion(new Info
                 {
                     Version = "v1",
                     Title = "DpControl WebApi v1",
                     Description = "A WebApi Test and Document For DpControl",
                     TermsOfService = "None"
-
+                    
                 });
+                //options.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
+                //{
+                //    Type = "oauth2",
+                //    Flow = "implicit",
+                //    AuthorizationUrl = "<URL>",
+                //    Scopes = new Dictionary<string, string> { { "dpcontrolapiscope", "dpcontrolapiscope" } }
+                //});
+
+                //options.OperationFilter<AssignSecurityRequirements>();
                 options.OperationFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlActionComments(_pathToDoc));
                 //options.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
 
-            });
 
+            });
+            
             services.ConfigureSwaggerSchema(options =>
             {
                 options.DescribeAllEnumsAsStrings = true;
                 options.ModelFilter(new Swashbuckle.SwaggerGen.XmlComments.ApplyXmlTypeComments(_pathToDoc));
+                
+               
             });
+            
 
             #endregion
             #region Register Dependency Injection

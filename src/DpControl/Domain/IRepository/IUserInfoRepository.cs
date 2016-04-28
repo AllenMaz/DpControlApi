@@ -12,7 +12,9 @@ namespace DpControl.Domain.IRepository
     /// </summary>
     public interface ILoginUserRepository
     {
-        UserInfo GetLoginUserInfo();
+        LoginUserInfo GetLoginUserInfo();
+        Task<LoginUserInfo> GetLoginUserInfoAsync();
+
         
 
     }
@@ -26,5 +28,8 @@ namespace DpControl.Domain.IRepository
         Task<UserSubSearchModel> FindByIdAsync(string userId);
         Task<IEnumerable<GroupSubSearchModel>> GetGroupsByUserId(string userId);
         Task<IEnumerable<LocationSubSearchModel>> GetLocationsByUserId(string userId);
+        Task<string> AddAsync(UserAddModel user);
+        Task<string> UpdateByIdAsync(string userId, UserUpdateModel user);
+        Task RemoveByIdAsync(string itemId);
     }
 }

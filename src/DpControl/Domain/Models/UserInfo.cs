@@ -1,28 +1,80 @@
 ﻿using DpControl.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DpControl.Domain.Models
 {
-    public class UserInfo
+    public class LoginUserInfo
     {
         public string UserName { get; set; }
+        public string CustomerNo { get; set; }
+        public string ProjectNo { get; set; }
 
         public List<string> Roles { get; set; }
+
+        public bool hasCustomerNo
+        {
+            get {
+                return string.IsNullOrEmpty(this.CustomerNo) ? false : true;
+            }
+            set
+            {
+                value = string.IsNullOrEmpty(this.CustomerNo) ? false : true;
+            }
+        }
+
+        public bool hasProjectNo
+        {
+            get{
+                return string.IsNullOrEmpty(this.ProjectNo) ? false : true;
+
+            }
+            set
+            {
+                value = string.IsNullOrEmpty(this.ProjectNo) ? false : true;
+            }
+        }
+        
     }
 
-    public class UserSubSearchModel
+    public class UserBaseModel
+    {
+        [RegularExpression(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$", ErrorMessage = "Invalid email address format")]
+        public string Email { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string CustomerNo { get; set; }
+        public string ProjectNo { get; set; }
+    }
+    public class UserSubSearchModel: UserBaseModel
     {
         public string UserId { get; set; }
         public string UserName { get; set; }
+
+
     }
 
     public class UserSearchModel:UserSubSearchModel
     {
         public IEnumerable<GroupSubSearchModel> Groups { get; set; }     
         public IEnumerable<LocationSubSearchModel> Locations { get; set; }
+    }
+
+    public class UserAddModel : UserBaseModel
+    {
+        [Required]
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+    }
+
+    public class UserUpdateModel : UserBaseModel
+    {
+
     }
 
     public static class UserOperator

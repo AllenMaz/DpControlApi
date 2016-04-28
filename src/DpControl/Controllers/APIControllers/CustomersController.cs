@@ -24,18 +24,21 @@ namespace DpControl.APIControllers
     {
         [FromServices]
         public ICustomerRepository _customerRepository { get; set; }
-
-        [FromServices]
-        public IDistributedCache _sqlServerCache { get; set; }
-
         
+        private ILoginUserRepository _loginUser;
+
+        public CustomersController(ILoginUserRepository loginUser)
+        {
+            _loginUser = loginUser;
+        }
+
         #region GET
         /// <summary>
         /// Search data by CustomerId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
+        [Authorize]
         [EnableQuery(typeof(CustomerSearchModel))]
         [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
         public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
@@ -53,7 +56,7 @@ namespace DpControl.APIControllers
         /// Get Related Projects
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
+        [Authorize]
         [HttpGet("{customerId}/Projects")]
         [EnableQuery]
         public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
@@ -67,7 +70,7 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles ="Admin,Public")]
+        [Authorize]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
@@ -96,6 +99,21 @@ namespace DpControl.APIControllers
             //    result = JsonHandler.UnJson<IEnumerable<CustomerSearchModel>>(cacheResultStr);
 
             //}
+
+            
+            var user = _loginUser.GetLoginUserInfo();
+            if (user.hasCustomerNo)
+            {
+                //filter by CustomerNo
+                Filter customerNoFilter = new Filter();
+                var filterPropertyValue = new Dictionary<string, string>();
+                filterPropertyValue.Add("CustomerNo", user.CustomerNo);
+                customerNoFilter.FilterPropertyValue = filterPropertyValue;
+                customerNoFilter.CompareOperator = FilterOperators.Equal;
+                customerNoFilter.LogicalOperator = FilterOperators.And;
+                Query.AddFilterCondition(customerNoFilter);
+            }
+
             var result = await _customerRepository.GetAllAsync();
 
             return result;
@@ -109,7 +127,7 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
+        [Authorize(Roles = Role.Admin )]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
         {
@@ -128,7 +146,7 @@ namespace DpControl.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="customer"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
+        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] CustomerUpdateModel mCustomer)
         {
@@ -145,8 +163,8 @@ namespace DpControl.APIControllers
         /// <summary>
         /// Delete data by CustomerNo
         /// </summary>
+        [Authorize(Roles = Role.Admin)]
         /// <param name="customerId"></param>
-        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{customerId}")]
         public async Task<IActionResult> DeleteByCustomerIdAsync(int customerId)
         {

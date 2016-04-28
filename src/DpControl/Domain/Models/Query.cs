@@ -62,6 +62,29 @@ namespace DpControl.Domain.Models
             expand = null;
         }
         
+        /// <summary>
+        /// Add extra filter condition
+        /// </summary>
+        public static void AddFilterCondition(List<Filter> filters)
+        {
+            foreach(var filter in filters)
+            {
+                AddFilterCondition(filter);
+            }
+        }
+
+        /// <summary>
+        /// Add extra filter condition
+        /// </summary>
+        public static void AddFilterCondition(Filter filter)
+        {
+            //if Query.filter is not null,then conver to list
+            var queryFilter = Query.filter == null ? new List<Filter>() : Query.filter.ToList();
+            //add filter param to queryFilter
+            queryFilter.Add(filter);
+            //reset value form Gobal Query filter
+            Query.filter = queryFilter.ToArray();
+        }
     }
 
     public class OrderBy
