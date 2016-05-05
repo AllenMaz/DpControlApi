@@ -1,7 +1,7 @@
 ﻿(function ($, swaggerUi) {
     $(function () {
         var settings = {
-            authority: 'http://localhost:23194/',
+            authority: 'http://localhost:60/',
             client_id: 'swagger-implicit',
             popup_redirect_uri: window.location.protocol
                 + '//'
