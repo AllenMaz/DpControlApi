@@ -14,22 +14,25 @@ namespace DpControl.Domain.IRepository
     {
         LoginUserInfo GetLoginUserInfo();
         Task<LoginUserInfo> GetLoginUserInfoAsync();
-
         
-
     }
 
     /// <summary>
     /// use to operator database data
     /// </summary>
-    public interface IUserInfoRepository
+    public interface IUserRepository
     {
         Task<IEnumerable<UserSearchModel>> GetAllAsync();
         Task<UserSubSearchModel> FindByIdAsync(string userId);
         Task<IEnumerable<GroupSubSearchModel>> GetGroupsByUserId(string userId);
         Task<IEnumerable<LocationSubSearchModel>> GetLocationsByUserId(string userId);
+        Task<IEnumerable<RoleSubSearchModel>> GetRolesByUserId(string userId);
+
         Task<string> AddAsync(UserAddModel user);
         Task<string> UpdateByIdAsync(string userId, UserUpdateModel user);
         Task RemoveByIdAsync(string itemId);
+        Task CreateRelationsAsync(string userId, string navigationProperty, List<string> navigationPropertyIds);
+        Task RemoveRelationsAsync(string userId, string navigationProperty, List<string> navigationPropertyIds);
+
     }
 }

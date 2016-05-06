@@ -1,4 +1,6 @@
-﻿using DpControl.Domain.Entities;
+﻿using DpControl.Domain.EFContext;
+using DpControl.Domain.Entities;
+using DpControl.Domain.IRepository;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,8 +14,48 @@ namespace DpControl.Domain.Models
         public string UserName { get; set; }
         public string CustomerNo { get; set; }
         public string ProjectNo { get; set; }
+        public int UserLevel { get; set; }
 
         public List<string> Roles { get; set; }
+
+        public bool isSuperLevel
+        {
+            get
+            {
+
+                return (int)DpControl.Domain.Entities.UserLevel.SuperLevel ==this.UserLevel  ? true : false;
+            }
+            set
+            {
+                value = (int)DpControl.Domain.Entities.UserLevel.SuperLevel == this.UserLevel ? true : false;
+            }
+        }
+
+        public bool isCustomerLevel
+        {
+            get
+            {
+
+                return (int)DpControl.Domain.Entities.UserLevel.CustomerLevel == this.UserLevel ? true : false;
+            }
+            set
+            {
+                value = (int)DpControl.Domain.Entities.UserLevel.CustomerLevel == this.UserLevel ? true : false;
+            }
+        }
+
+        public bool isProjectLevel
+        {
+            get
+            {
+
+                return (int)DpControl.Domain.Entities.UserLevel.ProjectLevel == this.UserLevel ? true : false;
+            }
+            set
+            {
+                value = (int)DpControl.Domain.Entities.UserLevel.ProjectLevel == this.UserLevel ? true : false;
+            }
+        }
 
         public bool hasCustomerNo
         {
@@ -47,6 +89,9 @@ namespace DpControl.Domain.Models
 
         public string PhoneNumber { get; set; }
 
+        [Required(ErrorMessage = "UserLeveal is required!")]
+        public int UserLevel { get; set; }
+
         public string CustomerNo { get; set; }
         public string ProjectNo { get; set; }
     }
@@ -54,21 +99,23 @@ namespace DpControl.Domain.Models
     {
         public string UserId { get; set; }
         public string UserName { get; set; }
-
-
+        
     }
 
     public class UserSearchModel:UserSubSearchModel
     {
         public IEnumerable<GroupSubSearchModel> Groups { get; set; }     
         public IEnumerable<LocationSubSearchModel> Locations { get; set; }
+        public IEnumerable<RoleSubSearchModel> Roles { get; set; }
     }
 
     public class UserAddModel : UserBaseModel
     {
         [Required]
         public string UserName { get; set; }
+        
 
+        [Required]
         public string Password { get; set; }
     }
 
@@ -79,6 +126,7 @@ namespace DpControl.Domain.Models
 
     public static class UserOperator
     {
+
         /// <summary>
         /// Cascade set UserSearchModel Results
         /// </summary>
@@ -96,13 +144,16 @@ namespace DpControl.Domain.Models
         /// <returns></returns>
         public static UserSearchModel SetUserSearchModelCascade(ApplicationUser user)
         {
+            ShadingContext context = new ShadingContext();
             if (user == null) return null;
             var userSearchModel = new UserSearchModel
             {
                 UserId = user.Id,
+                UserLevel = user.UserLevel,
                 UserName = user.UserName,
                 Groups = user.UserGroups.Select(v => GroupOperator.SetGroupSubSearchModel(v.Group)),
-                Locations = user.UserLocations.Select(v => LocationOperator.SetLocationSubSearchModel(v.Location))
+                Locations = user.UserLocations.Select(v => LocationOperator.SetLocationSubSearchModel(v.Location)),
+                Roles = user.Roles.Select(v=>RoleOperator.SetRoleSubSearchModel(context.Roles.FirstOrDefault(r=>r.Id == v.RoleId)))
             };
 
             return userSearchModel;

@@ -51,6 +51,7 @@ namespace DpControl.Controllers
             string userName = "Admin";
             string password = "admin123";
             string roleName = "Admin";
+            
             //判断系统中是否已经存在Admin用户
             var admin = _userManager.FindByNameAsync(userName);
             
@@ -60,7 +61,7 @@ namespace DpControl.Controllers
                 return View(model);
             }
             //新增用户
-            var user = new ApplicationUser { UserName = userName };
+            var user = new ApplicationUser { UserName = userName,UserLevel = (int)UserLevel.SuperLevel };
             var result = await _userManager.CreateAsync(user, password);
             //新增角色
             IdentityRole adminRole = new IdentityRole { Name = roleName, NormalizedName = roleName.ToUpper() };

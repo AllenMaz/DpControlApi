@@ -55,36 +55,4 @@ namespace DpControl.Domain.Entities
             this.Logs = new List<Log>();
         }
     }
-
-    public enum Orientation
-    {
-        Null,       // for unidentified
-        East,
-        South,
-        West,
-        North,
-        Southeast,
-        Southwest,
-        Northeast,
-        Northwest
-    }
-
-    public enum DeviceType
-    {
-        Null,
-        Controller,
-        TouchScreen,
-        DryContact,
-        RF,
-        Tubular
-    }
-
-    public enum CommMode
-    {
-        Null,
-        RS485,
-        ZigBee,
-        Bluetooth,
-        WiFi
-    }
 }

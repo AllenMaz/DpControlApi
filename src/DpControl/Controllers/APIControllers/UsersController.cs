@@ -1,8 +1,11 @@
-﻿using DpControl.Domain.IRepository;
+﻿using DpControl.Domain.Entities;
+using DpControl.Domain.Execptions;
+using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,7 +17,10 @@ namespace DpControl.Controllers.APIControllers
     public class UsersController:BaseAPIController
     {
         [FromServices]
-        public IUserInfoRepository _userInfoRepository { get; set; }
+        public IUserRepository _userInfoRepository { get; set; }
+
+        [FromServices]
+        private IUrlHelper _urlHelper { get; set; }
 
         /// <summary>
         /// Search data by UserId
@@ -62,6 +68,20 @@ namespace DpControl.Controllers.APIControllers
             var groups = await _userInfoRepository.GetGroupsByUserId(userId);
             return groups;
         }
+
+        /// <summary>
+        /// Get Roles Relation
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin,Public")]
+        [EnableQuery]
+        [HttpGet("{userId}/Roles")]
+        public async Task<IEnumerable<RoleSubSearchModel>> GetRolesBySceneIdAsync(string userId)
+        {
+            var roles = await _userInfoRepository.GetRolesByUserId(userId);
+            return roles;
+        }
         #endregion
 
         /// <summary>
@@ -92,8 +112,63 @@ namespace DpControl.Controllers.APIControllers
                 return HttpBadRequest(ModelStateError());
             }
 
+            //check UserLevel value
+            if (!Enum.IsDefined(typeof(UserLevel), mUserAddModel.UserLevel))
+            {
+                string userLevelUrl = CreateCustomUrl("GetUserLevel", new { controller = "Utilities"});
+                throw new ExpectException("Invalid UserLevel.UserLevel ref :"+ userLevelUrl);
+
+            }
+
             string userId = await _userInfoRepository.AddAsync(mUserAddModel);
             return CreatedAtRoute("GetByUserIdAsync", new { controller = "Users", userId = userId }, mUserAddModel);
+        }
+
+        /// <summary>
+        /// Create RelationShips:Roles、Locations、Groups
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="navigationProperty"></param>
+        /// <param name="navigationPropertyIds"></param>
+        /// <returns></returns>
+        [HttpPost("{userId}/{navigationProperty}")]
+        public async Task<IActionResult> CreateRelationsAsync(string userId,string navigationProperty,
+            [FromBody] List<string> navigationPropertyIds)
+        {
+            if(navigationPropertyIds ==null || navigationPropertyIds.Count ==0 )
+            {
+                return HttpNotFound();
+            }
+            var uniqueNavigationPropertyIds = navigationPropertyIds.Distinct().ToList();
+            await _userInfoRepository.CreateRelationsAsync(userId,navigationProperty, uniqueNavigationPropertyIds);
+
+            string returnUrl = CreateCustomUrl("GetByUserIdAsync", 
+                new { controller = "Users", userId = userId },
+                "?expand=" + navigationProperty);
+
+            return Created(returnUrl, null);
+
+        }
+
+        /// <summary>
+        /// Remove RelationShips:Roles、Locations、Groups
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="navigationProperty"></param>
+        /// <param name="navigationPropertyIds"></param>
+        /// <returns></returns>
+        [HttpDelete("{userId}/{navigationProperty}")]
+        public async Task<IActionResult> RemoveRelationsAsync(string userId, string navigationProperty,
+            [FromBody] List<string> navigationPropertyIds)
+        {
+            if (navigationPropertyIds == null || navigationPropertyIds.Count == 0)
+            {
+                return HttpNotFound();
+            }
+            var uniqueNavigationPropertyIds = navigationPropertyIds.Distinct().ToList();
+
+            await _userInfoRepository.RemoveRelationsAsync(userId, navigationProperty, uniqueNavigationPropertyIds);
+            return Ok();
         }
 
         /// <summary>
@@ -108,6 +183,14 @@ namespace DpControl.Controllers.APIControllers
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
+            }
+
+            //check UserLevel value
+            if (!Enum.IsDefined(typeof(UserLevel), mUser.UserLevel))
+            {
+                string userLevelUrl = CreateCustomUrl("GetUserLevel", new { controller = "Utilities" });
+                throw new ExpectException("Invalid UserLevel.UserLevel ref :" + userLevelUrl);
+
             }
 
             var userId = await _userInfoRepository.UpdateByIdAsync(id, mUser);

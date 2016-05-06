@@ -71,6 +71,7 @@ namespace DpControl.Utility
             var user = Task.Run<ApplicationUser>(() => _userManager.FindByNameAsync(userName)).Result;
 
             loginUserInfo.UserName = userName;
+            loginUserInfo.UserLevel = user.UserLevel;
             loginUserInfo.CustomerNo = user.CustomerNo;
             loginUserInfo.ProjectNo = user.ProjectNo;
             loginUserInfo.Roles = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Role).Select(c => c.Value).ToList();
@@ -89,6 +90,7 @@ namespace DpControl.Utility
 
             var user = await _userManager.FindByNameAsync(userName);
             loginUserInfo.UserName = userName;
+            loginUserInfo.UserLevel = user.UserLevel;
             loginUserInfo.CustomerNo = user.CustomerNo;
             loginUserInfo.ProjectNo = user.ProjectNo;
             loginUserInfo.Roles = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Role).Select(c => c.Value).ToList();

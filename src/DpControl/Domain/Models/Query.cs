@@ -8,6 +8,7 @@ using Microsoft.AspNet.Mvc.ViewFeatures;
 using System.Linq.Expressions;
 using DpControl.Domain.Entities;
 using Microsoft.Data.Entity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace DpControl.Domain.Models
 {
@@ -107,7 +108,15 @@ namespace DpControl.Domain.Models
         /// value:PropertyValue
         /// </summary>
         public Dictionary<string, string> FilterPropertyValue { get; set; }
+        
+        /// <summary>
+        /// this operator will be: eq、lt 、gt
+        /// </summary>
         public string CompareOperator { get; set; }
+
+        /// <summary>
+        /// this operator will be : and 、or
+        /// </summary>
         public string LogicalOperator { get; set; }
 
     }
@@ -309,6 +318,33 @@ namespace DpControl.Domain.Models
                     returnResult = returnResult.Include(h=>h.Project);
                 return (IQueryable<T>)returnResult;
                 #endregion
+            }else if(typeof(T) == typeof(ApplicationUser))
+            {
+                //用户下的角色
+                var returnResult = result as IQueryable<ApplicationUser>;
+                var needExpandRoles = ExpandOperator.NeedExpand("Roles");
+                var needExpandGroups = ExpandOperator.NeedExpand("Groups");
+                var needExpandLocations = ExpandOperator.NeedExpand("Locations");
+
+                if (needExpandRoles)
+                    returnResult = returnResult.Include(l => l.Roles);
+                if (needExpandGroups)
+                    returnResult = returnResult.Include(l => l.UserGroups).ThenInclude(gl => gl.Group);
+                if (needExpandLocations)
+                    returnResult = returnResult.Include(l => l.UserLocations).ThenInclude(gl => gl.Location);
+
+                return (IQueryable<T>)returnResult;
+
+            } else if (typeof(T) == typeof(IdentityRole))
+            {
+                //角色下的用户
+                var returnResult = result as IQueryable<IdentityRole>;
+                var needExpandUsers = ExpandOperator.NeedExpand("Users");
+
+                if (needExpandUsers)
+                    returnResult = returnResult.Include(l => l.Users);
+                
+                return (IQueryable<T>)returnResult;
             }
 
 

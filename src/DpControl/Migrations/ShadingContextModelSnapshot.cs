@@ -90,6 +90,8 @@ namespace DpControl.Migrations
 
                     b.Property<bool>("TwoFactorEnabled");
 
+                    b.Property<int>("UserLevel");
+
                     b.Property<string>("UserName")
                         .HasAnnotation("MaxLength", 256);
 

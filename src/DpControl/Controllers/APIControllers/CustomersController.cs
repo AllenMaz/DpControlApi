@@ -102,7 +102,7 @@ namespace DpControl.APIControllers
 
             
             var user = _loginUser.GetLoginUserInfo();
-            if (user.hasCustomerNo)
+            if (!user.isSuperLevel)
             {
                 //filter by CustomerNo
                 Filter customerNoFilter = new Filter();

@@ -32,5 +32,26 @@ namespace DpControl.Controllers
         }
 
         
+        [NonAction]
+        public string CreateCustomUrl(string routeName,object values,string queryString)
+        {
+            var customerUrl = CreateCustomUrl(routeName,values);
+            customerUrl = customerUrl + queryString;
+            return customerUrl;
+        }
+
+        [NonAction]
+        public string CreateCustomUrl(string routeName, object values)
+        {
+            var customerUrl = Url.RouteUrl(new Microsoft.AspNet.Mvc.Routing.UrlRouteContext()
+            {
+                RouteName = routeName,
+                Values = values,
+                Protocol = HttpContext.Request.Scheme,
+                Host = HttpContext.Request.Host.Value,
+            });
+
+            return customerUrl;
+        }
     }
 }

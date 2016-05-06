@@ -8,7 +8,7 @@ using DpControl.Domain.EFContext;
 namespace DpControl.Migrations
 {
     [DbContext(typeof(ShadingContext))]
-    [Migration("20160425064410_Initial")]
+    [Migration("20160505072953_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,6 +90,8 @@ namespace DpControl.Migrations
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<int>("UserLevel");
 
                     b.Property<string>("UserName")
                         .HasAnnotation("MaxLength", 256);
