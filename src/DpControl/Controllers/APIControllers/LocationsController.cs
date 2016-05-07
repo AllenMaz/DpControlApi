@@ -1,4 +1,6 @@
-﻿using DpControl.Domain.IRepository;
+﻿using DpControl.Domain.Entities;
+using DpControl.Domain.Execptions;
+using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
@@ -144,6 +146,28 @@ namespace DpControl.Controllers.APIControllers
                 return HttpBadRequest(ModelStateError());
             }
 
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
+            {
+                string orientationUrl = CreateCustomUrl("GetOrientation", new { controller = "Utilities" });
+                throw new ExpectException("Invalid Orientation. ref :" + orientationUrl);
+            }
+
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
+            {
+                string deviceTypeUrl = CreateCustomUrl("GetDeviceType", new { controller = "Utilities" });
+                throw new ExpectException("Invalid DeviceType. ref :" + deviceTypeUrl);
+            }
+
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
+            {
+                string commModeUrl = CreateCustomUrl("GetCommMode", new { controller = "Utilities" });
+                throw new ExpectException("Invalid CommMode. ref :" + commModeUrl);
+            }
+
+
             var locationId = await _locationRepository.AddAsync(mLocation);
             return CreatedAtRoute("GetByLocationIdAsync", new { controller = "Locations", locationId = locationId }, mLocation);
         }
@@ -163,6 +187,27 @@ namespace DpControl.Controllers.APIControllers
                 return HttpBadRequest(ModelStateError());
             }
 
+            //Check Orientation
+            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
+            {
+                string orientationUrl = CreateCustomUrl("GetOrientation", new { controller = "Utilities" });
+                throw new ExpectException("Invalid Orientation. ref :" + orientationUrl);
+            }
+
+            //Check DeviceType
+            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
+            {
+                string deviceTypeUrl = CreateCustomUrl("GetDeviceType", new { controller = "Utilities" });
+                throw new ExpectException("Invalid DeviceType. ref :" + deviceTypeUrl);
+            }
+
+            //Check CommMode
+            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
+            {
+                string commModeUrl = CreateCustomUrl("GetCommMode", new { controller = "Utilities" });
+                throw new ExpectException("Invalid CommMode. ref :" + commModeUrl);
+            }
+
             var locationId = await _locationRepository.UpdateByIdAsync(id, mLocation);
             return CreatedAtRoute("GetByLocationIdAsync", new { controller = "Locations", locationId = locationId }, mLocation);
 
@@ -177,6 +222,53 @@ namespace DpControl.Controllers.APIControllers
         public async Task<IActionResult> DeleteByLocationIdAsync(int locationId)
         {
             await _locationRepository.RemoveByIdAsync(locationId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Create RelationShips:Users、Groups
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <param name="navigationProperty"></param>
+        /// <param name="navigationPropertyIds"></param>
+        /// <returns></returns>
+        [HttpPost("{locationId}/{navigationProperty}")]
+        public async Task<IActionResult> CreateRelationsAsync(int locationId, string navigationProperty,
+            [FromBody] List<string> navigationPropertyIds)
+        {
+            if (navigationPropertyIds == null || navigationPropertyIds.Count == 0)
+            {
+                return HttpNotFound();
+            }
+            var uniqueNavigationPropertyIds = navigationPropertyIds.Distinct().ToList();
+            await _locationRepository.CreateRelationsAsync(locationId, navigationProperty, uniqueNavigationPropertyIds);
+
+            string returnUrl = CreateCustomUrl("GetByLocationIdAsync",
+                new { controller = "Locations", locationId = locationId },
+                "?expand=" + navigationProperty);
+
+            return Created(returnUrl, null);
+
+        }
+
+        /// <summary>
+        /// Remove RelationShips:Users、Groups
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <param name="navigationProperty"></param>
+        /// <param name="navigationPropertyIds"></param>
+        /// <returns></returns>
+        [HttpDelete("{locationId}/{navigationProperty}")]
+        public async Task<IActionResult> RemoveRelationsAsync(int locationId, string navigationProperty,
+            [FromBody] List<string> navigationPropertyIds)
+        {
+            if (navigationPropertyIds == null || navigationPropertyIds.Count == 0)
+            {
+                return HttpNotFound();
+            }
+            var uniqueNavigationPropertyIds = navigationPropertyIds.Distinct().ToList();
+
+            await _locationRepository.RemoveRelationsAsync(locationId, navigationProperty, uniqueNavigationPropertyIds);
             return Ok();
         }
     }

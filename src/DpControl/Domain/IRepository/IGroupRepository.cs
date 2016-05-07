@@ -7,6 +7,7 @@ using DpControl.Domain.Models;
 namespace DpControl.Domain.IRepository
 {
     public interface IGroupRepository:IBaseRepository<GroupAddModel,GroupUpdateModel,GroupSearchModel>
+        , IRelationsRepository<int>
     {
         #region Relations
         Task<SceneSubSearchModel> GetSceneByGroupIdAsync(int groupId);

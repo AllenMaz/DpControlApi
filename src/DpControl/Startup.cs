@@ -191,9 +191,6 @@ namespace DpControl
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<ISceneRepository, SceneRepository>();
             services.AddScoped<ISceneSegmentRepository, SceneSegmentRepository>();
-            services.AddScoped<IGroupLocationRepository, GroupLocationRepository>();
-            services.AddScoped<IUserGroupRepository, UserGroupRepository>();
-            services.AddScoped<IUserLocationRepository, UserLocationRepository>();
             services.AddScoped<IAlarmRepository, AlarmRepository>();
             services.AddScoped<IAlarmMessageRepository, AlarmMessageRepository>();
             services.AddScoped<IHolidayRepository, HolidayRepository>();

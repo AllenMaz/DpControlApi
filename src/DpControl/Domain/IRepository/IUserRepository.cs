@@ -20,7 +20,7 @@ namespace DpControl.Domain.IRepository
     /// <summary>
     /// use to operator database data
     /// </summary>
-    public interface IUserRepository
+    public interface IUserRepository: IRelationsRepository<string>
     {
         Task<IEnumerable<UserSearchModel>> GetAllAsync();
         Task<UserSubSearchModel> FindByIdAsync(string userId);
@@ -31,8 +31,6 @@ namespace DpControl.Domain.IRepository
         Task<string> AddAsync(UserAddModel user);
         Task<string> UpdateByIdAsync(string userId, UserUpdateModel user);
         Task RemoveByIdAsync(string itemId);
-        Task CreateRelationsAsync(string userId, string navigationProperty, List<string> navigationPropertyIds);
-        Task RemoveRelationsAsync(string userId, string navigationProperty, List<string> navigationPropertyIds);
-
+       
     }
 }

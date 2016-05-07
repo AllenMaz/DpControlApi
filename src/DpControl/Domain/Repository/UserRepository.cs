@@ -132,7 +132,7 @@ namespace DpControl.Domain.Repository
                     foreach (string navigationId in navigationPropertyIds)
                     {
                         //conver navigationId to int
-                        int navId = this.ConverRelationIdToInt(navigationId);
+                        int navId = Utilities.ConverRelationIdToInt(navigationId);
                         //check navigationProperty already exist in system
                         var group = _context.Groups.FirstOrDefault(r => r.GroupId == navId);
                         if (group == null)
@@ -153,7 +153,7 @@ namespace DpControl.Domain.Repository
                     foreach (string navigationId in navigationPropertyIds)
                     {
                         //conver navigationId to int
-                        int navId = this.ConverRelationIdToInt(navigationId);
+                        int navId = Utilities.ConverRelationIdToInt(navigationId);
                         //is navigationProperty already exist in system
                         var location = _context.Locations.FirstOrDefault(r => r.LocationId == navId);
                         if (location == null)
@@ -211,7 +211,7 @@ namespace DpControl.Domain.Repository
                     foreach (string navigationId in navigationPropertyIds)
                     {
                         //conver navigationId to int
-                        int navId = this.ConverRelationIdToInt(navigationId);
+                        int navId = Utilities.ConverRelationIdToInt(navigationId);
                        //is relationship already exist in system
                         var usergroup = _context.UserGroups
                             .Where(ug => ug.GroupId == navId && ug.UserId == userId).FirstOrDefault();
@@ -227,7 +227,7 @@ namespace DpControl.Domain.Repository
                     foreach (string navigationId in navigationPropertyIds)
                     {
                         //conver navigationId to int
-                        int navId = this.ConverRelationIdToInt(navigationId);
+                        int navId = Utilities.ConverRelationIdToInt(navigationId);
                        //is relationship already exist in system
                         var userlocation = _context.UserLocations
                             .Where(ul => ul.LocationId == navId && ul.UserId == userId).FirstOrDefault();
@@ -430,17 +430,7 @@ namespace DpControl.Domain.Repository
             return projectBelongToCustomer;
         }
 
-        private int ConverRelationIdToInt(string relationId)
-        {
-            try
-            {
-                return System.Convert.ToInt32(relationId);
-            }
-            catch
-            {
-                throw new ExpectException("Wrong Id format :"+relationId);
-            }
-        }
+        
 
         
     }

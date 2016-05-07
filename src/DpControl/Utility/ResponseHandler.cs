@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DpControl.Utility
@@ -54,9 +55,11 @@ namespace DpControl.Utility
             ErrorResponseModel errResponse = new ErrorResponseModel();
             errResponse.code = httpStatusCode;
             errResponse.errors = errors;
-
+            
             string errJson = JsonHandler.ToJson(errResponse);
 
+            //URL 
+            errJson = errJson.Replace("\\/","/");
             return errJson;
         }
     }

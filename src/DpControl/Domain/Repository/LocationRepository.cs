@@ -53,23 +53,6 @@ namespace DpControl.Domain.Repository
             if (checkData.Count > 0)
                 throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
 
-            //Check Orientation
-            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
-            {
-                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
-            }
-
-            //Check DeviceType
-            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
-            {
-                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
-            }
-
-            //Check CommMode
-            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
-            {
-                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
-            }
 
             //Get UserInfo
             var user = _loginUser.GetLoginUserInfo();
@@ -122,25 +105,7 @@ namespace DpControl.Domain.Repository
             checkData = await _context.Locations.Where(dl => dl.DeviceSerialNo == mLocation.DeviceSerialNo).ToListAsync();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
-
-            //Check Orientation
-            if (!Enum.IsDefined(typeof(Orientation),mLocation.Orientation))
-            {
-                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
-            }
-
-            //Check DeviceType
-            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
-            {
-                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
-            }
-
-            //Check CommMode
-            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
-            {
-                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
-            }
-
+            
             //Get UserInfo
             var user = _loginUser.GetLoginUserInfo();
 
@@ -321,24 +286,7 @@ namespace DpControl.Domain.Repository
             if (checkData.Count > 0)
                 throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
 
-            //Check Orientation
-            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
-            {
-                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
-            }
-
-            //Check DeviceType
-            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
-            {
-                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
-            }
-
-            //Check CommMode
-            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
-            {
-                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
-            }
-
+            
             //Get UserInfo
             var user = _loginUser.GetLoginUserInfo();
 
@@ -389,23 +337,7 @@ namespace DpControl.Domain.Repository
             if (checkData.Count > 0)
                 throw new ExpectException("The data which DeviceSerialNo equal to '" + mLocation.DeviceSerialNo + "' already exist in system");
 
-            //Check Orientation
-            if (!Enum.IsDefined(typeof(Orientation), mLocation.Orientation))
-            {
-                throw new ExpectException("Invalid Orientation.You can get correct Orientation values from API");
-            }
-
-            //Check DeviceType
-            if (!Enum.IsDefined(typeof(DeviceType), mLocation.DeviceType))
-            {
-                throw new ExpectException("Invalid DeviceType.You can get correct DeviceType values from API");
-            }
-
-            //Check CommMode
-            if (!Enum.IsDefined(typeof(CommMode), mLocation.CommMode))
-            {
-                throw new ExpectException("Invalid CommMode.You can get correct CommMode values from API");
-            }
+           
 
             //Get UserInfo
             var user = _loginUser.GetLoginUserInfo();
@@ -432,6 +364,105 @@ namespace DpControl.Domain.Repository
             return location.LocationId;
         }
 
-       
+        public async Task CreateRelationsAsync(int locationId, string navigationProperty, List<string> navigationPropertyIds)
+        {
+            var location = await _context.Locations.FirstOrDefaultAsync(u => u.LocationId == locationId);
+            if (location == null)
+                throw new ExpectException("Could not find data which LocationId equal to " + locationId);
+
+            switch (navigationProperty)
+            {
+                case "Users":
+
+                    foreach (string userId in navigationPropertyIds)
+                    {
+                        //is navigationProperty already exist in system
+                        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+                        if (user == null)
+                            throw new ExpectException("User data which UserId equal to " + userId + " not exist in system");
+                        //is relationship already exist in system
+                        var userlocation = _context.UserLocations
+                            .Where(ul => ul.LocationId == locationId && ul.UserId == userId).ToList();
+                        if (userlocation.Count > 0)
+                            throw new ExpectException("Relation:" + userId + " already exist in system");
+                        //add relations
+                        var relation = new UserLocation() { UserId = userId, LocationId = locationId };
+                        _context.UserLocations.Add(relation);
+                    }
+
+
+                    break;
+                case "Groups":
+
+                    foreach (string navigationId in navigationPropertyIds)
+                    {
+                        //conver navigationId to int
+                        int groupId = Utilities.ConverRelationIdToInt(navigationId);
+                        //is navigationProperty already exist in system
+                        var group = _context.Groups.FirstOrDefault(r => r.GroupId == groupId);
+                        if (group == null)
+                            throw new ExpectException("Group data which GroupId equal to " + navigationId + " not exist in system");
+                        //is relationship already exist in system
+                        var grouplocation = _context.GroupLocations
+                            .Where(ul => ul.LocationId == locationId && ul.GroupId == groupId).ToList();
+                        if (grouplocation.Count > 0)
+                            throw new ExpectException("Relation:" + navigationId + " already exist in system");
+                        //add relations
+                        var relation = new GroupLocation() { GroupId = groupId, LocationId = locationId };
+                        _context.GroupLocations.Add(relation);
+                    }
+
+                    break;
+                default:
+                    throw new ExpectException("No relation:" + navigationProperty);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveRelationsAsync(int locationId, string navigationProperty, List<string> navigationPropertyIds)
+        {
+            var location = await _context.Locations.FirstOrDefaultAsync(u => u.LocationId == locationId);
+            if (location == null)
+                throw new ExpectException("Could not find data which LocationId equal to " + locationId);
+
+            switch (navigationProperty)
+            {
+                case "Users":
+
+                    foreach (string userId in navigationPropertyIds)
+                    {//is relationship already exist in system
+                        var userlocation = _context.UserLocations
+                            .Where(ul => ul.LocationId == locationId && ul.UserId == userId).FirstOrDefault();
+                        if (userlocation == null)
+                            throw new ExpectException("Relation:" + userId + " not exist in system");
+                        //remove relations
+                        _context.UserLocations.Remove(userlocation);
+                    }
+
+
+                    break;
+                case "Groups":
+
+                    foreach (string navigationId in navigationPropertyIds)
+                    {
+                        //conver navigationId to int
+                        int groupId = Utilities.ConverRelationIdToInt(navigationId);
+                       //is relationship already exist in system
+                        var grouplocation = _context.GroupLocations
+                            .Where(ul => ul.LocationId == locationId && ul.GroupId == groupId).FirstOrDefault();
+                        if (grouplocation == null)
+                            throw new ExpectException("Relation:" + navigationId + " not exist in system");
+                        //remove relations
+                        _context.GroupLocations.Remove(grouplocation);
+                    }
+
+                    break;
+                default:
+                    throw new ExpectException("No relation:" + navigationProperty);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

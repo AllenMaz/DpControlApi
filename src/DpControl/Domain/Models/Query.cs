@@ -219,6 +219,10 @@ namespace DpControl.Domain.Models
                 var needExpandLocations = ExpandOperator.NeedExpand("Locations");
                 var needExpandProject = ExpandOperator.NeedExpand("Project");
                 var needExpandScene = ExpandOperator.NeedExpand("Scene");
+                var needExpandUsers = ExpandOperator.NeedExpand("Users");
+
+                if (needExpandUsers)
+                    returnResult = returnResult.Include(g => g.UserGroups).ThenInclude(gl => gl.User);
                 if (needExpandLocations)
                     returnResult = returnResult.Include(g => g.GroupLocations).ThenInclude(gl => gl.Location);
                 if (needExpandProject)
@@ -237,7 +241,10 @@ namespace DpControl.Domain.Models
                 var needExpandLogs = ExpandOperator.NeedExpand("Logs");
                 var needExpandProject = ExpandOperator.NeedExpand("Project");
                 var needExpandDevice = ExpandOperator.NeedExpand("Device");
+                var needExpandUsers = ExpandOperator.NeedExpand("Users");
 
+                if (needExpandUsers)
+                    returnResult = returnResult.Include(g => g.UserLocations).ThenInclude(gl => gl.User);
                 if (needExpandGroups)
                     returnResult = returnResult.Include(l => l.GroupLocations).ThenInclude(gl => gl.Group);
                 if (needExpandAlarms)

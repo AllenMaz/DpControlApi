@@ -94,6 +94,8 @@ namespace DpControl.Domain.Models
         public IEnumerable<AlarmSubSearchModel> Alarms { get; set; }
         public IEnumerable<LogSubSearchModel> Logs { get; set; }
         public IEnumerable<GroupSubSearchModel> Groups { get; set; }
+        public IEnumerable<UserSubSearchModel> Users { get; set; }
+
     }
 
     public static class LocationOperator
@@ -141,6 +143,7 @@ namespace DpControl.Domain.Models
                 Modifier = location.Modifier,
                 ModifiedDate = location.ModifiedDate,
                 Groups = location.GroupLocations.Select(gl => GroupOperator.SetGroupSearchModelCascade(gl.Group)),
+                Users = location.UserLocations.Select(gl => UserOperator.SetUserSearchModelCascade(gl.User)),
                 Logs = LogOperator.SetLogSearchModelCascade(location.Logs),
                 Alarms = AlarmOperator.SetAlarmSearchModelCascade(location.Alarms),
                 Project = ProjectOperator.SetProjectSubSearchModel(location.Project),

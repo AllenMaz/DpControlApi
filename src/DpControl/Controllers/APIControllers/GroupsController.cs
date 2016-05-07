@@ -152,5 +152,52 @@ namespace DpControl.Controllers.APIControllers
             await _groupRepository.RemoveByIdAsync(groupId);
             return Ok();
         }
+
+        /// <summary>
+        /// Create RelationShips:Users、Locations
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="navigationProperty"></param>
+        /// <param name="navigationPropertyIds"></param>
+        /// <returns></returns>
+        [HttpPost("{groupId}/{navigationProperty}")]
+        public async Task<IActionResult> CreateRelationsAsync(int groupId, string navigationProperty,
+            [FromBody] List<string> navigationPropertyIds)
+        {
+            if (navigationPropertyIds == null || navigationPropertyIds.Count == 0)
+            {
+                return HttpNotFound();
+            }
+            var uniqueNavigationPropertyIds = navigationPropertyIds.Distinct().ToList();
+            await _groupRepository.CreateRelationsAsync(groupId, navigationProperty, uniqueNavigationPropertyIds);
+
+            string returnUrl = CreateCustomUrl("GetByGroupIdAsync",
+                new { controller = "Groups", groupId = groupId },
+                "?expand=" + navigationProperty);
+
+            return Created(returnUrl, null);
+
+        }
+
+        /// <summary>
+        /// Remove RelationShips:Users、Locations
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="navigationProperty"></param>
+        /// <param name="navigationPropertyIds"></param>
+        /// <returns></returns>
+        [HttpDelete("{groupId}/{navigationProperty}")]
+        public async Task<IActionResult> RemoveRelationsAsync(int groupId, string navigationProperty,
+            [FromBody] List<string> navigationPropertyIds)
+        {
+            if (navigationPropertyIds == null || navigationPropertyIds.Count == 0)
+            {
+                return HttpNotFound();
+            }
+            var uniqueNavigationPropertyIds = navigationPropertyIds.Distinct().ToList();
+
+            await _groupRepository.RemoveRelationsAsync(groupId, navigationProperty, uniqueNavigationPropertyIds);
+            return Ok();
+        }
     }
 }

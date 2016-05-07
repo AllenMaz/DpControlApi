@@ -102,6 +102,7 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return model.GroupId;
         }
+        
 
         public GroupSearchModel FindById(int groupId)
         {
@@ -206,7 +207,7 @@ namespace DpControl.Domain.Repository
             _context.Groups.Remove(group);
            await _context.SaveChangesAsync();
         }
-
+        
         public int UpdateById(int groupId, GroupUpdateModel mgroup)
         {
             var group = _context.Groups.FirstOrDefault(c => c.GroupId == groupId);
@@ -268,6 +269,106 @@ namespace DpControl.Domain.Repository
             await _context.SaveChangesAsync();
             return group.GroupId;
         }
-        
+
+        public async Task CreateRelationsAsync(int groupId, string navigationProperty, List<string> navigationPropertyIds)
+        {
+            var group = await _context.Groups.FirstOrDefaultAsync(u => u.GroupId == groupId);
+            if (group == null)
+                throw new ExpectException("Could not find data which GroupId equal to " + groupId);
+
+            switch (navigationProperty)
+            {
+                case "Users":
+
+                    foreach (string userId in navigationPropertyIds)
+                    {
+                        //is navigationProperty already exist in system
+                        var user = _context.Users.FirstOrDefault(u=>u.Id == userId);
+                        if (user == null)
+                            throw new ExpectException("User data which UserId equal to " + userId + " not exist in system");
+                        //is relationship already exist in system
+                        var usergroup = _context.UserGroups
+                            .Where(ul => ul.GroupId == groupId && ul.UserId == userId).ToList();
+                        if (usergroup.Count > 0)
+                            throw new ExpectException("Relation:" + userId + " already exist in system");
+                        //add relations
+                        var relation = new UserGroup() { UserId = userId, GroupId = groupId };
+                        _context.UserGroups.Add(relation);
+                    }
+
+
+                    break;
+                case "Locations":
+
+                    foreach (string navigationId in navigationPropertyIds)
+                    {
+                        //conver navigationId to int
+                        int locationId = Utilities.ConverRelationIdToInt(navigationId);
+                        //is navigationProperty already exist in system
+                        var location = _context.Locations.FirstOrDefault(r => r.LocationId == locationId);
+                        if (location == null)
+                            throw new ExpectException("Location data which LocationId equal to " + navigationId + " not exist in system");
+                        //is relationship already exist in system
+                        var grouplocation = _context.GroupLocations
+                            .Where(ul => ul.LocationId == locationId && ul.GroupId == groupId).ToList();
+                        if (grouplocation.Count > 0)
+                            throw new ExpectException("Relation:" + navigationId + " already exist in system");
+                        //add relations
+                        var relation = new GroupLocation() { GroupId = groupId, LocationId = locationId };
+                        _context.GroupLocations.Add(relation);
+                    }
+
+                    break;
+                default:
+                    throw new ExpectException("No relation:" + navigationProperty);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveRelationsAsync(int groupId, string navigationProperty, List<string> navigationPropertyIds)
+        {
+            var group = await _context.Groups.FirstOrDefaultAsync(u => u.GroupId == groupId);
+            if (group == null)
+                throw new ExpectException("Could not find data which GroupId equal to " + groupId);
+
+            switch (navigationProperty)
+            {
+                case "Users":
+
+                    foreach (string userId in navigationPropertyIds)
+                    {
+                       //is relationship already exist in system
+                        var usergroup = _context.UserGroups
+                            .Where(ul => ul.GroupId == groupId && ul.UserId == userId).FirstOrDefault();
+                        if (usergroup == null)
+                            throw new ExpectException("Relation:" + userId + " not exist in system");
+                        //remove relations
+                        _context.UserGroups.Remove(usergroup);
+                    }
+
+
+                    break;
+                case "Locations":
+
+                    foreach (string navigationId in navigationPropertyIds)
+                    {
+                        //conver navigationId to int
+                        int locationId = Utilities.ConverRelationIdToInt(navigationId);//is relationship already exist in system
+                        var grouplocation = _context.GroupLocations
+                            .Where(ul => ul.LocationId == locationId && ul.GroupId == groupId).FirstOrDefault();
+                        if (grouplocation == null)
+                            throw new ExpectException("Relation:" + navigationId + " not exist in system");
+                        //remove relations
+                        _context.GroupLocations.Remove(grouplocation);
+                    }
+
+                    break;
+                default:
+                    throw new ExpectException("No relation:" + navigationProperty);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

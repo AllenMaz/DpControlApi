@@ -4,27 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using DpControl.Domain.EFContext;
 using Microsoft.Data.Entity;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.Domain.Repository
 {
-    public class Utilities
+    public static class Utilities
     {
-        static ShadingContext _context;
-        public Utilities()
+        public static int ConverRelationIdToInt(string relationId)
         {
-
-        }
-        public Utilities(ShadingContext context)
-        {
-            _context = context;
-        }
-
-        public static async Task<int> GetLocationIdByProjectNo(string projectNo)
-        {
-            var project = await _context.Projects.SingleAsync(c => c.ProjectNo == projectNo);
-            if (project == null)
-                throw new NullReferenceException();
-            return 1;
+            try
+            {
+                return System.Convert.ToInt32(relationId);
+            }
+            catch
+            {
+                throw new ExpectException("Wrong Id format :" + relationId);
+            }
         }
     }
 }

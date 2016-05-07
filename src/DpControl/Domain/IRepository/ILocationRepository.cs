@@ -7,6 +7,7 @@ using DpControl.Domain.Models;
 namespace DpControl.Domain.IRepository
 {
     public interface ILocationRepository:IBaseRepository<LocationAddModel,LocationUpdateModel,LocationSearchModel>
+        ,IRelationsRepository<int>
     {
         #region Relations
         Task<ProjectSubSearchModel> GetProjectByLocationIdAsync(int locationId);
@@ -15,5 +16,7 @@ namespace DpControl.Domain.IRepository
         Task<IEnumerable<AlarmSubSearchModel>> GetAlarmsByLocationIdAsync(int locationId);
         Task<IEnumerable<GroupSubSearchModel>> GetGroupsByLocationIdAsync(int locationId);
         #endregion
+
+        
     }
 }

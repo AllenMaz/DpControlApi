@@ -44,6 +44,8 @@ namespace DpControl.Domain.Models
         public ProjectSubSearchModel Project { get; set; }
         public SceneSubSearchModel Scene { get; set; }
         public IEnumerable<LocationSubSearchModel> Locations { get; set; }
+
+        public IEnumerable<UserSubSearchModel> Users { get; set; }
     }
 
     public static class GroupOperator
@@ -79,7 +81,8 @@ namespace DpControl.Domain.Models
                 ModifiedDate = group.ModifiedDate,
                 Project = ProjectOperator.SetProjectSubSearchModel(group.Project),
                 Scene = SceneOperator.SetSceneSubSearchModel(group.Scene),
-                Locations = group.GroupLocations.Select(v => LocationOperator.SetLocationSearchModelCascade(v.Location))
+                Locations = group.GroupLocations.Select(v => LocationOperator.SetLocationSearchModelCascade(v.Location)),
+                Users = group.UserGroups.Select(v=>UserOperator.SetUserSearchModelCascade(v.User))
 
             };
             return groupSearchModel;

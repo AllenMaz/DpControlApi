@@ -19,4 +19,10 @@ namespace DpControl.Domain.IRepository
         void RemoveById(int itemId);
         Task RemoveByIdAsync(int itemId);
     }
+
+    public interface IRelationsRepository<IDType>
+    {
+        Task CreateRelationsAsync(IDType itemId, string navigationProperty, List<string> navigationPropertyIds);
+        Task RemoveRelationsAsync(IDType itemId, string navigationProperty, List<string> navigationPropertyIds);
+    }
 }

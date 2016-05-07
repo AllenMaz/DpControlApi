@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DpControl.Domain.IRepository
 {
-    public interface IRoleRepository
+    public interface IRoleRepository: IRelationsRepository<string>
     {
         Task<IEnumerable<RoleSearchModel>> GetAllAsync();
         Task<RoleSubSearchModel> FindByIdAsync(string roleId);
@@ -14,9 +14,6 @@ namespace DpControl.Domain.IRepository
         Task<string> UpdateByIdAsync(string roleId, RoleUpdateModel role);
         Task RemoveByIdAsync(string roleId);
         Task<IEnumerable<UserSubSearchModel>> GetUsersByUserId(string roleId);
-
-        Task CreateRelationsAsync(string roleId, string navigationProperty, List<string> navigationPropertyIds);
-        Task RemoveRelationsAsync(string roleId, string navigationProperty, List<string> navigationPropertyIds);
 
     }
 }
