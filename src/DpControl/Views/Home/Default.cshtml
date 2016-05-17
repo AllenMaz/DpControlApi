@@ -57,7 +57,19 @@
             $("#divCORS").toggle();
         });
 
-        
+        $("#changeLanguage").click(function () {
+
+            if ($("#changeLanguage").html() == "中文") {
+                $("#changeLanguage").html("英文");
+
+            } else {
+                $("#changeLanguage").html("中文");
+
+            }
+            
+            $(".en-us").toggle();
+            $(".zh-cn").toggle();
+        });
     });
 
 
@@ -85,6 +97,7 @@
                
                 <label style="color:#EEE">More Detail,Click: </label>
                 <a href="~/Swagger/index.html" target="_blank" style="color:#60B733">API Document</a>
+                <a href="javaScript:void(0)" id="changeLanguage" style="float:right;color:red;">中文</a>
                 <br />
                 @*<label>
                         <a href="http://192.168.20.239:8080/bugnet" target="_blank" style="color:#EEE">DpControl Project Management</a>
@@ -95,7 +108,7 @@
 
     <div class="container body-content">
         <div class="row">
-            <div class="col-xs-12 col-md-12">
+            <div class="col-xs-12 col-md-12 en-us">
                 <h3>There are some Features:</h3>
                 <ul>
                     <li class="lead">
@@ -156,8 +169,8 @@
                     <li class="lead">
                         Support Corss Origin Resource Sharing (<label style="color:red;"> Only for test !</label>)
                         <br />
-                        <a id="aHttpCORSTitle" href="#" style="cursor:help">Example</a>
-                        <div id="divCORS" style="display:none">
+                        <a id="aHttpCORSTitle" href="javaScript:void(0)" style="cursor:help">Example</a>
+                        <div id="divCORS">
                             <img src="~/images/cors.png" style="width:50%" />
                         </div>
                     </li>
@@ -165,8 +178,8 @@
                         Support X-HTTP-Method-Override (Via Post to request Put,Patch,Delete)
                         <br />
                         
-                        <a id="aHttpOverrideTitle" href="#" style="cursor:help">Example</a>
-                        <div id="divHttpOverride" style="display:none">
+                        <a id="aHttpOverrideTitle" href="javaScript:void(0)" style="cursor:help">Example</a>
+                        <div id="divHttpOverride">
                             <img src="~/images/httpOverride.png" style="width:50%" />
                         </div>
                     </li>
@@ -174,6 +187,84 @@
 
             </div>
 
+            <div class="col-xs-12 col-md-12 zh-cn" style="display:none;">
+                <h3>API功能:</h3>
+                <ul>
+                    <li class="lead">
+                        <strong>支持Gzip压缩</strong><sup class="tipFont">New</sup>
+                        <br />
+                        <p>
+                            与未压缩相比，Gzip压缩会将用于处理数据流的带宽减少到1/5。你可以通过以下HTTP头请求一个Gzipp压缩的流;
+                         </p>
+                        <code>Accept-Encoding:gzip</code>
+                        <p>API将会返回一个Gzip压缩后的流.</p>
+                    </li>
+                    <li class="lead">
+                        <strong>expand:</strong>  加载相关实体
+                        <p class="text-lowercase">
+                            <a href="/v1/Projects?expand=Customer,Scenes,Groups,Locations">/v1/Projects?expand=Customer,Scenes,Groups,Locations</a>
+                        </p>
+                    </li>
+
+                    <li class="lead">
+                        <strong>select:</strong> 选择哪些属性需要包含在返回结果中
+                        <p class="text-lowercase">
+                            <a href="/v1/Projects?select=ProjectId,ProjectName,ProjectNo">/v1/Projects?select=ProjectId,ProjectName,ProjectNo</a>
+                        </p>
+                    </li>
+
+
+                    <li class="lead">
+                        <strong>filter:</strong> 过滤查询结果
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> 过滤GroupId等于1或3的Groups数据(同时加载相关的实体数据 Locations)<br />
+                            <a href="/v1/Groups?filter=GroupId eq 1 or GroupId eq 3&expand=Locations">/v1/Groups?filter=GroupId <strong class="warningFont">eq</strong> 1 <strong class="importFont">or</strong> GroupId <strong class="warningFont">eq</strong> 3&expand=Locations</a>
+                        </p>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> 过滤CustomerName等于'Allen'并且CustomerNo 等于'333'的Customers数据<br />
+                            <a href="/v1/Customers?filter=CustomerName eq Allen and CustomerNo eq 333">/v1/Customers?filter=CustomerName <strong class="warningFont">eq</strong> Allen <strong class="importFont">and</strong> CustomerNo <strong class="warningFont">eq</strong> 333</a>
+                        </p>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> 过滤CustomerId 大于等于 15的Customers数据<br />
+                            <a href="/v1/Customers?filter=CustomerId gt 15">/v1/Customers?filter=CustomerId <strong class="warningFont">gt</strong> 15</a>
+                        </p>
+                        <p class="text-lowercase">
+                            <span class="glyphicon glyphicon-leaf"></span> 过滤CustomerId 小于等于10的Customers数据<br />
+                            <a href="/v1/Customers?filter=CustomerId lt 10">/v1/Customers?filter=CustomerId <strong class="warningFont">lt</strong> 10</a>
+                        </p>
+                    </li>
+                    <li class="lead">
+                        <strong>orderby(desc/asc):</strong> 对查询结果进行排序
+                        <p class="text-lowercase">
+                            <a href="/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo%20desc">/v1/Customers?orderby=CustomerName,CustomerId,CustomerNo desc</a>
+                        </p>
+                    </li>
+                    <li class="lead">
+                        通过skip 和 top 进行分页操作
+                        <p class="text-lowercase">
+                            <a href="/v1/Customers?skip=3&top=10">/v1/Customers?skip=3&top=10</a>
+                        </p>
+                    </li>
+                    <li class="lead">
+                       支持 Corss Origin Resource Sharing（跨域请求） (<label style="color:red;"> 仅用于测试 !</label>)
+                        <br />
+                        <a id="aHttpCORSTitle" href="javaScript:void(0)" style="cursor:help">示例</a>
+                        <div id="divCORS">
+                            <img src="~/images/cors.png" style="width:50%" />
+                        </div>
+                    </li>
+                    <li class="lead">
+                       支持 X-HTTP-Method-Override（HTTP方法重写，通过重写Post来实现 Put,Patch,Delete等操作)
+                        <br />
+
+                        <a id="aHttpOverrideTitle" href="javaScript:void(0)" style="cursor:help">示例</a>
+                        <div id="divHttpOverride">
+                            <img src="~/images/httpOverride.png" style="width:50%" />
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
         </div>
 
         <hr />
@@ -181,7 +272,6 @@
             <p>&copy; @DateTime.Now.ToString("yyyy/MM/dd") - Padmate</p>
         </footer>
     </div>
-
 </body>
 </html>
 

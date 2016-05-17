@@ -16,13 +16,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.AddAsync(DpControl.Domain.Models.AlarmMessageAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.GetByAlarmMessageIdAsync(System.Int32)">
             <summary>
             Search data by AlarmMessageId
@@ -30,10 +23,17 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.AddAsync(DpControl.Domain.Models.AlarmMessageAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.DeleteByAlarmMessageIdAsync(System.Int32)">
@@ -50,13 +50,6 @@
             <param name="AlarmMessage"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.AddAsync(DpControl.Domain.Models.AlarmAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetByAlarmIdAsync(System.Int32)">
             <summary>
             Search data by AlarmId
@@ -64,10 +57,31 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetLocationByAlarmIdAsync(System.Int32)">
+            <summary>
+            Get Location Relation
+            </summary>
+            <param name="alarmId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetAlarmMessageByAlarmIdAsync(System.Int32)">
+            <summary>
+            Get AlarmMessage Relation
+            </summary>
+            <param name="alarmId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.AddAsync(DpControl.Domain.Models.AlarmAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.AlarmsController.DeleteByAlarmIdAsync(System.Int32)">
@@ -76,24 +90,31 @@
             </summary>
             <param name="alarmId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.DevicesController.AddAsync(DpControl.Domain.Models.DeviceAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetBySceneIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetByDeviceIdAsync(System.Int32)">
             <summary>
             Search data by DeviceId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetLocationsBySceneIdAsync(System.Int32)">
+            <summary>
+            Get Locations Relation
+            </summary>
+            <param name="deviceId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.DevicesController.AddAsync(DpControl.Domain.Models.DeviceAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.DevicesController.UpdateAsync(System.Int32,DpControl.Domain.Models.DeviceUpdateModel)">
@@ -110,50 +131,45 @@
             </summary>
             <param name="DeviceId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.AddAsync(DpControl.Domain.Models.GroupLocationAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.GetByGroupLocationIdAsync(System.Int32)">
-            <summary>
-            Search data by GroupLocationId
-            </summary>
-            <param name="id">ID</param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.GetAllAsync(DpControl.Domain.Models.Query)">
-            <summary>
-            Search all data
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.GroupLocationsController.DeleteByGroupLocationIdAsync(System.Int32)">
-            <summary>
-            Delete data by GroupLocationId
-            </summary>
-            <param name="groupLocationId"></param>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.GroupsController.AddAsync(DpControl.Domain.Models.GroupAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetByProjectIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetByGroupIdAsync(System.Int32)">
             <summary>
             Search data by GroupId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetProjectByGroupIdAsync(System.Int32)">
+            <summary>
+            Get Project Relation
+            </summary>
+            <param name="groupId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetSceneByGroupIdAsync(System.Int32)">
+            <summary>
+            Get Scene Relation
+            </summary>
+            <param name="groupId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetLocationsByGroupIdAsync(System.Int32)">
+            <summary>
+            Get Locations Relation
+            </summary>
+            <param name="groupId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.AddAsync(DpControl.Domain.Models.GroupAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.GroupsController.UpdateAsync(System.Int32,DpControl.Domain.Models.GroupUpdateModel)">
@@ -170,11 +186,22 @@
             </summary>
             <param name="groupId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.AddAsync(DpControl.Domain.Models.HolidayAddModel)">
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.CreateRelationsAsync(System.Int32,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Add data
+            Create RelationShips:Users、Locations
             </summary>
-            <param name="item"></param>
+            <param name="groupId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.GroupsController.RemoveRelationsAsync(System.Int32,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Remove RelationShips:Users、Locations
+            </summary>
+            <param name="groupId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.HolidaysController.GetByHolidayIdAsync(System.Int32)">
@@ -184,10 +211,24 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.GetProjectByHolidayIdAsync(System.Int32)">
+            <summary>
+            Get Project Relation
+            </summary>
+            <param name="holidayId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.HolidaysController.AddAsync(DpControl.Domain.Models.HolidayAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.HolidaysController.UpdateAsync(System.Int32,DpControl.Domain.Models.HolidayUpdateModel)">
@@ -204,13 +245,6 @@
             </summary>
             <param name="customerId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LocationsController.AddAsync(DpControl.Domain.Models.LocationAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetBySceneIdAsync(System.Int32)">
             <summary>
             Search data by LocationId
@@ -218,10 +252,52 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetProjectBySceneIdAsync(System.Int32)">
+            <summary>
+            Get Project Relation
+            </summary>
+            <param name="locationId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetDeviceBySceneIdAsync(System.Int32)">
+            <summary>
+            Get Device Relation
+            </summary>
+            <param name="locationId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetGroupsBySceneIdAsync(System.Int32)">
+            <summary>
+            Get Groups Relation
+            </summary>
+            <param name="locationId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetLogsBySceneIdAsync(System.Int32)">
+            <summary>
+            Get Logs Relation
+            </summary>
+            <param name="locationId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetAlarmsBySceneIdAsync(System.Int32)">
+            <summary>
+            Get Alarms Relation
+            </summary>
+            <param name="locationId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.AddAsync(DpControl.Domain.Models.LocationAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.LocationsController.UpdateAsync(System.Int32,DpControl.Domain.Models.LocationUpdateModel)">
@@ -238,11 +314,22 @@
             </summary>
             <param name="LocationId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.AddAsync(DpControl.Domain.Models.LogDescriptionAddModel)">
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.CreateRelationsAsync(System.Int32,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Add data
+            Create RelationShips:Users、Groups
             </summary>
-            <param name="item"></param>
+            <param name="locationId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LocationsController.RemoveRelationsAsync(System.Int32,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Remove RelationShips:Users、Groups
+            </summary>
+            <param name="locationId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.GetByLogDescriptionIdAsync(System.Int32)">
@@ -252,10 +339,24 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.GetLogsByLogDescriptionIdAsync(System.Int32)">
+            <summary>
+            Get Logs Relation
+            </summary>
+            <param name="logDescriptionId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.AddAsync(DpControl.Domain.Models.LogDescriptionAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.DeleteByLogDescriptionIdAsync(System.Int32)">
@@ -272,13 +373,6 @@
             <param name="LogDescription"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogsController.AddAsync(DpControl.Domain.Models.LogAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.LogsController.GetByLogIdAsync(System.Int32)">
             <summary>
             Search data by LogId
@@ -286,10 +380,31 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.GetLocationByLogIdAsync(System.Int32)">
+            <summary>
+            Get Location Relation
+            </summary>
+            <param name="logId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.GetLogDescriptionByLogIdAsync(System.Int32)">
+            <summary>
+            Get LogDescription Relation
+            </summary>
+            <param name="logId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.LogsController.AddAsync(DpControl.Domain.Models.LogAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.LogsController.DeleteByLogIdAsync(System.Int32)">
@@ -298,13 +413,6 @@
             </summary>
             <param name="logId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.AddAsync(DpControl.Domain.Models.ProjectAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetByProjectIdAsync(System.Int32)">
             <summary>
             Search data by ProjectId
@@ -312,10 +420,52 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetCustomerByProjectIdAsync(System.Int32)">
+            <summary>
+            Get Customer Relation
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetGroupsByProjectIdAsync(System.Int32)">
+            <summary>
+            Get Groups Relation
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetLocationsByProjectIdAsync(System.Int32)">
+            <summary>
+            Get Locations Relation
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetScenesByProjectIdAsync(System.Int32)">
+            <summary>
+            Get Scenes Relation
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetHolidaysByProjectIdAsync(System.Int32)">
+            <summary>
+            Get Locations Relation
+            </summary>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ProjectsController.AddAsync(DpControl.Domain.Models.ProjectAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.UpdateAsync(System.Int32,DpControl.Domain.Models.ProjectUpdateModel)">
@@ -332,11 +482,42 @@
             </summary>
             <param name="customerId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.ScenesController.AddAsync(DpControl.Domain.Models.SceneAddModel)">
+        <member name="M:DpControl.Controllers.APIControllers.RolesController.GetByRoleIdAsync(System.String)">
             <summary>
-            Add data
+            Get Role by id
             </summary>
-            <param name="item"></param>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.RolesController.GetUsersByRoleIdAsync(System.String)">
+            <summary>
+            Get User Relation by role id
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.RolesController.GetAllAsync">
+            <summary>
+            Get all Roles
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.RolesController.CreateRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Create RelationShips.Available Relations :Users
+            </summary>
+            <param name="roleId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.RolesController.RemoveRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Delete RelationShips.Available Relations :Users
+            </summary>
+            <param name="roleId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetBySceneIdAsync(System.Int32)">
@@ -346,10 +527,31 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetProjectBySceneIdAsync(System.Int32)">
+            <summary>
+            Get Project Relation
+            </summary>
+            <param name="sceneId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetSceneSegmentsBySceneIdAsync(System.Int32)">
+            <summary>
+            Get SceneSegments Relation
+            </summary>
+            <param name="sceneId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.ScenesController.AddAsync(DpControl.Domain.Models.SceneAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ScenesController.UpdateAsync(System.Int32,DpControl.Domain.Models.SceneUpdateModel)">
@@ -366,13 +568,6 @@
             </summary>
             <param name="SceneId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.AddAsync(DpControl.Domain.Models.SceneSegmentAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.GetBySceneSegmentIdAsync(System.Int32)">
             <summary>
             Search data by sceneSegmentId
@@ -380,10 +575,24 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.GetSceneBySceneSegmentIdAsync(System.Int32)">
+            <summary>
+            Get Scene Relation
+            </summary>
+            <param name="sceneSegmentId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.AddAsync(DpControl.Domain.Models.SceneSegmentAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.UpdateAsync(System.Int32,DpControl.Domain.Models.SceneSegmentUpdateModel)">
@@ -400,64 +609,81 @@
             </summary>
             <param name="customerId"></param>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.AddAsync(DpControl.Domain.Models.UserGroupAddModel)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetByUserIdAsync(System.String)">
             <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.GetByUserGroupIdAsync(System.Int32)">
-            <summary>
-            Search data by UserGroupId
+            Get User by id
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetLocationsByUserIdAsync(System.String)">
             <summary>
-            Search all data
+            Get Locations Relation by user id
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetGroupsByUserIdAsync(System.String)">
+            <summary>
+            Get Groups Relation by User id
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetRolesByUserIdAsync(System.String)">
+            <summary>
+            Get Roles Relation by User id
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetAllAsync">
+            <summary>
+            Get All Users:
+            if Admin and CustomerLevel,then filter by CustomerNo;
+            if Admin and ProjectNo,then filter by ProjectNo;
+            if not Admin,filter by current login username;
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserGroupsController.DeleteByUserGroupIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.AddAsync(DpControl.Domain.Models.UserAddModel)">
             <summary>
-            Delete data by UserGroupId
-            </summary>
-            <param name="userGroupId"></param>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.AddAsync(DpControl.Domain.Models.UserLocationAddModel)">
-            <summary>
-            Add data
+            Add new User
             </summary>
             <param name="item"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.GetByUserLocationIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.CreateRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Search data by UserLocationId
+            Create RelationShips:Roles、Locations、Groups
             </summary>
-            <param name="id">ID</param>
+            <param name="userId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.RemoveRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Search all data
+            Remove RelationShips:Roles、Locations、Groups
             </summary>
+            <param name="userId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UserLocationsController.DeleteByUserLocationIdAsync(System.Int32)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.UpdateAsync(System.String,DpControl.Domain.Models.UserUpdateModel)">
             <summary>
-            Delete data by UserLocationId
+            Update User by Id
             </summary>
-            <param name="userLocationId"></param>
-        </member>
-        <member name="M:DpControl.APIControllers.CustomersController.AddAsync(DpControl.Domain.Models.CustomerAddModel)">
-            <summary>
-            Add data
-            </summary>
-            <param name="item"></param>
+            <param name="id"></param>
+            <param name="mUser"></param>
             <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.DeleteByUserIdAsync(System.String)">
+            <summary>
+            Delete data by UserId
+            </summary>
+            <param name="userId"></param>
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.GetByCustomerIdAsync(System.Int32)">
             <summary>
@@ -466,10 +692,23 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.APIControllers.CustomersController.GetAllAsync(DpControl.Domain.Models.Query)">
+        <member name="M:DpControl.APIControllers.CustomersController.GetProjectsByCustomerIdAsync(System.Int32)">
+            <summary>
+            Get Related Projects
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.GetAllAsync">
             <summary>
             Search all data
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.APIControllers.CustomersController.AddAsync(DpControl.Domain.Models.CustomerAddModel)">
+            <summary>
+            Add data
+            </summary>
+            <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.UpdateAsync(System.Int32,DpControl.Domain.Models.CustomerUpdateModel)">
@@ -484,12 +723,409 @@
             <summary>
             Delete data by CustomerNo
             </summary>
-            <param name="customerId"></param>
+        </member>
+        <member name="P:DpControl.Domain.Entities.ApplicationUser.UserLevel">
+            <summary>
+            there are three levels:
+            SuperLevel:this level CustomerNo and ProjectNo must be empty
+            CustomerLevel:this level CustomerNo is required and ProjectNo must be empty
+            ProjectLevel:this level ProjectNo is required
+            </summary>
+        </member>
+        <member name="T:DpControl.Domain.Entities.Orientation">
+            <summary>
+            方向
+            </summary>
+        </member>
+        <member name="T:DpControl.Domain.Entities.DeviceType">
+            <summary>
+            设备类型
+            </summary>
+        </member>
+        <member name="T:DpControl.Domain.Entities.CommMode">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:DpControl.Domain.Entities.UserLevel">
+            <summary>
+            用户级别
+            </summary>
         </member>
         <member name="T:DpControl.Domain.Execptions.ExpectException">
             <summary>
             Expect Exception which use to catch error tip
             </summary>
+        </member>
+        <member name="T:DpControl.Domain.IRepository.ILoginUserRepository">
+            <summary>
+            use to get login user info
+            </summary>
+        </member>
+        <member name="T:DpControl.Domain.IRepository.IUserRepository">
+            <summary>
+            use to operator database data
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmOperator.SetAlarmSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Alarm})">
+            <summary>
+            Cascade set AlarmSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmOperator.SetAlarmSearchModelCascade(DpControl.Domain.Entities.Alarm)">
+            <summary>
+            Cascade set AlarmSearchModel Result
+            </summary>
+            <param name="alarm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmOperator.SetAlarmSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Alarm})">
+            <summary>
+            Cascade set AlarmSubSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmOperator.SetAlarmSubSearchModel(DpControl.Domain.Entities.Alarm)">
+            <summary>
+            Cascade set AlarmSubSearchModel Result
+            </summary>
+            <param name="alarm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmMessageOperator.SetAlarmMessageSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.AlarmMessage})">
+            <summary>
+            Cascade set AlarmMessageSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmMessageOperator.SetAlarmMessageSearchModelCascade(DpControl.Domain.Entities.AlarmMessage)">
+            <summary>
+            Cascade set AlarmMessageSearchModel Result
+            </summary>
+            <param name="alarmMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmMessageOperator.SetAlarmMessageSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.AlarmMessage})">
+            <summary>
+            Cascade set AlarmMessageSubSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.AlarmMessageOperator.SetAlarmMessageSubSearchModel(DpControl.Domain.Entities.AlarmMessage)">
+            <summary>
+            Cascade set AlarmMessageSubSearchModel Result
+            </summary>
+            <param name="alarmMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.CustomerOperator.SetCustomerSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Customer})">
+            <summary>
+            Cascade set CustomerSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.CustomerOperator.SetCustomerSearchModelCascade(DpControl.Domain.Entities.Customer)">
+            <summary>
+            Cascade set CustomerSearchModel Result
+            </summary>
+            <param name="customer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.CustomerOperator.SetCustomerSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Customer})">
+            <summary>
+            Cascade set CustomerSubSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.CustomerOperator.SetCustomerSubSearchModel(DpControl.Domain.Entities.Customer)">
+            <summary>
+            Cascade set CustomerSubSearchModel Result
+            </summary>
+            <param name="customer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.DeviceOperator.SetDeviceSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Device})">
+            <summary>
+            Cascade set DeviceSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.DeviceOperator.SetDeviceSearchModelCascade(DpControl.Domain.Entities.Device)">
+            <summary>
+            Cascade set DeviceSearchModel Result
+            </summary>
+            <param name="device"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.DeviceOperator.SetDeviceSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Device})">
+            <summary>
+            Cascade set DeviceSubSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.DeviceOperator.SetDeviceSubSearchModel(DpControl.Domain.Entities.Device)">
+            <summary>
+            Cascade set DeviceSubSearchModel Result
+            </summary>
+            <param name="device"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.GroupOperator.SetGroupSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Group})">
+            <summary>
+            Cascade set GroupSearchModel Results
+            </summary>
+            <param name="groups"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.GroupOperator.SetGroupSearchModelCascade(DpControl.Domain.Entities.Group)">
+            <summary>
+            Cascade set GroupSearchModel Result
+            </summary>
+            <param name="group"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.GroupOperator.SetGroupSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Group})">
+            <summary>
+            Cascade set GroupSubSearchModel Results
+            </summary>
+            <param name="groups"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.GroupOperator.SetGroupSubSearchModel(DpControl.Domain.Entities.Group)">
+            <summary>
+            Cascade set GroupSubSearchModel Result
+            </summary>
+            <param name="group"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.HolidayOperator.SetHolidaySearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Holiday})">
+            <summary>
+            Cascade set HolidaySearchModel Results
+            </summary>
+            <param name="holidays"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.HolidayOperator.SetHolidaySearchModelCascade(DpControl.Domain.Entities.Holiday)">
+            <summary>
+            Cascade set HolidaySearchModel Result
+            </summary>
+            <param name="holiday"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.HolidayOperator.SetHolidaySubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Holiday})">
+            <summary>
+            Cascade set HolidaySubSearchModel Results
+            </summary>
+            <param name="holidays"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.HolidayOperator.SetHolidaySubSearchModel(DpControl.Domain.Entities.Holiday)">
+            <summary>
+            Cascade set HolidaySubSearchModel Result
+            </summary>
+            <param name="holiday"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LocationOperator.SetLocationSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Location})">
+            <summary>
+            Cascade set LocationSearchModel Results
+            </summary>
+            <param name="locations"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LocationOperator.SetLocationSearchModelCascade(DpControl.Domain.Entities.Location)">
+            <summary>
+            Cascade set LocationSearchModel Result
+            </summary>
+            <param name="location"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LocationOperator.SetLocationSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Location})">
+            <summary>
+            Cascade set LocationSubSearchModel Results
+            </summary>
+            <param name="locations"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LocationOperator.SetLocationSubSearchModel(DpControl.Domain.Entities.Location)">
+            <summary>
+            Cascade set LocationSubSearchModel Result
+            </summary>
+            <param name="location"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogOperator.SetLogSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Log})">
+            <summary>
+            Cascade set LogSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogOperator.SetLogSearchModelCascade(DpControl.Domain.Entities.Log)">
+            <summary>
+            Cascade set LogSearchModel Result
+            </summary>
+            <param name="log"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogOperator.SetLogSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Log})">
+            <summary>
+            Cascade set LogSubSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogOperator.SetLogSubSearchModel(DpControl.Domain.Entities.Log)">
+            <summary>
+            Cascade set LogSearchModel Result
+            </summary>
+            <param name="log"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogDescriptionOperator.SetLogDescriptionSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.LogDescription})">
+            <summary>
+            Cascade set LogDescriptionSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogDescriptionOperator.SetLogDescriptionSearchModelCascade(DpControl.Domain.Entities.LogDescription)">
+            <summary>
+            Cascade set LogDescriptionSearchModel Result
+            </summary>
+            <param name="logDescription"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogDescriptionOperator.SetLogDescriptionSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.LogDescription})">
+            <summary>
+            Cascade set LogDescriptionSubSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.LogDescriptionOperator.SetLogDescriptionSubSearchModel(DpControl.Domain.Entities.LogDescription)">
+            <summary>
+            Cascade set LogDescriptionSearchModel Result
+            </summary>
+            <param name="logDescription"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.ProjectOperator.SetProjectSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Project})">
+            <summary>
+            Cascade set ProjectSearchModel Results
+            </summary>
+            <param name="projects"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.ProjectOperator.SetProjectSearchModelCascade(DpControl.Domain.Entities.Project)">
+            <summary>
+            Cascade set ProjectSearchModel Result
+            </summary>
+            <param name="project"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.ProjectOperator.SetProjectSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Project})">
+            <summary>
+            Cascade set ProjectSubSearchModel Results
+            </summary>
+            <param name="projects"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.ProjectOperator.SetProjectSubSearchModel(DpControl.Domain.Entities.Project)">
+            <summary>
+            Cascade set ProjectSubSearchModel Result
+            </summary>
+            <param name="project"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.RoleOperator.SetRoleSearchModelCascade(System.Collections.Generic.List{Microsoft.AspNet.Identity.EntityFramework.IdentityRole})">
+            <summary>
+            Cascade set RoleSearchModel Results
+            </summary>
+            <param name="roles"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.RoleOperator.SetRoleSearchModelCascade(Microsoft.AspNet.Identity.EntityFramework.IdentityRole)">
+            <summary>
+            Cascade set RoleSearchModel Result
+            </summary>
+            <param name="role"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.RoleOperator.SetRoleSubSearchModel(System.Collections.Generic.List{Microsoft.AspNet.Identity.EntityFramework.IdentityRole})">
+            <summary>
+            Cascade set RoleSubSearchModel Results
+            </summary>
+            <param name="roles"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.RoleOperator.SetRoleSubSearchModel(Microsoft.AspNet.Identity.EntityFramework.IdentityRole)">
+            <summary>
+            Cascade set RoleSubSearchModel Result
+            </summary>
+            <param name="role"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneOperator.SetSceneSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.Scene})">
+            <summary>
+            Cascade set SceneSearchModel Results
+            </summary>
+            <param name="scenes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneOperator.SetSceneSearchModelCascade(DpControl.Domain.Entities.Scene)">
+            <summary>
+            Cascade set SceneSearchModel Result
+            </summary>
+            <param name="scene"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneOperator.SetSceneSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.Scene})">
+            <summary>
+            Cascade set SceneSubSearchModel Results
+            </summary>
+            <param name="scenes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneOperator.SetSceneSubSearchModel(DpControl.Domain.Entities.Scene)">
+            <summary>
+            Cascade set SceneSubSearchModel Result
+            </summary>
+            <param name="scene"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneSegmentOperator.SetSceneSegmentSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.SceneSegment})">
+            <summary>
+            Cascade set SceneSegmentSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneSegmentOperator.SetSceneSegmentSearchModelCascade(DpControl.Domain.Entities.SceneSegment)">
+            <summary>
+            Cascade set SceneSegmentSearchModel Result
+            </summary>
+            <param name="sceneSegment"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneSegmentOperator.SetSceneSegmentSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.SceneSegment})">
+            <summary>
+            Cascade set SceneSubSegmentSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.SceneSegmentOperator.SetSceneSegmentSubSearchModel(DpControl.Domain.Entities.SceneSegment)">
+            <summary>
+            Cascade set SceneSegmentSearchModel Result
+            </summary>
+            <param name="sceneSegment"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.UserOperator.SetUserSearchModelCascade(System.Collections.Generic.List{DpControl.Domain.Entities.ApplicationUser})">
+            <summary>
+            Cascade set UserSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.UserOperator.SetUserSearchModelCascade(DpControl.Domain.Entities.ApplicationUser)">
+            <summary>
+            Cascade set UserSearchModel Result
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.UserOperator.SetUserSubSearchModel(System.Collections.Generic.List{DpControl.Domain.Entities.ApplicationUser})">
+            <summary>
+            Cascade set UserSubSearchModel Results
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.UserOperator.SetUserSubSearchModel(DpControl.Domain.Entities.ApplicationUser)">
+            <summary>
+            Cascade set UserSubSearchModel Result
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
         </member>
         <member name="P:DpControl.Domain.Models.Query.orderby">
             <summary>
@@ -528,9 +1164,21 @@
             Filter
             </summary>
         </member>
-        <member name="M:DpControl.Domain.Models.Query.#ctor">
+        <member name="M:DpControl.Domain.Models.Query.And(System.String,System.String)">
             <summary>
-            
+            Add extra And Confition
+            </summary>
+            <param name="propertyName"></param>
+            <param name="propertyValue"></param>
+        </member>
+        <member name="M:DpControl.Domain.Models.Query.AddFilterCondition(System.Collections.Generic.List{DpControl.Domain.Models.Filter})">
+            <summary>
+            Add extra filter condition
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.Query.AddFilterCondition(DpControl.Domain.Models.Filter)">
+            <summary>
+            Add extra filter condition
             </summary>
         </member>
         <member name="P:DpControl.Domain.Models.OrderBy.OrderbyField">
@@ -548,6 +1196,101 @@
             key:PropertyName
             value:PropertyValue
             </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.Filter.CompareOperator">
+            <summary>
+            this operator will be: eq、lt 、gt
+            </summary>
+        </member>
+        <member name="P:DpControl.Domain.Models.Filter.LogicalOperator">
+            <summary>
+            this operator will be : and 、or
+            </summary>
+        </member>
+        <member name="M:DpControl.Domain.Models.ExpandOperator.ExpandRelatedEntities``1(System.Linq.IQueryable{``0})">
+            <summary>
+            Expand Related Entities
+            </summary>
+            <param name="result"></param>
+            
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.ExpandOperator.NeedExpand(System.String)">
+            <summary>
+            Judge if need expand
+            </summary>
+            <param name="relatedEntityName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.QueryOperate`1.ConstructMulitFilterLambadExpression(DpControl.Domain.Models.Filter[])">
+            <summary>
+            Construct mulit filter conditions
+            </summary>
+            <param name="filterParams"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Models.QueryOperate`1.ConstructFilterLambadExpression(DpControl.Domain.Models.Filter)">
+            <summary>
+            Construct single filter condition
+            </summary>
+            <param name="filterParams"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Repository.CustomerRepository.GetAll">
+            <summary>
+            Get All Customers
+            If user has CustomerNo ,then filter by CustomerNo
+            if user's CustomerNo is null ,then return all Customers
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Repository.RoleRepository.CreateRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Create Relations
+            </summary>
+            <param name="roleId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Repository.UserRepository.CreateRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Creation Relations 
+            </summary>
+            <param name="userId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Repository.UserRepository.RemoveRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Remove Relations
+            </summary>
+            <param name="userId"></param>
+            <param name="navigationProperty"></param>
+            <param name="navigationPropertyIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Repository.UserRepository.SystemExistCustomerNo(System.String)">
+            <summary>
+            Is CustomerNo existed in system
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Repository.UserRepository.SystemExistProjectNo(System.String)">
+            <summary>
+            Is ProjectNo existed in system
+            </summary>
+            <param name="projectNo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Domain.Repository.UserRepository.ProjectBelongToCustomer(System.String,System.String)">
+            <summary>
+            Is ProjectNo Belong to CustomerNo
+            </summary>
+            <param name="customerNo"></param>
+            <param name="projectNo"></param>
+            <returns></returns>
         </member>
         <member name="P:DpControl.Models.JQueryDataTableParams.sEcho">
             <summary>  
@@ -616,6 +1359,15 @@
             <param name="value"></param>
             <returns></returns>
         </member>
+        <member name="M:DpControl.Utility.DataSeeder.SeedData(Microsoft.AspNet.Builder.IApplicationBuilder)">
+            <summary>
+            This is a workaround for missing seed data functionality in EF 7.0-rc1
+            More info: https://github.com/aspnet/EntityFramework/issues/629
+            </summary>
+            <param name="app">
+            An instance that provides the mechanisms to get instance of the database context.
+            </param>
+        </member>
         <member name="M:DpControl.Utility.ModelHandler.ConverEntityToModel``2(System.Collections.Generic.List{``1})">
             <summary>
             Conver Entity To Model
@@ -675,15 +1427,17 @@
             <param name="message"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.UserInfoManager.GetUserInfo">
+        <member name="M:DpControl.Utility.UserInfoManager.GetBasicLoginUserInfo">
             <summary>
-            Get UserInfo
+            Get UserInfo from Http Head
+            Basic Authorization / Digest Authorization
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.UserInfoManager.GetUserInfoAsync">
+        <member name="M:DpControl.Utility.UserInfoManager.GetBasicLoginUserInfoAsync">
             <summary>
-            Get UserInfo
+            Get UserInfo from Http Head
+            Basic Authorization / Digest Authorization
             </summary>
             <returns></returns>
         </member>
@@ -701,7 +1455,7 @@
             <param name="httpContext"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.Authentication.AbstractAuthentication.GetUserInfo(Microsoft.AspNet.Http.HttpContext)">
+        <member name="M:DpControl.Utility.Authentication.AbstractAuthentication.GetUserInfoFromHttpHeadAsync(Microsoft.AspNet.Http.HttpContext)">
             <summary>
             Get User Info
             </summary>
@@ -793,54 +1547,90 @@
             <param name="topString"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetOrderbyParam(System.String,System.Type)">
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetOrderbyParam(System.String)">
             <summary>
             获取orderby参数
             </summary>
             <param name="orderbyString"></param>
-            <param name="actionReturnType"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetSelectParam(System.String,System.Type)">
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetSelectParam(System.String)">
             <summary>
             获取select参数
             </summary>
             <param name="orderbyString"></param>
-            <param name="actionReturnType"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetExpandParam(System.String,System.Type)">
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetExpandParam(System.String)">
             <summary>
             获取expand参数
             </summary>
             <param name="expandString"></param>
-            <param name="actionReturnType"></param>
+            
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetFilterParam(System.String,System.Type)">
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.GetFilterParam(System.String)">
             <summary>
             获取filter参数
             </summary>
             <param name="filterString"></param>
-            <param name="actionReturnType"></param>
+            
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.IsFilter_Select_OrderbyType(System.Reflection.PropertyInfo)">
+            <summary>
+            判断满足Filter,Select,OrderBy的数据类型
+            </summary>
+            <param name="property"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OnResultExecuting(Microsoft.AspNet.Mvc.Filters.ResultExecutingContext)">
             <summary>
             在controller action result执行之前调用 
-            获取返回结果后，对结果进行过滤，排序，搜索等操作
+            获取返回结果后，重新组织查询结果格式
             </summary>
             <param name="context"></param>
             
         </member>
-        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OrderByResult(System.Collections.IList,DpControl.Domain.Models.OrderBy)">
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.IsSingleResult(System.Object)">
+            <summary>
+            判断result是单个结果，而不是list
+            </summary>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.ReturnExpandAndSelectResult(System.Type,System.Object,System.String[],System.String[])">
+            <summary>
+            返回expand 和select之后的结果
+            </summary>
+            <param name="resultType"></param>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.DynamicExpandAndSelectResult(System.Type,System.Collections.Generic.IEnumerable{System.Object},System.String[],System.String[])">
+            <summary>
+            根据expand 和select条件动态构造返回的结果
+            </summary>
+            <param name="resultType"></param>
+            <param name="results"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.DynamicExpandAndSelectResult(System.Type,System.Object,System.String[],System.String[])">
+            <summary>
+            根据expand 和select条件动态构造返回的结果
+            </summary>
+            <param name="resultType"></param>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.OrderByResult(System.Collections.IList)">
             <summary>
             对查询结果进行排序
             </summary>
             <param name="listData"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.PageResult(System.Collections.IList,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+        <member name="M:DpControl.Utility.Filters.EnableQueryAttribute.PageResult(System.Collections.IList)">
             <summary>
             对结果进行分页
             </summary>
@@ -875,6 +1665,11 @@
             </summary>
             <param name="context"></param>
             
+        </member>
+        <member name="T:DpControl.Utility.Middlewares.RequiredScopesMiddleware">
+            <summary>
+            For IdentityServer3
+            </summary>
         </member>
         <member name="T:DpControl.Utility.Middlewares.XHttpHeaderOverrideMiddleware">
             <summary>

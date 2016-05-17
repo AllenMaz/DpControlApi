@@ -105,13 +105,7 @@ namespace DpControl.APIControllers
             if (!user.isSuperLevel)
             {
                 //filter by CustomerNo
-                Filter customerNoFilter = new Filter();
-                var filterPropertyValue = new Dictionary<string, string>();
-                filterPropertyValue.Add("CustomerNo", user.CustomerNo);
-                customerNoFilter.FilterPropertyValue = filterPropertyValue;
-                customerNoFilter.CompareOperator = FilterOperators.Equal;
-                customerNoFilter.LogicalOperator = FilterOperators.And;
-                Query.AddFilterCondition(customerNoFilter);
+                Query.And("CustomerNo", user.CustomerNo);
             }
 
             var result = await _customerRepository.GetAllAsync();

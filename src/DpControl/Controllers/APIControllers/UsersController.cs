@@ -2,6 +2,7 @@
 using DpControl.Domain.Execptions;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
+using DpControl.Utility;
 using DpControl.Utility.Authorization;
 using DpControl.Utility.Filters;
 using Microsoft.AspNet.Authorization;
@@ -14,8 +15,16 @@ using System.Threading.Tasks;
 
 namespace DpControl.Controllers.APIControllers
 {
+    [Authorize]
     public class UsersController:BaseAPIController
     {
+        private ILoginUserRepository _loginUser;
+
+        public UsersController(ILoginUserRepository loginUser)
+        {
+            _loginUser = loginUser;
+        }
+
         [FromServices]
         public IUserRepository _userInfoRepository { get; set; }
 
@@ -23,11 +32,10 @@ namespace DpControl.Controllers.APIControllers
         private IUrlHelper _urlHelper { get; set; }
 
         /// <summary>
-        /// Search data by UserId
+        /// Get User by id
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(UserSearchModel))]
         [HttpGet("{userId}", Name = "GetByUserIdAsync")]
         public async Task<IActionResult> GetByUserIdAsync(string userId)
@@ -42,42 +50,39 @@ namespace DpControl.Controllers.APIControllers
 
         #region Relations
         /// <summary>
-        /// Get Locations Relation
+        /// Get Locations Relation by user id
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{userId}/Locations")]
-        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsBySceneIdAsync(string userId)
+        public async Task<IEnumerable<LocationSubSearchModel>> GetLocationsByUserIdAsync(string userId)
         {
             var locations = await _userInfoRepository.GetLocationsByUserId(userId);
             return locations;
         }
 
         /// <summary>
-        /// Get Groups Relation
+        /// Get Groups Relation by User id
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{userId}/Groups")]
-        public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsBySceneIdAsync(string userId)
+        public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsByUserIdAsync(string userId)
         {
             var groups = await _userInfoRepository.GetGroupsByUserId(userId);
             return groups;
         }
 
         /// <summary>
-        /// Get Roles Relation
+        /// Get Roles Relation by User id
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{userId}/Roles")]
-        public async Task<IEnumerable<RoleSubSearchModel>> GetRolesBySceneIdAsync(string userId)
+        public async Task<IEnumerable<RoleSubSearchModel>> GetRolesByUserIdAsync(string userId)
         {
             var roles = await _userInfoRepository.GetRolesByUserId(userId);
             return roles;
@@ -85,14 +90,32 @@ namespace DpControl.Controllers.APIControllers
         #endregion
 
         /// <summary>
-        /// Search all data
+        /// Get All Users:
+        /// if Admin and CustomerLevel,then filter by CustomerNo;
+        /// if Admin and ProjectNo,then filter by ProjectNo;
+        /// if not Admin,filter by current login username;
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<UserSearchModel>> GetAllAsync()
         {
+            var user = _loginUser.GetLoginUserInfo();
+            if (user.isAdmin && user.isCustomerLevel)
+            {
+                //if admin and CustomerLevel,then filter by CustomerNo
+                Query.And("CustomerNo", user.CustomerNo);
+            }
+            else if (user.isAdmin && user.isProjectLevel)
+            {
+                //if admin and ProjectNo,then filter by ProjectNo
+                Query.And("ProjectNo", user.ProjectNo);
+            }
+            else if (!user.isAdmin)
+            {
+                //if not admin,filter by current login username
+                Query.And("UserName", user.UserName);
+            }
 
             var result = await _userInfoRepository.GetAllAsync(); ;
 
@@ -100,10 +123,11 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Add data
+        /// Add new User
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
+        [Authorize(Roles =Role.Admin)]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] UserAddModel mUserAddModel)
         {
@@ -120,6 +144,20 @@ namespace DpControl.Controllers.APIControllers
 
             }
 
+            var user = _loginUser.GetLoginUserInfo();
+            if(user.isCustomerLevel && mUserAddModel.UserLevel == (int)UserLevel.SuperLevel)
+            {
+                //如果用户是Admin，且是CustomerLevel,则可以新增Customer级别以下的用户
+                throw new ExpectException("Invalid UserLevel.Only CustomerLevel and ProjectLevel are available");
+                
+            }
+            else if(user.isProjectLevel && mUserAddModel.UserLevel != (int)UserLevel.ProjectLevel)
+            {
+                //如果用户是Admin，且是ProjectLevel,则可以新增Project级别的用户
+                throw new ExpectException("Invalid UserLevel.Only ProjectLevel is available");
+
+            }
+
             string userId = await _userInfoRepository.AddAsync(mUserAddModel);
             return CreatedAtRoute("GetByUserIdAsync", new { controller = "Users", userId = userId }, mUserAddModel);
         }
@@ -131,6 +169,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="navigationProperty"></param>
         /// <param name="navigationPropertyIds"></param>
         /// <returns></returns>
+        [Authorize(Roles = Role.Admin)]
         [HttpPost("{userId}/{navigationProperty}")]
         public async Task<IActionResult> CreateRelationsAsync(string userId,string navigationProperty,
             [FromBody] List<string> navigationPropertyIds)
@@ -157,6 +196,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="navigationProperty"></param>
         /// <param name="navigationPropertyIds"></param>
         /// <returns></returns>
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{userId}/{navigationProperty}")]
         public async Task<IActionResult> RemoveRelationsAsync(string userId, string navigationProperty,
             [FromBody] List<string> navigationPropertyIds)
@@ -172,10 +212,10 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Edit data by UserId
+        /// Update User by Id
         /// </summary>
-        /// <param name="customerNo"></param>
-        /// <param name="customer"></param>
+        /// <param name="id"></param>
+        /// <param name="mUser"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(string id, [FromBody] UserUpdateModel mUser)
@@ -202,6 +242,7 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by UserId
         /// </summary>
         /// <param name="userId"></param>
+        [Authorize(Roles =Role.Admin)]
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteByUserIdAsync(string userId)
         {

@@ -1,6 +1,7 @@
 ﻿using DpControl.Domain.EFContext;
 using DpControl.Domain.Entities;
 using DpControl.Domain.IRepository;
+using DpControl.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,6 +18,19 @@ namespace DpControl.Domain.Models
         public int UserLevel { get; set; }
 
         public List<string> Roles { get; set; }
+
+        public bool isAdmin
+        {
+            get
+            {
+               
+                return Roles != null && Roles.Contains(Role.Admin) ? true : false;
+            }
+            set
+            {
+                value = Roles != null && Roles.Contains(Role.Admin) ? true : false;
+            }
+        }
 
         public bool isSuperLevel
         {

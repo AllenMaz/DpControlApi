@@ -62,11 +62,28 @@ namespace DpControl.Domain.Models
             select = null;
             expand = null;
         }
-        
+
+        /// <summary>
+        /// Add extra And Confition
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <param name="propertyValue"></param>
+        public static void And(string propertyName, string propertyValue)
+        {
+            Filter filter = new Filter();
+            var filterPropertyValue = new Dictionary<string, string>();
+            filterPropertyValue.Add(propertyName, propertyValue);
+            filter.FilterPropertyValue = filterPropertyValue;
+            filter.CompareOperator = FilterOperators.Equal;
+            filter.LogicalOperator = FilterOperators.And;
+            Query.AddFilterCondition(filter);
+        }
+
+
         /// <summary>
         /// Add extra filter condition
         /// </summary>
-        public static void AddFilterCondition(List<Filter> filters)
+        private static void AddFilterCondition(List<Filter> filters)
         {
             foreach(var filter in filters)
             {
@@ -77,7 +94,7 @@ namespace DpControl.Domain.Models
         /// <summary>
         /// Add extra filter condition
         /// </summary>
-        public static void AddFilterCondition(Filter filter)
+        private static void AddFilterCondition(Filter filter)
         {
             //if Query.filter is not null,then conver to list
             var queryFilter = Query.filter == null ? new List<Filter>() : Query.filter.ToList();
@@ -86,6 +103,7 @@ namespace DpControl.Domain.Models
             //reset value form Gobal Query filter
             Query.filter = queryFilter.ToArray();
         }
+
     }
 
     public class OrderBy

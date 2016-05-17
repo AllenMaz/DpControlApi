@@ -13,7 +13,7 @@ namespace DpControl.Controllers.APIControllers
     {
         [HttpGet("UserLevel",Name = "GetUserLevel")]
         public IActionResult GetUserLevel()
-        { 
+        {
             var result = this.ConstructEnumDict(typeof(UserLevel));
             return new ObjectResult(result);
         }
