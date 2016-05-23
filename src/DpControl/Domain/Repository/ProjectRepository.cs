@@ -18,7 +18,6 @@ namespace DpControl.Domain.Repository
 
         private ShadingContext _context;
         private readonly ILoginUserRepository _loginUser;
-
         #region Constructors
         public ProjectRepository()
         {
@@ -119,6 +118,22 @@ namespace DpControl.Domain.Repository
             var queryData = from P in _context.Projects
                             select P;
 
+            #region extra filter condition by current login user
+            var user = _loginUser.GetLoginUserInfo();
+            if (user.isCustomerLevel)
+            {
+                //if CustomerLevel then filter by CustomerId
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerNo == user.CustomerNo);
+                queryData = queryData.Where(p => p.CustomerId == customer.CustomerId);
+
+            }
+            else if (user.isProjectLevel)
+            {
+                //if ProjectLevel then filter by ProjectNo
+                queryData = queryData.Where(p => p.ProjectNo == user.ProjectNo);
+            }
+            #endregion
+
             var result = QueryOperate<Project>.Execute(queryData);
             result = (IQueryable<Project>)ExpandOperator.ExpandRelatedEntities<Project>(result);
 
@@ -134,6 +149,22 @@ namespace DpControl.Domain.Repository
         {
             var queryData = from P in _context.Projects
                             select P;
+
+            #region extra filter condition by current login user
+            var user = _loginUser.GetLoginUserInfo();
+            if (user.isCustomerLevel)
+            {
+                //if CustomerLevel then filter by CustomerId
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerNo == user.CustomerNo);
+                queryData = queryData.Where(p => p.CustomerId == customer.CustomerId);
+
+            }
+            else if (user.isProjectLevel)
+            {
+                //if ProjectLevel then filter by ProjectNo
+                queryData = queryData.Where(p => p.ProjectNo == user.ProjectNo);
+            }
+            #endregion
 
             var result = QueryOperate<Project>.Execute(queryData);
             result = (IQueryable<Project>)ExpandOperator.ExpandRelatedEntities<Project>(result);

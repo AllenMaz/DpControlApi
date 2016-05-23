@@ -2,6 +2,7 @@
     $(function () {
         var settings = {
             authority: 'http://localhost:60/',
+            //authority: 'http://developer.chinacloudsites.cn/',
             client_id: 'swagger-implicit',
             popup_redirect_uri: window.location.protocol
                 + '//'

@@ -121,6 +121,15 @@ namespace DpControl.Domain.Repository
             var queryData = from C in _context.Customers
                             select C;
 
+            #region extra filter condition by current login user 
+            var user = _loginUser.GetLoginUserInfo();
+            if (!user.isSuperLevel)
+            {
+                //filter by CustomerNo
+                queryData = queryData.Where(c => c.CustomerNo == user.CustomerNo);
+            }
+            #endregion
+
             var result = QueryOperate<Customer>.Execute(queryData);
             result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
 
@@ -135,7 +144,16 @@ namespace DpControl.Domain.Repository
         {
             var queryData = from C in _context.Customers
                         select C;
-            
+
+            #region extra filter condition by current login user 
+            var user = _loginUser.GetLoginUserInfo();
+            if (!user.isSuperLevel)
+            {
+                //filter by CustomerNo
+                queryData = queryData.Where(c => c.CustomerNo == user.CustomerNo);
+            }
+            #endregion
+
             var result = QueryOperate<Customer>.Execute(queryData);
             result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
 

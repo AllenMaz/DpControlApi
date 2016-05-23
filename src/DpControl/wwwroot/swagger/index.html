@@ -42,7 +42,9 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-          url = "http://localhost:37936/swagger/v1/swagger.json";
+          url = window.location.protocol + '//'
+                + window.location.host
+                + '/swagger/v1/swagger.json'
       }
 
       hljs.configure({

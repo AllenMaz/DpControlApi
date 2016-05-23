@@ -259,7 +259,7 @@ namespace DpControl.Utility.Filters
             //split by "and" logical operator
             //Conver filter operator to lower(case sensitive)
             string lowerFilterString = Regex.Replace(filterString, FilterOperators.And, FilterOperators.And, RegexOptions.IgnoreCase);
-            lowerFilterString = Regex.Replace(filterString, FilterOperators.Or, FilterOperators.Or, RegexOptions.IgnoreCase);
+            lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.Or, FilterOperators.Or, RegexOptions.IgnoreCase);
 
             lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.LessThan, FilterOperators.LessThan, RegexOptions.IgnoreCase);
             lowerFilterString = Regex.Replace(lowerFilterString, FilterOperators.MoreThan, FilterOperators.MoreThan, RegexOptions.IgnoreCase);
@@ -296,6 +296,8 @@ namespace DpControl.Utility.Filters
                         compareOperator = FilterOperators.Equal;
                     }
                     string[] arrFieldAndValue = arrSubFilter[j].Split(new string[] { compareOperator }, StringSplitOptions.RemoveEmptyEntries);
+                    //去掉数组中所有元素的首位空格
+                    arrFieldAndValue = arrFieldAndValue.Select(v => v.Trim()).ToArray();
                     if (arrFieldAndValue.Length != 2)
                         throw new ExpectException("The query(filter) syntax errors:'" + arrSubFilter[j] + "' syntax error");
                     //校验输入的filter参数的属性值的范围必须在当前方法返回类型中的字段值中

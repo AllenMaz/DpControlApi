@@ -20,6 +20,7 @@ using Microsoft.AspNet.Cors;
 
 namespace DpControl.APIControllers
 {
+    [Authorize]
     public class CustomersController : BaseAPIController
     {
         [FromServices]
@@ -38,7 +39,6 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [Authorize]
         [EnableQuery(typeof(CustomerSearchModel))]
         [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
         public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
@@ -56,7 +56,6 @@ namespace DpControl.APIControllers
         /// Get Related Projects
         /// </summary>
         /// <returns></returns>
-        [Authorize]
         [HttpGet("{customerId}/Projects")]
         [EnableQuery]
         public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
@@ -70,7 +69,6 @@ namespace DpControl.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<CustomerSearchModel>> GetAllAsync()
@@ -99,15 +97,7 @@ namespace DpControl.APIControllers
             //    result = JsonHandler.UnJson<IEnumerable<CustomerSearchModel>>(cacheResultStr);
 
             //}
-
             
-            var user = _loginUser.GetLoginUserInfo();
-            if (!user.isSuperLevel)
-            {
-                //filter by CustomerNo
-                Query.And("CustomerNo", user.CustomerNo);
-            }
-
             var result = await _customerRepository.GetAllAsync();
 
             return result;
@@ -121,10 +111,16 @@ namespace DpControl.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [Authorize(Roles = Role.Admin )]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
         {
+            //only SuperLevel has authorzation
+            var user = _loginUser.GetLoginUserInfo();
+            if (!user.isSuperLevel)
+            {
+                return HttpUnauthorized();
+            }
+
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
@@ -140,10 +136,16 @@ namespace DpControl.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="customer"></param>
         /// <returns></returns>
-        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] CustomerUpdateModel mCustomer)
         {
+            //only SuperLevel has authorzation
+            var user = _loginUser.GetLoginUserInfo();
+            if (!user.isSuperLevel)
+            {
+                return HttpUnauthorized();
+            }
+
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
@@ -157,11 +159,17 @@ namespace DpControl.APIControllers
         /// <summary>
         /// Delete data by CustomerNo
         /// </summary>
-        [Authorize(Roles = Role.Admin)]
         /// <param name="customerId"></param>
         [HttpDelete("{customerId}")]
         public async Task<IActionResult> DeleteByCustomerIdAsync(int customerId)
         {
+            //only SuperLevel has authorzation
+            var user = _loginUser.GetLoginUserInfo();
+            if (!user.isSuperLevel)
+            {
+                return HttpUnauthorized();
+            }
+
             await _customerRepository.RemoveByIdAsync(customerId);
             return Ok();
         }

@@ -17,6 +17,7 @@ namespace DpControl.Domain.Repository
     {
 
         ShadingContext _context;
+        private ILoginUserRepository _loginUser;
 
         #region construct
         public UserRepository()
@@ -27,7 +28,12 @@ namespace DpControl.Domain.Repository
         {
             _context = context;
         }
-        
+
+        public UserRepository(ShadingContext context, ILoginUserRepository loginUser)
+        {
+            _context = context;
+            _loginUser = loginUser;
+        }
         #endregion
 
         public async Task<UserSubSearchModel> FindByIdAsync(string userId)
@@ -44,6 +50,27 @@ namespace DpControl.Domain.Repository
         {
             var queryData = from U in _context.Users
                             select U;
+
+            #region extra filter condition by current login user
+            var user = _loginUser.GetLoginUserInfo();
+            if (user.isAdmin && user.isCustomerLevel)
+            {
+                //if admin and CustomerLevel,then filter by CustomerNo
+                queryData = queryData.Where(u=>u.CustomerNo == user.CustomerNo);
+            }
+            else if (user.isAdmin && user.isProjectLevel)
+            {
+                //if admin and ProjectNo,then filter by ProjectNo
+                queryData = queryData.Where(u => u.ProjectNo == user.ProjectNo);
+
+            }
+            else if (!user.isAdmin)
+            {
+                //if not admin,filter by current login username
+                queryData = queryData.Where(u => u.UserName == user.UserName);
+
+            }
+            #endregion
 
             var result = QueryOperate<ApplicationUser>.Execute(queryData);
             result = (IQueryable<ApplicationUser>)ExpandOperator.ExpandRelatedEntities<ApplicationUser>(result);

@@ -476,12 +476,25 @@ namespace DpControl.Domain.Models
                 string propertyValue = filterParam.FilterPropertyValue.First().Value;
                 string filterOperator = filterParam.CompareOperator;
 
-                var valueTypr = typeof(T).GetProperty(propertyName).PropertyType;
+                var valueType = typeof(T).GetProperty(propertyName).PropertyType;
+                //如果类型为nullable,则获取基础类型
+                Type nullableValueType = Nullable.GetUnderlyingType(valueType);
+
                 ParameterExpression param = Expression.Parameter(typeof(T), "c");
                 Expression left = Expression.Property(param, typeof(T).GetProperty(propertyName));
                 //Conver value to propertyType
-                var converValue = Convert.ChangeType(propertyValue, valueTypr);
-                Expression right = Expression.Constant(converValue);
+                var converValue = new object();
+                if (nullableValueType != null)
+                {
+                    //如果属性类型为nullable类型，则将值转换为基础类型
+                    converValue = Convert.ChangeType(propertyValue, nullableValueType);
+                }
+                else
+                {
+                    converValue = Convert.ChangeType(propertyValue, valueType);
+                }
+
+                Expression right = Expression.Constant(converValue, valueType);
                 Expression filter = Expression.Equal(left, right);
                 if (filterOperator.Equals(FilterOperators.LessThan))
                 {

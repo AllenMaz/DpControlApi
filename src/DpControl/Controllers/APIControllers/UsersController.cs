@@ -100,23 +100,6 @@ namespace DpControl.Controllers.APIControllers
         [EnableQuery]
         public async Task<IEnumerable<UserSearchModel>> GetAllAsync()
         {
-            var user = _loginUser.GetLoginUserInfo();
-            if (user.isAdmin && user.isCustomerLevel)
-            {
-                //if admin and CustomerLevel,then filter by CustomerNo
-                Query.And("CustomerNo", user.CustomerNo);
-            }
-            else if (user.isAdmin && user.isProjectLevel)
-            {
-                //if admin and ProjectNo,then filter by ProjectNo
-                Query.And("ProjectNo", user.ProjectNo);
-            }
-            else if (!user.isAdmin)
-            {
-                //if not admin,filter by current login username
-                Query.And("UserName", user.UserName);
-            }
-
             var result = await _userInfoRepository.GetAllAsync(); ;
 
             return result;

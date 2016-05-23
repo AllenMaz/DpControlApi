@@ -68,6 +68,7 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="navigationProperty"></param>
         /// <param name="navigationPropertyIds"></param>
         /// <returns></returns>
+        [Authorize(Roles = Role.Admin)]
         [HttpPost("{roleId}/{navigationProperty}")]
         public async Task<IActionResult> CreateRelationsAsync(string roleId, string navigationProperty,
             [FromBody] List<string> navigationPropertyIds)
