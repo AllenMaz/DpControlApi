@@ -115,6 +115,24 @@ namespace DpControl.Domain.Repository
             var queryData = from S in _context.Scenes
                             select S;
 
+            #region filter by login user
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (loginUser.isCustomerLevel)
+            {
+                var customer = _context.Customers
+                    .Include(c => c.Projects)
+                    .Where(c => c.CustomerNo == loginUser.CustomerNo).FirstOrDefault();
+                var projectIds = customer.Projects.Select(p => p.ProjectId);
+                queryData = queryData.Where(s => projectIds.Contains((int)s.ProjectId));
+
+            }
+            else if (loginUser.isProjectLevel)
+            {
+                var project = _context.Projects.Where(p => p.ProjectNo == loginUser.ProjectNo).FirstOrDefault();
+                queryData = queryData.Where(s => s.ProjectId == project.ProjectId);
+            }
+            #endregion
+
             var result = QueryOperate<Scene>.Execute(queryData);
             result = (IQueryable<Scene>)ExpandOperator.ExpandRelatedEntities<Scene>(result);
 
@@ -129,6 +147,23 @@ namespace DpControl.Domain.Repository
         {
             var queryData = from S in _context.Scenes
                             select S;
+
+            #region filter by login user
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if(loginUser.isCustomerLevel)
+            {
+                var customer = _context.Customers
+                    .Include(c=>c.Projects)
+                    .Where(c => c.CustomerNo == loginUser.CustomerNo).FirstOrDefault();
+                var projectIds = customer.Projects.Select(p => p.ProjectId);
+                queryData = queryData.Where(s=>projectIds.Contains((int)s.ProjectId));
+
+            }else if(loginUser.isProjectLevel)
+            {
+                var project = _context.Projects.Where(p => p.ProjectNo == loginUser.ProjectNo).FirstOrDefault();
+                queryData = queryData.Where(s=>s.ProjectId == project.ProjectId);
+            }
+            #endregion
 
             var result = QueryOperate<Scene>.Execute(queryData);
             result = (IQueryable<Scene>)ExpandOperator.ExpandRelatedEntities<Scene>(result);

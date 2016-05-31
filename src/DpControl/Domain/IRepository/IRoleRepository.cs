@@ -13,7 +13,7 @@ namespace DpControl.Domain.IRepository
         Task<string> AddAsync(RoleAddModel role);
         Task<string> UpdateByIdAsync(string roleId, RoleUpdateModel role);
         Task RemoveByIdAsync(string roleId);
-        Task<IEnumerable<UserSubSearchModel>> GetUsersByUserId(string roleId);
+        Task<IEnumerable<UserSubSearchModel>> GetUsersByRoleId(string roleId);
 
     }
 }

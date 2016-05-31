@@ -95,8 +95,7 @@ namespace DpControl.Utility
                 {
                     UserName = userName,
                     NormalizedUserName = userName.ToUpper(),
-                    PasswordHash = passwordHash,
-                    UserLevel = (int)UserLevel.SuperLevel
+                    PasswordHash = passwordHash
                 };
 
                 dbcontext.Add(userModel);

@@ -18,7 +18,9 @@ namespace DpControl.Controllers.APIControllers
         public IRoleRepository _roleInfoRepository { get; set; }
 
         /// <summary>
-        /// Get Role by id
+        /// Roles：Admin<br/>
+        /// UserLevel:All<br/>
+        /// Description：根据ID获取Role信息
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -35,7 +37,9 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Get User Relation by role id
+        /// Roles：Admin<br/>
+        /// UserLevel:All<br/>
+        /// Description：根据roleId以及当前登录用户信息获取该Role下的Users
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
@@ -43,13 +47,15 @@ namespace DpControl.Controllers.APIControllers
         [HttpGet("{roleId}/Users")]
         public async Task<IEnumerable<UserSubSearchModel>> GetUsersByRoleIdAsync(string roleId)
         {
-            var users = await _roleInfoRepository.GetUsersByUserId(roleId);
+            var users = await _roleInfoRepository.GetUsersByRoleId(roleId);
             return users;
         }
 
 
         /// <summary>
-        /// Get all Roles
+        /// Roles：Admin<br/>
+        /// UserLevel:All<br/>
+        /// Description：获取所有角色信息
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -62,7 +68,9 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Create RelationShips.Available Relations :Users
+        /// Roles：Admin<br/>
+        /// UserLevel:All<br/>
+        /// Description：根据RoleId为Role添加User
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="navigationProperty"></param>
@@ -92,7 +100,9 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Delete RelationShips.Available Relations :Users
+        /// Roles：Admin<br/>
+        /// UserLevel:All<br/>
+        /// Description：根据RoleId为Role移除User
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="navigationProperty"></param>

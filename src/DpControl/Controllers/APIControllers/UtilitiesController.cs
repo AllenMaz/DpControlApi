@@ -11,12 +11,6 @@ namespace DpControl.Controllers.APIControllers
 {
     public class UtilitiesController:BaseAPIController
     {
-        [HttpGet("UserLevel",Name = "GetUserLevel")]
-        public IActionResult GetUserLevel()
-        {
-            var result = this.ConstructEnumDict(typeof(UserLevel));
-            return new ObjectResult(result);
-        }
 
         [HttpGet("Orientation", Name = "GetOrientation")]
         public IActionResult GetOrientation()

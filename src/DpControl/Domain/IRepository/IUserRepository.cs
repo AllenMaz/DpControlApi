@@ -24,6 +24,7 @@ namespace DpControl.Domain.IRepository
     {
         Task<IEnumerable<UserSearchModel>> GetAllAsync();
         Task<UserSubSearchModel> FindByIdAsync(string userId);
+        UserSubSearchModel FindByName(string userName);
         Task<IEnumerable<GroupSubSearchModel>> GetGroupsByUserId(string userId);
         Task<IEnumerable<LocationSubSearchModel>> GetLocationsByUserId(string userId);
         Task<IEnumerable<RoleSubSearchModel>> GetRolesByUserId(string userId);

@@ -12,6 +12,7 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
+    [Authorize]
     public class AlarmsController:BaseAPIController
     {
         [FromServices]
@@ -22,7 +23,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(AlarmSearchModel))]
         [HttpGet("{alarmId}", Name = "GetByAlarmIdAsync")]
         public async Task<IActionResult> GetByAlarmIdAsync(int alarmId)
@@ -41,7 +41,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="alarmId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(LocationSubSearchModel))]
         [HttpGet("{alarmId}/Location")]
         public async Task<IActionResult> GetLocationByAlarmIdAsync(int alarmId)
@@ -59,7 +58,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="alarmId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(AlarmMessageSubSearchModel))]
         [HttpGet("{alarmId}/AlarmMessage")]
         public async Task<IActionResult> GetAlarmMessageByAlarmIdAsync(int alarmId)
@@ -77,23 +75,21 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
-        [HttpGet]
-        [EnableQuery]
-        public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync()
-        {
+        //[HttpGet]
+        //[EnableQuery]
+        //public async Task<IEnumerable<AlarmSearchModel>> GetAllAsync()
+        //{
 
-            var result = await _alarmRepository.GetAllAsync(); ;
+        //    var result = await _alarmRepository.GetAllAsync(); ;
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// Add data
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] AlarmAddModel mAlarm)
         {
@@ -111,7 +107,6 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by AlarmId
         /// </summary>
         /// <param name="alarmId"></param>
-        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{alarmId}")]
         public async Task<IActionResult> DeleteByAlarmIdAsync(int alarmId)
         {

@@ -23,12 +23,6 @@
             <param name="id">ID</param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.GetAllAsync">
-            <summary>
-            Search all data
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.AlarmMessagesController.AddAsync(DpControl.Domain.Models.AlarmMessageAddModel)">
             <summary>
             Add data
@@ -71,12 +65,6 @@
             <param name="alarmId"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.AlarmsController.GetAllAsync">
-            <summary>
-            Search all data
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.AlarmsController.AddAsync(DpControl.Domain.Models.AlarmAddModel)">
             <summary>
             Add data
@@ -90,6 +78,12 @@
             </summary>
             <param name="alarmId"></param>
         </member>
+        <member name="M:DpControl.Controllers.APIControllers.APIHomeController.GetApiStartList">
+            <summary>
+            Get api list
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetByDeviceIdAsync(System.Int32)">
             <summary>
             Search data by DeviceId
@@ -102,12 +96,6 @@
             Get Locations Relation
             </summary>
             <param name="deviceId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.DevicesController.GetAllAsync">
-            <summary>
-            Search all data
-            </summary>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.DevicesController.AddAsync(DpControl.Domain.Models.DeviceAddModel)">
@@ -346,12 +334,6 @@
             <param name="logDescriptionId"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.GetAllAsync">
-            <summary>
-            Search all data
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.LogDescriptionsController.AddAsync(DpControl.Domain.Models.LogDescriptionAddModel)">
             <summary>
             Add data
@@ -394,12 +376,6 @@
             <param name="logId"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.LogsController.GetAllAsync">
-            <summary>
-            Search all data
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.LogsController.AddAsync(DpControl.Domain.Models.LogAddModel)">
             <summary>
             Add data
@@ -415,62 +391,68 @@
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetByProjectIdAsync(System.Int32)">
             <summary>
-            Search data by ProjectId
+            Get Project by id
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetCustomerByProjectIdAsync(System.Int32)">
             <summary>
-            Get Customer Relation
+            Get Customer by ProjectId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetGroupsByProjectIdAsync(System.Int32)">
             <summary>
-            Get Groups Relation
+            Get Groups by ProjectId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetLocationsByProjectIdAsync(System.Int32)">
             <summary>
-            Get Locations Relation
+            Get Locations by ProjectId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetScenesByProjectIdAsync(System.Int32)">
             <summary>
-            Get Scenes Relation
+            Get Scenes by ProjectId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetHolidaysByProjectIdAsync(System.Int32)">
             <summary>
-            Get Locations Relation
+            Get Holidays by ProjectId
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.GetAllAsync">
             <summary>
-            Search all data
+            Roles：All<br/>
+            UserLevel:SuperLevel,CustomerLevel<br/>
+            Description：根据当前登录用户所属级别获取所有Projects
             </summary>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.AddAsync(DpControl.Domain.Models.ProjectAddModel)">
             <summary>
-            Add data
+            Roles：All<br/>
+            UserLevel:SuperLevel,CustomerLevel<br/>
+            Description：新增Project
             </summary>
             <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.UpdateAsync(System.Int32,DpControl.Domain.Models.ProjectUpdateModel)">
             <summary>
-            Edit data by ProjectId
+            Roles：All<br/>
+            UserLevel:SuperLevel,CustomerLevel<br/>
+            Description：修改Project
             </summary>
             <param name="customerNo"></param>
             <param name="project"></param>
@@ -478,33 +460,43 @@
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ProjectsController.DeleteByProjectIdIdAsync(System.Int32)">
             <summary>
-            Delete data by CustomerNo
+            Roles：All<br/>
+            UserLevel:SuperLevel,CustomerLevel<br/>
+            Description：删除Project
             </summary>
             <param name="customerId"></param>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.RolesController.GetByRoleIdAsync(System.String)">
             <summary>
-            Get Role by id
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：根据ID获取Role信息
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.RolesController.GetUsersByRoleIdAsync(System.String)">
             <summary>
-            Get User Relation by role id
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：根据roleId以及当前登录用户信息获取该Role下的Users
             </summary>
             <param name="userId"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.RolesController.GetAllAsync">
             <summary>
-            Get all Roles
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：获取所有角色信息
             </summary>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.RolesController.CreateRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Create RelationShips.Available Relations :Users
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：根据RoleId为Role添加User
             </summary>
             <param name="roleId"></param>
             <param name="navigationProperty"></param>
@@ -513,7 +505,9 @@
         </member>
         <member name="M:DpControl.Controllers.APIControllers.RolesController.RemoveRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Delete RelationShips.Available Relations :Users
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：根据RoleId为Role移除User
             </summary>
             <param name="roleId"></param>
             <param name="navigationProperty"></param>
@@ -522,34 +516,36 @@
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetBySceneIdAsync(System.Int32)">
             <summary>
-            Search data by SceneId
+            Get Scene by sceneid
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetProjectBySceneIdAsync(System.Int32)">
             <summary>
-            Get Project Relation
+            Get Project by sceneid
             </summary>
             <param name="sceneId"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetSceneSegmentsBySceneIdAsync(System.Int32)">
             <summary>
-            Get SceneSegments Relation
+            Get SceneSegments by sceneid
             </summary>
             <param name="sceneId"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ScenesController.GetAllAsync">
             <summary>
-            Search all data
+            Roles：All<br/>
+            UserLevel:All<br/>
+            Description：根据当前用户获取所有Scenes
             </summary>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.ScenesController.AddAsync(DpControl.Domain.Models.SceneAddModel)">
             <summary>
-            Add data
+            Add Scene
             </summary>
             <param name="item"></param>
             <returns></returns>
@@ -582,12 +578,6 @@
             <param name="sceneSegmentId"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.GetAllAsync">
-            <summary>
-            Search all data
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:DpControl.Controllers.APIControllers.SceneSegmentsController.AddAsync(DpControl.Domain.Models.SceneSegmentAddModel)">
             <summary>
             Add data
@@ -611,51 +601,69 @@
         </member>
         <member name="M:DpControl.Controllers.APIControllers.UsersController.GetByUserIdAsync(System.String)">
             <summary>
-            Get User by id
-            </summary>
-            <param name="id">ID</param>
-            <returns></returns>
-        </member>
-        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetLocationsByUserIdAsync(System.String)">
-            <summary>
-            Get Locations Relation by user id
+            Roles：All<br/>
+            UserLevel:All<br/>
+            Description：根据UserId查询用户信息
             </summary>
             <param name="userId"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetGroupsByUserIdAsync(System.String)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetLoginUser">
             <summary>
-            Get Groups Relation by User id
+            Get current Login user info
             </summary>
-            <param name="userId"></param>
             <returns></returns>
         </member>
-        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetRolesByUserIdAsync(System.String)">
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetLocationsByUserNameAsync(System.String)">
             <summary>
-            Get Roles Relation by User id
+            Roles：All<br/>
+            UserLevel:All<br/>
+            Description：根据用户名获取该用户下的所有Locations
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetGroupsByUserNameAsync(System.String)">
+            <summary>
+            Roles：All<br/>
+            UserLevel:All<br/>
+            Description：根据用户名获取该用户下的所有Groups
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DpControl.Controllers.APIControllers.UsersController.GetRolesByUserNameAsync(System.String)">
+            <summary>
+            Roles：All<br/>
+            UserLevel:All<br/>
+            Description：根据用户名获取该用户下的所有角色
             </summary>
             <param name="userId"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.UsersController.GetAllAsync">
             <summary>
-            Get All Users:
-            if Admin and CustomerLevel,then filter by CustomerNo;
-            if Admin and ProjectNo,then filter by ProjectNo;
-            if not Admin,filter by current login username;
+            Roles：Admin<br/>
+            UserLevel:SuperLevel,CustomerLevel,ProjectLevel<br/>
+            Description：根据当前登录用户，获取用户列表
             </summary>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.UsersController.AddAsync(DpControl.Domain.Models.UserAddModel)">
             <summary>
-            Add new User
+            Roles：Admin<br/>
+            UserLevel:SuperLevel,CustomerLevel,ProjectLevel<br/>
+            Description：根据当前登录用户，新增用户信息
             </summary>
             <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.UsersController.CreateRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Create RelationShips:Roles、Locations、Groups
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：ProjectLevel级别下的管理员指定用户下有哪些Locations,Groups;<br/>
+                  管理员指定用户有哪些角色
             </summary>
             <param name="userId"></param>
             <param name="navigationProperty"></param>
@@ -664,16 +672,21 @@
         </member>
         <member name="M:DpControl.Controllers.APIControllers.UsersController.RemoveRelationsAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            Remove RelationShips:Roles、Locations、Groups
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：ProjectLevel级别下的管理员删除用户下的Locations,Groups;<br/>
+                  管理员删除用户下的角色
             </summary>
-            <param name="userId"></param>
+            <param name="userName"></param>
             <param name="navigationProperty"></param>
             <param name="navigationPropertyIds"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.Controllers.APIControllers.UsersController.UpdateAsync(System.String,DpControl.Domain.Models.UserUpdateModel)">
             <summary>
-            Update User by Id
+            Roles：All<br/>
+            UserLevel:All<br/>
+            Description：修改用户信息
             </summary>
             <param name="id"></param>
             <param name="mUser"></param>
@@ -681,39 +694,49 @@
         </member>
         <member name="M:DpControl.Controllers.APIControllers.UsersController.DeleteByUserIdAsync(System.String)">
             <summary>
-            Delete data by UserId
+            Roles：Admin<br/>
+            UserLevel:All<br/>
+            Description：删除用户
             </summary>
             <param name="userId"></param>
         </member>
-        <member name="M:DpControl.APIControllers.CustomersController.GetByCustomerIdAsync(System.Int32)">
+        <member name="M:DpControl.APIControllers.CustomersController.GetByCustomerById(System.Int32)">
             <summary>
-            Search data by CustomerId
+            Get Customer by id
             </summary>
             <param name="id">ID</param>
             <returns></returns>
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.GetProjectsByCustomerIdAsync(System.Int32)">
             <summary>
-            Get Related Projects
+            Roles：All<br/>
+            UserLevel:SuperLevel,CustomerLevel<br/>
+            Description：根据CustomerId及当前登录用户信息获取该Customer下的所有Projects
             </summary>
             <returns></returns>
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.GetAllAsync">
             <summary>
-            Search all data
+            Roles：All<br/>
+            UserLevel:SuperLevel<br/>
+            Description：根据当前登录用户获取所有Customer
             </summary>
             <returns></returns>
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.AddAsync(DpControl.Domain.Models.CustomerAddModel)">
             <summary>
-            Add data
+            Roles：All<br/>
+            UserLevel:SuperLevel<br/>
+            Description：新增Customer
             </summary>
             <param name="item"></param>
             <returns></returns>
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.UpdateAsync(System.Int32,DpControl.Domain.Models.CustomerUpdateModel)">
             <summary>
-            Edit data by CustomerId
+            Roles：All<br/>
+            UserLevel:SuperLevel<br/>
+            Description：修改Customer
             </summary>
             <param name="customerNo"></param>
             <param name="customer"></param>
@@ -721,16 +744,11 @@
         </member>
         <member name="M:DpControl.APIControllers.CustomersController.DeleteByCustomerIdAsync(System.Int32)">
             <summary>
-            Delete data by CustomerNo
+            Roles：All<br/>
+            UserLevel:SuperLevel<br/>
+            Description：删除Customer
             </summary>
-        </member>
-        <member name="P:DpControl.Domain.Entities.ApplicationUser.UserLevel">
-            <summary>
-            there are three levels:
-            SuperLevel:this level CustomerNo and ProjectNo must be empty
-            CustomerLevel:this level CustomerNo is required and ProjectNo must be empty
-            ProjectLevel:this level ProjectNo is required
-            </summary>
+            <param name="customerId"></param>
         </member>
         <member name="T:DpControl.Domain.Entities.Orientation">
             <summary>
@@ -745,11 +763,6 @@
         <member name="T:DpControl.Domain.Entities.CommMode">
             <summary>
             
-            </summary>
-        </member>
-        <member name="T:DpControl.Domain.Entities.UserLevel">
-            <summary>
-            用户级别
             </summary>
         </member>
         <member name="T:DpControl.Domain.Execptions.ExpectException">
@@ -1271,6 +1284,11 @@
             <param name="navigationPropertyIds"></param>
             <returns></returns>
         </member>
+        <member name="M:DpControl.Domain.Repository.UserRepository.CheckConditionByLoginUser(System.String,System.String)">
+            <summary>
+            Check condition by current login user
+            </summary>
+        </member>
         <member name="M:DpControl.Domain.Repository.UserRepository.SystemExistCustomerNo(System.String)">
             <summary>
             Is CustomerNo existed in system
@@ -1331,6 +1349,21 @@
         <member name="P:DpControl.Models.Menu.MenuIcon">
             <summary>
             fullname eg:logo.png
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.Link.Rel">
+            <summary>
+            Relation
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.Link.Method">
+            <summary>
+            HTTP Method
+            </summary>
+        </member>
+        <member name="P:DpControl.Models.Link.Href">
+            <summary>
+            Relation Url
             </summary>
         </member>
         <member name="T:DpControl.Models.ListResponseModel`1">

@@ -43,16 +43,24 @@ namespace DpControl.Utility.ExceptionHandler
                     
                     var exceptionType = error.Error.GetType();
                     var exceptionMessage = error.Error.Message;
-
                     int httpStatusCode = (int)HttpStatusCode.BadRequest;
-                    if (exceptionType != typeof(ExpectException))
+
+                    if(exceptionType == typeof(ExpectException))
+                    {
+                        //default value
+                    }else if(exceptionType == typeof(UnauthorizedException))
+                    {
+                        httpStatusCode = (int)HttpStatusCode.Unauthorized;
+                        exceptionMessage = "You have no permission!";
+                    }
+                    else
                     {
                         httpStatusCode = (int)HttpStatusCode.InternalServerError;
                         //系统异常
                         exceptionMessage = "System is abnormal !";
                         //记录异常日志
                         _logger.LogError(exceptionMessage+" Request finished.");
-                            
+                        
                     }
                     string errMessage = ResponseHandler.ReturnError(httpStatusCode, new List<string>() { exceptionMessage });
                     context.Response.StatusCode = httpStatusCode;

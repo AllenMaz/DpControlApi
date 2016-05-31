@@ -42,20 +42,23 @@ namespace DpControl.Domain.Repository
             if (customer == null)
                 throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
 
+            //Get UserInfo
+            var loginUser = _loginUser.GetLoginUserInfo();
+            //如果当前登录用户CustomerNo不为空，则新增Project中的CustomerId与登录用户的CustomerNo必须属于同一条数据
+            if (!string.IsNullOrEmpty(loginUser.CustomerNo) && loginUser.CustomerNo != customer.CustomerNo)
+                throw new ExpectException("Customer " + project.CustomerId + " and current user's Customer is not match");
+
             //ProjectNo must be unique
             var checkData = _context.Projects.Where(p => p.ProjectNo == project.ProjectNo).ToList();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
-
-            //Get UserInfo
-            var user = _loginUser.GetLoginUserInfo();
-
+            
             var model = new Project
             {
                 CustomerId = project.CustomerId,
                 ProjectName = project.ProjectName,
                 ProjectNo = project.ProjectNo,
-                Creator = user.UserName ,
+                Creator = loginUser.UserName ,
                 CreateDate = DateTime.Now
             };
             _context.Projects.Add(model);
@@ -70,20 +73,23 @@ namespace DpControl.Domain.Repository
             if (customer == null)
                 throw new ExpectException("Could not find Customer data which CustomerId equal to " + project.CustomerId);
 
+            //Get UserInfo
+            var loginUser = _loginUser.GetLoginUserInfo();
+            //如果当前登录用户CustomerNo不为空，则新增Project中的CustomerId与登录用户的CustomerNo必须属于同一条数据
+            if (!string.IsNullOrEmpty(loginUser.CustomerNo) && loginUser.CustomerNo != customer.CustomerNo)
+                throw new ExpectException("Customer "+ project.CustomerId +" and current user's Customer is not match");
+           
             //ProjectNo must be unique
             var checkData = await _context.Projects.Where(p =>p.ProjectNo == project.ProjectNo).ToListAsync();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which ProjectNo equal to '" + project.ProjectNo + "' already exist in system");
-
-            //Get UserInfo
-            var user = _loginUser.GetLoginUserInfo();
-
+            
             var model = new Project
             {
                 CustomerId = project.CustomerId,
                 ProjectName = project.ProjectName,
                 ProjectNo = project.ProjectNo,
-                Creator = user.UserName,
+                Creator = loginUser.UserName,
                 CreateDate = DateTime.Now
             };
             _context.Projects.Add(model);
@@ -119,18 +125,13 @@ namespace DpControl.Domain.Repository
                             select P;
 
             #region extra filter condition by current login user
-            var user = _loginUser.GetLoginUserInfo();
-            if (user.isCustomerLevel)
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (!string.IsNullOrEmpty(loginUser.CustomerNo))
             {
                 //if CustomerLevel then filter by CustomerId
-                var customer = _context.Customers.FirstOrDefault(c => c.CustomerNo == user.CustomerNo);
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerNo == loginUser.CustomerNo);
                 queryData = queryData.Where(p => p.CustomerId == customer.CustomerId);
 
-            }
-            else if (user.isProjectLevel)
-            {
-                //if ProjectLevel then filter by ProjectNo
-                queryData = queryData.Where(p => p.ProjectNo == user.ProjectNo);
             }
             #endregion
 
@@ -151,18 +152,13 @@ namespace DpControl.Domain.Repository
                             select P;
 
             #region extra filter condition by current login user
-            var user = _loginUser.GetLoginUserInfo();
-            if (user.isCustomerLevel)
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (!string.IsNullOrEmpty(loginUser.CustomerNo))
             {
                 //if CustomerLevel then filter by CustomerId
-                var customer = _context.Customers.FirstOrDefault(c => c.CustomerNo == user.CustomerNo);
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerNo == loginUser.CustomerNo);
                 queryData = queryData.Where(p => p.CustomerId == customer.CustomerId);
 
-            }
-            else if (user.isProjectLevel)
-            {
-                //if ProjectLevel then filter by ProjectNo
-                queryData = queryData.Where(p => p.ProjectNo == user.ProjectNo);
             }
             #endregion
 
@@ -233,6 +229,11 @@ namespace DpControl.Domain.Repository
 
         public void RemoveById(int projectId)
         {
+            //Get UserInfo
+            var user = _loginUser.GetLoginUserInfo();
+            if (!user.isCustomerLevel)
+                throw new UnauthorizedException();
+
             var project = _context.Projects.FirstOrDefault(c => c.ProjectId == projectId);
             if (project == null)
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);
@@ -247,6 +248,11 @@ namespace DpControl.Domain.Repository
 
         public async Task RemoveByIdAsync(int projectId)
         {
+            //Get UserInfo
+            var user = _loginUser.GetLoginUserInfo();
+            if (!user.isCustomerLevel)
+                throw new UnauthorizedException();
+
             var project = _context.Projects.FirstOrDefault(c => c.ProjectId == projectId);
             if (project == null)
                 throw new ExpectException("Could not find data which ProjectId equal to " + projectId);

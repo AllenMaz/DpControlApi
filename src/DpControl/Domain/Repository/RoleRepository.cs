@@ -15,6 +15,7 @@ namespace DpControl.Domain.Repository
     public class RoleRepository : IRoleRepository
     {
         ShadingContext _context;
+        private ILoginUserRepository _loginUser;
 
         #region construct
         public RoleRepository()
@@ -25,7 +26,11 @@ namespace DpControl.Domain.Repository
         {
             _context = context;
         }
-
+        public RoleRepository(ShadingContext context, ILoginUserRepository loginUser)
+        {
+            _context = context;
+            _loginUser = loginUser;
+        }
         #endregion
 
         public async Task<string> AddAsync(RoleAddModel role)
@@ -95,13 +100,26 @@ namespace DpControl.Domain.Repository
 
         }
 
-        public async Task<IEnumerable<UserSubSearchModel>> GetUsersByUserId(string roleId)
+        public async Task<IEnumerable<UserSubSearchModel>> GetUsersByRoleId(string roleId)
         {
+            var loginUser = _loginUser.GetLoginUserInfo();
+
             var userIds = await _context.UserRoles
                .Where(u => u.RoleId == roleId)
                .Select(u => u.UserId).ToListAsync();
 
             var queryData = _context.Users.Where(r => userIds.Contains(r.Id));
+            #region filter by loginUser
+            if(!string.IsNullOrEmpty(loginUser.CustomerNo))
+            {
+                queryData = queryData.Where(u=>u.CustomerNo == loginUser.CustomerNo);
+            }
+            if (!string.IsNullOrEmpty(loginUser.ProjectNo))
+            {
+                queryData = queryData.Where(u => u.ProjectNo == loginUser.ProjectNo);
+            }
+            #endregion
+
             var result = QueryOperate<ApplicationUser>.Execute(queryData);
 
             var users = await result.ToListAsync();

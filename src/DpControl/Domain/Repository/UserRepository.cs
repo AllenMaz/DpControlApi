@@ -46,6 +46,16 @@ namespace DpControl.Domain.Repository
             return userSearch;
         }
 
+        public UserSubSearchModel FindByName(string userName)
+        {
+            var result = _context.Users.Where(v => v.UserName == userName);
+            result = (IQueryable<ApplicationUser>)ExpandOperator.ExpandRelatedEntities<ApplicationUser>(result);
+
+            var user = result.FirstOrDefault();
+            var userSearch = UserOperator.SetUserSearchModelCascade(user);
+            return userSearch;
+        }
+
         public async Task<IEnumerable<UserSearchModel>> GetAllAsync()
         {
             var queryData = from U in _context.Users
@@ -53,23 +63,12 @@ namespace DpControl.Domain.Repository
 
             #region extra filter condition by current login user
             var user = _loginUser.GetLoginUserInfo();
-            if (user.isAdmin && user.isCustomerLevel)
-            {
-                //if admin and CustomerLevel,then filter by CustomerNo
-                queryData = queryData.Where(u=>u.CustomerNo == user.CustomerNo);
-            }
-            else if (user.isAdmin && user.isProjectLevel)
-            {
-                //if admin and ProjectNo,then filter by ProjectNo
+            
+            if (!string.IsNullOrEmpty(user.CustomerNo))
+                queryData = queryData.Where(u => u.CustomerNo == user.CustomerNo);
+            if (!string.IsNullOrEmpty(user.ProjectNo))
                 queryData = queryData.Where(u => u.ProjectNo == user.ProjectNo);
 
-            }
-            else if (!user.isAdmin)
-            {
-                //if not admin,filter by current login username
-                queryData = queryData.Where(u => u.UserName == user.UserName);
-
-            }
             #endregion
 
             var result = QueryOperate<ApplicationUser>.Execute(queryData);
@@ -126,11 +125,14 @@ namespace DpControl.Domain.Repository
         /// <param name="navigationProperty"></param>
         /// <param name="navigationPropertyIds"></param>
         /// <returns></returns>
-        public async Task CreateRelationsAsync(string userId,string navigationProperty,List<string> navigationPropertyIds)
+        public async Task CreateRelationsAsync(string userId, string navigationProperty,List<string> navigationPropertyIds)
         {
             var userData = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (userData == null)
                 throw new ExpectException("Could not find data which UserId equal to " + userId);
+            
+            //获取当前登录用户信息
+            var loginUser = _loginUser.GetLoginUserInfo();
 
             switch (navigationProperty)
             {
@@ -155,6 +157,9 @@ namespace DpControl.Domain.Repository
 
                     break;
                 case "Groups":
+                    //只有ProjectLevel级别的管理员才有权限操作
+                    if (!loginUser.isProjectLevel)
+                        throw new UnauthorizedException();
 
                     foreach (string navigationId in navigationPropertyIds)
                     {
@@ -176,6 +181,10 @@ namespace DpControl.Domain.Repository
 
                     break;
                 case "Locations":
+
+                    //只有ProjectLevel级别的管理员才有权限操作
+                    if (!loginUser.isProjectLevel)
+                        throw new UnauthorizedException();
 
                     foreach (string navigationId in navigationPropertyIds)
                     {
@@ -215,7 +224,7 @@ namespace DpControl.Domain.Repository
             var userData = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (userData == null)
                 throw new ExpectException("Could not find data which UserId equal to " + userId);
-
+            
             switch (navigationProperty)
             {
                 case "Roles":
@@ -279,44 +288,8 @@ namespace DpControl.Domain.Repository
             if (checkData.Count > 0)
                 throw new ExpectException("User:" +user.UserName + "' already exist in system");
 
-            #region UserLeveal
-            switch (user.UserLevel)
-            {
-                case (int)UserLevel.SuperLevel:
-                    //if SuperLevel ,set CustomerNo and ProjectNo to be empty 
-                    user.CustomerNo = string.Empty;
-                    user.ProjectNo = string.Empty;
-                    break;
-                case (int)UserLevel.CustomerLevel:
-                    //if CustomerLevel, CustomerNo is required and Set ProjectNo to be empty
-                    if (string.IsNullOrEmpty(user.CustomerNo))
-                        throw new ExpectException("When CustomerLevel CustomerNo is required ");
-                    if (!SystemExistCustomerNo(user.CustomerNo))
-                        throw new ExpectException("Could not find Customer data which CustomerNo equal to " + user.CustomerNo);
+            CheckConditionByLoginUser(user.CustomerNo,user.ProjectNo);
 
-                    user.ProjectNo = string.Empty;
-                    break;
-                case (int)UserLevel.ProjectLevel:
-                    //if ProjectLevel,CustomerNo and ProjectNo is required
-                    if (string.IsNullOrEmpty(user.CustomerNo))
-                        throw new ExpectException("When ProjectLevel CustomerNo is required ");
-                    if (string.IsNullOrEmpty(user.ProjectNo))
-                        throw new ExpectException("When ProjectLevel ProjectNo is required ");
-
-                    //CustomerNo and ProjectNo must existed in system
-                    if (!SystemExistCustomerNo(user.CustomerNo))
-                        throw new ExpectException("Could not find Customer data which CustomerNo equal to " + user.CustomerNo);
-                    if (!SystemExistProjectNo(user.ProjectNo))
-                        throw new ExpectException("Could not find Project data which ProjectNo equal to " + user.ProjectNo);
-
-                    // Project must belong to Customer
-                    if (!ProjectBelongToCustomer(user.CustomerNo, user.ProjectNo))
-                        throw new ExpectException("The Project " + user.ProjectNo + " is not belong to Customer " + user.CustomerNo);
-
-                    break;
-                default: break;
-            }
-            #endregion
             // Hash password
             var passwordHash = new PasswordHasher().HashPassword(null, user.Password);
 
@@ -327,7 +300,6 @@ namespace DpControl.Domain.Repository
                 PasswordHash = passwordHash,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                UserLevel = user.UserLevel,
                 CustomerNo = user.CustomerNo,
                 ProjectNo = user.ProjectNo
             };
@@ -354,54 +326,99 @@ namespace DpControl.Domain.Repository
             if (userData == null)
                 throw new ExpectException("Could not find data which UserId equal to " + userId);
 
-            #region UserLeveal
-            switch (user.UserLevel)
-            {
-                case (int)UserLevel.SuperLevel:
-                    //if SuperLevel ,set CustomerNo and ProjectNo to be empty 
-                    user.CustomerNo = string.Empty;
-                    user.ProjectNo = string.Empty;
-                    break;
-                case (int)UserLevel.CustomerLevel:
-                    //if CustomerLevel, CustomerNo is required and Set ProjectNo to be empty
-                    if (string.IsNullOrEmpty(user.CustomerNo))
-                        throw new ExpectException("When CustomerLevel CustomerNo is required ");
-                    if (!SystemExistCustomerNo(user.CustomerNo))
-                        throw new ExpectException("Could not find Customer data which CustomerNo equal to " + user.CustomerNo);
-
-                    user.ProjectNo = string.Empty;
-                    break;
-                case (int)UserLevel.ProjectLevel:
-                    //if ProjectLevel,CustomerNo and ProjectNo is required
-                    if (string.IsNullOrEmpty(user.CustomerNo))
-                        throw new ExpectException("When ProjectLevel CustomerNo is required ");
-                    if (string.IsNullOrEmpty(user.ProjectNo))
-                        throw new ExpectException("When ProjectLevel ProjectNo is required ");
-
-                    //CustomerNo and ProjectNo must existed in system
-                    if (!SystemExistCustomerNo(user.CustomerNo))
-                        throw new ExpectException("Could not find Customer data which CustomerNo equal to " + user.CustomerNo);
-                    if (!SystemExistProjectNo(user.ProjectNo))
-                        throw new ExpectException("Could not find Project data which ProjectNo equal to " + user.ProjectNo);
-
-                    // Project must belong to Customer
-                    if (!ProjectBelongToCustomer(user.CustomerNo, user.ProjectNo))
-                        throw new ExpectException("The Project " + user.ProjectNo + " is not belong to Customer " + user.CustomerNo);
-
-                    break;
-                default: break;
-            }
-            #endregion
+            CheckConditionByLoginUser(user.CustomerNo, user.ProjectNo);
 
             userData.Email = user.Email;
             userData.PhoneNumber = user.PhoneNumber;
             userData.CustomerNo = user.CustomerNo;
             userData.ProjectNo = user.ProjectNo;
-            userData.UserLevel = user.UserLevel;
 
             await _context.SaveChangesAsync();
             return userData.Id;
         }
+
+        /// <summary>
+        /// Check condition by current login user
+        /// </summary>
+        private void CheckConditionByLoginUser(string customerNo,string projectNo)
+        {
+            #region CustomerNo and ProjectNo
+            var loginUser = _loginUser.GetLoginUserInfo();
+
+            if (loginUser.isSuperLevel)
+            {
+                #region if current login user's CustomerNo and ProjectNo are empty,then check user add logic
+                //如果新增用户的ProjectNo不为空，则
+                if (!string.IsNullOrEmpty(projectNo))
+                {
+                    if (string.IsNullOrEmpty(customerNo))
+                        throw new ExpectException("CustomerNo is required");
+
+                    //ProjectNo must existed in system
+                    if (!SystemExistProjectNo(projectNo))
+                        throw new ExpectException("Could not find Project data which ProjectNo equal to " + projectNo);
+
+                    //judge if CustomerNo is exist in system
+                    if (!SystemExistCustomerNo(customerNo))
+                        throw new ExpectException("Could not find Customer data which CustomerNo equal to " + customerNo);
+
+                    // Project must belong to Customer
+                    if (!ProjectBelongToCustomer(customerNo, projectNo))
+                        throw new ExpectException("The Project " + projectNo + " is not belong to Customer " + customerNo);
+
+                }
+                else
+                {
+                    //如果新增用户的CustomerNo不为空，则
+                    if (!string.IsNullOrEmpty(customerNo))
+                    {
+                        //judge if CustomerNo is exist in system
+                        if (!SystemExistCustomerNo(customerNo))
+                            throw new ExpectException("Could not find Customer data which CustomerNo equal to " + customerNo);
+
+                    }
+                }
+                #endregion
+                
+            }
+            else if (loginUser.isCustomerLevel)
+            {
+                #region if current login user's only has CustomerNo ,then check user add logic
+                //新增用户的CustomerNo必须与当前登录用户的CustomerNo一致
+                if (loginUser.CustomerNo != customerNo)
+                    throw new ExpectException("CustomerNo '" + customerNo + "' and current user's CustomerNo is not match.");
+
+                //如果新增用户的ProjectNo不为空
+                if (!string.IsNullOrEmpty(projectNo))
+                {
+                    //ProjectNo must existed in system
+                    if (!SystemExistProjectNo(projectNo))
+                        throw new ExpectException("Could not find Project data which ProjectNo equal to " + projectNo);
+
+                    // Project must belong to Customer
+                    if (!ProjectBelongToCustomer(customerNo, projectNo))
+                        throw new ExpectException("The Project " + projectNo + " is not belong to Customer " + customerNo);
+
+                }
+                #endregion
+            }
+            else if (loginUser.isProjectLevel)
+            {
+
+                #region if current login user has both CustomerNo and ProjectNo
+                //新增用户的CustomerNo必须与当前登录用户的CustomerNo一致
+                if (loginUser.CustomerNo != customerNo)
+                    throw new ExpectException("CustomerNo '" + customerNo + "' and current user's CustomerNo is not match.");
+
+                //ProjectNo must be match current login user's ProjectNo
+                if (loginUser.ProjectNo != projectNo)
+                    throw new ExpectException("ProjectNo '" + projectNo + "' and current user's ProjectNo is not match.");
+                #endregion
+            }
+
+            #endregion
+        }
+        
 
         /// <summary>
         /// Is CustomerNo existed in system
@@ -457,8 +474,6 @@ namespace DpControl.Domain.Repository
             return projectBelongToCustomer;
         }
 
-        
-
-        
+       
     }
 }

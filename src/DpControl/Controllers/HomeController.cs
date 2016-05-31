@@ -1,10 +1,12 @@
 ﻿using DpControl.Domain.Entities;
+using DpControl.Domain.IRepository;
 using DpControl.Models;
 using DpControl.Utility;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.ApiExplorer;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -18,19 +20,21 @@ namespace DpControl.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private IApiDescriptionGroupCollectionProvider _description;
         public HomeController(
            UserManager<ApplicationUser> userManager,
            SignInManager<ApplicationUser> signInManager,
-           RoleManager<IdentityRole> roleManager)
+           RoleManager<IdentityRole> roleManager, IApiDescriptionGroupCollectionProvider description)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _description = description;
         }
+        
 
         public IActionResult Default()
         {
-           
             return View();
         }
 

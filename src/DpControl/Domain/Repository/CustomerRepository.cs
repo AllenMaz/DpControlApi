@@ -39,13 +39,15 @@ namespace DpControl.Domain.Repository
         #region Add
         public int Add(CustomerAddModel customer)
         {
+            var user = _loginUser.GetLoginUserInfo();
+
             //CustomerNo must be unique
             var checkData = _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToList().Count ;
             if (checkData >0)
                 throw new ExpectException("The data which CustomerNo equal to '"+customer.CustomerNo +"' already exist in system");
 
-            //Get UserInfo
-            var user = _loginUser.GetLoginUserInfo();
+            
+            
 
             var model = new Customer
             {
@@ -63,14 +65,13 @@ namespace DpControl.Domain.Repository
         
         public async Task<int> AddAsync(CustomerAddModel customer)
         {
+            var user = _loginUser.GetLoginUserInfo();
+
             //CustomerNo must be unique
             var checkData = await _context.Customers.Where(c => c.CustomerNo == customer.CustomerNo).ToListAsync();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
-
-            //Get UserInfo
-            var user = _loginUser.GetLoginUserInfo();
-
+            
             var model = new Customer
             {
                 CustomerName = customer.CustomerName,
@@ -85,12 +86,23 @@ namespace DpControl.Domain.Repository
             return model.CustomerId;
 
         }
-        
+
         #endregion
 
         public CustomerSearchModel FindById(int customerId)
         {
             var result = _context.Customers.Where(c => c.CustomerId == customerId);
+            result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
+
+            var customer = result.FirstOrDefault();
+            var customerSearch = CustomerOperator.SetCustomerSearchModelCascade(customer);
+
+            return customerSearch;
+        }
+
+        public CustomerSearchModel FindByCustomerNo(string customerNo)
+        {
+            var result = _context.Customers.Where(c => c.CustomerNo == customerNo);
             result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
 
             var customer = result.FirstOrDefault();
@@ -121,15 +133,6 @@ namespace DpControl.Domain.Repository
             var queryData = from C in _context.Customers
                             select C;
 
-            #region extra filter condition by current login user 
-            var user = _loginUser.GetLoginUserInfo();
-            if (!user.isSuperLevel)
-            {
-                //filter by CustomerNo
-                queryData = queryData.Where(c => c.CustomerNo == user.CustomerNo);
-            }
-            #endregion
-
             var result = QueryOperate<Customer>.Execute(queryData);
             result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
 
@@ -144,16 +147,7 @@ namespace DpControl.Domain.Repository
         {
             var queryData = from C in _context.Customers
                         select C;
-
-            #region extra filter condition by current login user 
-            var user = _loginUser.GetLoginUserInfo();
-            if (!user.isSuperLevel)
-            {
-                //filter by CustomerNo
-                queryData = queryData.Where(c => c.CustomerNo == user.CustomerNo);
-            }
-            #endregion
-
+            
             var result = QueryOperate<Customer>.Execute(queryData);
             result = (IQueryable<Customer>)ExpandOperator.ExpandRelatedEntities<Customer>(result);
 
@@ -179,7 +173,9 @@ namespace DpControl.Domain.Repository
 
         public int UpdateById(int customerId,CustomerUpdateModel mcustomer)
         {
-            
+
+            var user = _loginUser.GetLoginUserInfo();
+
             var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
@@ -189,9 +185,7 @@ namespace DpControl.Domain.Repository
                                                             && c.CustomerId != customerId).ToList();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which CustomerNo equal to '" + customer.CustomerNo + "' already exist in system");
-
-            //Get UserInfo
-            var user =  _loginUser.GetLoginUserInfo();
+            
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
@@ -205,6 +199,8 @@ namespace DpControl.Domain.Repository
 
         public async Task<int> UpdateByIdAsync(int customerId,CustomerUpdateModel mcustomer)
         {
+            var user = _loginUser.GetLoginUserInfo();
+
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to " + customerId);
@@ -213,9 +209,7 @@ namespace DpControl.Domain.Repository
                                                             && c.CustomerId != customerId).ToListAsync();
             if (checkData.Count > 0)
                 throw new ExpectException("The data which CustomerNo equal to '" + mcustomer.CustomerNo + "' already exist in system");
-
-            //Get UserInfo
-            var user = _loginUser.GetLoginUserInfo();
+            
 
             customer.CustomerName = mcustomer.CustomerName;
             customer.CustomerNo = mcustomer.CustomerNo;
@@ -228,6 +222,8 @@ namespace DpControl.Domain.Repository
 
         public void RemoveById(int id)
         {
+            var user = _loginUser.GetLoginUserInfo();
+
             var customer = _context.Customers.Include(c => c.Projects).FirstOrDefault(v => v.CustomerId == id);
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to " + id);
@@ -247,6 +243,8 @@ namespace DpControl.Domain.Repository
 
         public async Task RemoveByIdAsync(int id)
         {
+            var user = _loginUser.GetLoginUserInfo();
+
             var customer = await _context.Customers.Include(c=>c.Projects).FirstOrDefaultAsync(v => v.CustomerId == id);
             if (customer == null)
                 throw new ExpectException("Could not find data which CustomerId equal to "+id);

@@ -13,6 +13,7 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
+    [Authorize]
     public class SceneSegmentsController:BaseAPIController
     {
         [FromServices]
@@ -24,7 +25,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(SceneSegmentSearchModel))]
         [HttpGet("{sceneSegmentId}", Name = "GetBySceneSegmentIdAsync")]
         public async Task<IActionResult> GetBySceneSegmentIdAsync(int sceneSegmentId)
@@ -43,7 +43,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="sceneSegmentId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(SceneSubSearchModel))]
         [HttpGet("{sceneSegmentId}/Scene")]
         public async Task<IActionResult> GetSceneBySceneSegmentIdAsync(int sceneSegmentId)
@@ -61,23 +60,21 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
-        [HttpGet]
-        [EnableQuery]
-        public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync()
-        {
+        //[HttpGet]
+        //[EnableQuery]
+        //public async Task<IEnumerable<SceneSegmentSearchModel>> GetAllAsync()
+        //{
 
-            var result = await _sceneSegmentRepository.GetAllAsync(); ;
+        //    var result = await _sceneSegmentRepository.GetAllAsync(); ;
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// Add data
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] SceneSegmentAddModel mSceneSegment)
         {
@@ -96,7 +93,6 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="project"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpPut("{sceneSegmentId}")]
         public async Task<IActionResult> UpdateAsync(int sceneSegmentId, [FromBody] SceneSegmentUpdateModel mSceneSegment)
         {
@@ -114,7 +110,6 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by SceneSegmentId
         /// </summary>
         /// <param name="customerId"></param>
-        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{sceneSegmentId}")]
         public async Task<IActionResult> DeleteBySceneSegmentIdAsync(int sceneSegmentId)
         {

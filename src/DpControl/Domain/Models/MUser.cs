@@ -15,10 +15,46 @@ namespace DpControl.Domain.Models
         public string UserName { get; set; }
         public string CustomerNo { get; set; }
         public string ProjectNo { get; set; }
-        public int UserLevel { get; set; }
 
         public List<string> Roles { get; set; }
 
+        public bool isSuperLevel
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.CustomerNo) && string.IsNullOrEmpty(this.ProjectNo) ? true : false;
+            }
+            set
+            {
+                value = string.IsNullOrEmpty(this.CustomerNo) && string.IsNullOrEmpty(this.ProjectNo) ? true : false;
+            }
+        }
+
+        public bool isCustomerLevel
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(this.CustomerNo) && string.IsNullOrEmpty(this.ProjectNo) ? true : false;
+            }
+            set
+            {
+                value = !string.IsNullOrEmpty(this.CustomerNo) && string.IsNullOrEmpty(this.ProjectNo) ? true : false;
+            }
+        }
+
+        public bool isProjectLevel
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(this.CustomerNo) && !string.IsNullOrEmpty(this.ProjectNo) ? true : false;
+            }
+            set
+            {
+                value = !string.IsNullOrEmpty(this.CustomerNo) && !string.IsNullOrEmpty(this.ProjectNo) ? true : false;
+            }
+        }
+
+        #region Roles
         public bool isAdmin
         {
             get
@@ -32,44 +68,45 @@ namespace DpControl.Domain.Models
             }
         }
 
-        public bool isSuperLevel
+        public bool isEngineer
         {
             get
             {
 
-                return (int)DpControl.Domain.Entities.UserLevel.SuperLevel ==this.UserLevel  ? true : false;
+                return Roles != null && Roles.Contains(Role.Engineer) ? true : false;
             }
             set
             {
-                value = (int)DpControl.Domain.Entities.UserLevel.SuperLevel == this.UserLevel ? true : false;
+                value = Roles != null && Roles.Contains(Role.Engineer) ? true : false;
             }
         }
 
-        public bool isCustomerLevel
+        public bool isCustomerService
         {
             get
             {
 
-                return (int)DpControl.Domain.Entities.UserLevel.CustomerLevel == this.UserLevel ? true : false;
+                return Roles != null && Roles.Contains(Role.CustomerService) ? true : false;
             }
             set
             {
-                value = (int)DpControl.Domain.Entities.UserLevel.CustomerLevel == this.UserLevel ? true : false;
+                value = Roles != null && Roles.Contains(Role.CustomerService) ? true : false;
             }
         }
 
-        public bool isProjectLevel
+        public bool isNormalUser
         {
             get
             {
 
-                return (int)DpControl.Domain.Entities.UserLevel.ProjectLevel == this.UserLevel ? true : false;
+                return Roles != null && Roles.Contains(Role.NormalUser) ? true : false;
             }
             set
             {
-                value = (int)DpControl.Domain.Entities.UserLevel.ProjectLevel == this.UserLevel ? true : false;
+                value = Roles != null && Roles.Contains(Role.NormalUser) ? true : false;
             }
         }
+        #endregion
 
         public bool hasCustomerNo
         {
@@ -102,9 +139,6 @@ namespace DpControl.Domain.Models
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
-
-        [Required(ErrorMessage = "UserLeveal is required!")]
-        public int UserLevel { get; set; }
 
         public string CustomerNo { get; set; }
         public string ProjectNo { get; set; }
@@ -163,8 +197,11 @@ namespace DpControl.Domain.Models
             var userSearchModel = new UserSearchModel
             {
                 UserId = user.Id,
-                UserLevel = user.UserLevel,
                 UserName = user.UserName,
+                CustomerNo = user.CustomerNo,
+                ProjectNo = user.ProjectNo,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
                 Groups = user.UserGroups.Select(v => GroupOperator.SetGroupSubSearchModel(v.Group)),
                 Locations = user.UserLocations.Select(v => LocationOperator.SetLocationSubSearchModel(v.Location)),
                 Roles = user.Roles.Select(v=>RoleOperator.SetRoleSubSearchModel(context.Roles.FirstOrDefault(r=>r.Id == v.RoleId)))
@@ -194,7 +231,11 @@ namespace DpControl.Domain.Models
             var userSearchModel = new UserSubSearchModel
             {
                 UserId = user.Id,
-                UserName = user.UserName
+                UserName = user.UserName,
+                CustomerNo = user.CustomerNo,
+                ProjectNo = user.ProjectNo,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
             };
 
             return userSearchModel;

@@ -17,6 +17,7 @@ using DpControl.Utility.Authorization;
 using Microsoft.AspNet.Authorization;
 using DpControl.Utility.Authentication;
 using Microsoft.AspNet.Cors;
+using DpControl.Domain.Execptions;
 
 namespace DpControl.APIControllers
 {
@@ -35,15 +36,15 @@ namespace DpControl.APIControllers
 
         #region GET
         /// <summary>
-        /// Search data by CustomerId
+        /// Get Customer by id
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
         [EnableQuery(typeof(CustomerSearchModel))]
-        [HttpGet("{customerId}", Name = "GetByCustomerIdAsync")]
-        public async Task<IActionResult> GetByCustomerIdAsync(int customerId)
+        [HttpGet("{customerId}", Name = "GetByCustomerById")]
+        public IActionResult GetByCustomerById(int customerId)
         {
-            var customer = await _customerRepository.FindByIdAsync(customerId);
+            var customer = _customerRepository.FindById(customerId);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -53,20 +54,29 @@ namespace DpControl.APIControllers
 
         #region Relations
         /// <summary>
-        /// Get Related Projects
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel,CustomerLevel<br/>
+        /// Description：根据CustomerId及当前登录用户信息获取该Customer下的所有Projects
         /// </summary>
         /// <returns></returns>
         [HttpGet("{customerId}/Projects")]
         [EnableQuery]
         public async Task<IEnumerable<ProjectSubSearchModel>> GetProjectsByCustomerIdAsync(int customerId)
         {
+            
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (loginUser.isProjectLevel)
+                throw new UnauthorizedException();
+
             var result = await _customerRepository.GetProjectsByCustomerIdAsync(customerId);
             return result;
         }
         #endregion
 
         /// <summary>
-        /// Search all data
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel<br/>
+        /// Description：根据当前登录用户获取所有Customer
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -97,7 +107,10 @@ namespace DpControl.APIControllers
             //    result = JsonHandler.UnJson<IEnumerable<CustomerSearchModel>>(cacheResultStr);
 
             //}
-            
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (!loginUser.isSuperLevel)
+                throw new UnauthorizedException();
+
             var result = await _customerRepository.GetAllAsync();
 
             return result;
@@ -105,21 +118,20 @@ namespace DpControl.APIControllers
 
         #endregion
 
-        
+
         /// <summary>
-        /// Add data
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel<br/>
+        /// Description：新增Customer
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CustomerAddModel mCustomer)
         {
-            //only SuperLevel has authorzation
             var user = _loginUser.GetLoginUserInfo();
             if (!user.isSuperLevel)
-            {
-                return HttpUnauthorized();
-            }
+                throw new UnauthorizedException();
 
             if (!ModelState.IsValid)
             {
@@ -127,11 +139,13 @@ namespace DpControl.APIControllers
             }
 
             int customerId = await _customerRepository.AddAsync(mCustomer);
-            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
+            return CreatedAtRoute("GetByCustomerById", new { controller = "Customers", customerId = customerId }, mCustomer);
         }
 
         /// <summary>
-        /// Edit data by CustomerId
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel<br/>
+        /// Description：修改Customer
         /// </summary>
         /// <param name="customerNo"></param>
         /// <param name="customer"></param>
@@ -139,12 +153,9 @@ namespace DpControl.APIControllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] CustomerUpdateModel mCustomer)
         {
-            //only SuperLevel has authorzation
             var user = _loginUser.GetLoginUserInfo();
             if (!user.isSuperLevel)
-            {
-                return HttpUnauthorized();
-            }
+                throw new UnauthorizedException();
 
             if (!ModelState.IsValid)
             {
@@ -152,26 +163,26 @@ namespace DpControl.APIControllers
             }
 
             var customerId = await _customerRepository.UpdateByIdAsync(id,mCustomer);
-            return CreatedAtRoute("GetByCustomerIdAsync", new { controller = "Customers", customerId = customerId }, mCustomer);
+            return CreatedAtRoute("GetByCustomerById", new { controller = "Customers", customerId = customerId }, mCustomer);
 
         }
 
         /// <summary>
-        /// Delete data by CustomerNo
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel<br/>
+        /// Description：删除Customer
         /// </summary>
         /// <param name="customerId"></param>
         [HttpDelete("{customerId}")]
         public async Task<IActionResult> DeleteByCustomerIdAsync(int customerId)
         {
-            //only SuperLevel has authorzation
             var user = _loginUser.GetLoginUserInfo();
             if (!user.isSuperLevel)
-            {
-                return HttpUnauthorized();
-            }
+                throw new UnauthorizedException();
 
             await _customerRepository.RemoveByIdAsync(customerId);
             return Ok();
         }
+        
     }
 }

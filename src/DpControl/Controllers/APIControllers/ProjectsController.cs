@@ -1,4 +1,5 @@
 ﻿using DpControl.Domain.EFContext;
+using DpControl.Domain.Execptions;
 using DpControl.Domain.IRepository;
 using DpControl.Domain.Models;
 using DpControl.Utility;
@@ -20,10 +21,16 @@ namespace DpControl.Controllers.APIControllers
     {
         [FromServices]
         public IProjectRepository _projectRepository { get; set; }
-        
+
+        private ILoginUserRepository _loginUser;
+
+        public ProjectsController(ILoginUserRepository loginUser)
+        {
+            _loginUser = loginUser;
+        }
 
         /// <summary>
-        /// Search data by ProjectId
+        /// Get Project by id
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -41,7 +48,7 @@ namespace DpControl.Controllers.APIControllers
 
         #region Relations
         /// <summary>
-        /// Get Customer Relation
+        /// Get Customer by ProjectId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -58,7 +65,7 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Get Groups Relation
+        /// Get Groups by ProjectId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -71,7 +78,7 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Get Locations Relation
+        /// Get Locations by ProjectId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -84,7 +91,7 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Get Scenes Relation
+        /// Get Scenes by ProjectId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -97,7 +104,7 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Get Locations Relation
+        /// Get Holidays by ProjectId
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
@@ -111,27 +118,40 @@ namespace DpControl.Controllers.APIControllers
         #endregion
 
         /// <summary>
-        /// Search all data
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel,CustomerLevel<br/>
+        /// Description：根据当前登录用户所属级别获取所有Projects
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<ProjectSearchModel>> GetAllAsync()
         {
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (loginUser.isProjectLevel)
+                throw new UnauthorizedException();
+
             var result = await _projectRepository.GetAllAsync(); 
             
             return result;
         }
-        
+
 
         /// <summary>
-        /// Add data
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel,CustomerLevel<br/>
+        /// Description：新增Project
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
+        [Authorize(Roles =Role.Admin)]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] ProjectAddModel mProject)
         {
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (loginUser.isProjectLevel)
+                throw new UnauthorizedException();
+
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
@@ -142,14 +162,22 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Edit data by ProjectId
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel,CustomerLevel<br/>
+        /// Description：修改Project
         /// </summary>
         /// <param name="customerNo"></param>
         /// <param name="project"></param>
         /// <returns></returns>
+        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ProjectUpdateModel mProject)
         {
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (loginUser.isProjectLevel)
+                throw new UnauthorizedException();
+
+
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelStateError());
@@ -161,12 +189,19 @@ namespace DpControl.Controllers.APIControllers
         }
 
         /// <summary>
-        /// Delete data by CustomerNo
+        /// Roles：All<br/>
+        /// UserLevel:SuperLevel,CustomerLevel<br/>
+        /// Description：删除Project
         /// </summary>
         /// <param name="customerId"></param>
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{projectId}")]
         public async Task<IActionResult> DeleteByProjectIdIdAsync(int projectId)
         {
+            var loginUser = _loginUser.GetLoginUserInfo();
+            if (loginUser.isProjectLevel)
+                throw new UnauthorizedException();
+
             await _projectRepository.RemoveByIdAsync(projectId);
             return Ok();
         }

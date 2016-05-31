@@ -61,7 +61,7 @@ namespace DpControl.Controllers
                 return View(model);
             }
             //新增用户
-            var user = new ApplicationUser { UserName = userName,UserLevel = (int)UserLevel.SuperLevel };
+            var user = new ApplicationUser { UserName = userName};
             var result = await _userManager.CreateAsync(user, password);
             //新增角色
             IdentityRole adminRole = new IdentityRole { Name = roleName, NormalizedName = roleName.ToUpper() };

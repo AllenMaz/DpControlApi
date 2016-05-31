@@ -49,14 +49,5 @@ namespace DpControl.Domain.Entities
         Bluetooth,
         WiFi
     }
-
-    /// <summary>
-    /// 用户级别
-    /// </summary>
-    public enum UserLevel
-    {
-        SuperLevel,
-        CustomerLevel,
-        ProjectLevel
-    }
+    
 }

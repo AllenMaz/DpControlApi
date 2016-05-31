@@ -14,6 +14,7 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
+    [Authorize]
     public class LocationsController:BaseAPIController
     {
         [FromServices]
@@ -24,7 +25,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(LocationSearchModel))]
         [HttpGet("{locationId}", Name = "GetByLocationIdAsync")]
         public async Task<IActionResult> GetBySceneIdAsync(int locationId)
@@ -43,7 +43,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="locationId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(ProjectSubSearchModel))]
         [HttpGet("{locationId}/Project")]
         public async Task<IActionResult> GetProjectBySceneIdAsync(int locationId)
@@ -61,7 +60,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="locationId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(DeviceSubSearchModel))]
         [HttpGet("{locationId}/Device")]
         public async Task<IActionResult> GetDeviceBySceneIdAsync(int locationId)
@@ -79,7 +77,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="locationId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{locationId}/Groups")]
         public async Task<IEnumerable<GroupSubSearchModel>> GetGroupsBySceneIdAsync(int locationId)
@@ -93,7 +90,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="locationId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{locationId}/Logs")]
         public async Task<IEnumerable<LogSubSearchModel>> GetLogsBySceneIdAsync(int locationId)
@@ -107,7 +103,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="locationId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery]
         [HttpGet("{locationId}/Alarms")]
         public async Task<IEnumerable<AlarmSubSearchModel>> GetAlarmsBySceneIdAsync(int locationId)
@@ -121,7 +116,6 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<LocationSearchModel>> GetAllAsync()
@@ -137,7 +131,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] LocationAddModel mLocation)
         {
@@ -178,7 +171,6 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="locationId"></param>
         /// <param name="Location"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] LocationUpdateModel mLocation)
         {
@@ -217,7 +209,6 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by LocationId
         /// </summary>
         /// <param name="LocationId"></param>
-        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{locationId}")]
         public async Task<IActionResult> DeleteByLocationIdAsync(int locationId)
         {

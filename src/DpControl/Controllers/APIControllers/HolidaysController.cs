@@ -13,6 +13,7 @@ using System.Web.Http;
 
 namespace DpControl.Controllers.APIControllers
 {
+    [Authorize]
     public class HolidaysController:BaseAPIController
     {
         [FromServices]
@@ -24,7 +25,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(HolidaySearchModel))]
         [HttpGet("{holidayId}", Name = "GetByHolidayIdAsync")]
         public async Task<IActionResult> GetByHolidayIdAsync(int holidayId)
@@ -43,7 +43,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="holidayId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [EnableQuery(typeof(ProjectSubSearchModel))]
         [HttpGet("{holidayId}/Project")]
         public async Task<IActionResult> GetProjectByHolidayIdAsync(int holidayId)
@@ -61,7 +60,6 @@ namespace DpControl.Controllers.APIControllers
         /// Search all data
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpGet]
         [EnableQuery]
         public async Task<IEnumerable<HolidaySearchModel>> GetAllAsync()
@@ -77,7 +75,6 @@ namespace DpControl.Controllers.APIControllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] HolidayAddModel mHoliday)
         {
@@ -96,7 +93,6 @@ namespace DpControl.Controllers.APIControllers
         /// <param name="customerNo"></param>
         /// <param name="project"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Public")]
         [HttpPut("{holidayId}")]
         public async Task<IActionResult> UpdateAsync(int holidayId, [FromBody] HolidayUpdateModel mHoliday)
         {
@@ -114,7 +110,6 @@ namespace DpControl.Controllers.APIControllers
         /// Delete data by HolidayId
         /// </summary>
         /// <param name="customerId"></param>
-        [Authorize(Roles = "Admin,Public")]
         [HttpDelete("{holidayId}")]
         public async Task<IActionResult> DeleteByHolidayIdAsync(int holidayId)
         {

@@ -9,15 +9,7 @@ namespace DpControl.Domain.Entities
     public class ApplicationUser : IdentityUser
     {
         #region relationship
-
-        /// <summary>
-        /// there are three levels:
-        /// SuperLevel:this level CustomerNo and ProjectNo must be empty
-        /// CustomerLevel:this level CustomerNo is required and ProjectNo must be empty
-        /// ProjectLevel:this level ProjectNo is required
-        /// </summary>
-        public int UserLevel { get; set; }
-
+        
         public string CustomerNo { get; set; }
 
         public string ProjectNo { get; set; }
